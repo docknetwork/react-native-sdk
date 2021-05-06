@@ -1,17 +1,31 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import { rpcServer } from "./rpc-server";
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+// import './polkadot-test';
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+const postMessage = (message) =>
+  window.ReactNativeWebView
+    ? window.ReactNativeWebView.postMessage(JSON.stringify(message))
+    : console.log("POST Message", message);
+
+const addEventListener = (...args) =>
+  (navigator.appVersion.includes("Android")
+    ? document
+    : window
+  ).addEventListener(...args);
+
+addEventListener("message", (event) => {
+  const data = event.data;
+
+  if (data && data.type === "json-rpc-request") {
+    rpcServer.receive(data.body).then((response) => {
+      postMessage({
+        type: "json-rpc-response",
+        body: response,
+      });
+    });
+  }
+});
+
+postMessage({
+  type: "json-rpc-ready",
+});
