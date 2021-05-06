@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.js": "/0.bundle.min.js",
+    "runtime-main.js": "/bundle.min.js",
+    "2.bundle.min.js": "/2.bundle.min.js",
+    "2.bundle.min.js.LICENSE.txt": "/2.bundle.min.js.LICENSE.txt",
+    "index.html": "/index.html"
+  },
+  "entrypoints": [
+    "bundle.min.js",
+    "2.bundle.min.js",
+    "0.bundle.min.js"
+  ]
+}
