@@ -1,13 +1,17 @@
 import { JSONRPCServer } from "json-rpc-2.0";
-import RpcMethods from "./rpc-methods";
+import { createRpcService } from "./rpc-util";
+import services from './services';
 
-export const rpcServer = new JSONRPCServer();
+const rpcServer = new JSONRPCServer();
 
-RpcMethods.forEach((method) => {
-  rpcServer.addMethod(method.name, (params) => {
-    return method.resolver(params);
+services.forEach((service) => {
+  const rpcService = createRpcService(service);
+
+  rpcService.forEach((method) => {
+    rpcServer.addMethod(method.name, (params) => {
+      return method.resolver(params);
+    });
   });
 });
 
-
-console.log(RpcMethods);
+export default rpcServer;

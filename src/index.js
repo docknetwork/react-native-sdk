@@ -1,6 +1,6 @@
-import { rpcServer } from "./rpc-server";
+import rpcServer from "./rpc-server";
 
-// import './polkadot-test';
+import './polkadot-test';
 
 const postMessage = (message) =>
   window.ReactNativeWebView

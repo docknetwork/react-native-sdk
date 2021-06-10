@@ -3,3 +3,17 @@
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom';
+import { getRpcClient, initRpcClient } from './rpc-client';
+import rpcServer from './rpc-server';
+
+initRpcClient((req) => {
+  // console.log('Request received', req);
+  return rpcServer
+    .receive(req)
+    .then(result => {
+      
+      getRpcClient().receive(result);
+      
+      return result;
+    })
+});

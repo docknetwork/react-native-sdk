@@ -1,7 +1,7 @@
-export function generateMethods({ parent, methodList }) {
-  return methodList.map((methodResolver) => {
+export function createRpcService({ name, routes }) {
+  return routes.map((methodResolver) => {
     return {
-      name: `${parent}.${methodResolver.name}`,
+      name: `${name}.${methodResolver.name}`,
       resolver: (params = {}) => {
         if (params.__args) {
           return methodResolver(...params.__args);
