@@ -8,29 +8,34 @@ export const setCurrentPairIdx = idx => {
   currentPairIdx = idx;
 }
 
-function initialize(options) {
+export function initialize(options) {
   keyring = new Keyring(options);
 
   return true;
 }
 
-function addFromMnemonic(...args) {
+export function addFromMnemonic(...args) {
   const pair = keyring.addFromMnemonic(...args);
   currentPairIdx = keyring.pairs.length - 1;
   return pair;
 }
 
-function addFromJson(...args) {
+export function addFromJson(...args) {
   const pair = keyring.addFromJson(...args);
   currentPairIdx = keyring.pairs.length - 1;
   return pair;
 }
 
+export function addressFromUri({ phrase, type, derivePath }) {
+  return keyring.createFromUri(`${phrase.trim()}${derivePath}`, {}, type).address;
+}
+
 export default {
   name: 'keyring',
-  routes: [
+  routes: {
     addFromJson,
     addFromMnemonic,
+    addressFromUri,
     initialize
-  ]
+  }
 }

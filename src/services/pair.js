@@ -26,12 +26,12 @@ function toJson(password) {
 
 export default {
   name: "pair",
-  routes: [
+  routes: {
     setCurrent,
     address,
     isLocked,
     lock,
     unlock,
     toJson
-  ],
+  },
 }

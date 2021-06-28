@@ -6,7 +6,8 @@ module.exports = {
     "^.+\\.(ts|js)$": "babel-jest"
   },
   "setupFilesAfterEnv": ["./src/setupTests.js"],
-  
+  "resetMocks": false,
+  "setupFiles": ["jest-localstorage-mock"],
   transformIgnorePatterns: [
     "/node_modules/(?!@polkadot|@babel)"
     // "node_modules/(?!(@polkadot"

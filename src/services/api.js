@@ -3,14 +3,14 @@ import { ensureDockReady } from './dock';
 
 export default {
   name: "api",
-  routes: [
-    async function getAccountBalance(address) {
+  routes: {
+    async getAccountBalance(address) {
       await ensureDockReady();
       const { data: { free }} = await dock.api.query.system.account(address);
       return free.toHuman();
     },
 
-    async function sendTokens({ address, amount }) {
+    async sendTokens({ address, amount }) {
       return new Promise((resolve, reject) => {
         const unsub = dock.api.tx.balances.transfer(address, amount)
           .signAndSend(dock.account, (result) => {
@@ -31,5 +31,5 @@ export default {
           }).catch(reject);
       })
     }
-  ],
+  },
 };
