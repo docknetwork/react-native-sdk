@@ -21,6 +21,10 @@ export class KeyringRpc {
   static cryptoIsReady() {
     return rpcRequest('utilCrypto.cryptoIsReady');
   }
+
+  static addressFromUri(...params) {
+    return rpcRequest('keyring.addressFromUri', ...params);
+  }
 }
 
 export class KeyringPairRpc {

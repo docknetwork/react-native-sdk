@@ -127,18 +127,18 @@ export class DockService {
 
 export default {
   name: "dock",
-  routes: [
-    async function init(...params) {
+  routes: {
+    async init(...params) {
       const result = await dock.init(...params);
       isDockReady = true;
       return result;
     },
-    async function setAccount() {
+    async setAccount() {
       return dock.setAccount(getCurrentPair());
     },
     DockService.createDID,
     DockService.issueCredential,
     DockService.verifyCredential,
     // const wallet = walletsSelectors.getCurrentWallet(state);
-  ],
+  },
 };

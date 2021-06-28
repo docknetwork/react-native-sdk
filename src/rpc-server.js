@@ -9,7 +9,7 @@ services.forEach((service) => {
 
   rpcService.forEach((method) => {
     rpcServer.addMethod(method.name, (params) => {
-      return method.resolver(params);
+      return Promise.resolve(method.resolver(params));
     });
   });
 });

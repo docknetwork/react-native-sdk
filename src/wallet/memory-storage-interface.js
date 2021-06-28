@@ -11,7 +11,7 @@ class MemoryStorageInterface extends StorageInterface {
     super();
 
     this.directory = directory;
-    
+
     try {
       this.documents = JSON.parse(localStorage.getItem(directory));
 
@@ -22,7 +22,7 @@ class MemoryStorageInterface extends StorageInterface {
       this.documents = {};
     }
   }
-  
+
   updateLocalStorage() {
     localStorage.setItem(this.directory, JSON.stringify(this.documents));
   }

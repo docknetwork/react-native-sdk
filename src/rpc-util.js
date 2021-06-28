@@ -1,13 +1,36 @@
-export function createRpcService({ name, routes }) {
-  return routes.map((methodResolver) => {
-    return {
-      name: `${name}.${methodResolver.name}`,
-      resolver: (params = {}) => {
-        if (params.__args) {
-          return methodResolver(...params.__args);
-        }
+import { getLogger } from "./logger";
 
-        return methodResolver(params);
+export function createRpcService({ name, routes }) {
+  
+  return Object.keys(routes).map((routeName) => {
+    const methodResolver = routes[routeName];
+    const methodName = `${name}.${routeName}`;
+
+    return {
+      name: methodName,
+      resolver: async (params = {}) => {
+        try {
+          let result;
+
+          if (!methodResolver) {
+            throw new Error("Resolver is undefined");
+          }
+
+          if (params.__args) {
+            result = methodResolver(...params.__args);
+          } else {
+            result = methodResolver(params);
+          }
+
+          return Promise.resolve(result).then((value) => {
+            getLogger().log(`Result for ${methodName}`, value);
+            return value;
+          });
+        } catch (err) {
+          getLogger().log(`Error for ${methodName}`, err.toString());
+
+          throw err;
+        }
       },
     };
   });

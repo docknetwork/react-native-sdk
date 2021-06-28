@@ -7,7 +7,6 @@ import { getRpcClient, initRpcClient } from './rpc-client';
 import rpcServer from './rpc-server';
 
 initRpcClient((req) => {
-  // console.log('Request received', req);
   return rpcServer
     .receive(req)
     .then(result => {

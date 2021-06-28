@@ -1,6 +1,17 @@
 import rpcServer from "./rpc-server";
 
-import './polkadot-test';
+// import './polkadot-test';
+import {getRpcClient, initRpcClient} from './rpc-client';
+import { getLogger, setLogger } from "./logger";
+
+initRpcClient((jsonRPCRequest) => {
+  postMessage({
+    type: "json-rpc-request",
+    body: jsonRPCRequest,
+  });
+
+  return Promise.resolve(jsonRPCRequest);
+});
 
 const postMessage = (message) =>
   window.ReactNativeWebView
@@ -13,6 +24,16 @@ const addEventListener = (...args) =>
     : window
   ).addEventListener(...args);
 
+
+setLogger({
+  log: (...params) => {
+    postMessage({
+      type: "log",
+      body: JSON.stringify(params),
+    });
+  },
+});
+
 addEventListener("message", (event) => {
   const data = event.data;
 
@@ -23,6 +44,11 @@ addEventListener("message", (event) => {
         body: response,
       });
     });
+  }
+  
+  if (data && data.type === "json-rpc-response") {
+    getLogger().log('Received response', data.body);
+    getRpcClient().receive(data.body)
   }
 });
 
