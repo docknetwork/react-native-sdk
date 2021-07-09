@@ -10,12 +10,12 @@ describe("KeyringRpc", () => {
     expect(result).toBe(true);
   });
 
-  // it("addFromMnemonic", async () => {
-  //   const mnemonic = await UtilCryptoRpc.mnemonicGenerate();
-  //   const result = await KeyringRpc.addFromMnemonic(mnemonic);
+  it("addFromMnemonic", async () => {
+    const mnemonic = await UtilCryptoRpc.mnemonicGenerate();
+    const result = await KeyringRpc.addFromMnemonic(mnemonic);
     
-  //   expect(result.address).toBeDefined();
-  // });
+    expect(result.address).toBeDefined();
+  });
   
   describe("addFromJson", () => {
     it("with success", async () => {
@@ -39,16 +39,16 @@ describe("KeyringRpc", () => {
     });
   });
   
-  // it("addressFromUri", async () => {
-  //   const phrase = "scale hold evidence moment reward garbage spider sign admit omit mimic frame"
-  //   const type = 'sr25519';
-  //   const derivePath = ''
-  //   const address = await KeyringRpc.addressFromUri({
-  //     phrase,
-  //     type,
-  //     derivePath
-  //   });
+  it("addressFromUri", async () => {
+    const phrase = "scale hold evidence moment reward garbage spider sign admit omit mimic frame"
+    const type = 'sr25519';
+    const derivePath = ''
+    const address = await KeyringRpc.addressFromUri({
+      phrase,
+      type,
+      derivePath
+    });
 
-  //   expect(address).toBeDefined();
-  // });
+    expect(address).toBeDefined();
+  });
 });
