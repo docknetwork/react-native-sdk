@@ -139,6 +139,5 @@ export default {
     createDID: DockService.createDID,
     issueCredential: DockService.issueCredential,
     verifyCredential: DockService.verifyCredential,
-    // const wallet = walletsSelectors.getCurrentWallet(state);
   },
 };
