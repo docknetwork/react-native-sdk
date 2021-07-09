@@ -111,8 +111,6 @@ describe("WalletRpc", () => {
 
     expect(doc.content.meta.hasBackup).toBe(false);
 
-    // doc.content.meta.hasBackup = true;
-
     await WalletRpc.update({
       ...doc.content,
       meta: {
