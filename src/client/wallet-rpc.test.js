@@ -126,16 +126,6 @@ describe("WalletRpc", () => {
     expect(doc2.content.meta.hasBackup).toBe(true);
   });
 
-  // it("unlocked", async () => {
-  //   await WalletRpc.lock('1234');
-  //   const isUnlocked = await WalletRpc.Unlocked();
-  //   expect(isUnlocked).toBe(true);
-  // });
-  // it("unlock", async () => {
-  //   const result = await WalletRpc.unlocked();
-  //   expect(result).toBe(false);
-  // });
-
   it("toJSON", async () => {
     const result = await WalletRpc.toJSON();
     expect(result.id).toBe("dockWallet");
