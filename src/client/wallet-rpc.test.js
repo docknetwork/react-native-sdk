@@ -30,8 +30,6 @@ const accountEntity = {
   },
 };
 
-// localStorage.setItem('dockWallet', JSON.stringify({"doc:f99e487c-df70-4da5-9eee-54ad7ae8e063":{"@context":["https://w3id.org/wallet/v1"],"id":"0x774477c4cd54718d32d4df393415796b9bfcb63c","type":"Account","name":"cocomelon","balance":{"value":0,"symbol":"DOCK"}},"doc:e1f58d89-b386-4cf6-9588-39bc9552f3f9":{"@context":["https://w3id.org/wallet/v1"],"id":"0x774477c4cd54718d32d4df393415796b9bfcb63c","type":"Account","name":"cocomelon","balance":{"value":0,"symbol":"DOCK"}}}));
-
 describe("WalletRpc", () => {
   it("create", async () => {
     const walletId = "dockWallet";
