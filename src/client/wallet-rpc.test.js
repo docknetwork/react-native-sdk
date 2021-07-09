@@ -20,16 +20,17 @@ const mnemonicEntity2 = {
 };
 
 const accountEntity = {
-  "@context": [
-    "https://w3id.org/wallet/v1"
-  ],
-  "id": "0x774477c4cd54718d32d4df393415796b9bfcb63c",
-  "type": "Account",
-  "name": "cocomelon",
-}
+  "@context": ["https://w3id.org/wallet/v1"],
+  id: "5DAqex3WuhWFJpXE3TFtDmAoJPiw4QGq1mVPoNz7Vh6B4iyB",
+  type: "Account",
+  name: "cocomelon",
+  correlation: [mnemonicEntity2.id],
+  meta: {
+    hasBackup: false,
+  },
+};
 
 // localStorage.setItem('dockWallet', JSON.stringify({"doc:f99e487c-df70-4da5-9eee-54ad7ae8e063":{"@context":["https://w3id.org/wallet/v1"],"id":"0x774477c4cd54718d32d4df393415796b9bfcb63c","type":"Account","name":"cocomelon","balance":{"value":0,"symbol":"DOCK"}},"doc:e1f58d89-b386-4cf6-9588-39bc9552f3f9":{"@context":["https://w3id.org/wallet/v1"],"id":"0x774477c4cd54718d32d4df393415796b9bfcb63c","type":"Account","name":"cocomelon","balance":{"value":0,"symbol":"DOCK"}}}));
-
 
 describe("WalletRpc", () => {
   it("create", async () => {
@@ -54,22 +55,21 @@ describe("WalletRpc", () => {
 
     expect(result).toBe(null);
   });
-  
+
   it("add account", async () => {
     const result = await WalletRpc.add(accountEntity);
     expect(result).toBe(null);
   });
-  
+
   it("get accounts", async () => {
     const result = await WalletRpc.query({
       equals: {
-        'content.type': 'Account'
-      }
+        "content.type": "Account",
+      },
     });
-    
+
     expect(result.length).toBe(1);
     expect(result[0]).toBe(accountEntity);
-    
   });
 
   it("getStorageDocument", async () => {
@@ -82,24 +82,52 @@ describe("WalletRpc", () => {
       id: mnemonicEntity2.id,
     });
     expect(result.content).toBe(mnemonicEntity2);
-  });
-  
-  it('remove', async () => {
-    await WalletRpc.remove(mnemonicEntity1.id);
     
+    result = await WalletRpc.getStorageDocument({
+      id: accountEntity.id,
+    });
+    expect(result.content).toBe(accountEntity);
+  });
+
+  it("remove", async () => {
+    await WalletRpc.remove(mnemonicEntity1.id);
+
     let result;
     let error;
     try {
       result = await WalletRpc.getStorageDocument({
         id: mnemonicEntity1.id,
       });
-    } catch(err) {
+    } catch (err) {
       error = true;
     }
-    
+
     expect(error).toBe(true);
     expect(result).toBe(undefined);
-    
+  });
+
+  it("update", async () => {
+    const doc = await WalletRpc.getStorageDocument({
+      id: accountEntity.id,
+    });
+
+    expect(doc.content.meta.hasBackup).toBe(false);
+
+    // doc.content.meta.hasBackup = true;
+
+    await WalletRpc.update({
+      ...doc.content,
+      meta: {
+        ...doc.content.meta,
+        hasBackup: true,
+      },
+    });
+
+    const doc2 = await WalletRpc.getStorageDocument({
+      id: accountEntity.id,
+    });
+
+    expect(doc2.content.meta.hasBackup).toBe(true);
   });
 
   // it("unlocked", async () => {
@@ -118,8 +146,10 @@ describe("WalletRpc", () => {
     expect(result.status).toBe("UNLOCKED");
   });
 
-  // it("export", async () => {
-  //   const result = await WalletRpc.export('somepassword');
-  //   expect(result).toBe(null);
-  // });
+  it("exportAccount", async () => {
+    const result = await WalletRpc.exportAccount(accountEntity.id, 'test');
+    
+    expect(result.address).toBe(accountEntity.id);
+    expect(result.encoded).toBeDefined();
+  });
 });

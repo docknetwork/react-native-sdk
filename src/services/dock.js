@@ -136,9 +136,9 @@ export default {
     async setAccount() {
       return dock.setAccount(getCurrentPair());
     },
-    DockService.createDID,
-    DockService.issueCredential,
-    DockService.verifyCredential,
+    createDID: DockService.createDID,
+    issueCredential: DockService.issueCredential,
+    verifyCredential: DockService.verifyCredential,
     // const wallet = walletsSelectors.getCurrentWallet(state);
   },
 };

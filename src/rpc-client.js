@@ -28,8 +28,6 @@ export function initRpcClient(requestHandler) {
 
   client.__request = client.request;
   client.request = function (name, ...params) {
-    console.log('RPC Client:', {name, params});
-
     return client.__request(name, params.length === 0 ? params[0] : {
       __args: params,
     });
