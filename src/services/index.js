@@ -5,6 +5,8 @@ import api from './api';
 import wallet from './wallet';
 import storage from './storage';
 import logger from './logger';
+import polkadotUI from './polkadot-ui';
+
 
 export default [
   utilCryptoMethods,
@@ -14,4 +16,5 @@ export default [
   wallet,
   storage,
   logger,
+  polkadotUI
 ];
