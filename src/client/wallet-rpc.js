@@ -73,4 +73,10 @@ export class WalletRpc extends RpcClient {
   static export(...params) {
     return rpcRequest("wallet.exportWallet", ...params);
   }
+  static exportAccount(accountId, password) {
+    return rpcRequest("wallet.exportAccount", accountId, password);
+  }
+  static importWallet(data, password) {
+    return rpcRequest("wallet.importWallet", data, password);
+  }
 }

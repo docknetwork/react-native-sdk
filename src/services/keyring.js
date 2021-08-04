@@ -7,6 +7,13 @@ export const getCurrentPair = () => keyring.pairs[currentPairIdx];
 export const setCurrentPairIdx = idx => {
   currentPairIdx = idx;
 }
+export const getKeyring = () => {
+  if (!keyring) {
+    keyring = new Keyring();
+  }
+
+  return keyring;
+}
 
 export function initialize(options) {
   keyring = new Keyring(options);
@@ -20,9 +27,10 @@ export function addFromMnemonic(...args) {
   return pair;
 }
 
-export function addFromJson(...args) {
-  const pair = keyring.addFromJson(...args);
+export function addFromJson(data, password) {
+  const pair = keyring.addFromJson(data);
   currentPairIdx = keyring.pairs.length - 1;
+  pair.unlock(password);
   return pair;
 }
 
