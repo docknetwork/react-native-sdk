@@ -6,7 +6,7 @@ import {
   createSignedKeyUpdate,
 } from "@docknetwork/sdk/utils/did";
 import { getPublicKeyFromKeyringPair } from "@docknetwork/sdk/utils/misc";
-import {DockResolver} from '@docknetwork/sdk/resolver';
+// import {DockResolver} from '@docknetwork/sdk/resolver';
 import {
   KeyringPairDidKeys,
   OneOfPolicy,
@@ -27,7 +27,7 @@ import { getCurrentPair } from "./keyring";
 
 let isDockReady = false;
 
-const resolver = new DockResolver(dock);
+const resolver = 0;//new DockResolver(dock);
 
 // hardcoded registry for testing
 const registryId =
@@ -136,9 +136,8 @@ export default {
     async setAccount() {
       return dock.setAccount(getCurrentPair());
     },
-    DockService.createDID,
-    DockService.issueCredential,
-    DockService.verifyCredential,
-    // const wallet = walletsSelectors.getCurrentWallet(state);
+    createDID: DockService.createDID,
+    issueCredential: DockService.issueCredential,
+    verifyCredential: DockService.verifyCredential,
   },
 };

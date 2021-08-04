@@ -2565,7 +2565,7 @@
     "@digitalbazaar/x25519-key-agreement-key-2020" "^1.0.0"
     esm "^3.2.25"
 
-"@digitalbazaar/ed25519-verification-key-2018@github:digitalbazaar/ed25519-verification-key-2018":
+"@digitalbazaar/ed25519-verification-key-2018@digitalbazaar/ed25519-verification-key-2018":
   version "3.1.2-0"
   resolved "https://codeload.github.com/digitalbazaar/ed25519-verification-key-2018/tar.gz/05609830bfba96ea0ccc35c0e4e238d6bca53324"
   dependencies:
@@ -3101,19 +3101,19 @@
     "@polkadot/util-crypto" "^6.4.1"
     bn.js "^4.11.9"
 
-"@polkadot/networks@6.10.1", "@polkadot/networks@^6.4.1":
-  version "6.10.1"
-  resolved "https://registry.yarnpkg.com/@polkadot/networks/-/networks-6.10.1.tgz#e0a53f9860729ac77759a6983af0e0b527560d04"
-  integrity sha512-/zJMryxivseJ0gJ1nmYKpUWE3eIH5TaMMCyGFM7XvyaYpBmRxLWDYDrwxINJXTxKj6iBHKKB0ylQ8BXgCokSIg==
-  dependencies:
-    "@babel/runtime" "^7.14.6"
-
 "@polkadot/networks@6.4.1":
   version "6.4.1"
   resolved "https://registry.yarnpkg.com/@polkadot/networks/-/networks-6.4.1.tgz#0f933c4af10a2bfe8f072e2c7e8357ef03b2e37e"
   integrity sha512-YGFeGJf8lIgiAL8U7XzRYZVWDKHhZbll6LSnRynzsox9CCqUa4oWyIBxymnsWBk13jj5KZZN24IsnyVURvBYiA==
   dependencies:
     "@babel/runtime" "^7.14.0"
+
+"@polkadot/networks@^6.4.1":
+  version "6.10.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/networks/-/networks-6.10.1.tgz#e0a53f9860729ac77759a6983af0e0b527560d04"
+  integrity sha512-/zJMryxivseJ0gJ1nmYKpUWE3eIH5TaMMCyGFM7XvyaYpBmRxLWDYDrwxINJXTxKj6iBHKKB0ylQ8BXgCokSIg==
+  dependencies:
+    "@babel/runtime" "^7.14.6"
 
 "@polkadot/rpc-core@4.10.1":
   version "4.10.1"
@@ -3176,6 +3176,14 @@
     "@types/bn.js" "^4.11.6"
     bn.js "^4.11.9"
 
+"@polkadot/ui-shared@^0.83.1":
+  version "0.83.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/ui-shared/-/ui-shared-0.83.1.tgz#7693ff730531a14c43b2deab085b65398b7f86ac"
+  integrity sha512-xv+PXuomFYGHxSgTTZ4Fj9DjKWxTxPEIOH210VI5MyO1Pg/SXsyewF5EPLb363jZO7Tf7O3OPOdavIRdGU1YuA==
+  dependencies:
+    "@babel/runtime" "^7.14.6"
+    color "^3.1.3"
+
 "@polkadot/util-crypto@5.1.1", "@polkadot/util-crypto@6.4.1", "@polkadot/util-crypto@^6.4.1":
   version "6.4.1"
   resolved "https://registry.yarnpkg.com/@polkadot/util-crypto/-/util-crypto-6.4.1.tgz#b567d824598bf8f4587364c1d7234bafe805f1c5"
@@ -3198,7 +3206,7 @@
     tweetnacl "^1.0.3"
     xxhashjs "^0.2.2"
 
-"@polkadot/util@5.1.1", "@polkadot/util@6.10.1", "@polkadot/util@6.4.1", "@polkadot/util@^5.1.1", "@polkadot/util@^6.4.1":
+"@polkadot/util@5.1.1", "@polkadot/util@6.4.1", "@polkadot/util@^5.1.1", "@polkadot/util@^6.4.1":
   version "6.4.1"
   resolved "https://registry.yarnpkg.com/@polkadot/util/-/util-6.4.1.tgz#f40fdc91ae49396d7930e37dbd31747769555b7a"
   integrity sha512-+vnmUFz/HR/BMqG4qxONMcbnwNovShIxmrfJIhAJK4NghZC6pSioj+EtY4itQDA5psgUbur5WEWMFX1Q4TT9Bw==
@@ -3261,14 +3269,6 @@
     "@babel/runtime" "^7.14.0"
     "@types/node-fetch" "^2.5.10"
     node-fetch "^2.6.1"
-
-"@polkadot/x-randomvalues@6.10.1":
-  version "6.10.1"
-  resolved "https://registry.yarnpkg.com/@polkadot/x-randomvalues/-/x-randomvalues-6.10.1.tgz#8dd2e01e2b47c6eddf03ed6e525884ca804e626e"
-  integrity sha512-jBp9Yrq0/tH3MxX+18A5800nq+5oE8jK2EMpelMsdErByfBhael+fyKDgUkNqPAaP1qtZV+otHTb4wpizBJxZg==
-  dependencies:
-    "@babel/runtime" "^7.14.6"
-    "@polkadot/x-global" "6.10.1"
 
 "@polkadot/x-randomvalues@6.4.1":
   version "6.4.1"
@@ -5186,7 +5186,7 @@ blake2b@^2.1.3:
     blake2b-wasm "^1.1.0"
     nanoassert "^1.0.0"
 
-blakejs@^1.1.0, blakejs@^1.1.1:
+blakejs@^1.1.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/blakejs/-/blakejs-1.1.1.tgz#bf313053978b2cd4c444a48795710be05c785702"
   integrity sha512-bLG6PHOCZJKNshTjGRBvET0vTciwQE6zFKOKKXPDJfwFBd4Ac0yBfPZqcGvGJap50l7ktvlpFqc2jGVaUgbJgg==
@@ -5843,7 +5843,7 @@ color@3.0.x:
     color-convert "^1.9.1"
     color-string "^1.5.2"
 
-color@^3.0.0:
+color@^3.0.0, color@^3.1.3:
   version "3.1.3"
   resolved "https://registry.yarnpkg.com/color/-/color-3.1.3.tgz#ca67fb4e7b97d611dcde39eceed422067d91596e"
   integrity sha512-xgXAcTHa2HeFCGLE9Xs/R82hujGtu9Jd9x4NW3T34+OMs7VoPsjwzRczKHvTAHeJwWFwX5j15+MgAppE8ztObQ==
@@ -10166,9 +10166,9 @@ jsonld-context-parser@^2.0.0, jsonld-context-parser@^2.0.2, jsonld-context-parse
     http-link-header "^1.0.2"
     relative-to-absolute-iri "^1.0.5"
 
-"jsonld-signatures@git+https://github.com/docknetwork/jsonld-signatures.git":
+"jsonld-signatures@https://github.com/docknetwork/jsonld-signatures":
   version "6.0.2-0"
-  resolved "git+https://github.com/docknetwork/jsonld-signatures.git#b14b6e6078f7a9ffd635f4e0f76f2a5d377e45b7"
+  resolved "https://github.com/docknetwork/jsonld-signatures#b14b6e6078f7a9ffd635f4e0f76f2a5d377e45b7"
   dependencies:
     base64url "^3.0.1"
     crypto-ld "^3.7.0"

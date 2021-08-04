@@ -1,5 +1,6 @@
 import RpcWallet from "../wallet/rpc-storage-wallet";
 import { LoggerRpc } from "../client/logger-rpc";
+import { getKeyring } from "./keyring";
 
 let wallet;
 
@@ -48,5 +49,15 @@ export default {
     exportWallet(password) {
       return wallet.export(password);
     },
+    importWallet(data, password) {
+      return wallet.import(data, password);
+    },
+    async exportAccount(accountId, password) {
+      const account = await wallet.getStorageDocument({ id: accountId });
+      const mnemonicEntity = await wallet.getStorageDocument({ id: account.content.correlation[0] })
+      const pair = getKeyring().addFromMnemonic(mnemonicEntity.content.value);
+
+      return pair.toJson(password);
+    }
   },
 };
