@@ -49,6 +49,9 @@ export default {
     exportWallet(password) {
       return wallet.export(password);
     },
+    importWallet(data, password) {
+      return wallet.import(data, password);
+    },
     async exportAccount(accountId, password) {
       const account = await wallet.getStorageDocument({ id: accountId });
       const mnemonicEntity = await wallet.getStorageDocument({ id: account.content.correlation[0] })

@@ -130,6 +130,16 @@ describe("WalletRpc", () => {
     const result = await WalletRpc.toJSON();
     expect(result.id).toBe("dockWallet");
     expect(result.status).toBe("UNLOCKED");
+    
+    console.log(result);
+  });
+
+  it("exportWallet", async () => {
+    // const result = await WalletRpc.export('*&test1234');
+    // expect(result.id).toBe("dockWallet");
+    // expect(result.status).toBe("UNLOCKED");
+    
+    // console.log(result);
   });
 
   it("exportAccount", async () => {
