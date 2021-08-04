@@ -18,6 +18,7 @@
     "@docknetwork/wallet": "0.0.3",
     "@pmmmwh/react-refresh-webpack-plugin": "0.4.3",
     "@polkadot/util-crypto": "^6.4.1",
+    "@polkadot/keyring": "6.4.1",
     "@polkadot/wasm-crypto": "^4.0.2",
     "@svgr/webpack": "5.5.0",
     "@testing-library/jest-dom": "^5.11.4",
