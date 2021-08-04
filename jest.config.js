@@ -8,8 +8,14 @@ module.exports = {
   "setupFilesAfterEnv": ["./src/setupTests.js"],
   "resetMocks": false,
   "setupFiles": ["jest-localstorage-mock"],
-  transformIgnorePatterns: [
-    "/node_modules/(?!@polkadot|@babel)"
+  "moduleNameMapper": {
+    // "@docknetwork/sdk": "<rootDir>/node_modules/@docknetwork/sdk/index.js",
+    // "@docknetwork/sdk/resolver": "<rootDir>/node_modules/@docknetwork/sdk/resolver.js"
+    
+  },
+  "transformIgnorePatterns": [
+    "/node_modules/(?!@polkadot|@babel)",
+    // @docknetwork/wallet
     // "node_modules/(?!(@polkadot"
     //   + "|react-navigation-tabs"
     //   + "|react-native-splash-screen"

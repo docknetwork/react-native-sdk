@@ -9,6 +9,16 @@ class RpcWallet extends StorageWallet {
     const storageInterface = storageOptions.storageInterface || new RpcStorageInterface(id);
     super(id, storageInterface);
   }
+  
+  
+  async import(data, password) {
+    const result = await super.import(data, password);
+    this.contents.forEach(content => {
+      this.promises.push(this.insertToStorage(content));
+    });
+
+    return result;
+  }
 }
 
 export default RpcWallet;
