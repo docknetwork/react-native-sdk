@@ -2,16 +2,14 @@
   "name": "@docknetwork/react-native-sdk",
   "version": "0.1.0",
   "private": false,
-  "resolutions": {
-    "jsonld": "3.2.0",
-    "@polkadot/api": "4.10.1",
-    "@polkadot/keyring": "6.4.1",
-    "@polkadot/types": "4.10.1",
-    "@polkadot/util": "6.4.1",
-    "@polkadot/util-crypto": "6.4.1",
-    "@polkadot/wasm-crypto": "^4.0.2"
+  "peerDependencies": {
+    "react": "*",
+    "json-rpc-2.0": "*"
   },
-  "dependencies": {
+  "devDependencies": {
+    "jest-localstorage-mock": "^2.4.14",
+    "react-app-rewired": "^2.1.8",
+    "wasm-loader": "^1.3.0",
     "@babel/core": "7.12.3",
     "@babel/preset-env": "^7.14.5",
     "@docknetwork/sdk": "^0.4.6",
@@ -109,11 +107,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "jest-localstorage-mock": "^2.4.14",
-    "react-app-rewired": "^2.1.8",
-    "wasm-loader": "^1.3.0"
   },
   "babel": {
     "presets": [
