@@ -22,6 +22,7 @@ import {
   expandJSONLD,
 } from '@docknetwork/sdk/utils/vc/index';
 import {randomAsHex} from '@polkadot/util-crypto';
+import { getLogger } from "../logger";
 
 import { getCurrentPair } from "./keyring";
 
@@ -129,7 +130,9 @@ export default {
   name: "dock",
   routes: {
     async init(...params) {
+      getLogger().log('Attempt to init dock', params);
       const result = await dock.init(...params);
+      getLogger().log('Dock sdk initialized', result);
       isDockReady = true;
       return result;
     },

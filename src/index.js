@@ -4,6 +4,8 @@ import rpcServer from "./rpc-server";
 import {getRpcClient, initRpcClient} from './rpc-client';
 import { getLogger, setLogger } from "./logger";
 
+import './services/playground';
+
 initRpcClient((jsonRPCRequest) => {
   postMessage({
     type: "json-rpc-request",
@@ -34,7 +36,9 @@ setLogger({
   },
 });
 
-addEventListener("message", (event) => {
+
+global.handleEvent = (event) => {
+  console.log('received message', event);
   const data = event.data;
 
   if (data && data.type === "json-rpc-request") {
@@ -50,7 +54,9 @@ addEventListener("message", (event) => {
     getLogger().log('Received response', data.body);
     getRpcClient().receive(data.body)
   }
-});
+};
+
+addEventListener("message", global.handleEvent);
 
 postMessage({
   type: "json-rpc-ready",
