@@ -10,7 +10,11 @@ export const rpcRequest = (method, ...params) => {
       method,
       params
     });
-    
+
+    if (!client) {
+      return {};
+    }
+
     return client.request(method, ...params)
       .catch(err => {
         getLogger().log('Error with', { method, params, err });

@@ -9,6 +9,4 @@ cp ./bundle.js ../DockApp/assets/app-html/bundle.js
 cp ./bundle.js ../DockApp/android/app/src/main/assets/app-html/bundle.js
 
 
-
-
-
+# cp ./bundle.js /Users/maycon/dev/dock/DockApp/packages/web-wallet/public
