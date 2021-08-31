@@ -7,7 +7,7 @@ export const getCurrentPair = () => keyring.pairs[currentPairIdx];
 export const setCurrentPairIdx = idx => {
   currentPairIdx = idx;
 }
-export const getKeyring = () => {
+export const getKeyring = (): Keyring => {
   if (!keyring) {
     keyring = new Keyring();
   }

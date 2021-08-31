@@ -1,5 +1,8 @@
 import dock from "@docknetwork/sdk";
+import { getLogger } from "../logger";
 import { ensureDockReady } from "./dock";
+import { getKeyring } from "./keyring";
+import { getWallet } from "./wallet";
 
 export default {
   name: "api",
@@ -17,6 +20,23 @@ export default {
     },
 
     async sendTokens({ recipientAddress, accountAddress, amount }) {
+      const accountDetails = (await getWallet().query({
+        equals: {
+          'content.id': accountAddress,
+        },
+      }))[0];
+      const mnemonic = (await getWallet().query({
+        equals: {
+          'content.id': accountDetails.correlation[0],
+        },
+      }))[0];
+
+      const account = getKeyring().addFromMnemonic(mnemonic.value)
+      
+      getLogger().log('Account selected', account);
+
+      dock.setAccount(account);
+
       return new Promise((resolve, reject) => {
         const unsub = dock.api.tx.balances
           .transfer(recipientAddress, amount)
