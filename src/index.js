@@ -4,7 +4,7 @@ import rpcServer from "./rpc-server";
 import {getRpcClient, initRpcClient} from './rpc-client';
 import { getLogger, setLogger } from "./logger";
 
-import './services/playground';
+// import './services/playground';
 
 initRpcClient((jsonRPCRequest) => {
   postMessage({
