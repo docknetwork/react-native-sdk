@@ -31,8 +31,7 @@ export default {
         },
       }))[0];
 
-      const account = getKeyring().addFromMnemonic(mnemonic.value)
-      
+      const account = getKeyring().addFromMnemonic(mnemonic.value, {}, 'sr25519');
       getLogger().log('Account selected', account);
 
       dock.setAccount(account);
