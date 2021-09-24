@@ -1,4 +1,5 @@
 import RpcWallet from "../wallet/rpc-storage-wallet";
+import MemoryWallet from '../wallet/memory-storage-wallet';
 import { LoggerRpc } from "../client/logger-rpc";
 import { getKeyring } from "./keyring";
 
@@ -9,8 +10,12 @@ export const getWallet = () => wallet;
 export default {
   name: "wallet",
   routes: {
-    async create(walletId) {
-      wallet = new RpcWallet(walletId);
+    async create(walletId, type) {
+      if (type === 'memory') {
+        wallet = new MemoryWallet(walletId);
+      } else {
+        wallet = new RpcWallet(walletId);
+      }
       return walletId;
     },
     async load() {
@@ -55,7 +60,7 @@ export default {
     async exportAccount(accountId, password) {
       const account = await wallet.getStorageDocument({ id: accountId });
       const mnemonicEntity = await wallet.getStorageDocument({ id: account.content.correlation[0] })
-      const pair = getKeyring().addFromMnemonic(mnemonicEntity.content.value);
+      const pair = getKeyring().addFromMnemonic(mnemonicEntity.content.value, 'sr25519');
 
       return pair.toJson(password);
     }

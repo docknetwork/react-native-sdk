@@ -4,14 +4,31 @@ import dock from '@docknetwork/sdk';
 import { DockService } from './services/dock';
 
 const keyring = new Keyring();
-const mnemonic = mnemonicGenerate(12);
+
+// const mnemonic = mnemonicGenerate(12);
 // 'wife village evoke error day record quick donor awful pass arctic arctic';
+const mnemonic =
+  "hole dog cross program hungry blue burst raccoon differ rookie pipe auction";
 
+cryptoWaitReady().then(async () => {
+  await dock.init({
+    address: 'wss://knox-1.dock.io',
+  });
 
-cryptoWaitReady().then(() => {
+  const testAccount = keyring.addFromUri(`${mnemonic}`);
+
+  window.testAccount = testAccount;
+  window.dock = dock;
+
+  dock.setAccount(testAccount);
+
+  // const data = dock.api.tx.balances.transfer('37GfhtNUJk1aJhXuGxNJsAGenteDBX3DTVAvuBZm49Kqc9wA', '10000');
+  // const fee = await data.paymentInfo(testAccount);
+
+  // window.data = fee;
   
-})
-console.log(mnemonic);
+  console.log(fee.partialFee.toString());
+});
 
 // const pair = keyring.addFromMnemonic(mnemonic, {
 //   name: 'test wallet',
