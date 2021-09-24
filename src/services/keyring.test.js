@@ -1,23 +1,35 @@
+import { DockAPI } from "@docknetwork/sdk";
 import Keyring, { KeyringPair } from "@polkadot/keyring";
 import { cryptoWaitReady } from "@polkadot/util-crypto";
+import { u8aToHex } from '@polkadot/util';
 
 const phrase =
-  "scale hold evidence moment reward garbage spider sign admit omit mimic frame";
+  "twenty fat wood hub lock cattle thought base lazy apology lyrics innocent";
 
+const network = 'test';
+  
+const TESTNET_ADDR_PREFIX = 21;
+const MAINNET_ADDR_PREFIX = 22;
+
+const prfx = network === 'test' ? TESTNET_ADDR_PREFIX : MAINNET_ADDR_PREFIX;
+  
+  
 describe("KeyringService", () => {
   let keyring: Keyring;
 
   beforeAll(async () => {
     await cryptoWaitReady();
-    keyring = new Keyring();
+    keyring = new Keyring({
+      ss58Format: prfx,
+    })
   });
 
   it("Create pair, Schnorrkel: sr25519", () => {
     const type = "sr25519";
     const derivePath = ''
+    
     const pair: KeyringPair = keyring.createFromUri(`${phrase.trim()}${derivePath}`, {}, type)
-
-    expect(pair.address).toBe("3Hw9kgeVr39oo9AaCC9T7GCt3N5DBzRzcw9f3fFjukLx6BBo");
+    expect(pair.address).toBe("393NFT43eUgKnEthAaKXnuCzizuxExMYULWrsjep5c1TmV4X");
   });
 
   // it("Create pair, Edwards: ed25519", () => {

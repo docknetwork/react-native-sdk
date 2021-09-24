@@ -4,6 +4,22 @@ import { ensureDockReady } from "./dock";
 import { getKeyring } from "./keyring";
 import { getWallet } from "./wallet";
 
+
+async function getAccountKeyring(accountAddress) {
+  const accountDetails = (await getWallet().query({
+    equals: {
+      'content.id': accountAddress,
+    },
+  }))[0];
+  const mnemonic = (await getWallet().query({
+    equals: {
+      'content.id': accountDetails.correlation[0],
+    },
+  }))[0];
+  
+  return getKeyring().addFromMnemonic(mnemonic.value, {}, 'sr25519');
+}
+
 export default {
   name: "api",
   routes: {
@@ -16,24 +32,20 @@ export default {
     },
 
     async getFeeAmount({ recipientAddress, accountAddress, amount }) {
-      return 0;
+      const account = await getAccountKeyring(accountAddress);
+
+      dock.setAccount(account);
+
+      const extrinsic = dock.api.tx.balances.transfer(recipientAddress, amount);
+      const paymentInfo = await extrinsic.paymentInfo(account);
+      return paymentInfo.partialFee.toString()
     },
 
     async sendTokens({ recipientAddress, accountAddress, amount }) {
-      const accountDetails = (await getWallet().query({
-        equals: {
-          'content.id': accountAddress,
-        },
-      }))[0];
-      const mnemonic = (await getWallet().query({
-        equals: {
-          'content.id': accountDetails.correlation[0],
-        },
-      }))[0];
-
-      const account = getKeyring().addFromMnemonic(mnemonic.value, {}, 'sr25519');
+      const account = await getAccountKeyring(accountAddress);
       getLogger().log('Account selected', account);
-
+      getLogger().log('Transfer to address', recipientAddress);
+      
       dock.setAccount(account);
 
       return new Promise((resolve, reject) => {

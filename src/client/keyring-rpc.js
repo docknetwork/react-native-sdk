@@ -6,8 +6,8 @@ export class KeyringRpc {
    * @param {*} options 
    * @returns 
    */
-  static initialize() {
-    return rpcRequest('keyring.initialize');
+  static initialize(...params) {
+    return rpcRequest('keyring.initialize', ...params);
   }
 
   static addFromMnemonic(...options) {

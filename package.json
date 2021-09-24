@@ -88,7 +88,8 @@
   "scripts": {
     "start": "node ./scripts/start",
     "build": "node ./scripts/build",
-    "test": "jest ./src/**/*.test.js  --verbose --watchAll"
+    "test": "jest ./src/**/*.test.js  --verbose --watchAll",
+    "polkadot-test": "npx babel-node ./src/polkadot-test"
   },
   "eslintConfig": {
     "extends": [
