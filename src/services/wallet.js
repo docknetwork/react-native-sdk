@@ -59,8 +59,12 @@ export default {
     },
     async exportAccount(accountId, password) {
       const account = await wallet.getStorageDocument({ id: accountId });
-      const mnemonicEntity = await wallet.getStorageDocument({ id: account.content.correlation[0] })
-      const pair = getKeyring().addFromMnemonic(mnemonicEntity.content.value, 'sr25519');
+      const mnemonicEntity = await wallet.getStorageDocument({ id: account.content.correlation[0] });
+      const mnemonic = mnemonicEntity.content.value;
+      const accountMeta = account.meta || {};
+      const derivePath = accountMeta.derivePath || '';
+      const keyType = accountMeta.keyType || 'sr25519';
+      const pair = getKeyring().createFromUri(`${mnemonic.trim()}${derivePath}`, {}, keyType);
 
       return pair.toJson(password);
     }
