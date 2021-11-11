@@ -1,12 +1,12 @@
-import Keyring, { KeyringPair } from "@polkadot/keyring";
-import { cryptoWaitReady } from "@polkadot/util-crypto";
-import dock from "@docknetwork/sdk";
+import Keyring, {KeyringPair} from '@polkadot/keyring';
+import {cryptoWaitReady} from '@polkadot/util-crypto';
+import dock from '@docknetwork/sdk';
 import ApiService from './api';
 import DockService from './dock';
 
 const phrase =
-  "hole dog cross program hungry blue burst raccoon differ rookie pipe auction";
-  
+  'hole dog cross program hungry blue burst raccoon differ rookie pipe auction';
+
 async function main() {
   await cryptoWaitReady();
   const keyring = new Keyring();
@@ -14,19 +14,21 @@ async function main() {
   await DockService.routes.init({
     // address: 'wss://knox-1.dock.io',
     // address: "ws://127.0.0.1:9944",
-    address: 'wss://mainnet-node.dock.io'
+    address: 'wss://mainnet-node.dock.io',
   });
-  
+
   const testAccount = keyring.addFromUri(phrase, {}, 'sr25519');
   const faucetAccount = keyring.addFromUri('//Alice');
-  
-  
-  console.log(await ApiService.routes.getAccountBalance('3HM9DYxHe5tAwh2cuErNHiLxSMDJhetxaVGCDTYXiwyuuHN6'));
+
+  console.log(
+    await ApiService.routes.getAccountBalance(
+      '3HM9DYxHe5tAwh2cuErNHiLxSMDJhetxaVGCDTYXiwyuuHN6',
+    ),
+  );
   // console.log(testAccount.address);
-  
+
   window.testAccount = testAccount;
 }
-
 
 main();
 
@@ -36,8 +38,7 @@ main();
 //   let testAccount;
 
 //   beforeAll(async () => {
-    
-    
+
 //     // faucetAccount = keyring.addFromUri('//Bob');
 //   });
 
@@ -45,7 +46,7 @@ main();
 //     console.log(testAccount);
 //     expect(testAccount.id).toBe('3AqFkPbKcrzUmGVBztLfEXHcZJVUJ9tpF8civn6KruuATjZq');
 //   });
-  
+
 //   it("Get account balance", async () => {
 //     const balance = await ApiService.routes.getAccountBalance(testAccount.address);
 //     console.log(balance);

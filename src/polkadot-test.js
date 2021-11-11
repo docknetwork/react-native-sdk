@@ -1,14 +1,14 @@
 import Keyring from '@polkadot/keyring';
-import { mnemonicGenerate, cryptoWaitReady } from '@polkadot/util-crypto';
+import {mnemonicGenerate, cryptoWaitReady} from '@polkadot/util-crypto';
 import dock from '@docknetwork/sdk';
-import { DockService } from './services/dock';
+import {DockService} from './services/dock';
 
 const keyring = new Keyring();
 
 // const mnemonic = mnemonicGenerate(12);
 // 'wife village evoke error day record quick donor awful pass arctic arctic';
 const mnemonic =
-  "hole dog cross program hungry blue burst raccoon differ rookie pipe auction";
+  'hole dog cross program hungry blue burst raccoon differ rookie pipe auction';
 
 cryptoWaitReady().then(async () => {
   await dock.init({
@@ -26,7 +26,7 @@ cryptoWaitReady().then(async () => {
   // const fee = await data.paymentInfo(testAccount);
 
   // window.data = fee;
-  
+
   console.log(fee.partialFee.toString());
 });
 
@@ -42,16 +42,16 @@ cryptoWaitReady().then(async () => {
 //   dock.setAccount(pair);
 //   // Test2:
 //   // 5EJsUaFxpm2XjDz3yX9JMkRE7D9phD45zFSwkUJVMvNMcXd1
-  
+
 //   // Test
 //   // 5GNwpoq4A7YZsRyCnJknNJ9CgxFDBV9LuRtsqRHbHbNzCg7i
-  
+
 //   // 5EJsUaFxpm2XjDz3yX9JMkRE7D9phD45zFSwkUJVMvNMcXd1
 //   const account = await dock.api.query.system.account('5GNwpoq4A7YZsRyCnJknNJ9CgxFDBV9LuRtsqRHbHbNzCg7i');
 //   console.log(account.data.toJSON());
-  
+
 //   debugger;
-  
+
 //   const dripAmount = 1000;
 //   const address = '5EJsUaFxpm2XjDz3yX9JMkRE7D9phD45zFSwkUJVMvNMcXd1';
 
@@ -59,7 +59,7 @@ cryptoWaitReady().then(async () => {
 //   const unsub = await dock.api.tx.balances.transfer('5EJsUaFxpm2XjDz3yX9JMkRE7D9phD45zFSwkUJVMvNMcXd1', dripAmount)
 //     .signAndSend(dock.account, (result) => {
 //       const { status } = result;
-  
+
 //       console.log(status.toJSON());
 //       if (status.isInBlock) {
 //         // Request is successfully processed, remove address from queue.
@@ -82,10 +82,10 @@ cryptoWaitReady().then(async () => {
 //       }
 //     });
 //   } catch(err) {
-    
+
 //     debugger;
 //   }
-    
+
 //   // console.log('test', account.data.free.toHuman());
 // });
 
@@ -94,4 +94,3 @@ cryptoWaitReady().then(async () => {
 //   keyring,
 //   pairJson
 // });
-

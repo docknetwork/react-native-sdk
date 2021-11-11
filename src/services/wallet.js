@@ -1,14 +1,14 @@
-import RpcWallet from "../wallet/rpc-storage-wallet";
+import RpcWallet from '../wallet/rpc-storage-wallet';
 import MemoryWallet from '../wallet/memory-storage-wallet';
-import { LoggerRpc } from "../client/logger-rpc";
-import { getKeyring } from "./keyring";
+import {LoggerRpc} from '../client/logger-rpc';
+import {getKeyring} from './keyring';
 
 let wallet;
 
 export const getWallet = () => wallet;
 
 export default {
-  name: "wallet",
+  name: 'wallet',
   routes: {
     async create(walletId, type) {
       if (type === 'memory') {
@@ -48,8 +48,8 @@ export default {
     query(search) {
       return wallet.query(search);
     },
-    getStorageDocument({ id }) {
-      return wallet.getStorageDocument({ id });
+    getStorageDocument({id}) {
+      return wallet.getStorageDocument({id});
     },
     exportWallet(password) {
       return wallet.export(password);
@@ -58,15 +58,21 @@ export default {
       return wallet.import(data, password);
     },
     async exportAccount(accountId, password) {
-      const account = await wallet.getStorageDocument({ id: accountId });
-      const mnemonicEntity = await wallet.getStorageDocument({ id: account.content.correlation[0] });
+      const account = await wallet.getStorageDocument({id: accountId});
+      const mnemonicEntity = await wallet.getStorageDocument({
+        id: account.content.correlation[0],
+      });
       const mnemonic = mnemonicEntity.content.value;
       const accountMeta = account.meta || {};
       const derivePath = accountMeta.derivePath || '';
       const keyType = accountMeta.keyType || 'sr25519';
-      const pair = getKeyring().createFromUri(`${mnemonic.trim()}${derivePath}`, {}, keyType);
+      const pair = getKeyring().createFromUri(
+        `${mnemonic.trim()}${derivePath}`,
+        {},
+        keyType,
+      );
 
       return pair.toJson(password);
-    }
+    },
   },
 };

@@ -1,13 +1,11 @@
-
-import { polkadotIcon } from '@polkadot/ui-shared';
-
+import {polkadotIcon} from '@polkadot/ui-shared';
 
 export default {
-  name: "polkadotUI",
+  name: 'polkadotUI',
   routes: {
     async getPolkadotSvgIcon(address, isAlternative) {
       return polkadotIcon(address, {
-        isAlternative
+        isAlternative,
       });
     },
   },

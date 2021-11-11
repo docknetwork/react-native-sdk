@@ -1,5 +1,3 @@
-
-
 let logger = {
   log: (...args) => {
     if (process.env.NODE_ENV !== 'test') {

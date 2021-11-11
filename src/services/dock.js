@@ -1,11 +1,11 @@
-import dock, { PublicKeySr25519 } from "@docknetwork/sdk";
+import dock, {PublicKeySr25519} from '@docknetwork/sdk';
 import {
   createNewDockDID,
   createKeyDetail,
   createSignedDidRemoval,
   createSignedKeyUpdate,
-} from "@docknetwork/sdk/utils/did";
-import { getPublicKeyFromKeyringPair } from "@docknetwork/sdk/utils/misc";
+} from '@docknetwork/sdk/utils/did';
+import {getPublicKeyFromKeyringPair} from '@docknetwork/sdk/utils/misc';
 // import {DockResolver} from '@docknetwork/sdk/resolver';
 import {
   KeyringPairDidKeys,
@@ -22,13 +22,13 @@ import {
   expandJSONLD,
 } from '@docknetwork/sdk/utils/vc/index';
 import {randomAsHex} from '@polkadot/util-crypto';
-import { getLogger } from "../logger";
+import {getLogger} from '../logger';
 
-import { getCurrentPair } from "./keyring";
+import {getCurrentPair} from './keyring';
 
 let isDockReady = false;
 
-const resolver = 0;//new DockResolver(dock);
+const resolver = 0; //new DockResolver(dock);
 
 // hardcoded registry for testing
 const registryId =
@@ -49,7 +49,7 @@ export async function ensureDockReady() {
     return;
   }
 
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     const checkDockRedy = () => {
       if (isDockReady) {
         return resolve();
@@ -76,24 +76,28 @@ export class DockService {
     } catch (err) {
       // Fallback
       return {
-        "@context": "https://www.w3.org/ns/did/v1",
+        '@context': 'https://www.w3.org/ns/did/v1',
         id: dockDID,
-        authentication: [dockDID + "#keys-1"],
-        assertionMethod: [dockDID + "#keys-1"],
+        authentication: [dockDID + '#keys-1'],
+        assertionMethod: [dockDID + '#keys-1'],
         publicKey: [
           {
-            id: dockDID + "#keys-1",
-            type: "Sr25519VerificationKey2020",
+            id: dockDID + '#keys-1',
+            type: 'Sr25519VerificationKey2020',
             controller: dockDID,
-            publicKeyBase58: "2cdEpNq1fgWCuBSNkgmnffn7NUYJGxaMt58i72e5Hxfj",
+            publicKeyBase58: '2cdEpNq1fgWCuBSNkgmnffn7NUYJGxaMt58i72e5Hxfj',
           },
         ],
       };
     }
   }
-  
+
   static async issueCredential(did) {
-    const issuerKey = getKeyDoc(did, getCurrentPair(), 'Ed25519VerificationKey2018');
+    const issuerKey = getKeyDoc(
+      did,
+      getCurrentPair(),
+      'Ed25519VerificationKey2018',
+    );
 
     // // Use the same did for testing
     const credId = randomAsHex(32);
@@ -117,9 +121,9 @@ export class DockService {
 
     const credentialDocument = await issueCredential(issuerKey, unsignedCred);
 
-    return credentialDocument
+    return credentialDocument;
   }
-  
+
   static async verifyCredential(credentialDoc) {
     const result = await verifyCredential(credentialDoc, {resolver});
     return result;
@@ -127,7 +131,7 @@ export class DockService {
 }
 
 export default {
-  name: "dock",
+  name: 'dock',
   routes: {
     async init(...params) {
       getLogger().log('Attempt to init dock', params);

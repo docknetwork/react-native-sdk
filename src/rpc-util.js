@@ -1,8 +1,7 @@
-import { getLogger } from "./logger";
+import {getLogger} from './logger';
 
-export function createRpcService({ name, routes }) {
-  
-  return Object.keys(routes).map((routeName) => {
+export function createRpcService({name, routes}) {
+  return Object.keys(routes).map(routeName => {
     const methodResolver = routes[routeName];
     const methodName = `${name}.${routeName}`;
 
@@ -13,7 +12,7 @@ export function createRpcService({ name, routes }) {
           let result;
 
           if (!methodResolver) {
-            throw new Error("Resolver is undefined");
+            throw new Error('Resolver is undefined');
           }
 
           if (params.__args) {
@@ -22,7 +21,7 @@ export function createRpcService({ name, routes }) {
             result = methodResolver(params);
           }
 
-          return Promise.resolve(result).then((value) => {
+          return Promise.resolve(result).then(value => {
             getLogger().log(`Result for ${methodName}`, value);
             return value;
           });
