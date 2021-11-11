@@ -1,4 +1,5 @@
 import { WalletRpc } from "../client/wallet-rpc";
+import {ApiRpc} from '../'
 import { Wallet } from "./wallet";
 
 
@@ -15,6 +16,10 @@ export class Accounts {
     });
 
     return this.accounts;
+  }
+  
+  getBalance(address) {
+    return ApiRpc.getAccountBalance(accountId);
   }
 
   getAccounts() {
