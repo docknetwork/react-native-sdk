@@ -18,7 +18,7 @@ class MemoryStorageInterface extends StorageInterface {
       if (!this.documents) {
         this.documents = {};
       }
-    } catch(err) {
+    } catch (err) {
       this.documents = {};
     }
   }
@@ -27,7 +27,7 @@ class MemoryStorageInterface extends StorageInterface {
     localStorage.setItem(this.directory, JSON.stringify(this.documents));
   }
 
-  async get({ id }) {
+  async get({id}) {
     const content = this.documents[id];
     return {
       id,
@@ -39,12 +39,12 @@ class MemoryStorageInterface extends StorageInterface {
     return this.insert(options);
   }
 
-  async delete({ document }) {
+  async delete({document}) {
     delete this.documents[document.id];
     this.updateLocalStorage();
   }
 
-  async insert({ document }) {
+  async insert({document}) {
     const docId = document.id || generateDocumentId();
 
     this.documents[docId] = document.content;
@@ -62,27 +62,31 @@ class MemoryStorageInterface extends StorageInterface {
     return result.length;
   }
 
-  async find({ has = undefined, equals = undefined } = {}) {
-    const documents = Object.keys(this.documents || {}).map((docId) => {
-      const content = this.documents[docId];
+  async find({has = undefined, equals = undefined} = {}) {
+    const documents = Object.keys(this.documents || {})
+      .map(docId => {
+        const content = this.documents[docId];
 
-      let matchesQuery = false;
-      if (!has && !equals) { // Return all documents
-        matchesQuery = true;
-      } else if (equals && equals['content.id']) { // Basic "query" support for tests
-        matchesQuery = content.id === equals['content.id'];
-      }
+        let matchesQuery = false;
+        if (!has && !equals) {
+          // Return all documents
+          matchesQuery = true;
+        } else if (equals && equals['content.id']) {
+          // Basic "query" support for tests
+          matchesQuery = content.id === equals['content.id'];
+        }
 
-      if (matchesQuery) {
-        return {
-          id: docId,
-          content,
-        };
-      }
-      
-      return null;
-    }).filter((value) => !!value);
-    return { documents };
+        if (matchesQuery) {
+          return {
+            id: docId,
+            content,
+          };
+        }
+
+        return null;
+      })
+      .filter(value => !!value);
+    return {documents};
   }
 }
 

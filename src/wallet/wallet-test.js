@@ -18,8 +18,7 @@ async function main() {
   await runWalletExample(memoryWallet);
 }
 
-main()
-  .catch((e) => {
-    console.error(e);
-    // process.exit(1);
-  });
+main().catch(e => {
+  console.error(e);
+  // process.exit(1);
+});

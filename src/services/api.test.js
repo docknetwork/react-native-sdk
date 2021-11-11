@@ -1,14 +1,14 @@
-import Keyring, { KeyringPair } from "@polkadot/keyring";
-import { cryptoWaitReady } from "@polkadot/util-crypto";
-import dock from "@docknetwork/sdk";
+import Keyring, {KeyringPair} from '@polkadot/keyring';
+import {cryptoWaitReady} from '@polkadot/util-crypto';
+import dock from '@docknetwork/sdk';
 import ApiService from './api';
 import DockService from './dock';
-import WalletService, { getWallet } from './wallet';
+import WalletService, {getWallet} from './wallet';
 
 const phrase =
-  "hole dog cross program hungry blue burst raccoon differ rookie pipe auction";
+  'hole dog cross program hungry blue burst raccoon differ rookie pipe auction';
 
-describe("ApiService", () => {
+describe('ApiService', () => {
   let keyring: Keyring;
   let testAccount;
 
@@ -28,39 +28,43 @@ describe("ApiService", () => {
 
     await getWallet().add({
       '@context': ['https://w3id.org/wallet/v1'],
-        id: testAccount.address,
-        type: 'Account',
-        correlation: [mnemonicId],
-        meta: {
-          name: accountName,
-        },
+      id: testAccount.address,
+      type: 'Account',
+      correlation: [mnemonicId],
+      meta: {
+        name: accountName,
+      },
     });
 
     await getWallet().add({
       '@context': ['https://w3id.org/wallet/v1'],
-          id: mnemonicId,
-          name: accountName,
-          type: 'Mnemonic',
-          value: phrase,
+      id: mnemonicId,
+      name: accountName,
+      type: 'Mnemonic',
+      value: phrase,
     });
   });
 
-  it("Get account address", async () => {
+  it('Get account address', async () => {
     console.log(testAccount);
-    expect(testAccount.address).toBe('5CGbZiZCVh5mshErU8pT4c2PnYjDbhaxeFtJG5prZUge3i7e');
+    expect(testAccount.address).toBe(
+      '5CGbZiZCVh5mshErU8pT4c2PnYjDbhaxeFtJG5prZUge3i7e',
+    );
   });
 
-  it("Get account balance", async () => {
-    const balance = await ApiService.routes.getAccountBalance(testAccount.address);
+  it('Get account balance', async () => {
+    const balance = await ApiService.routes.getAccountBalance(
+      testAccount.address,
+    );
     console.log(balance);
     expect(parseInt(balance)).toBeGreaterThanOrEqual(50);
   });
 
-  it("Get transaction fee amount", async () => {
+  it('Get transaction fee amount', async () => {
     const fee = await ApiService.routes.getFeeAmount({
       accountAddress: '5CGbZiZCVh5mshErU8pT4c2PnYjDbhaxeFtJG5prZUge3i7e',
       amount: '1000',
-      recipientAddress: '37GfhtNUJk1aJhXuGxNJsAGenteDBX3DTVAvuBZm49Kqc9wA'
+      recipientAddress: '37GfhtNUJk1aJhXuGxNJsAGenteDBX3DTVAvuBZm49Kqc9wA',
     });
 
     expect(parseInt(fee)).toBeGreaterThanOrEqual(1000);

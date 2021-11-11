@@ -1,7 +1,5 @@
-
-
 export default {
-  name: "storage",
+  name: 'storage',
   routes: {
     async getItem(...params) {
       return localStorage.getItem(...params);

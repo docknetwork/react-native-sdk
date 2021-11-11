@@ -1,0 +1,14 @@
+__snapshots__
+android
+coverage
+ios
+node_modules
+package-lock.json
+package.json
+/shim.js
+babel.config.js
+metro.config.js
+bundle.js
+out
+public
+build

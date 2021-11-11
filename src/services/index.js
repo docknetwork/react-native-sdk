@@ -7,7 +7,6 @@ import storage from './storage';
 import logger from './logger';
 import polkadotUI from './polkadot-ui';
 
-
 export default [
   utilCryptoMethods,
   keyring,
@@ -16,5 +15,5 @@ export default [
   wallet,
   storage,
   logger,
-  polkadotUI
+  polkadotUI,
 ];
