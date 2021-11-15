@@ -10,24 +10,27 @@ const keyring = new Keyring();
 const mnemonic =
   "hole dog cross program hungry blue burst raccoon differ rookie pipe auction";
 
-cryptoWaitReady().then(async () => {
+cryptoWaitReady().then(async () => {  
+  console.log('trying to create connection');
+
   await dock.init({
     address: 'wss://knox-1.dock.io',
   });
 
-  const testAccount = keyring.addFromUri(`${mnemonic}`);
+  // const testAccount = keyring.addFromUri(`${mnemonic}`);
 
-  window.testAccount = testAccount;
-  window.dock = dock;
+  // window.testAccount = testAccount;
+  // window.dock = dock;
 
-  dock.setAccount(testAccount);
+  // dock.setAccount(testAccount);
 
+  console.log('connection ok');
   // const data = dock.api.tx.balances.transfer('37GfhtNUJk1aJhXuGxNJsAGenteDBX3DTVAvuBZm49Kqc9wA', '10000');
   // const fee = await data.paymentInfo(testAccount);
 
   // window.data = fee;
   
-  console.log(fee.partialFee.toString());
+  // console.log(fee.partialFee.toString());
 });
 
 // const pair = keyring.addFromMnemonic(mnemonic, {
