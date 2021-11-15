@@ -2,6 +2,7 @@ import {
   cryptoWaitReady,
   cryptoIsReady,
   mnemonicGenerate,
+  mnemonicValidate,
 } from "@polkadot/util-crypto";
 import { hexToU8a, isHex } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/keyring';
@@ -25,6 +26,7 @@ export default {
         return false;
       }
     },
+    mnemonicValidate: (...params) => mnemonicValidate(...params),
     mnemonicGenerate: (...params) => mnemonicGenerate(...params),
   },
 };
