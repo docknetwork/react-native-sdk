@@ -1,5 +1,7 @@
 import {JSONRPCClient} from 'json-rpc-2.0';
+import { decryptData, encryptData, SECURE_JSON_RPC } from './core/crypto';
 import { getLogger } from './logger';
+import { patchRpcServer } from './rpc-util';
 
 let client;
 
@@ -32,8 +34,18 @@ export function initRpcClient(requestHandler) {
 
   client.__request = client.request;
   client.request = function (name, ...params) {
-    return client.__request(name, params.length === 0 ? params[0] : {
+    let reqParams = params.length === 0 ? params[0] : {
       __args: params,
-    });
+    };
+
+    if (SECURE_JSON_RPC && reqParams) {
+      reqParams = encryptData(JSON.stringify({
+        reqParams
+      }));
+    }
+
+    return client.__request(name, reqParams);
   };
+
+  patchRpcServer(client);
 }

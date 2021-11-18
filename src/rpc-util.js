@@ -1,7 +1,7 @@
+import { decryptData, SECURE_JSON_RPC } from "./core/crypto";
 import { getLogger } from "./logger";
 
 export function createRpcService({ name, routes }) {
-  
   return Object.keys(routes).map((routeName) => {
     const methodResolver = routes[routeName];
     const methodName = `${name}.${routeName}`;
@@ -34,4 +34,25 @@ export function createRpcService({ name, routes }) {
       },
     };
   });
+}
+
+export function patchRpcServer(server) {
+  server.__receive = server.receive;
+
+  server.receive = function (reqData) {
+    let data = reqData;
+
+    try {
+      if (SECURE_JSON_RPC && reqData.params && reqData.params.encryptedData) {
+        const params = decryptData(reqData.params);
+        reqData.params = JSON.parse(params).reqParams;
+      }
+    } catch (err) {
+      console.error(err);
+    }
+
+    return server.__receive(reqData);
+  };
+
+  return server;
 }

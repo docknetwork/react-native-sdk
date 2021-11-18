@@ -7,19 +7,16 @@
     "react": "*"
   },
   "devDependencies": {
-    "@babel/core": "7.12.3",
+    "@babel/core": "^7.16.0",
     "@babel/preset-env": "^7.14.5",
-    "@docknetwork/sdk": "1.2.1",
+    "@docknetwork/sdk": "^0.4.6",
     "@docknetwork/wallet": "0.0.3",
     "@pmmmwh/react-refresh-webpack-plugin": "0.4.3",
+    "@polkadot/keyring": "6.4.1",
     "@polkadot/ui-shared": "^0.83.1",
+    "@polkadot/util-crypto": "^6.4.1",
     "@polkadot/wasm-crypto": "^4.0.2",
-    "@polkadot/api": "5.6.1",
-    "@polkadot/keyring": "^7.2.1",
-    "@polkadot/types": "5.6.1",
-    "@polkadot/types-known": "5.6.1",
-    "@polkadot/util": "^7.2.1",
-    "@polkadot/util-crypto": "^7.2.1",
+    "@react-native-community/eslint-config": "^2.0.0",
     "@svgr/webpack": "5.5.0",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
@@ -93,7 +90,11 @@
     "start": "node ./scripts/start",
     "build": "node ./scripts/build",
     "test": "jest ./src/**/*.test.js  --verbose --watchAll",
-    "polkadot-test": "npx babel-node ./src/polkadot-test"
+    "polkadot-test": "npx babel-node ./src/polkadot-test",
+    "lint": "eslint './src/**/*.js' --ignore-path=.prettierignore",
+    "lint:fix": "eslint './src/**/*.js' --fix --ignore-path=.prettierignore",
+    "format": "prettier './src/**/*.{js,json}' --write",
+    "exec": "BABEL_ENV=development; babel-node"
   },
   "eslintConfig": {
     "extends": [
@@ -117,5 +118,9 @@
     "presets": [
       "react-app"
     ]
+  },
+  "dependencies": {
+    "@babel/node": "^7.16.0",
+    "babel-node": "^0.0.1-security"
   }
 }
