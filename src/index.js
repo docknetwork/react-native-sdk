@@ -1,10 +1,6 @@
 import rpcServer from "./rpc-server";
-
-// import './polkadot-test';
 import {getRpcClient, initRpcClient} from './rpc-client';
 import { getLogger, setLogger } from "./logger";
-
-// import './services/playground';
 
 initRpcClient((jsonRPCRequest) => {
   postMessage({
