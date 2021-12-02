@@ -1,5 +1,6 @@
 import { JSONRPCServer } from "json-rpc-2.0";
-import { createRpcService } from "./rpc-util";
+import { decryptData, SECURE_JSON_RPC } from "./core/crypto";
+import { createRpcService, patchRpcServer } from "./rpc-util";
 import services from './services';
 
 const rpcServer = new JSONRPCServer();
@@ -14,4 +15,4 @@ services.forEach((service) => {
   });
 });
 
-export default rpcServer;
+export default patchRpcServer(rpcServer);
