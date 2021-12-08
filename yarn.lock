@@ -3604,7 +3604,7 @@
     "@digitalbazaar/x25519-key-agreement-key-2020" "^1.0.0"
     esm "^3.2.25"
 
-"@digitalbazaar/ed25519-verification-key-2018@github:digitalbazaar/ed25519-verification-key-2018":
+"@digitalbazaar/ed25519-verification-key-2018@digitalbazaar/ed25519-verification-key-2018":
   version "3.1.2-0"
   resolved "https://codeload.github.com/digitalbazaar/ed25519-verification-key-2018/tar.gz/05609830bfba96ea0ccc35c0e4e238d6bca53324"
   dependencies:
@@ -7436,9 +7436,9 @@ bindings@^1.3.0, bindings@^1.5.0:
   dependencies:
     file-uri-to-path "1.0.0"
 
-"bip32-ed25519@git+https://github.com/Zondax/bip32-ed25519.git":
+"bip32-ed25519@https://github.com/Zondax/bip32-ed25519":
   version "0.0.4"
-  resolved "git+https://github.com/Zondax/bip32-ed25519.git#0949df01b5c93885339bc28116690292088f6134"
+  resolved "https://github.com/Zondax/bip32-ed25519#0949df01b5c93885339bc28116690292088f6134"
   dependencies:
     bn.js "^5.1.1"
     elliptic "^6.4.1"
@@ -13042,9 +13042,9 @@ jsonld-signatures@^9.0.2:
     security-context "^4.0.0"
     serialize-error "^8.0.1"
 
-"jsonld-signatures@git+https://github.com/docknetwork/jsonld-signatures.git":
+"jsonld-signatures@https://github.com/docknetwork/jsonld-signatures":
   version "6.0.2-0"
-  resolved "git+https://github.com/docknetwork/jsonld-signatures.git#b14b6e6078f7a9ffd635f4e0f76f2a5d377e45b7"
+  resolved "https://github.com/docknetwork/jsonld-signatures#b14b6e6078f7a9ffd635f4e0f76f2a5d377e45b7"
   dependencies:
     base64url "^3.0.1"
     crypto-ld "^3.7.0"
@@ -16333,6 +16333,11 @@ react-is@^17.0.1:
   version "17.0.2"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.2.tgz#e691d4a8e9c789365655539ab372762b0efb54f0"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
+
+react-native-keychain@^8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-keychain/-/react-native-keychain-8.0.0.tgz#ff708e4dc2a5440df717179bf9b7cd50f78b61d7"
+  integrity sha512-c7Cs+YQN26UaQsRG1dmlXL7VL2ctnXwH/dl0IOMEQ7ZaL2NdN313YSAI8ZEZZjrVhNmPsyWEuvTFqWrdpItqQg==
 
 react-native-securerandom@^0.1.1:
   version "0.1.1"

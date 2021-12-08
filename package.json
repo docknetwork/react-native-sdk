@@ -122,7 +122,11 @@
   "dependencies": {
     "@babel/node": "^7.16.0",
     "babel-node": "^0.0.1-security",
+    "bignumber.js": "^9.0.1",
     "jsdoc": "^3.6.7",
-    "jsdocs": "^1.0.0"
+    "jsdocs": "^1.0.0",
+    "react-native-keychain": "^8.0.0",
+    "uuid": "^8.3.2",
+    "winston": "^3.3.3"
   }
 }
