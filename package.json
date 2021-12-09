@@ -103,7 +103,8 @@
     "lint": "eslint './src/**/*.js' --ignore-path=.prettierignore",
     "lint:fix": "eslint './src/**/*.js' --fix --ignore-path=.prettierignore",
     "format": "prettier './src/**/*.{js,json}' --write",
-    "exec": "BABEL_ENV=development; babel-node"
+    "exec": "BABEL_ENV=development; babel-node",
+    "docs": "yarn jsdoc ./src/client/** ./src/modules/**"
   },
   "eslintConfig": {
     "extends": [
