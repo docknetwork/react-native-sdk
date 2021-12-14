@@ -13,7 +13,7 @@ module.exports = {
     "jest-localstorage-mock"
   ],
   "moduleNameMapper": {},
-  "transformIgnorePatterns": [
-    "/node_modules/(?!@polkadot|@babel|@docknetwork)",
+  transformIgnorePatterns: [
+    "/node_modules/(?!@polkadot|@babel|@docknetwork)"
   ],
 }
