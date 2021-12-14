@@ -1,7 +1,12 @@
 {
   "name": "@docknetwork/react-native-sdk",
   "version": "0.1.0",
-  "private": false,
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "packages/**"
+    ]
+  },
   "peerDependencies": {
     "json-rpc-2.0": "*",
     "react": "*"
@@ -98,7 +103,9 @@
   "scripts": {
     "start": "node ./scripts/start",
     "build": "node ./scripts/build",
-    "test": "jest ./src/**/*.test.js  --verbose --watchAll",
+    "test": "jest --verbose --watchAll",
+    "test:integration": "jest ./integration-tests/*.test.js --verbose --watchAll",
+    "examples:all": "nodemon --exec NODE_ENV=development npx babel-node ./examples/index.js",
     "polkadot-test": "npx babel-node ./src/polkadot-test",
     "lint": "eslint './src/**/*.js' --ignore-path=.prettierignore",
     "lint:fix": "eslint './src/**/*.js' --fix --ignore-path=.prettierignore",
@@ -131,11 +138,15 @@
   },
   "dependencies": {
     "@babel/node": "^7.16.0",
+    "@babel/plugin-transform-flow-strip-types": "^7.16.0",
     "babel-node": "^0.0.1-security",
     "bignumber.js": "^9.0.1",
     "jsdoc": "^3.6.7",
+    "jsdoc-babel": "^0.5.0",
     "jsdocs": "^1.0.0",
     "jsdom": "^19.0.0",
+    "mock-local-storage": "^1.1.19",
+    "nodemon": "^2.0.15",
     "react-native-keychain": "^8.0.0",
     "realm": "^10.10.1",
     "sinon": "^12.0.1",
