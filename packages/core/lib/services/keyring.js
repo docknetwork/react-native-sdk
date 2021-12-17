@@ -1,13 +1,14 @@
 import Keyring from '@polkadot/keyring';
+import { KeyringPair}  from '@polkadot/keyring/types';
 
-let keyring;
+let keyring: Keyring;
 let currentPairIdx = 0;
 
 export const getCurrentPair = () => keyring.pairs[currentPairIdx];
 export const setCurrentPairIdx = idx => {
   currentPairIdx = idx;
 };
-export const getKeyring = () => {
+export const getKeyring = (): Keyring => {
   if (!keyring) {
     keyring = new Keyring();
   }
@@ -34,9 +35,19 @@ export function addFromJson(data, password) {
   return pair;
 }
 
-export function addressFromUri({phrase, type, derivePath}) {
-  return keyring.createFromUri(`${phrase.trim()}${derivePath}`, {}, type)
-    .address;
+export function getKeyringPair({mnemonic, keyPairType, derivePath = ''}): KeyringPair {
+
+  console.log(mnemonic);
+
+  return keyring.createFromUri(
+    `${mnemonic.trim()}${derivePath}`,
+    {},
+    keyPairType,
+  );
+}
+
+export function addressFromUri({mnemonic, keyPairType, derivePath}) {
+  return getKeyringPair({mnemonic, keyPairType, derivePath}).address;
 }
 
 export default {

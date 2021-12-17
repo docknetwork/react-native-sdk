@@ -7,13 +7,7 @@ import {initRealm} from '../core/realm';
 import {ApiRpc} from '../client/api-rpc';
 import {DockRpc} from '../client/dock-rpc';
 import {EventManager} from './event-manager';
-
-export type DocumentType =
-  | 'mnemonic'
-  | 'credential'
-  | 'account'
-  | 'did'
-  | 'generic';
+import {DocumentType} from '../types';
 
 export const NetworkConfigs = {
   mainnet: {
