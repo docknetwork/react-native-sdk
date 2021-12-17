@@ -14,7 +14,9 @@ describe('ApiService', () => {
 
   beforeAll(async () => {
     await cryptoWaitReady();
-    keyring = new Keyring();
+    keyring = new Keyring({
+      ss58Format: 21
+    });
 
     await DockService.routes.init({
       address: 'wss://knox-1.dock.io',
@@ -24,7 +26,7 @@ describe('ApiService', () => {
     const mnemonicId = `${Date.now()}`;
     const accountName = 'Test Account';
 
-    testAccount = keyring.addFromUri(`${phrase}`);
+    testAccount = keyring.addFromMnemonic(phrase, null, 'sr25519');
 
     await getWallet().add({
       '@context': ['https://w3id.org/wallet/v1'],
@@ -47,7 +49,7 @@ describe('ApiService', () => {
 
   it('Get account address', async () => {
     expect(testAccount.address).toBe(
-      '5CGbZiZCVh5mshErU8pT4c2PnYjDbhaxeFtJG5prZUge3i7e',
+      '3AqFkPbKcrzUmGVBztLfEXHcZJVUJ9tpF8civn6KruuATjZq',
     );
   });
 

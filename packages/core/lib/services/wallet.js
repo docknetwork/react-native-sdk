@@ -1,11 +1,21 @@
 import RpcWallet from '../wallet/rpc-storage-wallet';
 import MemoryWallet from '../wallet/memory-storage-wallet';
 import {LoggerRpc} from '../client/logger-rpc';
-import {getKeyring} from './keyring';
+import {addressFromUri, getKeyring, getKeyringPair} from './keyring';
+import StorageWallet from '@docknetwork/wallet/storage-wallet';
+import {v4 as uuid } from 'uuid';
 
-let wallet;
+let wallet: StorageWallet;
 
-export const getWallet = () => wallet;
+export const getWallet = (): StorageWallet  => wallet;
+
+async function getDocumentById(docId) {
+  return (await wallet.query({
+    equals: {
+      'content.id': docId,
+    },
+  }))[0];
+}
 
 export default {
   name: 'wallet',
@@ -74,5 +84,84 @@ export default {
 
       return pair.toJson(password);
     },
+
+    /**
+     * Create all the documents required for an account
+     * 
+     * The address, mnemonic, and keyringPair
+     * 
+     * @param {*} param0 
+     * @returns 
+     */
+    createAccountDocuments: ({ name, keyPairType, derivePath, mnemonic }) => {
+      const mnemonicId = uuid();
+      const mnemonicDocument = {
+        '@context': ['https://w3id.org/wallet/v1'],
+        id: uuid(),
+        type: 'Mnemonic',
+        value: mnemonic,
+      }
+
+      const keyringPair = getKeyringPair({ mnemonic, derivePath, keyPairType });
+      const keyringJson = keyringPair.toJson();
+
+      const keyringPairDocument = {
+        '@context': ['https://w3id.org/wallet/v1'],
+        id: uuid(),
+        type: 'KeyringPair',
+        value: keyringJson
+      };
+
+      const addressDocument = {       
+        '@context': ['https://w3id.org/wallet/v1'],
+        id: keyringPair.address,
+        type: 'Address',
+        value: keyringPair.address,
+        name,
+        correlation: [mnemonicDocument.id, keyringPairDocument.id],
+      };
+
+      wallet.add(addressDocument);
+      wallet.add(keyringPairDocument);
+      wallet.add(mnemonicDocument);
+
+      return [
+        addressDocument,
+        keyringPairDocument,
+        mnemonicDocument,
+      ];
+    },
+    resolveCorrelations: async (documentId) => {
+      const document = await getDocumentById(documentId);
+      const correlation = await Promise.all((document.correlation || []).map(docId => getDocumentById(docId)));
+
+      const result = [
+        document,
+        ...correlation,
+      ];
+
+      return result;
+    },
+    getKeyringForAddress: (addressId) => {
+      // const accountDetails = (
+      //   await getWallet().query({
+      //     equals: {
+      //       'content.id': addressId,
+      //     },
+      //   })
+      // )[0];
+      // const mnemonic = (
+      //   await getWallet().query({
+      //     equals: {
+      //       'content.id': accountDetails.correlation[0],
+      //     },
+      //   })
+      // )[0];
+
+      // // if document id
+      // wallet.query({
+
+      // })
+    }
   },
 };

@@ -2,10 +2,9 @@ import {WalletRpc} from '../client/wallet-rpc';
 import {UtilCryptoRpc} from '../client/util-crypto-rpc';
 import {KeyringRpc} from '../client/keyring-rpc';
 import {ApiRpc} from '../client/api-rpc';
-import {Wallet} from './wallet';
+import {Wallet, WalletEvents} from './wallet';
 import { Errors } from '../errors';
-
-export type KeypairType = 'sr25519' | 'ed25519' |  'ecdsa';
+import {KeypairType} from '../types';
 
 export type Account = {
   id: string;
@@ -46,19 +45,19 @@ export class Accounts {
 
   async create(params: {
     name: string,
-    type: KeypairType,
+    keyPairType: KeypairType,
     derivationPath: string,
     mnemonic: string,
   } = {}): Promise<Account> {
    
     const name = params.name;
-    const type = params.type || 'sr25519';
-    const phrase = params.mnemonic || await this.generateMnemonic();
+    const keyPairType = params.keyPairType || 'sr25519';
+    const mnemonic = params.mnemonic || await this.generateMnemonic();
     const derivePath = params.derivationPath || '';
 
     const address = await KeyringRpc.addressFromUri({
-      phrase,
-      type,
+      mnemonic,
+      keyPairType,
       derivePath,
     });
 
@@ -73,15 +72,19 @@ export class Accounts {
     const account: Account = {
       id: address,
       name,
-      type,
+      keyPairType,
       address,
     };
 
-    await this.wallet.add({
-      id: address,
-      name: account.name,
-      type: 'account',
-      value: address,
+    const documents = await WalletRpc.createAccountDocuments({
+      name,
+      keyPairType,
+      derivePath,
+      mnemonic 
+    });
+
+    documents.forEach(doc => {
+      this.wallet.eventManager.emit(WalletEvents.documentAdded, doc);
     });
 
     await this.load();

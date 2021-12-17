@@ -11,7 +11,7 @@ class RpcClient {
 }
 
 /** WalletRpc */
-export class WalletRpc extends RpcClient {
+export class WalletRpc {
   constructor(options) {
     super(options);
   }
@@ -44,6 +44,9 @@ export class WalletRpc extends RpcClient {
   }
   static add(...params) {
     return rpcRequest('wallet.add', ...params);
+  }
+  static createAccountDocuments(...params) {
+    return rpcRequest('wallet.createAccountDocuments', ...params);
   }
   static remove(...params) {
     return rpcRequest('wallet.remove', ...params);

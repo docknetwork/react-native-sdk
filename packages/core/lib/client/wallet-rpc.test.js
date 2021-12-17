@@ -37,6 +37,10 @@ describe('WalletRpc', () => {
     testRpcEndpoint(service, WalletRpc.add);
   });
 
+  it('createAccountDocuments', async () => {
+    testRpcEndpoint(service, WalletRpc.createAccountDocuments);
+  });
+
   it('remove', async () => {
     testRpcEndpoint(service, WalletRpc.remove);
   });
