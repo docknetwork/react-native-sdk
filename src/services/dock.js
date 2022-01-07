@@ -137,7 +137,9 @@ export default {
       return result;
     },
     async disconnect(...params) {
-      return dock.disconnect(...params);
+      const result = await dock.disconnect(...params);
+      isDockReady = false;
+      return result;
     },
     async setAccount() {
       return dock.setAccount(getCurrentPair());
