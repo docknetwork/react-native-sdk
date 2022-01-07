@@ -8,10 +8,10 @@ let client;
 export const getRpcClient = () => client;
 export const rpcRequest = (method, ...params) => {
   try {
-    getLogger().log('Sending rpc request', {
-      method,
-      params
-    });
+    // getLogger().log('Sending rpc request', {
+    //   method,
+    //   params
+    // });
 
     if (!client) {
       return {};

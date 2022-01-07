@@ -14,7 +14,7 @@ module.exports = {
     
   },
   "transformIgnorePatterns": [
-    "/node_modules/(?!@polkadot|@babel)",
+    "/node_modules/(?!@polkadot|@babel|@docknetwork)",
     // @docknetwork/wallet
     // "node_modules/(?!(@polkadot"
     //   + "|react-navigation-tabs"

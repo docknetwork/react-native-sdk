@@ -5,19 +5,36 @@ import { getKeyring } from "./keyring";
 import { getWallet } from "./wallet";
 
 
-async function getAccountKeyring(accountAddress) {
+export async function getAccountKeyring(accountAddress) {
   const accountDetails = (await getWallet().query({
     equals: {
       'content.id': accountAddress,
     },
   }))[0];
-  const mnemonic = (await getWallet().query({
+  const secretEntry = (await getWallet().query({
     equals: {
       'content.id': accountDetails.correlation[0],
     },
   }))[0];
-  
-  return getKeyring().addFromMnemonic(mnemonic.value, {}, 'sr25519');
+  const accountMeta = accountDetails.meta || {};
+  const keyType = accountMeta.keyType || 'sr25519';
+
+  if (!secretEntry) {
+    return;
+  }
+
+  if (secretEntry.type === 'KeyPair') {
+    const pair = getKeyring().createFromJson(secretEntry.value);
+    
+    pair.unlock();
+    
+    return pair;
+  }
+
+  const mnemonic = secretEntry.value;
+  const derivePath = accountMeta.derivePath || '';
+
+  return getKeyring().createFromUri(`${mnemonic.trim()}${derivePath}`, {}, keyType);
 }
 
 export default {
@@ -43,9 +60,9 @@ export default {
 
     async sendTokens({ recipientAddress, accountAddress, amount }) {
       const account = await getAccountKeyring(accountAddress);
-      getLogger().log('Account selected', account);
-      getLogger().log('Transfer to address', recipientAddress);
-      
+      // getLogger().log('Account selected', account);
+      // getLogger().log('Transfer to address', recipientAddress);
+
       dock.setAccount(account);
 
       return new Promise((resolve, reject) => {

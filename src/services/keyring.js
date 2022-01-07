@@ -31,7 +31,7 @@ export function addFromJson(data, password) {
   const pair = keyring.addFromJson(data);
   currentPairIdx = keyring.pairs.length - 1;
   pair.unlock(password);
-  return pair;
+  return pair.toJson();
 }
 
 export function addressFromUri({ phrase, type, derivePath }) {
