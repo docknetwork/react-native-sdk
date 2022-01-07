@@ -136,6 +136,9 @@ export default {
       isDockReady = true;
       return result;
     },
+    async disconnect(...params) {
+      return dock.disconnect(...params);
+    },
     async setAccount() {
       return dock.setAccount(getCurrentPair());
     },
