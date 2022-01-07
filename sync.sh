@@ -1,4 +1,4 @@
-cp -rf ./src ../DockApp/node_modules/@docknetwork/react-native-sdk
+# cp -rf ./src ../DockApp/node_modules/@docknetwork/react-native-sdk
 
 # cp ./build/static/js/bundle.js ../DockApp/assets/app-html/bundle.js
 # cp ./build/static/js/bundle.js ../DockApp/android/app/src/main/assets/app-html/bundle.js

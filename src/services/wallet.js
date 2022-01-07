@@ -5,7 +5,7 @@ import { getKeyring } from "./keyring";
 
 let wallet;
 
-export const getWallet = () => wallet;
+export const getWallet = (): MemoryWallet => wallet;
 
 export default {
   name: "wallet",
@@ -59,12 +59,19 @@ export default {
     },
     async exportAccount(accountId, password) {
       const account = await wallet.getStorageDocument({ id: accountId });
-      const mnemonicEntity = await wallet.getStorageDocument({ id: account.content.correlation[0] });
-      const mnemonic = mnemonicEntity.content.value;
+      const secretEntry = await wallet.getStorageDocument({ id: account.content.correlation[0] });
       const accountMeta = account.meta || {};
-      const derivePath = accountMeta.derivePath || '';
       const keyType = accountMeta.keyType || 'sr25519';
-      const pair = getKeyring().createFromUri(`${mnemonic.trim()}${derivePath}`, {}, keyType);
+      let pair;
+
+      if (secretEntry.content.type === 'KeyPair') {
+        pair = getKeyring().createFromJson(secretEntry.content.value);
+        pair.unlock();
+      } else {
+        const mnemonic = secretEntry.content.value;
+        const derivePath = accountMeta.derivePath || '';
+        pair = getKeyring().createFromUri(`${mnemonic.trim()}${derivePath}`, {}, keyType);
+      }
 
       return pair.toJson(password);
     }

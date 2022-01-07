@@ -1,6 +1,6 @@
 import StorageInterface from '@docknetwork/wallet/storage/storage-interface';
 import {StorageRpc} from '../client/storage-rpc';
-import uuid from 'uuid/v4';
+import {v4 as uuid} from 'uuid';
 import { LoggerRpc } from '../client/logger-rpc';
 import { getLogger } from '../logger';
 
@@ -13,14 +13,14 @@ class RpcStorageInterface extends StorageInterface {
   constructor(directory) {
     super();
     this.directory = directory;
-    
+    this.documents = {};
     this.loadStorage(directory);
   }
   
   async loadStorage(directory) {
     try {
       const data = await StorageRpc.getItem(directory);
-      getLogger().log('retrieve data from rpc storage', data);
+      // getLogger().log('retrieve data from rpc storage', data);
       
       this.documents = JSON.parse(data);
 

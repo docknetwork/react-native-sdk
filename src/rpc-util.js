@@ -23,7 +23,7 @@ export function createRpcService({ name, routes }) {
           }
 
           return Promise.resolve(result).then((value) => {
-            getLogger().log(`Result for ${methodName}`, value);
+            // getLogger().log(`Result for ${methodName}`, value);
             return value;
           });
         } catch (err) {

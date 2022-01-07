@@ -3,8 +3,8 @@ import crypto from 'crypto';
 
 const algorithm = 'aes-256-cbc';
 
-export const DEFAULT_KEY = process.env.ENCRYPTION_KEY || process.env.REACT_APP_ENCRYPTION_KEY;
-export const SECURE_JSON_RPC = true;
+export const DEFAULT_KEY = process.env.ENCRYPTION_KEY || process.env.REACT_APP_ENCRYPTION_KEY || `lkjasfdlkj`;
+export const SECURE_JSON_RPC = false;
 
 let key = Buffer.from(DEFAULT_KEY, 'hex');
 const iv = crypto.randomBytes(16);
