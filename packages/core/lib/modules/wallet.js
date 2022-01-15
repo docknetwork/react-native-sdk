@@ -75,21 +75,26 @@ export class Wallet {
     await initRealm();
     await UtilCryptoRpc.cryptoWaitReady();
     await WalletRpc.create('dock-wallet');
-    await WalletRpc.load();
+    await WalletRpc.load();    
+    await initNetwork();
+    this.status = 'ready';
+  }
 
+  async initNetwork() {
     const networkInfo = this.networkManager.getNetworkInfo();
     await KeyringRpc.initialize({
       ss58Format: networkInfo.addressPrefix,
     });
 
     const isDockConnected = await DockRpc.isApiConnected();
-    if (!isDockConnected) {
-      await DockRpc.init({
-        address: networkInfo.substrateUrl,
-      });
+
+    if (isDockConnected) {
+      await DockRpc.disconnect();
     }
 
-    this.status = 'ready';
+    await DockRpc.init({
+      address: networkInfo.substrateUrl,
+    });
   }
 
   getContext() {

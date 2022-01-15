@@ -29,4 +29,13 @@ export class DockRpc {
   static setAccount(...params) {
     return rpcRequest('dock.setAccount', ...params);
   }
+
+  /**
+   * Disconnect dock
+   * @constructor
+   * @param {string} address - account address
+   */
+   static disconnect(...params) {
+    return rpcRequest('dock.disconnect', ...params);
+  }
 }

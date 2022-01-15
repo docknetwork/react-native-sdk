@@ -30,8 +30,8 @@ describe('ApiService', () => {
         correlation = await WalletService.routes.resolveCorrelations(documents[0].id);
     });
 
-    it('expect to create 3 documents', () => {
-        expect(documents.length).toBe(3);
+    it('expect to create 4 documents', () => {
+        expect(documents.length).toBe(4);
     });
 
     it('expect to create address document ', () => {
@@ -52,5 +52,11 @@ describe('ApiService', () => {
         expect(keyringPair.address).toBe(documents[0].value);
         expect(keyringPair.type).toBe(params.keyPairType);
     });
+
+    it('expect to create DOCK currency document', () => {
+      const document = correlation.find(doc => doc.type === 'Currency');
+      expect(document.value).toBe(0);
+      expect(document.symbol).toBe('DOCK');
+  });
   });
 });

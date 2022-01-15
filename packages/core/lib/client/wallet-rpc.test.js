@@ -41,6 +41,10 @@ describe('WalletRpc', () => {
     testRpcEndpoint(service, WalletRpc.createAccountDocuments);
   });
 
+  it('resolveCorrelations', async () => {
+    testRpcEndpoint(service, WalletRpc.resolveCorrelations);
+  });
+
   it('remove', async () => {
     testRpcEndpoint(service, WalletRpc.remove);
   });

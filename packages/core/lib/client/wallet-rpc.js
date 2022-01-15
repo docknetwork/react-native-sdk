@@ -12,10 +12,6 @@ class RpcClient {
 
 /** WalletRpc */
 export class WalletRpc {
-  constructor(options) {
-    super(options);
-  }
-
   /**
    * Validate mnemonic phrase
    * @params {object} params
@@ -47,6 +43,9 @@ export class WalletRpc {
   }
   static createAccountDocuments(...params) {
     return rpcRequest('wallet.createAccountDocuments', ...params);
+  }
+  static resolveCorrelations(...params) {
+    return rpcRequest('wallet.resolveCorrelations', ...params);
   }
   static remove(...params) {
     return rpcRequest('wallet.remove', ...params);
