@@ -11,3 +11,13 @@ export type DocumentType =
 | 'Key'
 | 'DID'
 | 'generic';
+
+
+export type WalletDocument = {
+    '@context': string,
+    type: DocumentType,
+    id: string,
+    value?: any,
+    name?: string,
+    correlation?: any[],
+}

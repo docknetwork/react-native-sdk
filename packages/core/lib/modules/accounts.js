@@ -25,7 +25,7 @@ export class Accounts {
 
   async load() {
     this.accounts = await Wallet.getInstance().query({
-      type: 'account',
+      type: 'Address',
     });
 
     return this.accounts;

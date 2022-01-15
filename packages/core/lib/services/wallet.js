@@ -4,6 +4,7 @@ import {LoggerRpc} from '../client/logger-rpc';
 import {addressFromUri, getKeyring, getKeyringPair} from './keyring';
 import StorageWallet from '@docknetwork/wallet/storage-wallet';
 import {v4 as uuid } from 'uuid';
+import {WalletDocument} from '../types';
 
 let wallet: StorageWallet;
 
@@ -95,40 +96,49 @@ export default {
      */
     createAccountDocuments: ({ name, keyPairType, derivePath, mnemonic }) => {
       const mnemonicId = uuid();
-      const mnemonicDocument = {
+      const mnemonicDocument: WalletDocument = {
         '@context': ['https://w3id.org/wallet/v1'],
         id: uuid(),
         type: 'Mnemonic',
         value: mnemonic,
       }
-
       const keyringPair = getKeyringPair({ mnemonic, derivePath, keyPairType });
       const keyringJson = keyringPair.toJson();
 
-      const keyringPairDocument = {
+      const keyringPairDocument: WalletDocument = {
         '@context': ['https://w3id.org/wallet/v1'],
         id: uuid(),
         type: 'KeyringPair',
         value: keyringJson
       };
 
-      const addressDocument = {       
+      const currencyDocument: WalletDocument = {       
+        '@context': ['https://w3id.org/wallet/v1'],
+        id: uuid(),
+        type: 'Currency',
+        value: 0,
+        symbol: 'DOCK',
+      };
+
+      const addressDocument: WalletDocument = {       
         '@context': ['https://w3id.org/wallet/v1'],
         id: keyringPair.address,
         type: 'Address',
         value: keyringPair.address,
         name,
-        correlation: [mnemonicDocument.id, keyringPairDocument.id],
+        correlation: [mnemonicDocument.id, keyringPairDocument.id, currencyDocument.id],
       };
 
       wallet.add(addressDocument);
       wallet.add(keyringPairDocument);
       wallet.add(mnemonicDocument);
+      wallet.add(currencyDocument);
 
       return [
         addressDocument,
         keyringPairDocument,
         mnemonicDocument,
+        currencyDocument,
       ];
     },
     resolveCorrelations: async (documentId) => {
