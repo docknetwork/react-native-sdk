@@ -4,7 +4,7 @@ const algorithm = 'aes-256-cbc';
 
 export const DEFAULT_KEY =
   process.env.ENCRYPTION_KEY || process.env.REACT_APP_ENCRYPTION_KEY || '776fe87eec8c9ba8417beda00b23cf22f5e134d9644d0a195cd9e0b7373760c1';
-export const SECURE_JSON_RPC = true;
+export const SECURE_JSON_RPC = process.env.ENCRYPTION_ENABLED;
 
 let key = Buffer.from(DEFAULT_KEY, 'hex');
 const iv = crypto.randomBytes(16);
