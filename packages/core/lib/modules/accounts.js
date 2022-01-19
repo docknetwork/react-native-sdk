@@ -3,16 +3,16 @@ import {UtilCryptoRpc} from '../client/util-crypto-rpc';
 import {KeyringRpc} from '../client/keyring-rpc';
 import {ApiRpc} from '../client/api-rpc';
 import {Wallet, WalletEvents} from './wallet';
-import { Errors } from '../errors';
+import {Errors} from '../errors';
 import {KeypairType, WalletDocument} from '../types';
-import { EventManager } from './event-manager';
+import {EventManager} from './event-manager';
 
 export type Account = {
-  id: string;
-  name: string;
-  type: KeypairType;
-  address: string;
-}
+  id: string,
+  name: string,
+  type: KeypairType,
+  address: string,
+};
 
 export const AccountsEvents = {
   loaded: 'loaded',
@@ -29,7 +29,7 @@ export class Accounts {
   static DocumentFilters = {
     mnemonicType: (item: WalletDocument) => item.type === 'Mnemonic',
     currencyType: (item: WalletDocument) => item.type === 'Currency',
-  }
+  };
 
   constructor() {
     this.accounts = [];
@@ -47,10 +47,7 @@ export class Accounts {
   }
 
   async exportAccount(accountId, password) {
-    return WalletRpc.exportAccount(
-      accountId,
-      password,
-    );
+    return WalletRpc.exportAccount(accountId, password);
   }
 
   getBalance(address) {
@@ -60,14 +57,16 @@ export class Accounts {
   getAccounts() {
     return this.accounts;
   }
-  
+
   async getAccount(accountId) {
-    const accountDocument = await Wallet.getInstance().getDocumentById(accountId);
+    const accountDocument = await Wallet.getInstance().getDocumentById(
+      accountId,
+    );
 
     return {
       ...accountDocument,
-      correlations: await WalletRpc.resolveCorrelations(accountId)
-    }
+      correlations: await WalletRpc.resolveCorrelations(accountId),
+    };
   }
 
   generateMnemonic(): Promise<string> {
@@ -80,16 +79,17 @@ export class Accounts {
     await this.load();
   }
 
-  async create(params: {
-    name: string,
-    keyPairType: KeypairType,
-    derivationPath: string,
-    mnemonic: string,
-  } = {}): Promise<Account> {
-   
+  async create(
+    params: {
+      name: string,
+      keyPairType: KeypairType,
+      derivationPath: string,
+      mnemonic: string,
+    } = {},
+  ): Promise<Account> {
     const name = params.name;
     const keyPairType = params.keyPairType || 'sr25519';
-    const mnemonic = params.mnemonic || await this.generateMnemonic();
+    const mnemonic = params.mnemonic || (await this.generateMnemonic());
     const derivePath = params.derivationPath || '';
 
     const address = await KeyringRpc.addressFromUri({
@@ -117,7 +117,7 @@ export class Accounts {
       name,
       keyPairType,
       derivePath,
-      mnemonic 
+      mnemonic,
     });
 
     documents.forEach(doc => {
@@ -132,9 +132,9 @@ export class Accounts {
 
   async remove(accountId) {
     await this.wallet.remove(accountId);
-    
+
     this.eventManager.emit(AccountsEvents.accountRemoved, accountId);
-    
+
     this.load();
   }
 
