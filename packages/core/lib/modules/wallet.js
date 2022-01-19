@@ -7,7 +7,7 @@ import {initRealm} from '../core/realm';
 import {ApiRpc} from '../client/api-rpc';
 import {DockRpc} from '../client/dock-rpc';
 import {EventManager} from './event-manager';
-import {DocumentType} from '../types';
+import {DocumentType, WalletDocument} from '../types';
 
 export const NetworkConfigs = {
   mainnet: {
@@ -27,18 +27,12 @@ export const NetworkConfigs = {
   },
 };
 
-export type WalletDocument = {
-  context?: string[],
-  id?: any,
-  name: any,
-  type: DocumentType,
-  value: any,
-};
 
 export const WalletEvents = {
   ready: 'ready',
   documentAdded: 'document-added',
   documentRemoved: 'document-removed',
+  networkUpdated: 'network-updated',
 };
 
 export type WalletStatus = 'closed' | 'loading' | 'ready';
@@ -117,6 +111,7 @@ export class Wallet {
   /**
    * Add document to the wallet
    * @param {*} options
+   * @throws InvalidAccountErrors
    * @returns document
    */
   async add(document: WalletDocument) {

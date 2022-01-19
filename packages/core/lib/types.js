@@ -14,10 +14,9 @@ export type DocumentType =
 
 
 export type WalletDocument = {
-    '@context': string,
-    type: DocumentType,
-    id: string,
-    value?: any,
-    name?: string,
-    correlation?: any[],
-}
+  context?: string[],
+  id?: any,
+  name: any,
+  type: DocumentType,
+  value: any,
+};
