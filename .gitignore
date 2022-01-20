@@ -11,6 +11,8 @@ node_modules
 # production
 /build
 
+dock.management/
+dock.lock 
 .env
 # misc
 .DS_Store
