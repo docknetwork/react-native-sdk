@@ -1,3 +1,6 @@
+import { ApiRpc } from '../client/api-rpc';
+import { WalletRpc } from '../client/wallet-rpc';
+import { getKeyring } from '../services/keyring';
 import {Accounts} from './accounts';
 import {Wallet} from './wallet';
 
@@ -35,14 +38,38 @@ describe('Accounts module', () => {
     expect(account.address).toBe(expectedAddress);
   });
 
-  it('Expect to export account', async () => {
-    const account = await accounts.create({
-      name,
+  it('expect to fetch account balance and update currency document', async () => {
+    const account = await accounts.create({});
+    const balance = 10;
+    jest.spyOn(ApiRpc, 'getAccountBalance').mockReturnValue(balance);
+    
+    let result = await accounts.fetchBalance(account.id);
+    
+    expect(ApiRpc.getAccountBalance).toBeCalled();
+    expect(result).toBe(balance);
+    
+    const currency = await accounts.findCorrelationByType(account.id, 'Currency');
+
+    expect(currency.value).toBe(balance);
+    
+    result = await accounts.getBalance(account.id);
+    
+    expect(result).toBe(balance);
+  });
+
+  it('Expect to export account and import account', async () => {
+    const account = await accounts.create({});
+    const json = await accounts.exportAccount(account.id, 'test');
+
+    expect(json.address).toBe(account.address);
+
+    await accounts.remove(account.id);
+
+    const account2 = await accounts.create({
+      json,
+      password: 'test'
     });
-
-    // const jsonData = accounts.export(account.id);
-
-    // expect(jsonData).toBeDefined();
-    // expect(jsonData.address).toBe(account.address);
+    
+    expect(account2.address).toBe(account.address);
   });
 });

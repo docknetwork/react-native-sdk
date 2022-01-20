@@ -19,4 +19,5 @@ export type WalletDocument = {
   name: any,
   type: DocumentType,
   value: any,
+  correlation?: any[],
 };

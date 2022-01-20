@@ -1,43 +1,45 @@
 import {Wallet, WalletDocument} from '@docknetwork/wallet-sdk-core/lib/modules/wallet';
+import {Accounts} from '@docknetwork/wallet-sdk-core/lib/modules/accounts';
+import dock from '@docknetwork/sdk';
+import { getKeyringPair } from '@docknetwork/wallet-sdk-core/lib/services/keyring';
+import { ApiRpc } from '@docknetwork/wallet-sdk-core/lib/client/api-rpc';
+
+
 
 const mockDocuments: WalletDocument[] = [];
 
 
+
 describe('Wallet integration test', () => {
   let wallet = Wallet.getInstance();
+  let accounts = Accounts.getInstance();
 
   beforeAll(async() => {
       await wallet.load();
       await Promise.all(mockDocuments.map(doc => wallet.add(doc)));
   });
 
-  it('Expect to get all documents', async () => {
-    const documents = await wallet.query();
-    // expect(documents.length).toBe(mockDocuments.length);
-  });
+  it('Import account + receive tokens + send tokens', async () => {
+    // const documents = await wallet.query();
+    const mnemonic = 'indicate mention thing discover clarify grief inherit vivid dish health market spoil';
+    const account = await accounts.create({
+      name: 'Test',
+      mnemonic,
+    });
+    
+    const keypair = await getKeyringPair({ mnemonic });
 
-  it('Expect to add new account', async () => {
-    const documents = await wallet.query();
-    // expect(documents.length).toBe(mockDocuments.length);
+    expect(account.address).toBe('39SiPt8AHxtThrWZNcQadD1MA7WAcmcedC89hqcU22ZYrJn2');
+    
+    await accounts.fetchBalance(account.id);
+    
+    
+    
+    // dock.setAccount(keypair);
+    // const extrinsic = dock.api.tx.balances.transfer(keypair.address, 1000);
+    // const paymentInfo = await extrinsic.paymentInfo(keypair);
+    // const info =  paymentInfo.partialFee.toString();
+    // console.log(info);
+    // dock.send()
   });
-
-  it('Expect to export account backup', async () => {
-    const documents = await wallet.query();
-    // expect(documents.length).toBe(mockDocuments.length);
-  });
-
-  it('Expect to import account from backup file', async () => {
-    const documents = await wallet.query();
-    // expect(documents.length).toBe(mockDocuments.length);
-  });
-
-  it('Expect to import account from backup file', async () => {
-    const documents = await wallet.query();
-    // expect(documents.length).toBe(mockDocuments.length);
-  });
-
-  // it('Expect to get accounts', async () => {
-  //   const documents = await wallet.getDocuments();
-  //   expect(documents.length).toBe(mockDocuments.length);
-  // });
 });
