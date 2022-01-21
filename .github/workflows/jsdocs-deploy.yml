@@ -1,5 +1,8 @@
 name: Deploy js docs
-on: push: master
+on:
+  push:
+    branches:
+      - master
 jobs:
   deployJsDocs:
     runs-on: ubuntu-latest
