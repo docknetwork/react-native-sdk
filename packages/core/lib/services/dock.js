@@ -127,6 +127,11 @@ export default {
       isDockReady = true;
       return result;
     },
+    async disconnect(...params) {
+      const result = await dock.disconnect(...params);
+      isDockReady = false;
+      return result;
+    },
     async setAccount() {
       return dock.setAccount(getCurrentPair());
     },

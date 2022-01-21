@@ -42,4 +42,8 @@ describe('ApiModule', () => {
 
     expect(doc).toBeUndefined();
   });
+  
+  afterAll(async() => {
+    await wallet.close();
+  });
 });

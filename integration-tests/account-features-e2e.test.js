@@ -32,14 +32,9 @@ describe('Wallet integration test', () => {
     expect(account.address).toBe('39SiPt8AHxtThrWZNcQadD1MA7WAcmcedC89hqcU22ZYrJn2');
     
     await accounts.fetchBalance(account.id);
-    
-    
-    
-    // dock.setAccount(keypair);
-    // const extrinsic = dock.api.tx.balances.transfer(keypair.address, 1000);
-    // const paymentInfo = await extrinsic.paymentInfo(keypair);
-    // const info =  paymentInfo.partialFee.toString();
-    // console.log(info);
-    // dock.send()
+  });
+  
+  afterAll(async() => {
+    await wallet.close();
   });
 });
