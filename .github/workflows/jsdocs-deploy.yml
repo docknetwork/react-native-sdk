@@ -1,5 +1,5 @@
 name: Deploy js docs
-on: push
+on: push: master
 jobs:
   deployJsDocs:
     runs-on: ubuntu-latest
