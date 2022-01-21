@@ -103,7 +103,7 @@
   "scripts": {
     "start": "node ./scripts/start",
     "build": "node ./scripts/build",
-    "test": "jest --verbose --watchAll",
+    "test": "jest --verbose",
     "test:integration": "jest ./integration-tests/*.test.js --verbose --watchAll",
     "examples:all": "nodemon --exec NODE_ENV=development npx babel-node ./examples/index.js",
     "lint": "eslint './packages/**/*.js' --max-warnings=0 --ignore-path=.prettierignore",
