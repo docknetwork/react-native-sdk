@@ -25,7 +25,7 @@ jobs:
         run: yarn install
         
       - name: Generate docs
-        run: yarn jsdocs
+        run: yarn docs
 
       - name: Commit report
         run: |
