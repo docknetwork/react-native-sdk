@@ -15,7 +15,8 @@ async function getAccountKeyring(accountAddress) {
   const mnemonic = (
     await getWallet().query({
       equals: {
-        'content.id': accountDetails.correlation && accountDetails.correlation[0],
+        'content.id':
+          accountDetails.correlation && accountDetails.correlation[0],
       },
     })
   )[0];
