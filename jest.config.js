@@ -9,6 +9,7 @@ module.exports = {
   "setupFilesAfterEnv": [
     "<rootDir>/setup-tests.js",
   ],
+  "globalTeardown": './scripts/test-teardown-globals.js',
   "setupFiles": [
     "jest-localstorage-mock"
   ],
