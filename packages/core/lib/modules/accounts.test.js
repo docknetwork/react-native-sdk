@@ -1,23 +1,25 @@
-import { ApiRpc } from '../client/api-rpc';
-import { WalletRpc } from '../client/wallet-rpc';
-import { getKeyring } from '../services/keyring';
+import {ApiRpc} from '../client/api-rpc';
+import {WalletRpc} from '../client/wallet-rpc';
+import {getKeyring} from '../services/keyring';
 import {Accounts} from './accounts';
 import {Wallet} from './wallet';
 
 describe('Accounts module', () => {
   let accounts = Accounts.getInstance();
 
-  beforeAll(async() => {
-      await Wallet.getInstance().load();
-      await accounts.load();
+  beforeAll(async () => {
+    await Wallet.getInstance().load();
+    await accounts.load();
   });
 
   it('Expect to create account', async () => {
     const name = 'Test account';
     const account = await accounts.create({
-      name
+      name,
     });
-    const foundDocument = accounts.getAccounts().find(item => item.id === account.id);
+    const foundDocument = accounts
+      .getAccounts()
+      .find(item => item.id === account.id);
 
     expect(account.name).toBe(name);
     expect(account.id).toBeDefined();
@@ -26,7 +28,8 @@ describe('Accounts module', () => {
 
   it('Expect to create accounts with existing mnemonic', async () => {
     const name = 'Test account';
-    const mnemonic = 'satisfy stadium what pizza blind monitor priority prize found glance stock snow';
+    const mnemonic =
+      'satisfy stadium what pizza blind monitor priority prize found glance stock snow';
     const expectedAddress = '37gNXoHSnDToA4UTQtgh8NdzjPcZ2CDZAqAcHuT1VweWAJaV';
     const account = await accounts.create({
       name,
@@ -42,18 +45,21 @@ describe('Accounts module', () => {
     const account = await accounts.create({});
     const balance = 10;
     jest.spyOn(ApiRpc, 'getAccountBalance').mockReturnValue(balance);
-    
+
     let result = await accounts.fetchBalance(account.id);
-    
+
     expect(ApiRpc.getAccountBalance).toBeCalled();
     expect(result).toBe(balance);
-    
-    const currency = await accounts.findCorrelationByType(account.id, 'Currency');
+
+    const currency = await accounts.findCorrelationByType(
+      account.id,
+      'Currency',
+    );
 
     expect(currency.value).toBe(balance);
-    
+
     result = await accounts.getBalance(account.id);
-    
+
     expect(result).toBe(balance);
   });
 
@@ -67,9 +73,9 @@ describe('Accounts module', () => {
 
     const account2 = await accounts.create({
       json,
-      password: 'test'
+      password: 'test',
     });
-    
+
     expect(account2.address).toBe(account.address);
   });
 });

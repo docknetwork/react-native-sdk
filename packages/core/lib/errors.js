@@ -1,12 +1,12 @@
 /* eslint-disable max-classes-per-file */
 
 export class SdkError extends Error {
-    constructor(message?: string) {
-       super(message);
-       Object.setPrototypeOf(this, SdkError.prototype);
-    }
+  constructor(message?: string) {
+    super(message);
+    Object.setPrototypeOf(this, SdkError.prototype);
+  }
 }
 
 export const Errors = {
-    accountAlreadyExists: 'Account already exists',
-}
+  accountAlreadyExists: 'Account already exists',
+};

@@ -1,10 +1,8 @@
-
-
 export type NetworkInfo = {
   name: string,
   substrateUrl: string,
   addressPrefix: number,
-}
+};
 
 export type NetworkId = 'mainnet' | 'testnet' | 'local' | 'custom';
 
@@ -36,7 +34,6 @@ function getNetworkInfo(networkId): NetworkInfo {
   return networkInfo;
 }
 
-
 export class NetworkManager {
   networkId: NetworkId;
 
@@ -46,8 +43,8 @@ export class NetworkManager {
 
   /**
    * Set current network id
-   * 
-   * @param {string} networkId 
+   *
+   * @param {string} networkId
    */
   setNetworkId(networkId: NetworkId) {
     this.networkId = networkId;
@@ -63,7 +60,7 @@ export class NetworkManager {
 
   /**
    * Set current network id
-   * 
+   *
    * @return {NetworkManager} substrateNetwork
    */
   static getInstance(): NetworkManager {

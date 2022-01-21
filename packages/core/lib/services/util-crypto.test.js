@@ -46,9 +46,9 @@ describe('UtilCryptoService', () => {
     });
 
     it('expect derive path to not be valid', () => {
-      const result = UtilCrypto.routes.deriveValidate(`wrong phrase`);
+      const result = UtilCrypto.routes.deriveValidate('wrong phrase');
       expect(result).toStrictEqual({
-        error: true
+        error: true,
       });
     });
   });

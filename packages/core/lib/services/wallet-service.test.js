@@ -4,7 +4,7 @@ import dock from '@docknetwork/sdk';
 import ApiService from './api';
 import DockService from './dock';
 import WalletService, {getWallet} from './wallet';
-import KeyringService, { getKeyring } from './keyring';
+import KeyringService, {getKeyring} from './keyring';
 import {initializeWalletService} from './test-utils';
 
 const mnemonic =
@@ -26,37 +26,39 @@ describe('ApiService', () => {
     let correlation;
 
     beforeAll(async () => {
-        documents = await WalletService.routes.createAccountDocuments(params);
-        correlation = await WalletService.routes.resolveCorrelations(documents[0].id);
+      documents = await WalletService.routes.createAccountDocuments(params);
+      correlation = await WalletService.routes.resolveCorrelations(
+        documents[0].id,
+      );
     });
 
     it('expect to create 4 documents', () => {
-        expect(documents.length).toBe(4);
+      expect(documents.length).toBe(4);
     });
 
     it('expect to create address document ', () => {
-        const document = correlation.find(doc => doc.type === 'Address');
-        expect(document.value).toBe(documents[0].id);
+      const document = correlation.find(doc => doc.type === 'Address');
+      expect(document.value).toBe(documents[0].id);
     });
 
     it('expect to create mnemonic document', () => {
-        const document = correlation.find(doc => doc.type === 'Mnemonic');
-        expect(document.value).toBe(params.mnemonic);
+      const document = correlation.find(doc => doc.type === 'Mnemonic');
+      expect(document.value).toBe(params.mnemonic);
     });
 
     it('expect to create keyringPair document', () => {
-        const document = correlation.find(doc => doc.type === 'KeyringPair');
-        const keyringPairJson = document.value;
-        const keyringPair = getKeyring().addFromJson(keyringPairJson);
+      const document = correlation.find(doc => doc.type === 'KeyringPair');
+      const keyringPairJson = document.value;
+      const keyringPair = getKeyring().addFromJson(keyringPairJson);
 
-        expect(keyringPair.address).toBe(documents[0].value);
-        expect(keyringPair.type).toBe(params.keyPairType);
+      expect(keyringPair.address).toBe(documents[0].value);
+      expect(keyringPair.type).toBe(params.keyPairType);
     });
 
     it('expect to create DOCK currency document', () => {
       const document = correlation.find(doc => doc.type === 'Currency');
       expect(document.value).toBe(0);
       expect(document.symbol).toBe('DOCK');
-  });
+    });
   });
 });

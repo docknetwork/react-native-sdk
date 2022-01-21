@@ -16,10 +16,9 @@ export class DockRpc {
    * @constructor
    * @param {string} address - substrate url
    */
-   static isApiConnected(...params) {
+  static isApiConnected(...params) {
     return rpcRequest('dock.isApiConnected', ...params);
   }
-
 
   /**
    * Set current account in the sdk
@@ -35,7 +34,7 @@ export class DockRpc {
    * @constructor
    * @param {string} address - account address
    */
-   static disconnect(...params) {
+  static disconnect(...params) {
     return rpcRequest('dock.disconnect', ...params);
   }
 }

@@ -55,21 +55,21 @@ export class Accounts {
     return this.create({
       json,
       password,
-    })
+    });
   }
 
   async fetchBalance(accountId) {
     const account = await this.getAccount(accountId);
     const balance = await ApiRpc.getAccountBalance(account.address);
     const currency = await this.findCorrelationByType(accountId, 'Currency');
-    
+
     currency.value = balance;
-    
+
     await this.wallet.update(currency);
-   
+
     return balance;
   }
-  
+
   async getBalance(accountId) {
     const currency = await this.findCorrelationByType(accountId, 'Currency');
     return currency.value;
@@ -116,14 +116,17 @@ export class Accounts {
     } = {},
   ): Promise<Account> {
     let {name, json, password, keyPairType = 'sr25519'} = params;
-    const mnemonic = params.mnemonic || (!json && await this.generateMnemonic());
+    const mnemonic =
+      params.mnemonic || (!json && (await this.generateMnemonic()));
     const derivePath = params.derivationPath || '';
 
-    const address = json ? json.address : await KeyringRpc.addressFromUri({
-      mnemonic,
-      keyPairType,
-      derivePath,
-    });
+    const address = json
+      ? json.address
+      : await KeyringRpc.addressFromUri({
+          mnemonic,
+          keyPairType,
+          derivePath,
+        });
 
     const existingAccounts = await this.wallet.query({
       id: address,
@@ -132,17 +135,13 @@ export class Accounts {
     if (existingAccounts.length > 0) {
       throw new Error(Errors.accountAlreadyExists);
     }
-    
+
     if (json) {
-      const pair = await KeyringRpc.addFromJson(json, password); 
-      
-      
+      const pair = await KeyringRpc.addFromJson(json, password);
+
       keyPairType = pair.type;
-      
-      
+
       // keyPairType = '2';
-      
-      
     }
 
     const account: Account = {

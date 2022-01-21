@@ -17,10 +17,12 @@ export const rpcRequest = (method, ...params) => {
       return {};
     }
 
-    return getRpcClient().request(method, ...params).catch(err => {
-      getLogger().log('Error with', {method, params, err});
-      throw err;
-    });
+    return getRpcClient()
+      .request(method, ...params)
+      .catch(err => {
+        getLogger().log('Error with', {method, params, err});
+        throw err;
+      });
   } catch (err) {
     getLogger().log('Error with request', {method, params, err});
     throw err;

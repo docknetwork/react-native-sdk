@@ -15,7 +15,7 @@ describe('ApiService', () => {
   beforeAll(async () => {
     await cryptoWaitReady();
     keyring = new Keyring({
-      ss58Format: 21
+      ss58Format: 21,
     });
 
     await DockService.routes.init({

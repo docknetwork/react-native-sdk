@@ -27,7 +27,6 @@ export const NetworkConfigs = {
   },
 };
 
-
 export const WalletEvents = {
   ready: 'ready',
   documentAdded: 'document-added',
@@ -70,7 +69,7 @@ export class Wallet {
     await initRealm();
     await UtilCryptoRpc.cryptoWaitReady();
     await WalletRpc.create('dock-wallet');
-    await WalletRpc.load();    
+    await WalletRpc.load();
     await this.initNetwork();
     this.status = 'ready';
   }
@@ -128,7 +127,7 @@ export class Wallet {
 
     return newDocument;
   }
-  
+
   async update(document: WalletDocument) {
     await WalletRpc.update(document);
     this.eventManager.emit(WalletEvents.documentUpdated, document);
