@@ -1,5 +1,5 @@
 import Keyring from '@polkadot/keyring';
-import { KeyringPair}  from '@polkadot/keyring/types';
+import {KeyringPair} from '@polkadot/keyring/types';
 
 let keyring: Keyring;
 let currentPairIdx = 0;
@@ -35,8 +35,11 @@ export function addFromJson(data, password) {
   return pair;
 }
 
-export function getKeyringPair({mnemonic, keyPairType, derivePath = ''}): KeyringPair {
-
+export function getKeyringPair({
+  mnemonic,
+  keyPairType,
+  derivePath = '',
+}): KeyringPair {
   console.log(mnemonic);
 
   return keyring.createFromUri(

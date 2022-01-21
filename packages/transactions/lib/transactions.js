@@ -5,7 +5,7 @@ import {DOCK_TOKEN_UNIT} from '../core/format-utils';
 import {fetchTransactions} from '../core/subscan';
 import BigNumber from 'bignumber.js';
 import {Accounts} from './accounts';
-import { NetworkManager } from './network-manager';
+import {NetworkManager} from './network-manager';
 
 export const TransactionStatus = {
   InProgress: 'pending',
@@ -32,25 +32,25 @@ export class Transactions {
 
     return Transactions.instance;
   }
-  
+
   /**
    * Load external transactions for the given account
-   * 
-   * @param {string} account 
+   *
+   * @param {string} account
    */
   async loadExternalTransactions(account) {
     const realm = getRealm();
     const dbTransactions = realm.objects('Transaction').toJSON();
-  
+
     const handleTransaction = tx => {
       if (tx.from !== account && tx.to !== account) {
         return;
       }
-  
+
       if (dbTransactions.find(item => item.hash === tx.hash)) {
         return;
       }
-  
+
       const newTx = {
         amount: BigNumber(tx.amount).times(DOCK_TOKEN_UNIT).toString(),
         feeAmount: tx.fee,
@@ -62,15 +62,15 @@ export class Transactions {
         status: 'complete',
         date: new Date(parseInt(tx.block_timestamp + '000', 10)),
       };
-  
+
       realm.write(() => {
         realm.create('Transaction', newTx, 'modified');
       });
     };
-  
+
     let data;
     let page = 0;
-  
+
     do {
       data = await fetchTransactions({address: account, page});
       data.transfers.forEach(handleTransaction);
@@ -80,7 +80,7 @@ export class Transactions {
 
   /**
    * Load transactions for the current accounts
-   * 
+   *
    * @returns transactions
    */
   async loadTransactions() {
@@ -112,10 +112,10 @@ export class Transactions {
 
   /**
    * Update transaction
-   * 
-   * @param {*} transaction 
+   *
+   * @param {*} transaction
    */
-  updateTransaction(transaction){
+  updateTransaction(transaction) {
     const realm = getRealm();
 
     realm.write(() => {
@@ -125,7 +125,7 @@ export class Transactions {
 
   /**
    * Get fee amount for the transaction
-   * @param {*} param0 
+   * @param {*} param0
    * @returns {int} fee amount
    */
   getFeeAmount({recipientAddress, accountAddress, amount}) {
@@ -135,12 +135,18 @@ export class Transactions {
       amount: amount,
     });
   }
-  
+
   /**
    * Send transaction
-   * @param {*} param0 
+   * @param {*} param0
    */
-  sendTransaction({recipientAddress, accountAddress, amount, fee, prevTransaction}) {
+  sendTransaction({
+    recipientAddress,
+    accountAddress,
+    amount,
+    fee,
+    prevTransaction,
+  }) {
     const parsedAmount = parseFloat(amount) * DOCK_TOKEN_UNIT;
 
     const internalId = uuid();

@@ -18,16 +18,16 @@ describe('ApiModule', () => {
   });
 
   it('Expect document to be added', async () => {
-      await wallet.add({
-        type: 'account',
-        name: 'cocomelon',
-      });
+    await wallet.add({
+      type: 'account',
+      name: 'cocomelon',
+    });
 
-      const accounts = await wallet.query({
-        type: 'account'
-      });
+    const accounts = await wallet.query({
+      type: 'account',
+    });
 
-      expect(accounts.length).toBe(1);
+    expect(accounts.length).toBe(1);
   });
 
   it('Expect document to be removed', async () => {

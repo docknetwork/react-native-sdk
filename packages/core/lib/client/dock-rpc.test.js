@@ -1,6 +1,6 @@
 import service from '../services/dock';
-import { mockRpcClient, restoreRpcClient, testRpcEndpoint } from '../test-utils';
-import { DockRpc } from './dock-rpc';
+import {mockRpcClient, restoreRpcClient, testRpcEndpoint} from '../test-utils';
+import {DockRpc} from './dock-rpc';
 
 describe('DockRpc', () => {
   beforeEach(mockRpcClient);

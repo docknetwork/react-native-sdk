@@ -4,7 +4,7 @@ export const ApiRpcEndpoints = {
   getAccountBalance: 'api.getAccountBalance',
   sendTokens: 'api.sendTokens',
   getFeeAmount: 'api.getFeeAmount',
-}
+};
 
 /** ApiRpc */
 export class ApiRpc {

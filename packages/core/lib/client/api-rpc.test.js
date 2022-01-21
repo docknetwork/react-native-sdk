@@ -1,9 +1,6 @@
 import service from '../services/api';
-import {
-  mockRpcClient, restoreRpcClient,
-  testRpcEndpoint
-} from '../test-utils';
-import { ApiRpc } from './api-rpc';
+import {mockRpcClient, restoreRpcClient, testRpcEndpoint} from '../test-utils';
+import {ApiRpc} from './api-rpc';
 
 describe('ApiRpc', () => {
   beforeEach(mockRpcClient);
@@ -22,4 +19,3 @@ describe('ApiRpc', () => {
 
   afterAll(restoreRpcClient);
 });
-

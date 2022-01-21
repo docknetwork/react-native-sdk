@@ -31,15 +31,15 @@ const exportAccount = async (accountId, password) => {
   return pair.toJson(password);
 };
 
-export const getAccountKeypair = async (accountId) => {
+export const getAccountKeypair = async accountId => {
   const correlations = await resolveCorrelations(accountId);
   const keyPairDocument = correlations.find(doc => doc.type === 'KeyringPair');
 
   const pair = getKeyring().addFromJson(keyPairDocument.value);
-  
+
   pair.unlock();
-  
- return pair;
+
+  return pair;
 };
 
 /**

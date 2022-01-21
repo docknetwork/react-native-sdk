@@ -1,5 +1,5 @@
 {
-    "name": "@docknetwork/wallet-sdk-webview-bundler",
+    "name": "@docknetwork/wallet-sdk-bundler",
     "version": "0.1.0",
     "dependencies": {
         "@polkadot/keyring": "^7.2.1",

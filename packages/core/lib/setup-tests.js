@@ -8,4 +8,3 @@ initRpcClient(req => {
     return result;
   });
 });
-
