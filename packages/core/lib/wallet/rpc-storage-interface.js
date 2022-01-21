@@ -1,7 +1,6 @@
 import StorageInterface from '@docknetwork/wallet/storage/storage-interface';
-import {StorageRpc} from '../client/storage-rpc';
 import {v4 as uuid} from 'uuid';
-import {LoggerRpc} from '../client/logger-rpc';
+import {StorageRpc} from '../client/storage-rpc';
 import {getLogger} from '../logger';
 
 function generateDocumentId() {

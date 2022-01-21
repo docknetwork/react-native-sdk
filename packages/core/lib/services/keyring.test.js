@@ -1,7 +1,5 @@
-import {DockAPI} from '@docknetwork/sdk';
 import Keyring, {KeyringPair} from '@polkadot/keyring';
 import {cryptoWaitReady} from '@polkadot/util-crypto';
-import {u8aToHex} from '@polkadot/util';
 
 const phrase =
   'twenty fat wood hub lock cattle thought base lazy apology lyrics innocent';

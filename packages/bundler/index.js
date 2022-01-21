@@ -1,10 +1,10 @@
 const {rollup} = require('rollup');
 const json = require('@rollup/plugin-json');
-const multiInput = require('rollup-plugin-multi-input');
+// const multiInput = require('rollup-plugin-multi-input');
 const commonjs = require('@rollup/plugin-commonjs');
-const {terser} = require('rollup-plugin-terser');
+// const {terser} = require('rollup-plugin-terser');
 const {nodeResolve} = require('@rollup/plugin-node-resolve');
-var flow = require('rollup-plugin-flow');
+// var flow = require('rollup-plugin-flow');
 const {babel} = require('@rollup/plugin-babel');
 const {wasm} = require('@rollup/plugin-wasm');
 
@@ -51,7 +51,7 @@ async function build({input, outputDir}) {
   let buildFailed = false;
   try {
     // create a bundle
-    const bundle = await rollup({
+    bundle = await rollup({
       ...inputOptions,
       input,
     });

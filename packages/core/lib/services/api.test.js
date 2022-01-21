@@ -1,6 +1,5 @@
-import Keyring, {KeyringPair} from '@polkadot/keyring';
+import Keyring from '@polkadot/keyring';
 import {cryptoWaitReady} from '@polkadot/util-crypto';
-import dock from '@docknetwork/sdk';
 import ApiService from './api';
 import DockService from './dock';
 import WalletService, {getWallet} from './wallet';
@@ -58,7 +57,7 @@ describe('ApiService', () => {
       testAccount.address,
     );
 
-    expect(parseInt(balance)).toBeGreaterThanOrEqual(50);
+    expect(parseInt(balance, 10)).toBeGreaterThanOrEqual(50);
   });
 
   it('Get transaction fee amount', async () => {
@@ -68,6 +67,6 @@ describe('ApiService', () => {
       recipientAddress: '37GfhtNUJk1aJhXuGxNJsAGenteDBX3DTVAvuBZm49Kqc9wA',
     });
 
-    expect(parseInt(fee)).toBeGreaterThanOrEqual(1000);
+    expect(parseInt(fee, 10)).toBeGreaterThanOrEqual(1000);
   });
 });

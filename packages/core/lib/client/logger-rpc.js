@@ -1,4 +1,3 @@
-import {getLogger} from '../logger';
 import {rpcRequest} from '../rpc-client';
 
 /** LoggerRpc */

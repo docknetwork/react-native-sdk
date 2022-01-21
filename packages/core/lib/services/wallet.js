@@ -1,15 +1,9 @@
-import RpcWallet from '../wallet/rpc-storage-wallet';
-import MemoryWallet from '../wallet/memory-storage-wallet';
-import {LoggerRpc} from '../client/logger-rpc';
-import {
-  addressFromUri,
-  getKeyring,
-  getKeyringPair,
-  addFromJson,
-} from './keyring';
 import StorageWallet from '@docknetwork/wallet/storage-wallet';
 import {v4 as uuid} from 'uuid';
 import {WalletDocument} from '../types';
+import MemoryWallet from '../wallet/memory-storage-wallet';
+import RpcWallet from '../wallet/rpc-storage-wallet';
+import {addFromJson, getKeyring, getKeyringPair} from './keyring';
 
 let wallet: StorageWallet;
 

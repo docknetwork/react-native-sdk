@@ -1,7 +1,5 @@
 import crypto from 'crypto';
 
-const algorithm = 'aes-256-cbc';
-
 export const DEFAULT_KEY =
   process.env.ENCRYPTION_KEY ||
   process.env.REACT_APP_ENCRYPTION_KEY ||
@@ -21,9 +19,9 @@ export function encryptData(text) {
 }
 
 export function decryptData(text) {
-  let iv = Buffer.from(text.iv, 'hex');
+  let dIv = Buffer.from(text.iv, 'hex');
   let encryptedText = Buffer.from(text.encryptedData, 'hex');
-  let decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(key), iv);
+  let decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(key), dIv);
   let decrypted = decipher.update(encryptedText);
 
   decrypted = Buffer.concat([decrypted, decipher.final()]);

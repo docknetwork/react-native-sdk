@@ -1,11 +1,6 @@
-import Keyring, {KeyringPair} from '@polkadot/keyring';
-import {cryptoWaitReady} from '@polkadot/util-crypto';
-import dock from '@docknetwork/sdk';
-import ApiService from './api';
-import DockService from './dock';
-import WalletService, {getWallet} from './wallet';
-import KeyringService, {getKeyring} from './keyring';
+import {getKeyring} from './keyring';
 import {initializeWalletService} from './test-utils';
+import WalletService from './wallet';
 
 const mnemonic =
   'hole dog cross program hungry blue burst raccoon differ rookie pipe auction';

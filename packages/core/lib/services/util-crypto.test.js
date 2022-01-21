@@ -1,8 +1,4 @@
-import {
-  cryptoWaitReady,
-  cryptoIsReady,
-  mnemonicGenerate,
-} from '@polkadot/util-crypto';
+import {cryptoWaitReady} from '@polkadot/util-crypto';
 import UtilCrypto from './util-crypto';
 
 describe('UtilCryptoService', () => {

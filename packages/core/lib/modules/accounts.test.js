@@ -1,6 +1,4 @@
 import {ApiRpc} from '../client/api-rpc';
-import {WalletRpc} from '../client/wallet-rpc';
-import {getKeyring} from '../services/keyring';
 import {Accounts} from './accounts';
 import {Wallet} from './wallet';
 
