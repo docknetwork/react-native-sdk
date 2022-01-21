@@ -77,7 +77,7 @@ describe('Accounts module', () => {
     expect(account2.address).toBe(account.address);
   });
 
-  afterAll(async() => {
+  afterAll(async () => {
     await Wallet.getInstance().close();
   });
 });
