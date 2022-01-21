@@ -48,7 +48,7 @@ export const getAccountKeypair = async (accountId) => {
  * The address, mnemonic, and keyringPair
  *
  * @param {*} param0
- * @returns
+ * @returns documents
  */
 const createAccountDocuments = async ({
   name,
