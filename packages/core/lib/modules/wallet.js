@@ -3,7 +3,7 @@ import {DockRpc} from '../client/dock-rpc';
 import {KeyringRpc} from '../client/keyring-rpc';
 import {UtilCryptoRpc} from '../client/util-crypto-rpc';
 import {WalletRpc} from '../client/wallet-rpc';
-import {initRealm} from '../core/realm';
+import {getRealm, initRealm} from '../core/realm';
 import {DocumentType, WalletDocument} from '../types';
 import {EventManager} from './event-manager';
 import {NetworkManager} from './network-manager';
@@ -47,10 +47,15 @@ export class Wallet {
     this.context = ['https://w3id.org/wallet/v1'];
     this.networkManager = NetworkManager.getInstance();
     this.eventManager = new EventManager();
-
+    this.status = 'closed';
     this.eventManager.registerEvents(WalletEvents);
   }
 
+  async close() {
+    getRealm().close();
+    await DockRpc.disconnect();
+    this.status = 'closed';
+  }
   /**
    * Load wallet
    */
