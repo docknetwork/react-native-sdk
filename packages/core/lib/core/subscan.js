@@ -20,9 +20,5 @@ export function fetchTransactions({address, page = 0, row = 50}) {
         ...res.data,
         hasNextPage: (page + 1) * row < res.data.count,
       };
-    })
-    .catch(err => {
-      console.log(err);
-      return mockData;
     });
 }
