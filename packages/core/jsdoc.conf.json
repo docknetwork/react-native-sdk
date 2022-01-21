@@ -2,7 +2,7 @@
     "plugins": ["node_modules/jsdoc-babel"],
     "babel": {
         "extensions": ["js", "es6", "jsx"],
-        "presets": ["@babel/preset-env"],
-        "plugins": ["transform-flow-strip-types"]
+        "presets": ["es2015"],
+        "plugins": "transform-flow-strip-types"
     }
 }

@@ -50,7 +50,7 @@ export class Accounts {
   async exportAccount(accountId, password) {
     return WalletRpc.exportAccount(accountId, password);
   }
-  
+
   async importAccount(json, password) {
     return this.create({
       json,
