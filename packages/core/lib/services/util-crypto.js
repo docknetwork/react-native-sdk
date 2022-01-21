@@ -1,13 +1,12 @@
+import {decodeAddress, encodeAddress} from '@polkadot/keyring';
+import {hexToU8a, isHex} from '@polkadot/util';
 import {
-  cryptoWaitReady,
   cryptoIsReady,
+  cryptoWaitReady,
+  keyExtractSuri,
   mnemonicGenerate,
   mnemonicValidate,
-  keyExtractSuri,
 } from '@polkadot/util-crypto';
-import {hexToU8a, isHex} from '@polkadot/util';
-import {decodeAddress, encodeAddress} from '@polkadot/keyring';
-import {LoggerRpc} from '../client/logger-rpc';
 
 export default {
   name: 'utilCrypto',

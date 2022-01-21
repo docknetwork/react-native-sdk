@@ -1,5 +1,4 @@
 import {getRpcClient} from './rpc-client';
-import sinon from 'sinon';
 
 let request;
 

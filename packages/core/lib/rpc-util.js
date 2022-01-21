@@ -40,8 +40,6 @@ export function patchRpcServer(server) {
   server.__receive = server.receive;
 
   server.receive = function (reqData) {
-    let data = reqData;
-
     try {
       if (SECURE_JSON_RPC && reqData.params && reqData.params.encryptedData) {
         const params = decryptData(reqData.params);

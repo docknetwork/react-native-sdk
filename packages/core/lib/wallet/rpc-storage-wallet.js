@@ -1,5 +1,4 @@
 import StorageWallet from '@docknetwork/wallet/storage-wallet';
-import {getLogger} from '../logger';
 import RpcStorageInterface from './rpc-storage-interface';
 
 class RpcWallet extends StorageWallet {

@@ -1,29 +1,16 @@
 import dock, {PublicKeySr25519} from '@docknetwork/sdk';
+import {createKeyDetail, createNewDockDID} from '@docknetwork/sdk/utils/did';
 import {
-  createNewDockDID,
-  createKeyDetail,
-  createSignedDidRemoval,
-  createSignedKeyUpdate,
-} from '@docknetwork/sdk/utils/did';
-import {getPublicKeyFromKeyringPair} from '@docknetwork/sdk/utils/misc';
-// import {DockResolver} from '@docknetwork/sdk/resolver';
-import {
-  KeyringPairDidKeys,
-  OneOfPolicy,
-  getDockRevIdFromCredential,
   DockRevRegQualifier,
   RevRegType,
 } from '@docknetwork/sdk/utils/revocation';
-
 import getKeyDoc from '@docknetwork/sdk/utils/vc/helpers';
 import {
   issueCredential,
   verifyCredential,
-  expandJSONLD,
 } from '@docknetwork/sdk/utils/vc/index';
 import {randomAsHex} from '@polkadot/util-crypto';
 import {getLogger} from '../logger';
-
 import {getCurrentPair} from './keyring';
 
 let isDockReady = false;

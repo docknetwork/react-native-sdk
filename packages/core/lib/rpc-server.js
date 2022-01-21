@@ -1,5 +1,4 @@
 import {JSONRPCServer} from 'json-rpc-2.0';
-import {decryptData, SECURE_JSON_RPC} from './core/crypto';
 import {createRpcService, patchRpcServer} from './rpc-util';
 import services from './services';
 

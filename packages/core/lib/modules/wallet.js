@@ -1,13 +1,12 @@
-import {WalletRpc} from '../client/wallet-rpc';
 import {v4 as uuid} from 'uuid';
+import {DockRpc} from '../client/dock-rpc';
 import {KeyringRpc} from '../client/keyring-rpc';
 import {UtilCryptoRpc} from '../client/util-crypto-rpc';
-import {NetworkManager} from './network-manager';
+import {WalletRpc} from '../client/wallet-rpc';
 import {initRealm} from '../core/realm';
-import {ApiRpc} from '../client/api-rpc';
-import {DockRpc} from '../client/dock-rpc';
-import {EventManager} from './event-manager';
 import {DocumentType, WalletDocument} from '../types';
+import {EventManager} from './event-manager';
+import {NetworkManager} from './network-manager';
 
 export const NetworkConfigs = {
   mainnet: {
@@ -146,7 +145,6 @@ export class Wallet {
       name: string,
     } = {},
   ): Promise<WalletDocument[]> {
-    const query = {};
     const equals = {};
 
     if (params.type) {

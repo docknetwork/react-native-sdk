@@ -1,15 +1,5 @@
 import {rpcRequest} from '../rpc-client';
 
-class RpcClient {
-  constructor(options) {
-    this.cachedResources = options.cachedResources;
-  }
-
-  request(resource, ...params) {
-    return rpcRequest(resource, ...params);
-  }
-}
-
 /** WalletRpc */
 export class WalletRpc {
   /**
