@@ -92,9 +92,7 @@ export class Transactions {
 
       for (const account of accounts) {
         try {
-          await dispatch(
-            transactionsOperations.loadExternalTransactions(account.id),
-          );
+          this.loadExternalTransactions(account.id);
         } catch (err) {
           console.error(err);
         }
@@ -197,8 +195,6 @@ export class Transactions {
       .catch(err => {
         console.error(err);
 
-        throw new Error('transaction_failed');
-
         const updatedTransation = {
           ...transaction,
           status: TransactionStatus.Failed,
@@ -209,6 +205,8 @@ export class Transactions {
         });
 
         this.updateTransaction(updatedTransation);
+
+        throw new Error('transaction_failed');
       });
   }
 }

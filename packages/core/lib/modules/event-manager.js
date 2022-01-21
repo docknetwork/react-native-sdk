@@ -45,7 +45,7 @@ export class EventManager {
     return this;
   }
 
-  on(eventName) {
+  on(eventName, payload) {
     this.checkEvent(eventName);
     this.eventEmitter.on(eventName, payload);
     return this;

@@ -8,6 +8,8 @@ export const DEFAULT_KEY =
   '776fe87eec8c9ba8417beda00b23cf22f5e134d9644d0a195cd9e0b7373760c1';
 export const SECURE_JSON_RPC = process.env.ENCRYPTION_ENABLED;
 
+const {Buffer} = global;
+
 let key = Buffer.from(DEFAULT_KEY, 'hex');
 const iv = crypto.randomBytes(16);
 

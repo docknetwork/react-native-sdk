@@ -1,9 +1,5 @@
 import {getCurrentPair} from './keyring';
 
-function setCurrent(index) {
-  currentPairIdx = index;
-}
-
 function address() {
   return getCurrentPair().address;
 }
@@ -27,7 +23,6 @@ function toJson(password) {
 export default {
   name: 'pair',
   routes: {
-    setCurrent,
     address,
     isLocked,
     lock,

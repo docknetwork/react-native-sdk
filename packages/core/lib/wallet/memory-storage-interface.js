@@ -1,5 +1,6 @@
-// import fs from 'fs';
 import StorageInterface from '@docknetwork/wallet/storage/storage-interface';
+
+const localStorage = global.localStorage;
 
 function generateDocumentId() {
   return `doc${Math.floor(Math.random() * 10000)}`;

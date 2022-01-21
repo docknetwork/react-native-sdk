@@ -106,7 +106,6 @@
     "test": "jest --verbose --watchAll",
     "test:integration": "jest ./integration-tests/*.test.js --verbose --watchAll",
     "examples:all": "nodemon --exec NODE_ENV=development npx babel-node ./examples/index.js",
-    "polkadot-test": "npx babel-node ./src/polkadot-test",
     "lint": "eslint './packages/**/*.js' --ignore-path=.prettierignore",
     "lint:fix": "eslint './src/**/*.js' --fix --ignore-path=.prettierignore",
     "format": "prettier './src/**/*.{js,json}' --write",
