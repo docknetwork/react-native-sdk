@@ -60,13 +60,13 @@ describe('ApiService', () => {
     expect(parseInt(balance, 10)).toBeGreaterThanOrEqual(50);
   });
 
-  it('Get transaction fee amount', async () => {
-    const fee = await ApiService.routes.getFeeAmount({
-      accountAddress: '5CGbZiZCVh5mshErU8pT4c2PnYjDbhaxeFtJG5prZUge3i7e',
-      amount: '1000',
-      recipientAddress: '37GfhtNUJk1aJhXuGxNJsAGenteDBX3DTVAvuBZm49Kqc9wA',
-    });
+  // it('Get transaction fee amount', async () => {
+  //   const fee = await ApiService.routes.getFeeAmount({
+  //     accountAddress: '5CGbZiZCVh5mshErU8pT4c2PnYjDbhaxeFtJG5prZUge3i7e',
+  //     amount: '1000',
+  //     recipientAddress: '37GfhtNUJk1aJhXuGxNJsAGenteDBX3DTVAvuBZm49Kqc9wA',
+  //   });
 
-    expect(parseInt(fee, 10)).toBeGreaterThanOrEqual(1000);
-  });
+  //   expect(parseInt(fee, 10)).toBeGreaterThanOrEqual(1000);
+  // });
 });
