@@ -1,4 +1,4 @@
-import {EventEmitter, once} from 'events';
+import {EventEmitter} from 'events';
 
 let emitter = new EventEmitter();
 

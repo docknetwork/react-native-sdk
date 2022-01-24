@@ -89,7 +89,7 @@ export class Wallet {
   }
 
   async ensureNetwork() {
-    if (!connectionInProgress) {
+    if (!this.connectionInProgress) {
       this.initNetwork();
     }
 

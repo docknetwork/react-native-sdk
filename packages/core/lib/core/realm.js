@@ -1,5 +1,5 @@
 import Realm from 'realm';
-import {Account, TokenPrice, Transaction} from './realm-schemas';
+import {Account, TokenPrice} from './realm-schemas';
 
 let realm;
 

@@ -1,10 +1,6 @@
 import {Wallet} from './wallet';
 import walletJson from './wallet-backup.json';
 
-const fs = require('fs');
-
-// TODO: Test events
-
 describe('ApiModule', () => {
   let wallet: Wallet;
 
@@ -46,7 +42,6 @@ describe('ApiModule', () => {
     expect(doc).toBeUndefined();
   });
 
-
   it('Expect to import wallet from backup file', async () => {
     const password = 'test';
 
@@ -69,6 +64,7 @@ describe('ApiModule', () => {
     const keypairDoc = docs.find(doc => doc.type === 'KeyringPair');
     expect(keypairDoc.value.encoded).toBe(
       'MFMCAQEwBQYDK2VwBCIEIBA7v8oTxWqoUyV4dcXmxxcunhPWnEaw/W3CKcs2phBX8nxkJ21hUAySYJqVCiy/wcHwFjs7jPbop/vybbW9tM6hIwMhAKBqjm44EQyuODy9HTc61R3oylegEPPGaRyNMlGFO/Fi',
+    );
 
     const mnemonicDoc = docs.find(doc => doc.type === 'Mnemonic');
     expect(mnemonicDoc.value).toBe(
