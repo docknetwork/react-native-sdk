@@ -7,6 +7,7 @@
         "@polkadot/ui-shared": "^0.87.5",
         "@polkadot/util-crypto": "^7.2.1",
         "@polkadot/wasm-crypto": "^4.5.1",
+        "json-rpc-2.0": "^0.2.16",
         "babel-node": "^0.0.1-security",
         "bignumber.js": "^9.0.1",
         "react-native-keychain": "^8.0.0",
