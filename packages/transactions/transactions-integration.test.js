@@ -1,5 +1,3 @@
-import {DOCK_TOKEN_UNIT} from '@docknetwork/wallet-sdk-core/lib/core/format-utils';
-import {getRealm} from '@docknetwork/wallet-sdk-core/lib/core/realm';
 import {TestFixtures} from '@docknetwork/wallet-sdk-core/lib/fixtures';
 import {Wallet} from '@docknetwork/wallet-sdk-core/lib/modules/wallet';
 import {
@@ -81,7 +79,6 @@ describe('Transactions integration test', () => {
 
     expect(result).toBe(hash);
 
-    const realm = getRealm();
     const items = await accountTx.getTransactions();
     expect(items.length).toBe(1);
     let txItem = await accountTx.transactions.getByHash(hash);
@@ -113,7 +110,6 @@ describe('Transactions integration test', () => {
 
     expect(result).toBe(hash);
 
-    const realm = getRealm();
     const items = await accountTx.getTransactions();
     expect(items.length).toBe(1);
     let txItem = await accountTx.transactions.getByHash(hash);
