@@ -40,8 +40,6 @@ export function getKeyringPair({
   keyPairType,
   derivePath = '',
 }): KeyringPair {
-  console.log(mnemonic);
-
   return keyring.createFromUri(
     `${mnemonic.trim()}${derivePath}`,
     {},

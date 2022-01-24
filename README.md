@@ -5,3 +5,8 @@ Handles polkadot-js and provides webassembly support
 ## Docs
 
 https://docknetwork.github.io/react-native-sdk/
+
+## TODO
+
+- realm storage for wallet documents
+- secure document storage

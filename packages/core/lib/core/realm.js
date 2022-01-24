@@ -3,15 +3,21 @@ import {Account, TokenPrice, Transaction} from './realm-schemas';
 
 let realm;
 
+const schema = [TokenPrice, Account];
+
+export function addSchema(item) {
+  schema.push(item);
+}
+
 export async function initRealm() {
   realm = await Realm.open({
     path: 'dock',
-    schema: [TokenPrice, Transaction, Account],
+    schema,
     schemaVersion: 3,
-    deleteRealmIfMigrationNeeded: false,
-    migration: () => {
-      // No migration required so far
-    },
+    deleteRealmIfMigrationNeeded: true,
+    // migration: () => {
+    //   // No migration required so far
+    // },
   });
 }
 

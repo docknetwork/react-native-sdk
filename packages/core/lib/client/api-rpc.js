@@ -6,6 +6,12 @@ export const ApiRpcEndpoints = {
   getFeeAmount: 'api.getFeeAmount',
 };
 
+type TxInput = {
+  toAddress: string,
+  fromAddress: string,
+  amount: string | number,
+};
+
 /** ApiRpc */
 export class ApiRpc {
   /**
@@ -13,19 +19,19 @@ export class ApiRpc {
    * @constructor
    * @param {string} address - Account address
    */
-  static getAccountBalance(...params) {
-    return rpcRequest(ApiRpcEndpoints.getAccountBalance, ...params);
+  static getAccountBalance(address: string) {
+    return rpcRequest(ApiRpcEndpoints.getAccountBalance, address);
   }
 
   /**
    * Send tokens
    * @constructor
-   * @param {string} recipientAddress - recipientAddress
-   * @param {string} accountAddress - accountAddress
+   * @param {string} toAddress - toAddress
+   * @param {string} fromAddress - fromAddress
    * @param {string} amount - amount
    */
-  static sendTokens(...params) {
-    return rpcRequest(ApiRpcEndpoints.sendTokens, ...params);
+  static sendTokens(params: TxInput) {
+    return rpcRequest(ApiRpcEndpoints.sendTokens, params);
   }
 
   /**
@@ -35,7 +41,7 @@ export class ApiRpc {
    * @param {string} accountAddress - accountAddress
    * @param {string} amount - amount
    */
-  static getFeeAmount(...params) {
-    return rpcRequest(ApiRpcEndpoints.getFeeAmount, ...params);
+  static getFeeAmount(params: TxInput) {
+    return rpcRequest(ApiRpcEndpoints.getFeeAmount, params);
   }
 }

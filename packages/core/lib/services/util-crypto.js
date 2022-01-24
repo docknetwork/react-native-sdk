@@ -26,8 +26,6 @@ export default {
     },
     mnemonicValidate: (...params) => mnemonicValidate(...params),
     mnemonicGenerate: (...params) => {
-      console.log('request to generate mnemonic');
-
       return mnemonicGenerate(...params);
     },
     deriveValidate: uri => {

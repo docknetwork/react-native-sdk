@@ -1,28 +1,6 @@
 import dock from '@docknetwork/sdk';
-import {getLogger} from '../logger';
 import {ensureDockReady} from './dock';
-import {getKeyring} from './keyring';
-import {getWallet} from './wallet';
-
-async function getAccountKeyring(accountAddress) {
-  const accountDetails = (
-    await getWallet().query({
-      equals: {
-        'content.id': accountAddress,
-      },
-    })
-  )[0];
-  const mnemonic = (
-    await getWallet().query({
-      equals: {
-        'content.id':
-          accountDetails.correlation && accountDetails.correlation[0],
-      },
-    })
-  )[0];
-
-  return getKeyring().addFromMnemonic(mnemonic.value, {}, 'sr25519');
-}
+import {getAccountKeypair} from './wallet';
 
 export default {
   name: 'api',
@@ -35,33 +13,55 @@ export default {
       return free.toString();
     },
 
-    async getFeeAmount({recipientAddress, accountAddress, amount}) {
-      const account = await getAccountKeyring(accountAddress);
+    async getFeeAmount({toAddress, fromAddress, amount}) {
+      const account = await getAccountKeypair(fromAddress);
 
       dock.setAccount(account);
 
-      const extrinsic = dock.api.tx.balances.transfer(recipientAddress, amount);
+      const extrinsic = dock.api.tx.balances.transfer(toAddress, amount);
       const paymentInfo = await extrinsic.paymentInfo(account);
       return paymentInfo.partialFee.toString();
     },
 
-    async sendTokens({recipientAddress, accountAddress, amount}) {
-      const account = await getAccountKeyring(accountAddress);
-      getLogger().log('Account selected', account);
-      getLogger().log('Transfer to address', recipientAddress);
-
+    async sendTokens({toAddress, fromAddress, amount}) {
+      const account = await getAccountKeypair(fromAddress);
       dock.setAccount(account);
 
       return new Promise((resolve, reject) => {
-        const unsub = dock.api.tx.balances
-          .transfer(recipientAddress, amount)
-          .signAndSend(dock.account, result => {
-            const {status} = result;
+        dock.api.tx.balances
+          .transfer(toAddress, amount)
+          .signAndSend(account, ({status, events}) => {
+            if (status.isInBlock || status.isFinalized) {
+              const errors = events.filter(({event}) =>
+                dock.api.events.system.ExtrinsicFailed.is(event),
+              );
 
-            if (status.isInBlock) {
-              resolve(status.toJSON());
+              errors.forEach(
+                ({
+                  event: {
+                    data: [error, info],
+                  },
+                }) => {
+                  if (error.isModule) {
+                    // for module errors, we have the section indexed, lookup
+                    const decoded = dock.api.registry.findMetaError(
+                      error.asModule,
+                    );
+                    const {docs, method, section} = decoded;
 
-              unsub();
+                    reject(
+                      new Error(`${section}.${method}: ${docs.join(' ')}`),
+                    );
+                  } else {
+                    // Other, CannotLookup, BadOrigin, no extra info
+                    reject(new Error(error.toString()));
+                  }
+                },
+              );
+
+              if (!errors.length) {
+                resolve(status.toHex());
+              }
             } else if (status.isInvalid) {
               reject(new Error('Transaction status is invalid'));
             } else if (status.isDropped) {

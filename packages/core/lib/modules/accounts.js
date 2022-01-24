@@ -6,14 +6,8 @@ import {Wallet, WalletEvents} from './wallet';
 import {Errors} from '../errors';
 import {KeypairType, WalletDocument, DocumentType} from '../types';
 import {EventManager} from './event-manager';
-
-export type Account = {
-  id: string,
-  name: string,
-  type: KeypairType,
-  address: string,
-  correlations: any[],
-};
+import {PolkadotUIRpc} from '../client/polkadot-ui-rpc';
+import {AccountDetails, Account} from './account';
 
 export const AccountsEvents = {
   loaded: 'loaded',
@@ -24,7 +18,7 @@ export const AccountsEvents = {
 
 // TODO: Add events to accounts
 export class Accounts {
-  accounts: Account[];
+  accounts: AccountDetails[];
   wallet: Wallet;
   eventManager: EventManager;
   static DocumentFilters = {
@@ -32,23 +26,23 @@ export class Accounts {
     currencyType: (item: WalletDocument) => item.type === 'Currency',
   };
 
-  constructor() {
+  constructor({wallet} = {}) {
     this.accounts = [];
-    this.wallet = Wallet.getInstance();
+    this.wallet = wallet || Wallet.getInstance();
     this.eventManager = new EventManager();
     this.eventManager.registerEvents(AccountsEvents);
   }
 
   async load() {
-    this.accounts = await Wallet.getInstance().query({
+    this.accounts = await this.wallet.query({
       type: 'Address',
     });
     this.eventManager.emit(AccountsEvents.loaded);
     return this.accounts;
   }
 
-  async exportAccount(accountId, password) {
-    return WalletRpc.exportAccount(accountId, password);
+  async exportAccount(address, password) {
+    return WalletRpc.exportAccount(address, password);
   }
 
   async importAccount(json, password) {
@@ -59,7 +53,7 @@ export class Accounts {
   }
 
   async fetchBalance(accountId) {
-    const account = await this.getAccount(accountId);
+    const account = await this.getByAddress(accountId);
     const balance = await ApiRpc.getAccountBalance(account.address);
     const currency = await this.findCorrelationByType(accountId, 'Currency');
 
@@ -70,8 +64,12 @@ export class Accounts {
     return balance;
   }
 
-  async getBalance(accountId) {
-    const currency = await this.findCorrelationByType(accountId, 'Currency');
+  async getBalance(address, skipFetch?) {
+    if (!skipFetch) {
+      await this.fetchBalance(address);
+    }
+
+    const currency = await this.findCorrelationByType(address, 'Currency');
     return currency.value;
   }
 
@@ -79,27 +77,24 @@ export class Accounts {
     return this.accounts;
   }
 
-  async getAccount(accountId): Promise<Account> {
-    const accountDocument = await Wallet.getInstance().getDocumentById(
-      accountId,
-    );
-
-    return {
-      ...accountDocument,
-      correlations: await WalletRpc.resolveCorrelations(accountId),
-    };
+  getAccountIcon(address: string, isAlternative: boolean): Promise<any> {
+    return PolkadotUIRpc.getPolkadotSvgIcon(address, isAlternative);
   }
 
-  async findCorrelationByType(accountId: string, type: DocumentType) {
-    const account = await this.getAccount(accountId);
-    return account.correlations.find(c => c.type === type);
+  async getByAddress(address: string): Promise<AccountDetails> {
+    return Account.with(address);
+  }
+
+  async findCorrelationByType(address: string, type: DocumentType) {
+    const correlations = await WalletRpc.resolveCorrelations(address);
+    return correlations.find(c => c.type === type);
   }
 
   generateMnemonic(): Promise<string> {
     return UtilCryptoRpc.mnemonicGenerate(12);
   }
 
-  async update(account: Account) {
+  async update(account: AccountDetails) {
     await WalletRpc.update(account);
     this.eventManager.emit(AccountsEvents.accountUpdated);
     await this.load();
@@ -140,11 +135,9 @@ export class Accounts {
       const pair = await KeyringRpc.addFromJson(json, password);
 
       keyPairType = pair.type;
-
-      // keyPairType = '2';
     }
 
-    const account: Account = {
+    const account: AccountDetails = {
       id: address,
       name,
       keyPairType,
@@ -167,7 +160,8 @@ export class Accounts {
     this.eventManager.emit(AccountsEvents.accountCreated, account);
 
     await this.load();
-    return account;
+
+    return Account.withAsync(account.address);
   }
 
   async remove(accountId) {
@@ -178,9 +172,9 @@ export class Accounts {
     this.load();
   }
 
-  static getInstance(): Accounts {
+  static getInstance(options = {}): Accounts {
     if (!Accounts.instance) {
-      Accounts.instance = new Accounts();
+      Accounts.instance = new Accounts(options);
     }
 
     return Accounts.instance;
