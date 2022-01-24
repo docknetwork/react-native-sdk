@@ -2,7 +2,7 @@ import * as RNKeychain from 'react-native-keychain';
 
 export const Keychain = {
   ...RNKeychain,
-  setItem(id, data, options = {}) {
+  setItem(id, data = {}, options = {}) {
     const jsonData = JSON.stringify(data);
 
     options.service = id;
