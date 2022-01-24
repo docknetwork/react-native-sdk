@@ -32,6 +32,8 @@ class RpcStorageInterface extends StorageInterface {
         err.toString(),
       );
       this.documents = {};
+
+      throw err;
     }
   }
 
