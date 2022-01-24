@@ -27,45 +27,45 @@ describe('Transactions integration test', () => {
     accountTx = Transactions.with(account);
   });
 
-  // it('Expect to get transaction fee', async () => {
-  //   const feeAmount = await accountTx.getFee(txInput);
-  //   expect(parseInt(feeAmount, 10)).toBeGreaterThan(0);
-  // });
+  it('Expect to get transaction fee', async () => {
+    const feeAmount = await accountTx.getFee(txInput);
+    expect(parseInt(feeAmount, 10)).toBeGreaterThan(0);
+  });
 
-  // it('Expect to receive "Inability to pay fees" error', async () => {
-  //   let error;
-  //   try {
-  //     const account3 = await wallet.accounts.create({name: 'no balance'});
-  //     await Transactions.with(account3).send(txInput);
-  //   } catch (err) {
-  //     error = err.toString();
-  //   }
+  it('Expect to receive "Inability to pay fees" error', async () => {
+    let error;
+    try {
+      const account3 = await wallet.accounts.create({name: 'no balance'});
+      await Transactions.with(account3).send(txInput);
+    } catch (err) {
+      error = err.toString();
+    }
 
-  //   expect(error).toContain(
-  //     'Error: 1010: Invalid Transaction: Inability to pay some fees',
-  //   );
+    expect(error).toContain(
+      'Error: 1010: Invalid Transaction: Inability to pay some fees',
+    );
 
-  //   // TODO: Check transaction history
-  // });
+    // TODO: Check transaction history
+  });
 
-  // it('Expect to receive "Balance too low" error', async () => {
-  //   let error;
-  //   try {
-  //     await accountTx.send({
-  //       ...txInput,
-  //       amount: DOCK_TOKEN_UNIT * 100000000,
-  //     });
-  //   } catch (err) {
-  //     console.log(err);
-  //     error = err.toString();
-  //   }
+  it('Expect to receive "Balance too low" error', async () => {
+    let error;
+    try {
+      await accountTx.send({
+        ...txInput,
+        amount: DOCK_TOKEN_UNIT * 100000000,
+      });
+    } catch (err) {
+      console.log(err);
+      error = err.toString();
+    }
 
-  //   expect(error).toContain(
-  //     'Error: balances.InsufficientBalance:  Balance too low to send value',
-  //   );
+    expect(error).toContain(
+      'Error: balances.InsufficientBalance:  Balance too low to send value',
+    );
 
-  //   // TODO: Check transaction history
-  // });
+    // TODO: Check transaction history
+  });
 
   it('Expect to send transaction (complete)', async () => {
     const hash = '0x1234';
