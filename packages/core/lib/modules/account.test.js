@@ -35,7 +35,10 @@ describe('Account', () => {
   it('expect to get balance', () => {
     jest.spyOn(account.accounts, 'getBalance');
     account.getBalance();
-    expect(account.accounts.getBalance).toBeCalledWith(account.address, undefined);
+    expect(account.accounts.getBalance).toBeCalledWith(
+      account.address,
+      undefined,
+    );
   });
 
   it('expect to export account', () => {

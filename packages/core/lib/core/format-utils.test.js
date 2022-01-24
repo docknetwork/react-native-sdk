@@ -17,7 +17,7 @@ describe('Format util', () => {
       sr25519Address,
     );
   });
-  
+
   it('getPlainDockAmount', () => {
     const amount = getPlainDockAmount(10);
     expect(amount.toNumber()).toBe(10000000);
