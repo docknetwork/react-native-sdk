@@ -11,10 +11,7 @@ initRpcClient(jsonRPCRequest => {
   return Promise.resolve(jsonRPCRequest);
 });
 
-const postMessage = message =>
-  window.ReactNativeWebView
-    ? window.ReactNativeWebView.postMessage(JSON.stringify(message))
-    : console.log('POST Message', message);
+const postMessage = message => window.ReactNativeWebView && window.ReactNativeWebView.postMessage(JSON.stringify(message));
 
 const addEventListener = (...args) =>
   (navigator.appVersion.includes('Android')
@@ -32,7 +29,6 @@ setLogger({
 });
 
 global.handleEvent = event => {
-  console.log('received message', event);
   const data = event.data;
 
   if (data && data.type === 'json-rpc-request') {
