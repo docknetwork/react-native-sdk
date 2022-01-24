@@ -5,13 +5,13 @@ node_modules
 /.pnp
 .pnp.js
 
-/dock
 # testing
 /coverage
 /out
 # production
 /build
 
+/dock
 /dock.management
 /dock.lock 
 .env
