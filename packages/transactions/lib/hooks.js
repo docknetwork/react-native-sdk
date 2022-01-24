@@ -1,3 +1,4 @@
+/* eslint-disable */
 // Work in progress
 // Examples on how to integrate with react
 // Will be moved to a separate package
