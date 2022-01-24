@@ -35,19 +35,19 @@ describe('KeyringService', () => {
     );
   });
 
-  // it("Create pair, Edwards: ed25519", () => {
-  //   const type = "ed25519";
-  //   const pair = keyring.addFromMnemonic(phrase, {}, type);
-  //   expect(pair.address).toBe(
-  //     "3Cudp4zNQTb4oEaB3Pyyu3wkQXAs6ta5LSkh7PcW7DEhkvSW"
-  //   );
-  // });
+  it("Create pair, Edwards: ed25519", () => {
+    const type = "ed25519";
+    const pair = keyring.addFromMnemonic(phrase, {}, type);
+    expect(pair.address).toBe(
+      "37DhmhmagugS2pUDVx618ojLpp6mjTjmB9wxPjLkwiudmBvc"
+    );
+  });
 
-  // it("Create pair, ECDSA", () => {
-  //   const type = "ecdsa";
-  //   const pair = keyring.addFromMnemonic(phrase, {}, type);
-  //   expect(pair.address).toBe(
-  //     "3F61e6tjURzsvpXwADj5nKhC6yTtBGqXre3XA2nkNDHUadq4"
-  //   );
-  // });
+  it("Create pair, ECDSA", () => {
+    const type = "ecdsa";
+    const pair = keyring.addFromMnemonic(phrase, {}, type);
+    expect(pair.address).toBe(
+      "39W9ykjfE5bx3c8GCqEheX8DeC8tN9qReKKQaNqkgUpZ2QKo"
+    );
+  });
 });
