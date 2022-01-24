@@ -9,6 +9,7 @@ export function addSchema(item) {
   schema.push(item);
 }
 
+
 export async function initRealm() {
   realm = await Realm.open({
     path: 'dock',

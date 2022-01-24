@@ -37,15 +37,15 @@ export async function ensureDockReady() {
   }
 
   return new Promise(resolve => {
-    const checkDockRedy = () => {
+    const checkDockReady = () => {
       if (isDockReady) {
         return resolve();
       }
 
-      setTimeout(checkDockRedy, 200);
+      setTimeout(checkDockReady, 200);
     };
 
-    checkDockRedy();
+    checkDockReady();
   });
 }
 
