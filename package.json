@@ -7,10 +7,6 @@
       "packages/**"
     ]
   },
-  "peerDependencies": {
-    "json-rpc-2.0": "*",
-    "react": "*"
-  },
   "resolutions": {
     "@polkadot/util-crypto": "7.9.2",
     "@polkadot/wasm-crypto": "4.5.1",
