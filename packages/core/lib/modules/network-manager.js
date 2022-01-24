@@ -36,9 +36,12 @@ function getNetworkInfo(networkId): NetworkInfo {
 
 export class NetworkManager {
   networkId: NetworkId;
+  isOnline: boolean;
 
   constructor() {
     this.networkId = 'mainnet';
+    // TODO: Detect offline mode
+    this.isOnline = true;
   }
 
   /**

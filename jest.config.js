@@ -15,6 +15,6 @@ module.exports = {
   ],
   "moduleNameMapper": {},
   "transformIgnorePatterns": [
-    "/node_modules/(?!@polkadot|@babel|@docknetwork)",
+    "/node_modules/(?!@polkadot|@babel|@docknetwork|@digitalbazaar)",
   ],
 }

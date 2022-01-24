@@ -100,6 +100,11 @@ const createAccountDocuments = async ({
 
 const resolveCorrelations = async documentId => {
   const document = await getDocumentById(documentId);
+
+  if (!document) {
+    throw new Error(`Document ${documentId} not found`);
+  }
+
   const correlation = await Promise.all(
     (document.correlation || []).map(docId => getDocumentById(docId)),
   );

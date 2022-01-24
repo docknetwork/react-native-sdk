@@ -7,6 +7,7 @@ import {getRealm, initRealm} from '../core/realm';
 import {DocumentType, WalletDocument} from '../types';
 import {EventManager} from './event-manager';
 import {NetworkManager} from './network-manager';
+import {Accounts} from './accounts';
 
 export const NetworkConfigs = {
   mainnet: {
@@ -32,6 +33,7 @@ export const WalletEvents = {
   documentUpdated: 'document-updated',
   documentRemoved: 'document-removed',
   networkUpdated: 'network-updated',
+  networkConnected: 'network-connected',
 };
 
 export type WalletStatus = 'closed' | 'loading' | 'ready';
@@ -41,14 +43,22 @@ export class Wallet {
   networkManager: NetworkManager;
   context: string[];
   status: WalletStatus;
+  apiConnected: boolean;
   eventManager: EventManager;
+  walletId: string;
+  accounts: Accounts;
 
-  constructor() {
-    this.context = ['https://w3id.org/wallet/v1'];
+  constructor({
+    walletId = 'dock-wallet',
+    context = ['https://w3id.org/wallet/v1'],
+  } = {}) {
+    this.walletId = walletId;
+    this.context = context;
     this.networkManager = NetworkManager.getInstance();
     this.eventManager = new EventManager();
     this.status = 'closed';
     this.eventManager.registerEvents(WalletEvents);
+    this.accounts = Accounts.getInstance({wallet: this});
   }
 
   async close() {
@@ -72,13 +82,23 @@ export class Wallet {
 
     await initRealm();
     await UtilCryptoRpc.cryptoWaitReady();
-    await WalletRpc.create('dock-wallet');
+    await WalletRpc.create(this.walletId);
     await WalletRpc.load();
-    await this.initNetwork();
     this.status = 'ready';
+    this.initNetwork();
+  }
+
+  async ensureNetwork() {
+    if (!connectionInProgress) {
+      this.initNetwork();
+    }
+
+    await this.eventManager.waitFor(WalletEvents.networkConnected);
   }
 
   async initNetwork() {
+    this.connectionInProgress = true;
+
     const networkInfo = this.networkManager.getNetworkInfo();
     await KeyringRpc.initialize({
       ss58Format: networkInfo.addressPrefix,
@@ -93,6 +113,8 @@ export class Wallet {
     await DockRpc.init({
       address: networkInfo.substrateUrl,
     });
+
+    this.connectionInProgress = false;
   }
 
   getContext() {
@@ -138,6 +160,9 @@ export class Wallet {
     return document;
   }
 
+  async export(password) {
+    return WalletRpc.exportWallet(password);
+  }
   /**
    * Add all documents in the wallet
    * @param {*} options
@@ -150,19 +175,21 @@ export class Wallet {
       name: string,
     } = {},
   ): Promise<WalletDocument[]> {
-    const equals = {};
+    let equals;
 
-    if (params.type) {
-      equals['content.type'] = params.type;
-    }
+    Object.keys(params).forEach(key => {
+      const value = params[key];
 
-    if (params.id) {
-      equals['content.id'] = params.id;
-    }
+      if (!value) {
+        return;
+      }
 
-    if (params.name) {
-      equals['content.name'] = params.name;
-    }
+      if (!equals) {
+        equals = {};
+      }
+
+      equals[`content.${key}`] = value;
+    });
 
     return WalletRpc.query({
       equals,
@@ -172,6 +199,18 @@ export class Wallet {
   async getDocumentById(documentId) {
     const result = await this.query({id: documentId});
     return result[0];
+  }
+
+  static async create({walletId, json, password} = {}): Wallet {
+    const wallet = new Wallet({walletId});
+
+    await wallet.load();
+
+    if (json) {
+      await WalletRpc.importWallet(json, password);
+    }
+
+    return wallet;
   }
 
   /**

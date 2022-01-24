@@ -1,11 +1,18 @@
-import {ApiRpc} from '../client/api-rpc';
+// import {ApiRpc} from '../client/api-rpc';
+import './schema';
 import uuid from 'uuid';
-import {getRealm} from '../core/realm';
-import {DOCK_TOKEN_UNIT} from '../core/format-utils';
-import {fetchTransactions} from '../core/subscan';
+import {DOCK_TOKEN_UNIT} from '@docknetwork/wallet-sdk-core/lib/core/format-utils';
+import {fetchTransactions} from '@docknetwork/wallet-sdk-core/lib/core/subscan';
 import BigNumber from 'bignumber.js';
-import {Accounts} from './accounts';
-import {NetworkManager} from './network-manager';
+import {Accounts} from '@docknetwork/wallet-sdk-core/lib/modules/accounts';
+import {Account} from '@docknetwork/wallet-sdk-core/lib/modules/account';
+import {ApiRpc} from '@docknetwork/wallet-sdk-core/lib/client/api-rpc';
+import {NetworkManager} from '@docknetwork/wallet-sdk-core/lib/modules/network-manager';
+import {getRealm} from '@docknetwork/wallet-sdk-core/lib/core/realm';
+import {getRpcEventEmitter} from '@docknetwork/wallet-sdk-core/lib/events';
+import {TransactionDetails} from './transaction';
+
+// import {NetworkManager} from './network-manager';
 
 export const TransactionStatus = {
   InProgress: 'pending',
@@ -13,24 +20,116 @@ export const TransactionStatus = {
   Complete: 'complete',
 };
 
+export type TransactionInput = {
+  fromAddress?: string,
+  toAddress: string,
+  amount: string,
+};
+
+export class AccountTransactions {
+  account: Account;
+  transactions: Transactions;
+
+  constructor(account: account, transactions?: Transactions) {
+    this.account = account;
+    this.transactions = transactions || Transactions.getInstance();
+  }
+
+  static create(
+    account: Account,
+    transactions?: Transactions,
+  ): AccountTransactions {
+    return new AccountTransactions(account, transactions);
+  }
+
+  getTxInput({toAddress, amount}) {
+    return {
+      fromAddress: this.account.address,
+      toAddress,
+      amount,
+    };
+  }
+
+  getFee({toAddress, amount}) {
+    return this.transactions.getFeeAmount(
+      this.getTxInput({
+        toAddress,
+        amount,
+      }),
+    );
+  }
+
+  async send({toAddress, amount}) {
+    return this.transactions.send(
+      this.getTxInput({
+        toAddress,
+        amount,
+      }),
+    );
+  }
+
+  async getTransactions(): Promise<TransactionDetails[]> {
+    return getRealm()
+      .objects('Transaction')
+      .filtered(
+        'fromAddress = $0 or recipientAddress = $0',
+        this.account.address,
+      )
+      .toJSON();
+  }
+}
+
+export const TransactionEvents = {
+  added: 'transaction-added',
+  updated: 'transaction-updated',
+};
+
 /**
  * Transactions Module
  */
 export class Transactions {
-  constructor() {
-    this.transactions = [];
+  constructor(accounts: Accounts) {
+    this.accounts = accounts || Accounts.getInstance();
+    this.wallet = this.accounts.wallet;
+    this.eventManager = this.wallet.eventManager;
   }
 
   /**
    * Get transactions module instance
    * @returns module instance
    */
-  static getInstance() {
+  static getInstance(): Transactions {
     if (!Transactions.instance) {
       Transactions.instance = new Transactions();
     }
 
     return Transactions.instance;
+  }
+
+  static with(account: string | Account): AccountTransactions {
+    if (typeof account === 'string') {
+      account = Account.with(account);
+    }
+
+    return AccountTransactions.create(account);
+  }
+
+  getByHash(hash): Promise<TransactionDetails> {
+    return getRealm()
+      .objects('Transaction')
+      .filtered('hash = $0', hash)
+      .toJSON()[0];
+  }
+
+  getByAccount(address): Promise<TransactionDetails> {
+    return getRealm()
+      .objects('Transaction')
+      .filtered('fromAddress = $0 or recipientAddress = $0', address)
+      .toJSON();
+  }
+
+  getAll(): Promise<TransactionDetails> {
+    return getRealm().objects('Transaction').toJSON();
   }
 
   /**
@@ -39,43 +138,37 @@ export class Transactions {
    * @param {string} account
    */
   async loadExternalTransactions(account) {
-    const realm = getRealm();
-    const dbTransactions = realm.objects('Transaction').toJSON();
-
-    const handleTransaction = tx => {
-      if (tx.from !== account && tx.to !== account) {
-        return;
-      }
-
-      if (dbTransactions.find(item => item.hash === tx.hash)) {
-        return;
-      }
-
-      const newTx = {
-        amount: BigNumber(tx.amount).times(DOCK_TOKEN_UNIT).toString(),
-        feeAmount: tx.fee,
-        recipientAddress: tx.to,
-        fromAddress: tx.from,
-        id: tx.hash,
-        hash: tx.hash,
-        network: 'mainnet',
-        status: 'complete',
-        date: new Date(parseInt(tx.block_timestamp + '000', 10)),
-      };
-
-      realm.write(() => {
-        realm.create('Transaction', newTx, 'modified');
-      });
-    };
-
-    let data;
-    let page = 0;
-
-    do {
-      data = await fetchTransactions({address: account, page});
-      data.transfers.forEach(handleTransaction);
-      page++;
-    } while (data.hasNextPage);
+    // const realm = getRealm();
+    // const dbTransactions = realm.objects('Transaction').toJSON();
+    // const handleTransaction = tx => {
+    //   if (tx.from !== account && tx.to !== account) {
+    //     return;
+    //   }
+    //   if (dbTransactions.find(item => item.hash === tx.hash)) {
+    //     return;
+    //   }
+    //   const newTx = {
+    //     amount: BigNumber(tx.amount).times(DOCK_TOKEN_UNIT).toString(),
+    //     feeAmount: tx.fee,
+    //     recipientAddress: tx.to,
+    //     fromAddress: tx.from,
+    //     id: tx.hash,
+    //     hash: tx.hash,
+    //     network: 'mainnet',
+    //     status: 'complete',
+    //     date: new Date(parseInt(tx.block_timestamp + '000', 10)),
+    //   };
+    //   realm.write(() => {
+    //     realm.create('Transaction', newTx, 'modified');
+    //   });
+    // };
+    // let data;
+    // let page = 0;
+    // do {
+    //   data = await fetchTransactions({address: account, page});
+    //   data.transfers.forEach(handleTransaction);
+    //   page++;
+    // } while (data.hasNextPage);
   }
 
   /**
@@ -84,28 +177,23 @@ export class Transactions {
    * @returns transactions
    */
   async loadTransactions() {
-    const realm = getRealm();
-    const networkId = NetworkManager.getInstance().networkId;
-
-    if (networkId === 'mainnet') {
-      const accounts = Accounts.getInstance().getAccounts();
-
-      for (const account of accounts) {
-        try {
-          this.loadExternalTransactions(account.id);
-        } catch (err) {
-          console.error(err);
-        }
-      }
-    }
-
-    let items = realm.objects('Transaction').toJSON();
-
-    if (networkId === 'mainnet') {
-      items = items.filter(item => !(item.status === 'complete' && !item.hash));
-    }
-
-    return items;
+    // const realm = getRealm();
+    // const networkId = NetworkManager.getInstance().networkId;
+    // if (networkId === 'mainnet') {
+    //   const accounts = Accounts.getInstance().getAccounts();
+    //   for (const account of accounts) {
+    //     try {
+    //       this.loadExternalTransactions(account.id);
+    //     } catch (err) {
+    //       console.error(err);
+    //     }
+    //   }
+    // }
+    // let items = realm.objects('Transaction').toJSON();
+    // if (networkId === 'mainnet') {
+    //   items = items.filter(item => !(item.status === 'complete' && !item.hash));
+    // }
+    // return items;
   }
 
   /**
@@ -138,75 +226,60 @@ export class Transactions {
    * Send transaction
    * @param {*} param0
    */
-  sendTransaction({
-    recipientAddress,
-    accountAddress,
-    amount,
-    fee,
-    prevTransaction,
-  }) {
-    const parsedAmount = parseFloat(amount) * DOCK_TOKEN_UNIT;
+  async send({toAddress, fromAddress, amount, fee, prevTxHash}) {
+    const amountUnits = parseFloat(amount) * DOCK_TOKEN_UNIT;
 
-    const internalId = uuid();
-    const transaction = {
-      id: internalId,
-      date: new Date().toISOString(),
-      fromAddress: accountAddress,
-      recipientAddress: recipientAddress,
-      amount: `${parsedAmount}`,
-      feeAmount: `${fee}`,
-      status: TransactionStatus.InProgress,
-    };
+    const hash = await ApiRpc.sendTokens({
+      toAddress,
+      fromAddress,
+      amount: amountUnits,
+    });
 
     const realm = getRealm();
+    const emitter = getRpcEventEmitter();
+
+    const transaction = {
+      hash,
+      date: new Date().toISOString(),
+      fromAddress: fromAddress,
+      recipientAddress: toAddress,
+      amount: `${amount}`,
+      feeAmount: `${fee}`,
+      status: TransactionStatus.InProgress,
+      network: NetworkManager.getInstance().networkId,
+    };
 
     realm.write(() => {
       realm.create('Transaction', transaction, 'modified');
     });
 
-    this.transactions.push(transaction);
-
-    return ApiRpc.sendTokens({
-      recipientAddress,
-      accountAddress,
-      amount: parsedAmount,
-    })
-      .then(res => {
-        const updatedTransation = {
-          ...transaction,
-          status: TransactionStatus.Complete,
-        };
-        this.updateTransaction(updatedTransation);
-
-        realm.write(() => {
-          realm.create('Transaction', updatedTransation, 'modified');
-        });
-
-        if (
-          prevTransaction &&
-          prevTransaction.status === TransactionStatus.Failed
-        ) {
-          this.updateTransaction({
-            ...prevTransaction,
-            retrySucceed: true,
-          });
-        }
-      })
-      .catch(err => {
-        console.error(err);
-
-        const updatedTransation = {
-          ...transaction,
-          status: TransactionStatus.Failed,
-        };
-
-        realm.write(() => {
-          realm.create('Transaction', updatedTransation, 'modified');
-        });
-
-        this.updateTransaction(updatedTransation);
-
-        throw new Error('transaction_failed');
+    emitter.on(`${hash}-complete`, () => {
+      realm.write(() => {
+        realm.create(
+          'Transaction',
+          {
+            ...transaction,
+            status: TransactionStatus.Complete,
+          },
+          'modified',
+        );
       });
+    });
+
+    emitter.on(`${hash}-failed`, error => {
+      realm.write(() => {
+        realm.create(
+          'Transaction',
+          {
+            ...transaction,
+            status: TransactionStatus.Failed,
+            error,
+          },
+          'modified',
+        );
+      });
+    });
+
+    return hash;
   }
 }
