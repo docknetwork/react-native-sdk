@@ -1,9 +1,7 @@
-// import {ApiRpc} from '../client/api-rpc';
 import './schema';
-import uuid from 'uuid';
 import {DOCK_TOKEN_UNIT} from '@docknetwork/wallet-sdk-core/lib/core/format-utils';
-import {fetchTransactions} from '@docknetwork/wallet-sdk-core/lib/core/subscan';
-import BigNumber from 'bignumber.js';
+// import {fetchTransactions} from '@docknetwork/wallet-sdk-core/lib/core/subscan';
+// import BigNumber from 'bignumber.js';
 import {Accounts} from '@docknetwork/wallet-sdk-core/lib/modules/accounts';
 import {Account} from '@docknetwork/wallet-sdk-core/lib/modules/account';
 import {ApiRpc} from '@docknetwork/wallet-sdk-core/lib/client/api-rpc';
@@ -11,8 +9,6 @@ import {NetworkManager} from '@docknetwork/wallet-sdk-core/lib/modules/network-m
 import {getRealm} from '@docknetwork/wallet-sdk-core/lib/core/realm';
 import {getRpcEventEmitter} from '@docknetwork/wallet-sdk-core/lib/events';
 import {TransactionDetails} from './transaction';
-
-// import {NetworkManager} from './network-manager';
 
 export const TransactionStatus = {
   InProgress: 'pending',
