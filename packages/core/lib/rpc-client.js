@@ -1,3 +1,4 @@
+import assert from 'assert';
 import {JSONRPCClient} from 'json-rpc-2.0';
 import {encryptData, SECURE_JSON_RPC} from './core/crypto';
 import {getLogger} from './logger';
@@ -7,6 +8,8 @@ let client;
 
 export const getRpcClient = () => client;
 export const rpcRequest = (method, ...params) => {
+  assert(typeof method === 'string', `invalid method: ${method}`);
+
   try {
     getLogger().log('Sending rpc request', {
       method,
