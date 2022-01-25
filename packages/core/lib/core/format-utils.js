@@ -36,14 +36,24 @@ export function formatAddress(address, size = 19) {
   )}`;
 }
 
+export function isNumberValid(v: any) {
+  if (v instanceof BigNumber) {
+    return true;
+  }
+
+  return !isNaN(parseInt(v, 10));
+}
+
 export function formatDockAmount(value) {
   assert(!!value, 'value is required');
+  assert(isNumberValid(value), 'value is not valid');
 
   return BigNumber(value).dividedBy(DOCK_TOKEN_UNIT).toNumber();
 }
 
 export function getPlainDockAmount(value) {
   assert(!!value, 'value is required');
+  assert(isNumberValid(value), 'value is not valid');
 
   return BigNumber(value).times(DOCK_TOKEN_UNIT);
 }
