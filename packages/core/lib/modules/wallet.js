@@ -1,3 +1,4 @@
+import assert from 'assert';
 import {v4 as uuid} from 'uuid';
 import {DockRpc} from '../client/dock-rpc';
 import {KeyringRpc} from '../client/keyring-rpc';
@@ -118,6 +119,12 @@ export class Wallet {
     this.context = context;
   }
 
+  assertReady() {
+    assert(
+      this.status === 'ready',
+      `The wallet is not ready yet, the current status is: ${this.status}`,
+    );
+  }
   /**
    * Remove document
    * @returns Promise<boolean>
@@ -134,6 +141,8 @@ export class Wallet {
    * @returns document
    */
   async add(document: WalletDocument) {
+    this.assertReady();
+
     const newDocument = {
       ...document,
       id: document.id || uuid(),
@@ -148,6 +157,8 @@ export class Wallet {
   }
 
   async update(document: WalletDocument) {
+    this.assertReady();
+
     await WalletRpc.update(document);
     this.eventManager.emit(WalletEvents.documentUpdated, document);
     return document;
@@ -168,6 +179,8 @@ export class Wallet {
       name: string,
     } = {},
   ): Promise<WalletDocument[]> {
+    this.assertReady();
+
     let equals;
 
     Object.keys(params).forEach(key => {
@@ -190,6 +203,8 @@ export class Wallet {
   }
 
   async getDocumentById(documentId) {
+    this.assertReady();
+
     const result = await this.query({id: documentId});
     return result[0];
   }
