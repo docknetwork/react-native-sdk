@@ -20,6 +20,7 @@ class MemoryStorageInterface extends StorageInterface {
         this.documents = {};
       }
     } catch (err) {
+      console.error(err);
       this.documents = {};
     }
   }
