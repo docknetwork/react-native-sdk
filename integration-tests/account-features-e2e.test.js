@@ -1,6 +1,5 @@
 import {Wallet, WalletDocument} from '@docknetwork/wallet-sdk-core/lib/modules/wallet';
 import {Accounts} from '@docknetwork/wallet-sdk-core/lib/modules/accounts';
-import dock from '@docknetwork/sdk';
 import { getKeyringPair } from '@docknetwork/wallet-sdk-core/lib/services/keyring';
 import { ApiRpc } from '@docknetwork/wallet-sdk-core/lib/client/api-rpc';
 

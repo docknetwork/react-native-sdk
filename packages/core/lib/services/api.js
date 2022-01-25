@@ -1,5 +1,4 @@
-import dock from '@docknetwork/sdk';
-import {ensureDockReady} from './dock';
+import {ensureDockReady, dock} from './dock';
 import {getAccountKeypair} from './wallet';
 
 export default {
@@ -14,6 +13,7 @@ export default {
     },
 
     async getFeeAmount({toAddress, fromAddress, amount}) {
+      console.log('get fee amount', dock);
       const account = await getAccountKeypair(fromAddress);
 
       dock.setAccount(account);

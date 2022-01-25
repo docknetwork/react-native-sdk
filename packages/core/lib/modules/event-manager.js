@@ -53,6 +53,6 @@ export class EventManager {
 
   waitFor(eventName) {
     this.checkEvent(eventName);
-    return once(this.emitter, eventName);
+    return once(this.eventEmitter, eventName);
   }
 }

@@ -1,8 +1,10 @@
-import dock from '@docknetwork/sdk';
+import { DockAPI } from '@docknetwork/sdk';
 import {getLogger} from '../logger';
 import {getCurrentPair} from './keyring';
 
 let isDockReady = false;
+
+export const dock = new DockAPI();
 
 export async function ensureDockReady() {
   if (isDockReady) {
@@ -26,9 +28,7 @@ export default {
   name: 'dock',
   routes: {
     async init(...params) {
-      getLogger().log('Attempt to init dock', params);
       const result = await dock.init(...params);
-      getLogger().log('Dock sdk initialized', result);
       isDockReady = true;
       return result;
     },

@@ -97,24 +97,29 @@ export class Wallet {
   }
 
   async initNetwork() {
-    this.connectionInProgress = true;
+    try {
+      this.connectionInProgress = true;
 
-    const networkInfo = this.networkManager.getNetworkInfo();
-    await KeyringRpc.initialize({
-      ss58Format: networkInfo.addressPrefix,
-    });
+      const networkInfo = this.networkManager.getNetworkInfo();
+      await KeyringRpc.initialize({
+        ss58Format: networkInfo.addressPrefix,
+      });
 
-    const isDockConnected = await DockRpc.isApiConnected();
+      const isDockConnected = await DockRpc.isApiConnected();
 
-    if (isDockConnected) {
-      await DockRpc.disconnect();
+      if (isDockConnected) {
+        await DockRpc.disconnect();
+      }
+
+      await DockRpc.init({
+        address: networkInfo.substrateUrl,
+      });
+      
+      this.eventManager.emit(WalletEvents.networkConnected);
+    } finally {
+      this.connectionInProgress = false;
+      
     }
-
-    await DockRpc.init({
-      address: networkInfo.substrateUrl,
-    });
-
-    this.connectionInProgress = false;
   }
 
   getContext() {
