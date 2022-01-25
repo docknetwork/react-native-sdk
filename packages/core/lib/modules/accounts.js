@@ -1,3 +1,4 @@
+import assert from 'assert';
 import {WalletRpc} from '../client/wallet-rpc';
 import {UtilCryptoRpc} from '../client/util-crypto-rpc';
 import {KeyringRpc} from '../client/keyring-rpc';
@@ -65,11 +66,18 @@ export class Accounts {
   }
 
   async getBalance(address, skipFetch?) {
+    assert(!!address, 'address is required');
+
     if (!skipFetch) {
       await this.fetchBalance(address);
     }
 
     const currency = await this.findCorrelationByType(address, 'Currency');
+
+    if (!currency) {
+      throw new Error(`currency object was not found for the address ${address}`);
+    }
+
     return currency.value;
   }
 
