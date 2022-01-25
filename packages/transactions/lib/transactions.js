@@ -1,4 +1,5 @@
 import './schema';
+import assert from 'assert';
 import {DOCK_TOKEN_UNIT} from '@docknetwork/wallet-sdk-core/lib/core/format-utils';
 import BigNumber from 'bignumber.js';
 import {Accounts} from '@docknetwork/wallet-sdk-core/lib/modules/accounts';
@@ -26,7 +27,13 @@ export class AccountTransactions {
   account: Account;
   transactions: Transactions;
 
-  constructor(account: account, transactions?: Transactions) {
+  constructor(account: Account, transactions?: Transactions) {
+    assert(!!account, 'account is required');
+    assert(
+      account instanceof Account,
+      'account must be an instance of Account',
+    );
+
     this.account = account;
     this.transactions = transactions || Transactions.getInstance();
   }
