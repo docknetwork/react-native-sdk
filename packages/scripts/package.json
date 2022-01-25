@@ -7,7 +7,18 @@
         "@docknetwork/wallet-sdk-transactions": "0.1.0",
         "@docknetwork/wallet-sdk-bundler": "0.1.0"
     },
+    "resolutions": {
+        "@polkadot/util-crypto": "7.9.2",
+        "@polkadot/wasm-crypto": "4.5.1",
+        "@polkadot/api": "5.6.1",
+        "@polkadot/types": "5.6.1",
+        "@polkadot/types-known": "5.6.1",
+        "@polkadot/util": "7.9.2",
+        "@polkadot/rpc-core": "5.6.1",
+        "@docknetwork/sdk": "1.2.3"
+    },
     "devDependencies": {
+        "@polkadot/types": "5.6.1",
         "@polkadot/keyring": "^7.2.1",
         "@polkadot/types-known": "5.6.1",
         "@polkadot/ui-shared": "^0.87.5",

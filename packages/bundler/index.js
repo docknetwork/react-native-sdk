@@ -1,98 +1,76 @@
-const {rollup} = require('rollup');
-const json = require('@rollup/plugin-json');
-// const multiInput = require('rollup-plugin-multi-input');
-const commonjs = require('@rollup/plugin-commonjs');
-// const {terser} = require('rollup-plugin-terser');
-const {nodeResolve} = require('@rollup/plugin-node-resolve');
-// var flow = require('rollup-plugin-flow');
-const {babel} = require('@rollup/plugin-babel');
-const {wasm} = require('@rollup/plugin-wasm');
+const webpack = require('webpack');
+const {resolve} = require('path');
 
-// see below for details on these options
-const inputOptions = {
-  plugins: [
-    // multiInput(),
-
-    wasm(),
-
-    babel({
-      babelHelpers: 'bundled',
-      exclude: 'node_modules/**',
-      presets: [
-        [
-          '@babel/preset-env',
-          {
-            targets: {
-              esmodules: true,
+function build({entry, path, filename, callback}) {
+  const compiler = webpack({
+    mode: 'production',
+    entry,
+    output: {
+      path,
+      filename,
+    },
+    resolve: {
+      alias: {
+        '@polkadot/types/packageInfo.cjs': resolve(
+          __dirname,
+          '../../node_modules/@polkadot/types/packageInfo.cjs',
+        ),
+      },
+      fallback: {
+        crypto: require.resolve('crypto-browserify'),
+        stream: require.resolve('stream-browserify'),
+        assert: require.resolve('assert'),
+        buffer: require.resolve('buffer'),
+      },
+    },
+    module: {
+      rules: [
+        {
+          test: /\.m?js$/,
+          exclude:
+            /\/node_modules\/(?!@polkadot|@babel|@docknetwork|@digitalbazaar)/,
+          use: {
+            loader: require.resolve('babel-loader'),
+            options: {
+              presets: [['@babel/preset-env']],
+              plugins: ['@babel/plugin-transform-flow-strip-types'],
             },
           },
-        ],
-        ['@babel/preset-flow'],
+        },
+        {
+          test: /\.wasm$/,
+          use: {
+            loader: require.resolve('wasm-loader'),
+          },
+        },
       ],
-      plugins: ['transform-flow-strip-types'],
-    }),
-    commonjs(),
-    nodeResolve(),
+    },
+    plugins: [
+      new webpack.DefinePlugin({
+        'process.env': JSON.stringify(process.env),
+      }),
+      new webpack.ProvidePlugin({
+        Buffer: ['buffer', 'Buffer'],
+      }),
+    ],
+  });
 
-    // flow({
-    //   all: true,
-    //   // include: "@docknetwork"
-    // }),
-    json(),
-    // terser(),
-  ],
-};
-
-// you can create multiple outputs from the same input to generate e.g.
-// different formats like CommonJS and ESM
-
-async function build({input, outputDir}) {
-  let bundle;
-  let buildFailed = false;
-  try {
-    // create a bundle
-    bundle = await rollup({
-      ...inputOptions,
-      input,
-    });
-
-    // an array of file names this bundle depends on
-    console.log(bundle.watchFiles);
-
-    // await generateOutputs(bundle);
-    const outputOptionsList = [
-      {
-        dir: outputDir,
-        format: 'esm',
-        entryFileNames: '[name].js',
-      },
-      {
-        dir: outputDir,
-        format: 'cjs',
-        entryFileNames: '[name].cjs',
-      },
-    ];
-    for (const outputOptions of outputOptionsList) {
-      const {output} = await bundle.write(outputOptions);
-
-      for (const chunkOrAsset of output) {
-        if (chunkOrAsset.type === 'asset') {
-          console.log('Asset', chunkOrAsset);
-        } else {
-          console.log('Chunk', chunkOrAsset.modules);
-        }
-      }
+  compiler.run(function (err, stats) {
+    if (err) {
+      console.error(err);
     }
-  } catch (error) {
-    buildFailed = true;
-    // do some error reporting
-    console.error(error);
-  }
-  if (bundle) {
-    // closes the bundle
-    await bundle.close();
-  }
-  process.exit(buildFailed ? 1 : 0);
+
+    if (stats.compilation.errors.length) {
+      console.log(stats.compilation.errors);
+      process.exit(1);
+    }
+
+    console.log('Build succeed');
+
+    if (callback) {
+      callback();
+    }
+  });
 }
 
 module.exports = {
