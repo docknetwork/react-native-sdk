@@ -95,6 +95,8 @@ export class Accounts {
   }
 
   async findCorrelationByType(address: string, type: DocumentType) {
+    assert(typeof address === 'string', 'invalid adress');
+
     const correlations = await WalletRpc.resolveCorrelations(address);
     return correlations.find(c => c.type === type);
   }
