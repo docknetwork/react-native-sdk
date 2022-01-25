@@ -10,6 +10,10 @@ import {getRealm} from '@docknetwork/wallet-sdk-core/lib/core/realm';
 import {getRpcEventEmitter} from '@docknetwork/wallet-sdk-core/lib/events';
 import {TransactionDetails} from './transaction';
 import {fetchTransactions} from '@docknetwork/wallet-sdk-core/lib/core/subscan';
+import {
+  isAddressValid,
+  isNumberValid,
+} from '@docknetwork/wallet-sdk-core/lib/core/validation';
 
 export const TransactionStatus = {
   InProgress: 'pending',
@@ -120,6 +124,8 @@ export class Transactions {
   }
 
   getByHash(hash): Promise<TransactionDetails> {
+    assert(!!hash, 'hash is required');
+
     return getRealm()
       .objects('Transaction')
       .filtered('hash = $0', hash)
@@ -127,6 +133,8 @@ export class Transactions {
   }
 
   getByAccount(address): Promise<TransactionDetails> {
+    assert(isAddressValid(address), 'invalid account address');
+
     return getRealm()
       .objects('Transaction')
       .filtered('fromAddress = $0 or recipientAddress = $0', address)
@@ -140,15 +148,15 @@ export class Transactions {
   /**
    * Load external transactions for the given account
    *
-   * @param {string} account
+   * @param {string} address
    */
-  async loadExternalTransactions(account) {
-    assert(typeof account === 'string', 'invalid account address');
+  async loadExternalTransactions(address) {
+    assert(isAddressValid(address), 'invalid address');
 
     const realm = getRealm();
     const dbTransactions = realm.objects('Transaction');
     const handleTransaction = tx => {
-      if (tx.from !== account && tx.to !== account) {
+      if (tx.from !== address && tx.to !== address) {
         return;
       }
       if (dbTransactions.find(item => item.hash === tx.hash)) {
@@ -172,7 +180,7 @@ export class Transactions {
     let data;
     let page = 0;
     do {
-      data = await fetchTransactions({address: account, page});
+      data = await fetchTransactions({address, page});
       data.transfers.forEach(handleTransaction);
       page++;
     } while (data.hasNextPage);
@@ -224,6 +232,10 @@ export class Transactions {
    * @returns {int} fee amount
    */
   getFeeAmount({fromAddress, toAddress, amount}) {
+    assert(isAddressValid(toAddress), 'invalid toAddress');
+    assert(isAddressValid(fromAddress), 'invalid fromAddress');
+    assert(isNumberValid(amount), 'invalid amount');
+
     return ApiRpc.getFeeAmount({
       fromAddress: fromAddress,
       toAddress,
@@ -236,6 +248,14 @@ export class Transactions {
    * @param {*} param0
    */
   async send({toAddress, fromAddress, amount, fee, prevTxHash}) {
+    assert(isAddressValid(toAddress), 'invalid toAddress');
+    assert(isAddressValid(fromAddress), 'invalid fromAddress');
+    assert(isNumberValid(amount), 'invalid amount');
+
+    if (fee) {
+      assert(isNumberValid(fee), 'invalid fee amount');
+    }
+
     const amountUnits = parseFloat(amount) * DOCK_TOKEN_UNIT;
 
     const hash = await ApiRpc.sendTokens({

@@ -1,5 +1,4 @@
-import BigNumber from 'bignumber.js';
-import {formatAddress, getPlainDockAmount, isNumberValid} from './format-utils';
+import {formatAddress, getPlainDockAmount} from './format-utils';
 
 const sr25519Address = '395pw1L5R4XiScC2BGRrSSSH6fadFuGSTfUcqA5cHPyA21eQ';
 const ed25519Address = '38yWnWt8k3j5BuxssLAH43t5cNevxyShkCAMEx8su3nSsayh';
@@ -22,13 +21,5 @@ describe('Format util', () => {
   it('getPlainDockAmount', () => {
     const amount = getPlainDockAmount(10);
     expect(amount.toNumber()).toBe(10000000);
-  });
-
-  it('isNumberValid', () => {
-    expect(isNumberValid('100000000')).toBeTruthy();
-    expect(isNumberValid('this is not valid')).toBeFalsy();
-    expect(isNumberValid(false)).toBeFalsy();
-    expect(isNumberValid(10)).toBeTruthy();
-    expect(isNumberValid(BigNumber(1))).toBeTruthy();
   });
 });

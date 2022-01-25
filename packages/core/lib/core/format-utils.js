@@ -1,5 +1,6 @@
 import assert from 'assert';
 import BigNumber from 'bignumber.js';
+import {isNumberValid} from './validation';
 
 export const DOCK_TOKEN_UNIT = 1000000;
 
@@ -34,14 +35,6 @@ export function formatAddress(address, size = 19) {
   return `${address.substring(0, offset)}...${address.substring(
     address.length - offset,
   )}`;
-}
-
-export function isNumberValid(v: any) {
-  if (v instanceof BigNumber) {
-    return true;
-  }
-
-  return !isNaN(parseInt(v, 10));
 }
 
 export function formatDockAmount(value) {
