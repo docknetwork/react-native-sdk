@@ -1,3 +1,4 @@
+import assert from 'assert';
 import {DockAPI} from '@docknetwork/sdk';
 import {getCurrentPair} from './keyring';
 
@@ -27,6 +28,7 @@ export default {
   name: 'dock',
   routes: {
     async init(...params) {
+      assert(!!params.address, `address is required`);
       const result = await dock.init(...params);
       isDockReady = true;
       return result;
