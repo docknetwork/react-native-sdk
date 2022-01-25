@@ -17,7 +17,6 @@ export const AccountsEvents = {
   accountRemoved: 'account-removed',
 };
 
-// TODO: Add events to accounts
 export class Accounts {
   accounts: AccountDetails[];
   wallet: Wallet;
