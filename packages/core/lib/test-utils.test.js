@@ -14,8 +14,8 @@ describe('Test utils', () => {
     const fee = 2;
     const delay = 100;
     const txInput = {
-      toAddress: 'test',
-      fromAddress: 'test',
+      toAddress: 'to-addres',
+      fromAddress: 'from-address',
       amount: 1,
     };
 
