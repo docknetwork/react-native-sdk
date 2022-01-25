@@ -114,11 +114,10 @@ export class Wallet {
       await DockRpc.init({
         address: networkInfo.substrateUrl,
       });
-      
+
       this.eventManager.emit(WalletEvents.networkConnected);
     } finally {
       this.connectionInProgress = false;
-      
     }
   }
 
