@@ -144,7 +144,7 @@ export class Accounts {
       const pair = await KeyringRpc.addFromJson(json, password);
 
       if (!pair || !pair.type) {
-        throw new Error('invalid keypair')
+        throw new Error('invalid keypair');
       }
 
       keyPairType = pair.type;
