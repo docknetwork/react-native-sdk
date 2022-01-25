@@ -28,7 +28,7 @@ export default {
   name: 'dock',
   routes: {
     async init(...params) {
-      assert(!!params.address, `address is required`);
+      assert(!!params.address, 'address is required');
       const result = await dock.init(...params);
       isDockReady = true;
       return result;
