@@ -1,3 +1,5 @@
+import assert from 'assert';
+import {isAddressValid} from '../core/validation';
 import {Accounts} from './accounts';
 
 export type AccountDetails = {
@@ -21,6 +23,8 @@ export class Account {
   }
 
   static with(address) {
+    assert(isAddressValid(address), 'invalid address');
+
     const account = new Account(address, Accounts.getInstance());
 
     account.loadPromise = account.loadDetails();
