@@ -9,24 +9,6 @@ import {EventManager} from './event-manager';
 import {NetworkManager} from './network-manager';
 import {Accounts} from './accounts';
 
-export const NetworkConfigs = {
-  mainnet: {
-    name: 'Dock PoS Mainnet',
-    url: 'wss://mainnet-node.dock.io',
-    addressPrefix: 22,
-  },
-  testnet: {
-    name: 'Dock PoS Testnet',
-    url: 'wss://knox-1.dock.io',
-    addressPrefix: 21,
-  },
-  local: {
-    name: 'Local Node',
-    url: 'ws://127.0.0.1:9944',
-    addressPrefix: 21,
-  },
-};
-
 export const WalletEvents = {
   ready: 'ready',
   documentAdded: 'document-added',

@@ -1,3 +1,5 @@
+import assert from 'assert';
+
 export type NetworkInfo = {
   name: string,
   substrateUrl: string,
@@ -27,9 +29,7 @@ export const SUBSTRATE_NETWORKS = {
 function getNetworkInfo(networkId): NetworkInfo {
   const networkInfo = SUBSTRATE_NETWORKS[networkId];
 
-  if (!networkInfo) {
-    throw new Error(`Network ${networkId} not found`);
-  }
+  assert(!!networkInfo, `Network ${networkId} not found`);
 
   return networkInfo;
 }
@@ -50,6 +50,8 @@ export class NetworkManager {
    * @param {string} networkId
    */
   setNetworkId(networkId: NetworkId) {
+    assert(!!SUBSTRATE_NETWORKS[networkId], `invalid networkId ${networkId}`);
+
     this.networkId = networkId;
   }
 
