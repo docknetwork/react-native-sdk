@@ -34,18 +34,25 @@ describe('UtilCryptoService', () => {
   });
 
   describe('deriveValidate', () => {
+    const phrase = UtilCrypto.routes.mnemonicGenerate(12);
     it('expect derive path to be valid', () => {
-      const phrase = UtilCrypto.routes.mnemonicGenerate(12);
       const result = UtilCrypto.routes.deriveValidate(`${phrase}/stuff/stuff`);
 
       expect(result).toStrictEqual({});
     });
 
     it('expect derive path to not be valid', () => {
-      const result = UtilCrypto.routes.deriveValidate('wrong phrase');
-      expect(result).toStrictEqual({
-        error: true,
-      });
+      expect(() => UtilCrypto.routes.deriveValidate('wrong phrase')).toThrow(
+        'invalid derive path',
+      );
+    });
+
+    it('expect derive path to have warning', () => {
+      const result = UtilCrypto.routes.deriveValidate(
+        `${phrase}/stuff///pass/tst`,
+      );
+
+      expect(result.warning).toBe('slash password detected');
     });
   });
 });
