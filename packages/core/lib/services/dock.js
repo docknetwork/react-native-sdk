@@ -6,6 +6,7 @@ let isDockReady = false;
 
 export const dock = new DockAPI();
 
+// TODO: Replace setTimeout by event emitter
 export async function ensureDockReady() {
   if (isDockReady) {
     return;
@@ -27,14 +28,14 @@ export async function ensureDockReady() {
 export default {
   name: 'dock',
   routes: {
-    async init(...params) {
+    async init(params) {
       assert(!!params.address, 'address is required');
-      const result = await dock.init(...params);
+      const result = await dock.init(params);
       isDockReady = true;
       return result;
     },
-    async disconnect(...params) {
-      const result = await dock.disconnect(...params);
+    async disconnect() {
+      const result = await dock.disconnect();
       isDockReady = false;
       return result;
     },
