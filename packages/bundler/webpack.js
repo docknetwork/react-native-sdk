@@ -14,12 +14,6 @@ function build({entry, path, filename}) {
         stream: require.resolve('stream-browserify'),
         buffer: require.resolve('buffer'),
       },
-      // alias: {
-      //   process: 'process/browser',
-      // },
-    },
-    experiments: {
-      // syncWebAssembly: true,
     },
     module: {
       rules: [
@@ -36,17 +30,8 @@ function build({entry, path, filename}) {
         },
         {
           test: /\.wasm$/,
-          // exclude: /(node_modules)/,
           use: {
             loader: 'wasm-loader',
-            // options: {
-            //   presets: [
-            //     [
-            //       '@babel/preset-env'
-            //     ],
-            //   ],
-            //   plugins: ['@babel/plugin-transform-flow-strip-types']
-            // }
           },
         },
       ],
