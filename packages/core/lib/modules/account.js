@@ -38,7 +38,7 @@ export class Account {
 
   async loadDetails() {
     this.details = await this.accounts.wallet.getDocumentById(this.address);
-    // this.name = this.details.name;
+    this.name = this.details.name;
   }
 
   getAddress() {

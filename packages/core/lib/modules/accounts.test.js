@@ -21,7 +21,7 @@ describe('Accounts module', () => {
       .getAccounts()
       .find(item => item.id === account.address);
 
-    // expect(account.name).toBe(name);
+    expect(account.name).toBe(name);
     expect(account.address).toBeDefined();
     expect(foundDocument.id).toBe(account.address);
   });
