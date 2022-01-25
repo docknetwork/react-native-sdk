@@ -13,7 +13,6 @@ export default {
     },
 
     async getFeeAmount({toAddress, fromAddress, amount}) {
-      console.log('get fee amount', dock);
       const account = await getAccountKeypair(fromAddress);
 
       dock.setAccount(account);

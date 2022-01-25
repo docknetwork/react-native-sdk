@@ -45,8 +45,7 @@ export class AccountTransactions {
       toAddress,
       amount,
     };
-    
-    console.log('get tx input', result);
+
     return result;
   }
 
