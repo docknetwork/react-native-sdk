@@ -9,6 +9,7 @@ import {NetworkManager} from '@docknetwork/wallet-sdk-core/lib/modules/network-m
 import {getRealm} from '@docknetwork/wallet-sdk-core/lib/core/realm';
 import {getRpcEventEmitter} from '@docknetwork/wallet-sdk-core/lib/events';
 import {TransactionDetails} from './transaction';
+import { fetchTransactions } from '@docknetwork/wallet-sdk-core/lib/core/subscan';
 
 export const TransactionStatus = {
   InProgress: 'pending',
@@ -39,11 +40,14 @@ export class AccountTransactions {
   }
 
   getTxInput({toAddress, amount}) {
-    return {
+    const result = {
       fromAddress: this.account.address,
       toAddress,
       amount,
     };
+    
+    console.log('get tx input', result);
+    return result;
   }
 
   getFee({toAddress, amount}) {
@@ -134,37 +138,37 @@ export class Transactions {
    * @param {string} account
    */
   async loadExternalTransactions(account) {
-    // const realm = getRealm();
-    // const dbTransactions = realm.objects('Transaction').toJSON();
-    // const handleTransaction = tx => {
-    //   if (tx.from !== account && tx.to !== account) {
-    //     return;
-    //   }
-    //   if (dbTransactions.find(item => item.hash === tx.hash)) {
-    //     return;
-    //   }
-    //   const newTx = {
-    //     amount: BigNumber(tx.amount).times(DOCK_TOKEN_UNIT).toString(),
-    //     feeAmount: tx.fee,
-    //     recipientAddress: tx.to,
-    //     fromAddress: tx.from,
-    //     id: tx.hash,
-    //     hash: tx.hash,
-    //     network: 'mainnet',
-    //     status: 'complete',
-    //     date: new Date(parseInt(tx.block_timestamp + '000', 10)),
-    //   };
-    //   realm.write(() => {
-    //     realm.create('Transaction', newTx, 'modified');
-    //   });
-    // };
-    // let data;
-    // let page = 0;
-    // do {
-    //   data = await fetchTransactions({address: account, page});
-    //   data.transfers.forEach(handleTransaction);
-    //   page++;
-    // } while (data.hasNextPage);
+    const realm = getRealm();
+    const dbTransactions = realm.objects('Transaction');
+    const handleTransaction = tx => {
+      if (tx.from !== account && tx.to !== account) {
+        return;
+      }
+      if (dbTransactions.find(item => item.hash === tx.hash)) {
+        return;
+      }
+      const newTx = {
+        amount: BigNumber(tx.amount).times(DOCK_TOKEN_UNIT).toString(),
+        feeAmount: tx.fee,
+        recipientAddress: tx.to,
+        fromAddress: tx.from,
+        id: tx.hash,
+        hash: tx.hash,
+        network: 'mainnet',
+        status: 'complete',
+        date: new Date(parseInt(tx.block_timestamp + '000', 10)),
+      };
+      realm.write(() => {
+        realm.create('Transaction', newTx, 'modified');
+      });
+    };
+    let data;
+    let page = 0;
+    do {
+      data = await fetchTransactions({address: account, page});
+      data.transfers.forEach(handleTransaction);
+      page++;
+    } while (data.hasNextPage);
   }
 
   /**
@@ -173,23 +177,25 @@ export class Transactions {
    * @returns transactions
    */
   async loadTransactions() {
-    // const realm = getRealm();
-    // const networkId = NetworkManager.getInstance().networkId;
-    // if (networkId === 'mainnet') {
-    //   const accounts = Accounts.getInstance().getAccounts();
-    //   for (const account of accounts) {
-    //     try {
-    //       this.loadExternalTransactions(account.id);
-    //     } catch (err) {
-    //       console.error(err);
-    //     }
-    //   }
-    // }
-    // let items = realm.objects('Transaction').toJSON();
-    // if (networkId === 'mainnet') {
-    //   items = items.filter(item => !(item.status === 'complete' && !item.hash));
-    // }
-    // return items;
+    const realm = getRealm();
+    const networkId = NetworkManager.getInstance().networkId;
+    if (networkId === 'mainnet') {
+      const accounts = Accounts.getInstance().getAccounts();
+      for (const account of accounts) {
+        try {
+          this.loadExternalTransactions(account.address);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    }
+
+    let items = realm.objects('Transaction');
+
+    if (networkId === 'mainnet') {
+      items = items.filter(item => !(item.status === 'complete' && !item.hash));
+    }
+    return items;
   }
 
   /**
@@ -210,11 +216,11 @@ export class Transactions {
    * @param {*} param0
    * @returns {int} fee amount
    */
-  getFeeAmount({recipientAddress, accountAddress, amount}) {
+  getFeeAmount({fromAddress, toAddress, amount}) {
     return ApiRpc.getFeeAmount({
-      recipientAddress: recipientAddress,
-      accountAddress,
-      amount: amount,
+      fromAddress: fromAddress,
+      toAddress,
+      amount,
     });
   }
 

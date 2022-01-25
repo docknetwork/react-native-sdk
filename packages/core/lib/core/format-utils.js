@@ -1,8 +1,12 @@
+import assert from 'assert';
 import BigNumber from 'bignumber.js';
 
 export const DOCK_TOKEN_UNIT = 1000000;
 
 export function formatCurrency(value, currency = 'USD') {
+  assert(!!value, 'value is required');
+  assert(typeof value === 'number' || typeof value === 'bigint', 'value must be a number or bigint');
+
   var formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: currency,
@@ -14,22 +18,30 @@ export function formatCurrency(value, currency = 'USD') {
   return formatter.format(value);
 }
 
-export function formatAddress(value, size = 19) {
-  if (!value || size > value.length) {
-    return value;
+export function formatAddress(address, size = 19) {
+  assert(!!address, 'address is required');
+  assert(typeof address === 'string', 'address must be a string');
+  
+  if (!address || size > address.length) {
+    return address;
   }
 
   const offset = size / 2;
-  return `${value.substring(0, offset)}...${value.substring(
-    value.length - offset,
+
+  return `${address.substring(0, offset)}...${address.substring(
+    address.length - offset,
   )}`;
 }
 
 export function formatDockAmount(value) {
+  assert(!!value, 'value is required');
+
   return BigNumber(value).dividedBy(DOCK_TOKEN_UNIT).toNumber();
 }
 
 export function getPlainDockAmount(value) {
+  assert(!!value, 'value is required');
+
   return BigNumber(value).times(DOCK_TOKEN_UNIT);
 }
 
@@ -39,5 +51,7 @@ const dateFormat = new Intl.DateTimeFormat(['en-US'], {
 });
 
 export function formatDate(date) {
+  assert(!!date, 'date is required');
+
   return dateFormat.format(typeof date === 'string' ? new Date(date) : date);
 }

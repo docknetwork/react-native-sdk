@@ -1,9 +1,14 @@
 import axios from 'axios';
+import assert from 'assert';
 
 const SUBSCAN_URL = 'https://dock.api.subscan.io';
 
 export function fetchTransactions({address, page = 0, itemsPerPage = 50}) {
   const url = `${SUBSCAN_URL}/api/scan/transfers`;
+
+  assert(typeof address === 'string', 'address must be a string');
+  assert(typeof page === 'number', 'page must be a number');
+  assert(typeof itemsPerPage === 'number', 'itemsPerPage must be a number');
 
   return axios
     .post(url, {
