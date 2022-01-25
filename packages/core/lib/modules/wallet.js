@@ -36,7 +36,7 @@ export const WalletEvents = {
   networkConnected: 'network-connected',
 };
 
-export type WalletStatus = 'closed' | 'loading' | 'ready';
+export type WalletStatus = 'closed' | 'loading' | 'ready' | 'error';
 
 /** Wallet */
 export class Wallet {
@@ -80,12 +80,19 @@ export class Wallet {
 
     this.status = 'loading';
 
-    await initRealm();
-    await UtilCryptoRpc.cryptoWaitReady();
-    await WalletRpc.create(this.walletId);
-    await WalletRpc.load();
-    this.status = 'ready';
-    this.initNetwork();
+    try {
+      await initRealm();
+      await UtilCryptoRpc.cryptoWaitReady();
+      await WalletRpc.create(this.walletId);
+      await WalletRpc.load();
+
+      this.status = 'ready';
+
+      this.initNetwork();
+    } catch (err) {
+      this.status = 'error';
+      throw err;
+    }
   }
 
   async ensureNetwork() {
