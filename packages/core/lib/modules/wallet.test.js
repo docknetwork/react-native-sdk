@@ -1,5 +1,5 @@
 import {Wallet} from './wallet';
-import walletJson from './wallet-backup.json';
+import walletJson from '../test/fixtures/wallet-backup.json';
 
 describe('ApiModule', () => {
   let wallet: Wallet;
