@@ -9,6 +9,7 @@ import {KeypairType, WalletDocument, DocumentType} from '../types';
 import {EventManager} from './event-manager';
 import {PolkadotUIRpc} from '../client/polkadot-ui-rpc';
 import {AccountDetails, Account} from './account';
+import {isAddressValid} from '../core/validation';
 
 export const AccountsEvents = {
   loaded: 'loaded',
@@ -95,7 +96,7 @@ export class Accounts {
   }
 
   async findCorrelationByType(address: string, type: DocumentType) {
-    assert(typeof address === 'string', 'invalid address');
+    assert(isAddressValid(address), 'invalid address');
 
     const correlations = await WalletRpc.resolveCorrelations(address);
     return correlations.find(c => c.type === type);
