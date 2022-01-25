@@ -1,5 +1,4 @@
-import { DockAPI } from '@docknetwork/sdk';
-import {getLogger} from '../logger';
+import {DockAPI} from '@docknetwork/sdk';
 import {getCurrentPair} from './keyring';
 
 let isDockReady = false;

@@ -5,7 +5,10 @@ export const DOCK_TOKEN_UNIT = 1000000;
 
 export function formatCurrency(value, currency = 'USD') {
   assert(!!value, 'value is required');
-  assert(typeof value === 'number' || typeof value === 'bigint', 'value must be a number or bigint');
+  assert(
+    typeof value === 'number' || typeof value === 'bigint',
+    'value must be a number or bigint',
+  );
 
   var formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -21,7 +24,7 @@ export function formatCurrency(value, currency = 'USD') {
 export function formatAddress(address, size = 19) {
   assert(!!address, 'address is required');
   assert(typeof address === 'string', 'address must be a string');
-  
+
   if (!address || size > address.length) {
     return address;
   }
