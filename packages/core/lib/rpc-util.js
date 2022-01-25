@@ -1,7 +1,11 @@
+import assert from 'assert';
 import {decryptData, SECURE_JSON_RPC} from './core/crypto';
 import {getLogger} from './logger';
 
 export function createRpcService({name, routes}) {
+  assert(typeof name === 'string', `invalid name: ${name}`);
+  assert(typeof routes === 'object', `invalid routes: ${routes}`);
+
   return Object.keys(routes).map(routeName => {
     const methodResolver = routes[routeName];
     const methodName = `${name}.${routeName}`;
