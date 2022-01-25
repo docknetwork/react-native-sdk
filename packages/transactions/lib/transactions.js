@@ -161,7 +161,7 @@ export class Transactions {
         fromAddress: tx.from,
         id: tx.hash,
         hash: tx.hash,
-        network: 'mainnet',
+        network: NetworkManager.getInstance().networkId,
         status: 'complete',
         date: new Date(parseInt(tx.block_timestamp + '000', 10)),
       };
