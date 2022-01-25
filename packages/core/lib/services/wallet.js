@@ -1,6 +1,7 @@
+import assert from 'assert';
 import StorageWallet from '@docknetwork/wallet/storage-wallet';
 import {v4 as uuid} from 'uuid';
-import {WalletDocument} from '../types';
+import {KeypairTypes, WalletDocument} from '../types';
 import MemoryWallet from '../wallet/memory-storage-wallet';
 import RpcWallet from '../wallet/rpc-storage-wallet';
 import {addFromJson, getKeyring, getKeyringPair} from './keyring';
@@ -46,12 +47,24 @@ export const getAccountKeypair = async accountId => {
  */
 const createAccountDocuments = async ({
   name,
-  keyPairType,
+  keyPairType = 'sr25519',
   derivePath,
   mnemonic,
   json,
   password,
 }) => {
+  assert(typeof name === 'string', `invalid account name: ${name}`);
+  assert(
+    !!KeypairTypes.find(t => t === keyPairType),
+    `invalid keyPairType: ${keyPairType}`,
+  );
+
+  if (json) {
+    assert(typeof password === 'string', `invalid password: ${password}`);
+  } else {
+    assert(typeof mnemonic === 'string', `invalid mnemonic: ${mnemonic}`);
+  }
+
   const keyringPair = json
     ? addFromJson(json, password)
     : getKeyringPair({mnemonic, derivePath, keyPairType});
