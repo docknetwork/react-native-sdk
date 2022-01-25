@@ -1,3 +1,5 @@
+import assert from 'assert';
+import {isAddressValid, isNumberValid} from '../core/validation';
 import {ensureDockReady, dock} from './dock';
 import {getAccountKeypair} from './wallet';
 
@@ -5,7 +7,10 @@ export default {
   name: 'api',
   routes: {
     async getAccountBalance(address) {
+      assert(isAddressValid(address), 'invalid address');
+
       await ensureDockReady();
+
       const {
         data: {free},
       } = await dock.api.query.system.account(address);
@@ -13,6 +18,10 @@ export default {
     },
 
     async getFeeAmount({toAddress, fromAddress, amount}) {
+      assert(isAddressValid(toAddress), 'invalid toAddress');
+      assert(isAddressValid(fromAddress), 'invalid fromAddress');
+      assert(isNumberValid(amount), 'invalid amount');
+
       const account = await getAccountKeypair(fromAddress);
 
       dock.setAccount(account);
@@ -23,6 +32,10 @@ export default {
     },
 
     async sendTokens({toAddress, fromAddress, amount}) {
+      assert(isAddressValid(toAddress), 'invalid toAddress');
+      assert(isAddressValid(fromAddress), 'invalid fromAddress');
+      assert(isNumberValid(amount), 'invalid amount');
+
       const account = await getAccountKeypair(fromAddress);
       dock.setAccount(account);
 

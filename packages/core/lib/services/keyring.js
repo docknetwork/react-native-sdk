@@ -1,3 +1,4 @@
+import assert from 'assert';
 import Keyring from '@polkadot/keyring';
 import {KeyringPair} from '@polkadot/keyring/types';
 
@@ -28,8 +29,11 @@ export function addFromMnemonic(...args) {
   return pair;
 }
 
-export function addFromJson(data, password) {
-  const pair = keyring.addFromJson(data);
+export function addFromJson(jsonData, password) {
+  assert(typeof jsonData === 'object', 'jsonData is required');
+  assert(typeof password === 'string', 'password is required');
+
+  const pair = keyring.addFromJson(jsonData);
   currentPairIdx = keyring.pairs.length - 1;
   pair.unlock(password);
   return pair;
