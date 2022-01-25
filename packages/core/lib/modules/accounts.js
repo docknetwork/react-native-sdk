@@ -75,7 +75,9 @@ export class Accounts {
     const currency = await this.findCorrelationByType(address, 'Currency');
 
     if (!currency) {
-      throw new Error(`currency object was not found for the address ${address}`);
+      throw new Error(
+        `currency object was not found for the address ${address}`,
+      );
     }
 
     return currency.value;
