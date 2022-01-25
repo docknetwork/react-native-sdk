@@ -37,7 +37,9 @@ describe('Accounts module', () => {
   });
 
   it('expect to fetch account balance and update currency document', async () => {
-    const account = await accounts.create({});
+    const account = await accounts.create({
+      name: 'test',
+    });
     const balance = 10;
     jest.spyOn(ApiRpc, 'getAccountBalance').mockReturnValue(balance);
 
@@ -59,7 +61,9 @@ describe('Accounts module', () => {
   });
 
   it('Expect to export account and import account', async () => {
-    const account = await accounts.create({});
+    const account = await accounts.create({
+      name: 'test',
+    });
     const json = await accounts.exportAccount(account.address, 'test');
 
     expect(json.address).toBe(account.address);
@@ -67,6 +71,7 @@ describe('Accounts module', () => {
     await accounts.remove(account.address);
 
     const account2 = await accounts.create({
+      name: 'json account',
       json,
       password: 'test',
     });

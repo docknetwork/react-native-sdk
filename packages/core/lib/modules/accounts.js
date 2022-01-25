@@ -5,7 +5,12 @@ import {KeyringRpc} from '../client/keyring-rpc';
 import {ApiRpc} from '../client/api-rpc';
 import {Wallet, WalletEvents} from './wallet';
 import {Errors} from '../errors';
-import {KeypairType, WalletDocument, DocumentType} from '../types';
+import {
+  KeypairType,
+  WalletDocument,
+  DocumentType,
+  KeypairTypes,
+} from '../types';
 import {EventManager} from './event-manager';
 import {PolkadotUIRpc} from '../client/polkadot-ui-rpc';
 import {AccountDetails, Account} from './account';
@@ -53,10 +58,15 @@ export class Accounts {
     });
   }
 
-  async fetchBalance(accountId) {
-    const account = await this.getByAddress(accountId);
-    const balance = await ApiRpc.getAccountBalance(account.address);
-    const currency = await this.findCorrelationByType(accountId, 'Currency');
+  async fetchBalance(address) {
+    assert(isAddressValid(address), 'invalid address');
+
+    const balance = await ApiRpc.getAccountBalance(address);
+    const currency = await this.findCorrelationByType(
+      address,
+      'Currency',
+      true,
+    );
 
     currency.value = balance;
 
@@ -66,19 +76,17 @@ export class Accounts {
   }
 
   async getBalance(address, skipFetch?) {
-    assert(!!address, 'address is required');
+    assert(isAddressValid(address), 'address is required');
 
     if (!skipFetch) {
       await this.fetchBalance(address);
     }
 
-    const currency = await this.findCorrelationByType(address, 'Currency');
-
-    if (!currency) {
-      throw new Error(
-        `currency object was not found for the address ${address}`,
-      );
-    }
+    const currency = await this.findCorrelationByType(
+      address,
+      'Currency',
+      true,
+    );
 
     return currency.value;
   }
@@ -95,11 +103,21 @@ export class Accounts {
     return Account.with(address);
   }
 
-  async findCorrelationByType(address: string, type: DocumentType) {
+  async findCorrelationByType(
+    address: string,
+    type: DocumentType,
+    assertResult: boolean,
+  ) {
     assert(isAddressValid(address), 'invalid address');
 
     const correlations = await WalletRpc.resolveCorrelations(address);
-    return correlations.find(c => c.type === type);
+    const result = correlations.find(c => c.type === type);
+
+    if (assertResult) {
+      assert(!!result, `${type} document not found for the account ${address}`);
+    }
+
+    return result;
   }
 
   generateMnemonic(): Promise<string> {
@@ -107,6 +125,8 @@ export class Accounts {
   }
 
   async update(account: AccountDetails) {
+    assert(!!account, 'account is required');
+
     await WalletRpc.update(account);
     this.eventManager.emit(AccountsEvents.accountUpdated);
     await this.load();
@@ -123,6 +143,18 @@ export class Accounts {
     } = {},
   ): Promise<Account> {
     let {name, json, password, keyPairType = 'sr25519'} = params;
+
+    assert(!!name, 'name is required');
+    assert(!!keyPairType, 'keypair type is required');
+    assert(
+      KeypairTypes.find(t => t === keyPairType),
+      `invalid keypair type ${keyPairType}`,
+    );
+
+    if (json) {
+      assert(!!password, 'password is required');
+    }
+
     const mnemonic =
       params.mnemonic || (!json && (await this.generateMnemonic()));
     const derivePath = params.derivationPath || '';
@@ -139,16 +171,12 @@ export class Accounts {
       id: address,
     });
 
-    if (existingAccounts.length > 0) {
-      throw new Error(Errors.accountAlreadyExists);
-    }
+    assert(existingAccounts.length === 0, Errors.accountAlreadyExists);
 
     if (json) {
       const pair = await KeyringRpc.addFromJson(json, password);
 
-      if (!pair || !pair.type) {
-        throw new Error('invalid keypair');
-      }
+      assert(pair && pair.type, 'invalid keypair');
 
       keyPairType = pair.type;
     }
