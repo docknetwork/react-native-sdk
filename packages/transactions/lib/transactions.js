@@ -143,6 +143,8 @@ export class Transactions {
    * @param {string} account
    */
   async loadExternalTransactions(account) {
+    assert(typeof account === 'string', 'invalid account address');
+
     const realm = getRealm();
     const dbTransactions = realm.objects('Transaction');
     const handleTransaction = tx => {
