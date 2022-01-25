@@ -15,8 +15,6 @@ async function main() {
     type: 'Currency',
   });
 
-  console.log(searchResult);
-
   const accounts = Accounts.getInstance();
 
   const mnemonic = await accounts.generateMnemonic();
