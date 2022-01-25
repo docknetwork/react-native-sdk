@@ -6,5 +6,5 @@ export class SdkError extends Error {
 }
 
 export const Errors = {
-  accountAlreadyExists: 'Account already exists',
+  accountAlreadyExists: 'account already exists',
 };
