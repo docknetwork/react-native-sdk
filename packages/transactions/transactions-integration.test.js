@@ -1,3 +1,4 @@
+import {DOCK_TOKEN_UNIT} from '@docknetwork/wallet-sdk-core/lib/core/format-utils';
 import {TestFixtures} from '@docknetwork/wallet-sdk-core/lib/fixtures';
 import {Wallet} from '@docknetwork/wallet-sdk-core/lib/modules/wallet';
 import {
@@ -44,8 +45,6 @@ describe('Transactions integration test', () => {
     expect(error).toContain(
       'Error: 1010: Invalid Transaction: Inability to pay some fees',
     );
-
-    // TODO: Check transaction history
   });
 
   it('Expect to receive "Balance too low" error', async () => {
@@ -63,8 +62,6 @@ describe('Transactions integration test', () => {
     expect(error).toContain(
       'Error: balances.InsufficientBalance:  Balance too low to send value',
     );
-
-    // TODO: Check transaction history
   });
 
   it('Expect to send transaction (complete)', async () => {
