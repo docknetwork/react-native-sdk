@@ -116,7 +116,11 @@ export class Transactions {
   }
 
   static with(account: string | Account): AccountTransactions {
+    assert(!!account, 'account is required');
+
     if (typeof account === 'string') {
+      assert(isAddressValid(account), 'invalid account address');
+
       account = Account.with(account);
     }
 
@@ -219,6 +223,8 @@ export class Transactions {
    * @param {*} transaction
    */
   updateTransaction(transaction) {
+    assert(!!transaction, 'transaction is required');
+
     const realm = getRealm();
 
     realm.write(() => {
