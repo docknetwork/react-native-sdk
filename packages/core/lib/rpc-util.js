@@ -1,6 +1,6 @@
 import assert from 'assert';
 import {decryptData, SECURE_JSON_RPC} from './core/crypto';
-import {getLogger} from './logger';
+import {Logger} from './core/logger';
 
 export function createRpcService({name, routes}) {
   assert(typeof name === 'string', `invalid name: ${name}`);
@@ -27,12 +27,11 @@ export function createRpcService({name, routes}) {
           }
 
           return Promise.resolve(result).then(value => {
-            getLogger().log(`Result for ${methodName}`, value);
+            Logger.debug(`Result for ${methodName}`, value);
             return value;
           });
         } catch (err) {
-          getLogger().log(`Error for ${methodName}`, err.toString());
-
+          Logger.debug(`Error for ${methodName}`, err.toString());
           throw err;
         }
       },

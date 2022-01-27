@@ -158,6 +158,7 @@
     "jsdocs": "^1.0.0",
     "jsdom": "^19.0.0",
     "mock-local-storage": "^1.1.19",
+    "node-localstorage": "^2.2.1",
     "nodemon": "^2.0.15",
     "process": "^0.11.10",
     "react-native-keychain": "^8.0.0",

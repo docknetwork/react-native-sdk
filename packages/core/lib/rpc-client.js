@@ -1,7 +1,7 @@
 import assert from 'assert';
 import {JSONRPCClient} from 'json-rpc-2.0';
 import {encryptData, SECURE_JSON_RPC} from './core/crypto';
-import { Logger } from './core/logger';
+import {Logger} from './core/logger';
 import {getLogger} from './logger';
 import {patchRpcServer} from './rpc-util';
 
@@ -17,9 +17,7 @@ export const rpcRequest = (method, ...params) => {
       params,
     });
 
-    if (!client) {
-      return {};
-    }
+    assert(!!client, 'json rpc client not found');
 
     return getRpcClient()
       .request(method, ...params)
