@@ -92,6 +92,14 @@ const hash = await transactions.send(txInput);
 console.log('Transaction hash', fee);
 
 ```
+
+## Running on nodejs
+
+Check the following repository for nodejs project example
+
+https://github.com/docknetwork/wallet-sdk-examples
+
+
 ## Docs
 
 https://docknetwork.github.io/react-native-sdk/

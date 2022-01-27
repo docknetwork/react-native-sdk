@@ -9,7 +9,7 @@ import {DocumentType, WalletDocument} from '../types';
 import {EventManager} from './event-manager';
 import {NetworkManager} from './network-manager';
 import {Accounts} from './accounts';
-
+import {getEnvironment} from 'realm/lib/utils';
 export const WalletEvents = {
   ready: 'ready',
   statusUpdated: 'status-updated',
@@ -21,6 +21,12 @@ export const WalletEvents = {
 };
 
 export type WalletStatus = 'closed' | 'loading' | 'ready' | 'error';
+
+const environment = getEnvironment();
+
+if (environment !== 'reactnative') {
+  require('../setup-nodejs');
+}
 
 /** Wallet */
 export class Wallet {

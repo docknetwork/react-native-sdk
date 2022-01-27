@@ -1,7 +1,7 @@
 import StorageInterface from '@docknetwork/wallet/storage/storage-interface';
 import {v4 as uuid} from 'uuid';
 import {StorageRpc} from '../client/storage-rpc';
-import {getLogger} from '../logger';
+import {Logger} from '../core/logger';
 
 function generateDocumentId() {
   return `doc:${uuid()}`;
@@ -19,7 +19,6 @@ class RpcStorageInterface extends StorageInterface {
   async loadStorage(directory) {
     try {
       const data = await StorageRpc.getItem(directory);
-      getLogger().log('retrieve data from rpc storage', data);
 
       this.documents = JSON.parse(data);
 
@@ -27,10 +26,7 @@ class RpcStorageInterface extends StorageInterface {
         this.documents = {};
       }
     } catch (err) {
-      getLogger().log(
-        'error to retrieve data from rpc storage',
-        err.toString(),
-      );
+      Logger.info('error to retrieve data from rpc storage', err.toString());
       this.documents = {};
 
       throw err;
@@ -77,7 +73,7 @@ class RpcStorageInterface extends StorageInterface {
   }
 
   async find({has = undefined, equals = undefined} = {}) {
-    getLogger().log('Execute find', {
+    Logger.debug('Execute find', {
       equals,
       documents: this.documents,
     });
