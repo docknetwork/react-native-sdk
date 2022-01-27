@@ -121,6 +121,6 @@ describe('Transactions integration test', () => {
     expect(txItem.recipientAddress).toBe(txInput.toAddress);
     expect(txItem.status).toBe(TransactionStatus.Failed);
     expect(txItem.error).toBe(error);
-    expect(txItem.retrySucceed).toBeFalsy();
+    expect(txItem.retrySucceeded).toBeFalsy();
   });
 });

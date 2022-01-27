@@ -69,7 +69,7 @@ function build({entry, path, filename, callback}) {
       process.exit(1);
     }
 
-    console.log('Build succeed');
+    console.log('Build succeeded');
 
     if (callback) {
       callback();
