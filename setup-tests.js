@@ -24,3 +24,5 @@ global.navigator = {
 require('./packages/core/lib/setup-tests');
 
 NetworkManager.getInstance().setNetworkId('testnet');
+
+jest.mock('@react-native-async-storage/async-storage', () => 'AsyncStorage');

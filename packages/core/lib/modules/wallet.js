@@ -12,6 +12,7 @@ import {Accounts} from './accounts';
 
 export const WalletEvents = {
   ready: 'ready',
+  statusUpdated: 'status-updated',
   documentAdded: 'document-added',
   documentUpdated: 'document-updated',
   documentRemoved: 'document-removed',
@@ -39,15 +40,16 @@ export class Wallet {
     this.context = context;
     this.networkManager = NetworkManager.getInstance();
     this.eventManager = new EventManager();
-    this.status = 'closed';
     this.eventManager.registerEvents(WalletEvents);
     this.accounts = Accounts.getInstance({wallet: this});
+
+    this.setStatus('closed');
   }
 
   async close() {
     getRealm().close();
     await DockRpc.disconnect();
-    this.status = 'closed';
+    this.setStatus('closed');
   }
   /**
    * Load wallet
@@ -61,7 +63,7 @@ export class Wallet {
       return;
     }
 
-    this.status = 'loading';
+    this.setStatus('loading');
 
     try {
       await initRealm();
@@ -69,13 +71,21 @@ export class Wallet {
       await WalletRpc.create(this.walletId);
       await WalletRpc.load();
 
-      this.status = 'ready';
+      this.setStatus('ready');
 
       this.initNetwork();
     } catch (err) {
-      this.status = 'error';
+      this.setStatus('error');
+
       throw err;
     }
+  }
+
+  setStatus(status: WalletStatus) {
+    assert(!!status, `status is required`);
+
+    this.status = status;
+    this.eventManager.emit(WalletEvents.statusUpdated, status);
   }
 
   async ensureNetwork() {

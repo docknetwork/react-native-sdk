@@ -5,7 +5,7 @@
         "@docknetwork/wallet-sdk-core": "0.1.0",
         "@docknetwork/wallet-sdk-credential": "0.1.0",
         "@docknetwork/wallet-sdk-transactions": "0.1.0",
-        "@docknetwork/wallet-sdk-bundler": "0.1.0"
+        "@docknetwork/wallet-sdk-react-native": "0.1.0"
     },
     "devDependencies": {
 

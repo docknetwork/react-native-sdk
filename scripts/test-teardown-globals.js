@@ -1,3 +1,5 @@
 module.exports =  () => {
-  process.exit(0)
+  if (process.env.CI) {
+    process.exit(0)
+  }
 };

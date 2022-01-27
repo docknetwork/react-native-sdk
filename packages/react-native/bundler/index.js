@@ -3,7 +3,7 @@ const {resolve} = require('path');
 
 function build({entry, path, filename, callback}) {
   const compiler = webpack({
-    mode: 'production',
+    mode: 'development',
     entry,
     output: {
       path,
@@ -13,7 +13,11 @@ function build({entry, path, filename, callback}) {
       alias: {
         '@polkadot/types/packageInfo.cjs': resolve(
           __dirname,
-          '../../node_modules/@polkadot/types/packageInfo.cjs',
+          '../../../node_modules/@polkadot/types/packageInfo.cjs',
+        ),
+        '@polkadot/types/packageInfo.js': resolve(
+          __dirname,
+          '../../../node_modules/@polkadot/types/packageInfo.js',
         ),
       },
       fallback: {

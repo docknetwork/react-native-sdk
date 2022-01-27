@@ -1,6 +1,9 @@
-cd packages/core
+cd ./packages/core
+yarn unlink
 yarn link
 cd ../transactions
+yarn unlink
 yarn link
-cd ../bundler
+cd ../react-native
+yarn unlink
 yarn link
