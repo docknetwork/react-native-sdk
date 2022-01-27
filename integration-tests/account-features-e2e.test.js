@@ -1,89 +1,44 @@
-import {
-  Wallet,
-  WalletDocument,
-} from '@docknetwork/wallet-sdk-core/lib/modules/wallet';
-import {Accounts} from '@docknetwork/wallet-sdk-core/lib/modules/accounts';
-import {getKeyringPair} from '@docknetwork/wallet-sdk-core/lib/services/keyring';
-import {ApiRpc} from '@docknetwork/wallet-sdk-core/lib/client/api-rpc';
+import {Wallet} from '@docknetwork/wallet-sdk-core/lib/modules/wallet';
+import {Transactions} from '@docknetwork/wallet-sdk-transactions/lib/transactions';
 
 describe('Wallet integration test', () => {
   let wallet: Wallet;
 
   it('Create wallet + add accounts + get account balance + get transaction fee', async () => {
-      wallet = await Wallet.create({
-        json: {
-          '@context': [
-            'https://www.w3.org/2018/credentials/v1',
-            'https://w3id.org/wallet/v1',
-          ],
-          id: 'did:key:z6LSs7dYJgMT7CXjcwNDRBWvbJrhrz8euoXGCH1qF5dXD2YE#encrypted-wallet',
-          type: ['VerifiableCredential', 'EncryptedWallet'],
-          issuer: 'did:key:z6LSs7dYJgMT7CXjcwNDRBWvbJrhrz8euoXGCH1qF5dXD2YE',
-          issuanceDate: '2022-01-26T18:09:04.178Z',
-          credentialSubject: {
-            id: 'did:key:z6LSs7dYJgMT7CXjcwNDRBWvbJrhrz8euoXGCH1qF5dXD2YE',
-            encryptedWalletContents: {
-              protected: 'eyJlbmMiOiJYQzIwUCJ9',
-              recipients: [
-                {
-                  header: {
-                    kid: 'did:key:z6LSs7dYJgMT7CXjcwNDRBWvbJrhrz8euoXGCH1qF5dXD2YE#z6LSs7dYJgMT7CXjcwNDRBWvbJrhrz8euoXGCH1qF5dXD2YE',
-                    alg: 'ECDH-ES+A256KW',
-                    epk: {
-                      kty: 'OKP',
-                      crv: 'X25519',
-                      x: '4C8mVzZlEgwqmXTTNFhVg8-Doh7FAOtzOqkSwIthwCo',
-                    },
-                    apu: '4C8mVzZlEgwqmXTTNFhVg8-Doh7FAOtzOqkSwIthwCo',
-                    apv: 'ZGlkOmtleTp6NkxTczdkWUpnTVQ3Q1hqY3dORFJCV3ZiSnJocno4ZXVvWEdDSDFxRjVkWEQyWUUjejZMU3M3ZFlKZ01UN0NYamN3TkRSQld2YkpyaHJ6OGV1b1hHQ0gxcUY1ZFhEMllF',
-                  },
-                  encrypted_key:
-                    'Mp3pT9ftpodo274A_kiVlKEl3G8jy1YqACK8kb9ghOngsfT870EO7A',
-                },
-              ],
-              iv: 'g4g09o27t94YqA4aZwYrUMGUPsrqt9Eh',
-              ciphertext: 'YlmEbaBOKKFGxnvBuRdI',
-              tag: 'XijyxZARhTHpLUZ-HDau7w',
-            },
-          },
-        },
-        password: '12345678Qw!',
-      });
-    
-      const docs = await wallet.query();
-      console.log(docs);
-      
-      // wallet = await Wallet.create();
+    wallet = await Wallet.create();
 
-      // console.log('test 2');
+    const account1 = await wallet.accounts.create({
+      name: 'test',
+    });
 
-      // const account = await wallet.accounts.create({
-      //   name: 'test',
-      // });
+    console.log(`Account1 address ${account1.address}`);
 
-      // console.log('test');
+    // Create account with existing mnemonic
+    const mnemonic =
+      'indicate mention thing discover clarify grief inherit vivid dish health market spoil';
+    const account2 = await wallet.accounts.create({
+      name: 'Test',
+      mnemonic,
+    });
 
-      // console.log(`Account address ${account.address}`);
+    console.log(`Account2 address ${account2.address}`);
 
-      // console.log(`Account address ${account.address}`);
-      // console.log(`Account address ${account.address}`);
-      // console.log(`Account address ${account.address}`);
+    // Fetch accounts balance
+    const balance = await account1.getBalance();
 
-      // const documents = await wallet.query();
-      // const mnemonic = 'indicate mention thing discover clarify grief inherit vivid dish health market spoil';
-      // const account = await accounts.create({
-      //   name: 'Test',
-      //   mnemonic,
-      // });
+    console.log('Account balance', balance);
 
-      // const keypair = await getKeyringPair({ mnemonic });
+    // Working with transactions
+    const transactions = Transactions.with(account1);
 
-      // expect(account.address).toBe('39SiPt8AHxtThrWZNcQadD1MA7WAcmcedC89hqcU22ZYrJn2');
+    const txInput = {
+      toAddress: account2.address,
+      amount: 3,
+    };
 
-      // await accounts.fetchBalance(account.id);
+    // Get transaction fee
+    const fee = await transactions.getFee(txInput);
+
+    console.log('Transaction fee', fee);
   });
-
-  // afterAll(async() => {
-  //   await wallet.close();
-  // });
 });
