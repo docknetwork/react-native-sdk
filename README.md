@@ -4,7 +4,7 @@ Handles polkadot-js and provides webassembly support
 
 ## React Native Example
 
-```
+```js
 import {Box, Button, NativeBaseProvider, Text} from 'native-base';
 import React, {useEffect} from 'react';
 import {
