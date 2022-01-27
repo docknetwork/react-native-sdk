@@ -3,7 +3,7 @@ const {execSync} = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
-const bundleDir = path.resolve(__dirname, './public/');
+const bundleDir = path.resolve(__dirname, '../public/');
 const bundlePath = path.resolve(bundleDir, './bundle.js');
 const htmlPath = path.resolve(bundleDir, './index.html');
 

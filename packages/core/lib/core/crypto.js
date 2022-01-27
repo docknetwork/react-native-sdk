@@ -5,9 +5,12 @@ export const DEFAULT_KEY =
   process.env.ENCRYPTION_KEY || process.env.REACT_APP_ENCRYPTION_KEY;
 export const SECURE_JSON_RPC = process.env.ENCRYPTION_ENABLED;
 
-assert(DEFAULT_KEY, 'ENCRYPTION_KEY is required');
+if (SECURE_JSON_RPC) {
+  assert(DEFAULT_KEY, 'ENCRYPTION_KEY is required');
+}
 
-let key = Buffer.from(DEFAULT_KEY, 'hex');
+let key = SECURE_JSON_RPC && Buffer.from(DEFAULT_KEY, 'hex');
+
 const iv = crypto.randomBytes(16);
 
 export function encryptData(text) {
