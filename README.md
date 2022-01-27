@@ -10,7 +10,7 @@ import React, {useEffect} from 'react';
 import {
   WalletSDKProvider,
   useWallet,
-} from '@docknetwork/wallet-sdk-react-native/lib/index';
+} from '@docknetwork/wallet-sdk-react-native/lib';
 
 const WalletDetails = function () {
   const {wallet, status, documents} = useWallet();
