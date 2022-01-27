@@ -9,7 +9,7 @@ import rnRpcServer from './rn-rpc-server';
 
 export class WebviewEventHandler {
   constructor({webViewRef, onReady}) {
-    assert(!!webViewRef, `webViewRef is required`);
+    assert(!!webViewRef, 'webViewRef is required');
 
     this.webViewRef = webViewRef;
     this.onReady = onReady;
@@ -25,13 +25,12 @@ export class WebviewEventHandler {
   }
 
   handleEvent(event) {
-    assert(!!event, `event is required`);
+    assert(!!event, 'event is required');
     const data = JSON.parse(event.nativeEvent.data);
 
     const handler = this.getEventMapping()[data.type];
 
     assert(!!handler, `handler not found for event ${data.type}`);
-
 
     handler.apply(this, [data]);
   }

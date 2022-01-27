@@ -72,6 +72,7 @@ export class Wallet {
       await WalletRpc.load();
 
       this.setStatus('ready');
+      this.eventManager.emit(WalletEvents.ready);
 
       this.initNetwork();
     } catch (err) {
@@ -82,7 +83,7 @@ export class Wallet {
   }
 
   setStatus(status: WalletStatus) {
-    assert(!!status, `status is required`);
+    assert(!!status, 'status is required');
 
     this.status = status;
     this.eventManager.emit(WalletEvents.statusUpdated, status);

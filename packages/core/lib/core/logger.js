@@ -5,4 +5,3 @@ export const Logger = winston.createLogger({
   level: process.env.LOGGER_LEVEL || 'info',
   transports: [new winston.transports.Console()],
 });
-
