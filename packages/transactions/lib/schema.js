@@ -20,7 +20,7 @@ addSchema({
       default: 'testnet',
     },
     status: 'string',
-    retrySucceed: {
+    retrySucceeded: {
       type: 'bool',
       default: false,
     },
