@@ -12,8 +12,8 @@ import {
 export default {
   name: 'utilCrypto',
   routes: {
-    cryptoWaitReady: (...params) => cryptoWaitReady(...params),
-    cryptoIsReady: (...params) => cryptoIsReady(...params),
+    cryptoWaitReady: cryptoWaitReady,
+    cryptoIsReady: cryptoIsReady,
     isAddressValid: address => {
       try {
         encodeAddress(
@@ -25,10 +25,8 @@ export default {
         return false;
       }
     },
-    mnemonicValidate: (...params) => mnemonicValidate(...params),
-    mnemonicGenerate: (...params) => {
-      return mnemonicGenerate(...params);
-    },
+    mnemonicValidate: mnemonicValidate,
+    mnemonicGenerate: mnemonicGenerate,
     deriveValidate: uri => {
       assert(!!uri, 'uri is required');
 

@@ -1,4 +1,5 @@
 import {rpcRequest} from '../rpc-client';
+import {assertAddress, assertTokenAmount} from '../core/validation';
 
 export const ApiRpcEndpoints = {
   getAccountBalance: 'api.getAccountBalance',
@@ -6,7 +7,7 @@ export const ApiRpcEndpoints = {
   getFeeAmount: 'api.getFeeAmount',
 };
 
-type TxInput = {
+export type TxInput = {
   toAddress: string,
   fromAddress: string,
   amount: string | number,
@@ -20,6 +21,7 @@ export class ApiRpc {
    * @param {string} address - Account address
    */
   static getAccountBalance(address: string) {
+    assertAddress(address);
     return rpcRequest(ApiRpcEndpoints.getAccountBalance, address);
   }
 
@@ -31,6 +33,10 @@ export class ApiRpc {
    * @param {string} amount - amount
    */
   static sendTokens(params: TxInput) {
+    assertAddress(params.fromAddress, 'fromAddress');
+    assertAddress(params.toAddress, 'toAddress');
+    assertTokenAmount(params.amount);
+
     return rpcRequest(ApiRpcEndpoints.sendTokens, params);
   }
 
@@ -42,6 +48,10 @@ export class ApiRpc {
    * @param {string} amount - amount
    */
   static getFeeAmount(params: TxInput) {
+    assertAddress(params.fromAddress, 'fromAddress');
+    assertAddress(params.toAddress, 'toAddress');
+    assertTokenAmount(params.amount);
+
     return rpcRequest(ApiRpcEndpoints.getFeeAmount, params);
   }
 }

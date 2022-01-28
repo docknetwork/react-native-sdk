@@ -23,6 +23,16 @@ export const AccountsEvents = {
   accountRemoved: 'account-removed',
 };
 
+export type CreateAccountParams = {
+  name: string,
+  keyPairType: KeypairType,
+  derivationPath: string,
+  mnemonic: string,
+  json: string,
+  password: string,
+  getIfExists: boolean,
+};
+
 export class Accounts {
   accounts: AccountDetails[];
   wallet: Wallet;
@@ -132,17 +142,15 @@ export class Accounts {
     await this.load();
   }
 
-  async create(
-    params: {
-      name: string,
-      keyPairType: KeypairType,
-      derivationPath: string,
-      mnemonic: string,
-      json: string,
-      password: string,
-    } = {},
-  ): Promise<Account> {
-    let {name, json, password, keyPairType = 'sr25519'} = params;
+  async getOrCreate(params: CreateAccountParams) {
+    return this.create({
+      ...params,
+      getIfExists: true,
+    });
+  }
+
+  async create(params: CreateAccountParams): Promise<Account> {
+    let {name, json, password, keyPairType = 'sr25519', getIfExists} = params;
 
     assert(!!name, 'name is required');
     assert(!!keyPairType, 'keypair type is required');
@@ -167,11 +175,17 @@ export class Accounts {
           derivePath,
         });
 
-    const existingAccounts = await this.wallet.query({
+    const existingAccountDocs = await this.wallet.query({
       id: address,
     });
 
-    assert(existingAccounts.length === 0, Errors.accountAlreadyExists);
+    const accountExists = existingAccountDocs.length > 0;
+
+    if (getIfExists && accountExists) {
+      return this.getByAddress(address);
+    }
+
+    assert(!accountExists, Errors.accountAlreadyExists);
 
     if (json) {
       const pair = await KeyringRpc.addFromJson(json, password);

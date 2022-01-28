@@ -1,3 +1,4 @@
+import {assert} from '../core/validation';
 import {rpcRequest} from '../rpc-client';
 
 /** DockRpc */
@@ -7,26 +8,18 @@ export class DockRpc {
    * @constructor
    * @param {string} address - substrate url
    */
-  static init(...params) {
-    return rpcRequest('dock.init', ...params);
+  static init({address}) {
+    assert(address, 'substrate url is required');
+    return rpcRequest('dock.init', {address});
   }
 
   /**
-   * Initialize dock sdk
+   * Check api connection status
    * @constructor
    * @param {string} address - substrate url
    */
-  static isApiConnected(...params) {
-    return rpcRequest('dock.isApiConnected', ...params);
-  }
-
-  /**
-   * Set current account in the sdk
-   * @constructor
-   * @param {string} address - account address
-   */
-  static setAccount(...params) {
-    return rpcRequest('dock.setAccount', ...params);
+  static isApiConnected() {
+    return rpcRequest('dock.isApiConnected');
   }
 
   /**
@@ -34,7 +27,7 @@ export class DockRpc {
    * @constructor
    * @param {string} address - account address
    */
-  static disconnect(...params) {
-    return rpcRequest('dock.disconnect', ...params);
+  static disconnect() {
+    return rpcRequest('dock.disconnect');
   }
 }
