@@ -237,16 +237,20 @@ export class Transactions {
    * @param {*} param0
    * @returns {int} fee amount
    */
-  getFeeAmount({fromAddress, toAddress, amount}) {
+  async getFeeAmount({fromAddress, toAddress, amount}) {
     assert(isAddressValid(toAddress), 'invalid toAddress');
     assert(isAddressValid(fromAddress), 'invalid fromAddress');
     assert(isNumberValid(amount), 'invalid amount');
 
-    return ApiRpc.getFeeAmount({
+    await this.wallet.ensureNetwork();
+
+    const fee = await ApiRpc.getFeeAmount({
       fromAddress: fromAddress,
       toAddress,
       amount,
     });
+
+    return BigNumber(fee).dividedBy(DOCK_TOKEN_UNIT).toNumber();
   }
 
   /**
@@ -263,6 +267,8 @@ export class Transactions {
     }
 
     const amountUnits = parseFloat(amount) * DOCK_TOKEN_UNIT;
+
+    await this.wallet.ensureNetwork();
 
     const hash = await ApiRpc.sendTokens({
       toAddress,

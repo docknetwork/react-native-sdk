@@ -1,20 +1,44 @@
 import service from '../services/api';
 import {mockRpcClient, restoreRpcClient, testRpcEndpoint} from '../test-utils';
-import {ApiRpc} from './api-rpc';
+import {ApiRpc, TxInput} from './api-rpc';
 
 describe('ApiRpc', () => {
   beforeEach(mockRpcClient);
 
-  it('getAccountBalance', async () => {
-    testRpcEndpoint(service, ApiRpc.getAccountBalance);
+  const txInput: TxInput = {
+    amount: 1,
+    fromAddress: 'from address',
+    toAddress: 'to address',
+  };
+
+  describe('getAccountBalance', () => {
+    it('expect to invoke server endpoint', () => {
+      testRpcEndpoint(service, ApiRpc.getAccountBalance, 'address');
+    });
+
+    it('expect to validate params', () => {
+      expect(() => ApiRpc.getAccountBalance(null)).toThrow();
+    });
   });
 
-  it('getFeeAmount', async () => {
-    testRpcEndpoint(service, ApiRpc.getFeeAmount);
+  describe('getFeeAmount', () => {
+    it('expect to invoke server endpoint', () => {
+      testRpcEndpoint(service, ApiRpc.getFeeAmount, txInput);
+    });
+
+    it('expect to validate params', () => {
+      expect(() => testRpcEndpoint(service, ApiRpc.getFeeAmount, {})).toThrow();
+    });
   });
 
-  it('sendTokens', async () => {
-    testRpcEndpoint(service, ApiRpc.sendTokens);
+  describe('sendTokens', () => {
+    it('expect to invoke server endpoint', () => {
+      testRpcEndpoint(service, ApiRpc.sendTokens, txInput);
+    });
+
+    it('expect to validate params', () => {
+      expect(() => testRpcEndpoint(service, ApiRpc.sendTokens, {})).toThrow();
+    });
   });
 
   afterAll(restoreRpcClient);

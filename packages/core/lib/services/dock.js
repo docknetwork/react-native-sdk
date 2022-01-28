@@ -25,22 +25,29 @@ export async function ensureDockReady() {
   });
 }
 
+let connectionInProgress = false;
+
 export default {
   name: 'dock',
   routes: {
     async init(params) {
-      assert(!!params.address, 'address is required');
-      const result = await dock.init(params);
+      assert(!!params.address, 'invalid substrate address');
+      assert(!connectionInProgress, 'there is a connection in progress');
+      assert(!isDockReady, 'dock is already initialized');
+
+      connectionInProgress = true;
+
+      const result = await dock.init(params).finally(() => {
+        connectionInProgress = false;
+      });
       isDockReady = true;
       return result;
     },
     async disconnect() {
       const result = await dock.disconnect();
       isDockReady = false;
+      connectionInProgress = false;
       return result;
-    },
-    async setAccount() {
-      return dock.setAccount(getCurrentPair());
     },
     async isApiConnected(...params) {
       return isDockReady;

@@ -17,8 +17,7 @@ export function resolveServiceEndpoint(service, method) {
   return `${service.name}.${method.name}`;
 }
 
-export function testRpcEndpoint(service, rpcMethod) {
-  const params = [];
+export function testRpcEndpoint(service, rpcMethod, ...params) {
   rpcMethod(...params);
   const endpoint = resolveServiceEndpoint(
     service,

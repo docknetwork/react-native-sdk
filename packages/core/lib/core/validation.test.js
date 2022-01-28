@@ -1,5 +1,10 @@
 import BigNumber from 'bignumber.js';
-import {isAddressValid, isNumberValid} from './validation';
+import {
+  assertAddress,
+  assertTokenAmount,
+  isAddressValid,
+  isNumberValid,
+} from './validation';
 
 describe('core validation', () => {
   it('isAddressValid', () => {
@@ -18,5 +23,19 @@ describe('core validation', () => {
     expect(isNumberValid(false)).toBeFalsy();
     expect(isNumberValid(10)).toBeTruthy();
     expect(isNumberValid(BigNumber(1))).toBeTruthy();
+  });
+
+  it('assertAddress', () => {
+    expect(() => assertAddress(' ')).toThrow(`invalid address: ${' '}`);
+    expect(() => assertAddress(null)).toThrow('invalid address: null');
+    expect(() => assertAddress('address')).not.toThrow();
+  });
+
+  it('assertTokenAmount', () => {
+    expect(() => assertTokenAmount(' ')).toThrow('invalid token amount');
+    expect(() => assertTokenAmount('abc')).toThrow('invalid token amount');
+    expect(() => assertTokenAmount(null)).toThrow('invalid token amount');
+    expect(() => assertTokenAmount('10')).not.toThrow();
+    expect(() => assertTokenAmount(100)).not.toThrow();
   });
 });

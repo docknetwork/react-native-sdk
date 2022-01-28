@@ -11,11 +11,13 @@ describe('UtilCryptoService', () => {
   });
 
   it('isAddressValid', () => {
-    const isValid = UtilCrypto.routes.isAddressValid(
-      '3HM9DYxHe5tAwh2cuErNHiLxSMDJhetxaVGCDTYXiwyuuHN6',
-    );
+    expect(
+      UtilCrypto.routes.isAddressValid(
+        '3HM9DYxHe5tAwh2cuErNHiLxSMDJhetxaVGCDTYXiwyuuHN6',
+      ),
+    ).toBe(true);
 
-    expect(isValid).toBe(true);
+    expect(UtilCrypto.routes.isAddressValid('wrong value')).toBe(false);
   });
 
   describe('mnemonicValidate', () => {
