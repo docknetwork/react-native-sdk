@@ -8,7 +8,6 @@ import {
   AddParams,
   ImportWalletParams,
   QueryParams,
-  RemoveParams,
   UpdateParams,
 } from './configs';
 
@@ -47,8 +46,8 @@ export class WalletServiceRpc extends RpcService {
     return this.call('add', params);
   }
 
-  remove(params: RemoveParams) {
-    return this.call('remove', params);
+  remove(id: string) {
+    return this.call('remove', id);
   }
 
   update(params: UpdateParams) {
