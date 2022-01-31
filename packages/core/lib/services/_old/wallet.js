@@ -30,6 +30,8 @@ export const getAccountKeypair = async accountId => {
   const correlations = await resolveCorrelations(accountId);
   const keyPairDocument = correlations.find(doc => doc.type === 'KeyringPair');
 
+  assert(!!keyPairDocument, `Keypair document not found for account: ${accountId}`)
+  
   const pair = getKeyring().addFromJson(keyPairDocument.value);
 
   pair.unlock();
@@ -37,7 +39,10 @@ export const getAccountKeypair = async accountId => {
   return pair;
 };
 
+
 /**
+ * TODO: Move this to the accounts module
+ * 
  * Create all the documents required for an account
  *
  * The address, mnemonic, and keyringPair

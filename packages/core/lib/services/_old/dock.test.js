@@ -1,34 +1,7 @@
 import DockService from './dock';
 import {NetworkManager} from '../modules/network-manager';
 import {dock} from './dock';
-
-function mockDockSdkConnection(connectionError) {
-  const result = 'result';
-
-  const mocks = [
-    jest.spyOn(dock, 'init').mockImplementation(() => {
-      if (connectionError) {
-        return Promise.reject(connectionError);
-      }
-
-      return Promise.resolve(result);
-    }),
-    jest.spyOn(dock, 'disconnect').mockReturnValue(Promise.resolve(true)),
-  ];
-
-  return {
-    result,
-    clear: () => mocks.forEach(mock => mock.mockClear()),
-  };
-}
-
-async function getPromiseError(func) {
-  try {
-    return await func();
-  } catch(err) {
-    return err;
-  }
-}
+import { getPromiseError, mockDockSdkConnection } from './test-utils';
 
 const doConnect = (address = NetworkManager.getInstance().getNetworkInfo().substrateUrl) =>
   DockService.routes.init({
