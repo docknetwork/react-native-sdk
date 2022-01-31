@@ -225,6 +225,9 @@ export class Accounts {
   async remove(accountId) {
     await this.wallet.remove(accountId);
 
+    // remove other documents
+    // mnemonic phrase and all the stuff
+
     this.eventManager.emit(AccountsEvents.accountRemoved, accountId);
 
     this.load();

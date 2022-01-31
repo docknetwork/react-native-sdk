@@ -11,6 +11,10 @@ class RpcWallet extends StorageWallet {
 
   async import(data, password) {
     const result = await super.import(data, password);
+
+    // validate wallet data
+    // migrate wallet data
+
     this.contents.forEach(content => {
       this.promises.push(this.insertToStorage(content));
     });
