@@ -54,13 +54,13 @@ export const validation = {
     assertPassword(password);
   },
   importWallet({json, password}: ImportWalletParams) {
-    assert(typeof json === 'object', `invalid json data ${object}`);
+    assert(typeof json === 'object', `invalid json data: ${json}`);
     assertPassword(password);
   },
   createAccountDocuments(params: CreateAccountDocumentsParams) {
     const {name, json, password, mnemonic, type, derivePath} = params;
 
-    // Property name was updated
+    // Property derivationPath was replaced by derivePath
     assert(
       !params.derivationPath,
       'invalid parameter derivationPath, it should be derivePath instead',
@@ -101,7 +101,7 @@ export type CreateAccountDocumentsParams = {
 export type QueryParams = any;
 export type AddParams = WalletContenxt;
 export type UpdateParams = WalletContent;
-export type RemoveParams = WalletContent;
+export type RemoveParams = string;
 export type ImportWalletParams = {
   json: string,
   password: string,

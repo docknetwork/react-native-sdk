@@ -11,7 +11,6 @@ import {
   ExportAccountParams,
   ImportWalletParams,
   QueryParams,
-  RemoveParams,
   UpdateParams,
   WalletContent,
 } from './configs';
@@ -94,10 +93,10 @@ export class WalletService {
     return this.wallet.add(content);
   }
 
-  remove(content) {
+  remove(id: sring) {
     this._assertWallet();
-    validation.remove(content);
-    return this.wallet.remove(content);
+    validation.remove(id);
+    return this.wallet.remove(id);
   }
 
   update(content) {
@@ -111,8 +110,15 @@ export class WalletService {
     validation.query(search);
     return this.wallet.query(search);
   }
+  
+  /**
+   * 
+   * @param {*} password 
+   * @returns 
+   */
   exportWallet(password) {
     this._assertWallet();
+    validation.exportWallet(password);
     return this.wallet.export(password);
   }
   /**
@@ -120,10 +126,23 @@ export class WalletService {
    * @param {*} param0
    * @returns
    */
-  importWallet({data, password}: ImportWalletParams) {
+  importWallet(params: ImportWalletParams) {
     this._assertWallet();
     validation.importWallet(params);
-    return this.wallet.import(data, password);
+
+    const {json, password} = params;
+    return this.wallet.import(json, password);
+  }
+  
+  async removeAll() {
+    this._assertWallet();
+    const documents = await this.wallet.query({});
+    
+    for (let doc of documents) {
+      await this.wallet.remove(doc.id);
+    }
+
+    await this.wallet.sync();
   }
   /**
    *

@@ -1,4 +1,4 @@
-import {WalletService, walletService as service} from './service';
+import {WalletService, walletService as service, walletService} from './service';
 import {WalletServiceRpc} from './service-rpc';
 import {NetworkManager} from '../../modules/network-manager';
 import {
@@ -116,19 +116,64 @@ describe('WalletService', () => {
       });
     });
     
-    describe('exportWallet', () => {
+    describe('exportAccount', () => {
       it('expect to export account', async () => {
         const result = await service.exportAccount({
           address: testAccount.id,
           password: '123',
         });
         expect(result.address).toBe(testAccount.id);
-        
         const pair = keyringService.addFromJson({ jsonData: result, password: '123' });
-        
         expect(pair.address).toBe(testAccount.id);
       });
       
-    })
+      it('expect to validate params', async () => {
+        const error = await getPromiseError(() =>
+          service.exportAccount({
+            address: undefined,
+            password: null,
+          })
+        );
+        expect(error.message).toBe('invalid address: undefined');
+      });
+    });
+    
+    describe('exportWallet', () => {
+      it('expect to export account', async () => {
+        const result = await service.exportWallet('123');
+        expect(result.id).toBeDefined();
+        expect(result['@context']).toBeDefined();
+        expect(result.type).toBeDefined();
+      });
+      
+      it('expect to validate params', async () => {
+        const error = await getPromiseError(() =>
+          service.exportWallet(undefined)
+        );
+        expect(error.message).toBe('invalid password: undefined');
+      });
+    });
+    
+    describe('importWallet', () => {
+      it('expect to export account', async () => {
+        const json = await service.exportWallet('123');
+        await walletService.removeAll();
+        await service.importWallet({ json, password: '123' });
+        for (let doc of accountDocuments) {
+          const walletDoc = await walletService.getDocumentById(doc.id);
+          expect(walletDoc).toStrictEqual(doc);
+        }
+      });
+      
+      it('expect to validate params', async () => {
+        const error = await getPromiseError(() =>
+          service.importWallet({ json: undefined })
+        );
+        expect(error.message).toBe('invalid json data: undefined');
+      });
+    });
+    
+    
+    
   });
 });
