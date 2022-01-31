@@ -1,0 +1,38 @@
+name: Deploy js docs
+on:
+  push:
+    branches:
+      - master
+jobs:
+  deployJsDocs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '16.x'
+
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Generate docs
+        run: yarn docs
+
+      - name: Commit report
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git checkout -b gh-pages
+          git commit -m "Automated update"
+          git push origin gh-pages --force

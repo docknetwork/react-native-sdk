@@ -1,21 +1,35 @@
 {
   "name": "@docknetwork/react-native-sdk",
   "version": "0.1.0",
-  "private": false,
-  "peerDependencies": {
-    "json-rpc-2.0": "*",
-    "react": "*"
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "packages/**"
+    ]
+  },
+  "resolutions": {
+    "@polkadot/util-crypto": "7.2.1",
+    "@polkadot/rpc-provider": "5.6.1",
+    "@polkadot/wasm-crypto": "4.5.1",
+    "@polkadot/keyring": "7.2.1",
+    "@polkadot/api": "5.6.1",
+    "@polkadot/types": "5.6.1",
+    "@polkadot/types-known": "5.6.1",
+    "@polkadot/util": "7.2.1",
+    "@polkadot/rpc-core": "5.6.1",
+    "@docknetwork/sdk": "1.2.3"
   },
   "devDependencies": {
     "@babel/core": "^7.16.0",
     "@babel/preset-env": "^7.14.5",
-    "@docknetwork/sdk": "^0.4.6",
+    "@docknetwork/sdk": "1.2.3",
     "@docknetwork/wallet": "0.0.3",
     "@pmmmwh/react-refresh-webpack-plugin": "0.4.3",
-    "@polkadot/keyring": "6.4.1",
-    "@polkadot/ui-shared": "^0.83.1",
-    "@polkadot/util-crypto": "^6.4.1",
-    "@polkadot/wasm-crypto": "^4.0.2",
+    "@polkadot/keyring": "^7.2.1",
+    "@polkadot/types-known": "5.6.1",
+    "@polkadot/ui-shared": "^0.87.5",
+    "@polkadot/util-crypto": "^7.2.1",
+    "@polkadot/wasm-crypto": "^4.5.1",
     "@react-native-community/eslint-config": "^2.0.0",
     "@svgr/webpack": "5.5.0",
     "@testing-library/jest-dom": "^5.11.4",
@@ -55,7 +69,6 @@
     "jest-localstorage-mock": "^2.4.14",
     "jest-resolve": "26.6.0",
     "jest-watch-typeahead": "0.6.1",
-    "json-rpc-2.0": "^0.2.16",
     "mini-css-extract-plugin": "0.11.3",
     "optimize-css-assets-webpack-plugin": "5.0.4",
     "pnp-webpack-plugin": "1.6.4",
@@ -81,7 +94,7 @@
     "url-loader": "4.1.1",
     "wasm-loader": "^1.3.0",
     "web-vitals": "^1.0.1",
-    "webpack": "4.44.2",
+    "webpack": "^5.67.0",
     "webpack-dev-server": "3.11.1",
     "webpack-manifest-plugin": "2.2.0",
     "workbox-webpack-plugin": "5.1.4"
@@ -89,12 +102,15 @@
   "scripts": {
     "start": "node ./scripts/start",
     "build": "node ./scripts/build",
-    "test": "jest ./src/**/*.test.js  --verbose --watchAll",
-    "polkadot-test": "npx babel-node ./src/polkadot-test",
-    "lint": "eslint './src/**/*.js' --ignore-path=.prettierignore",
+    "test": "export NODE_OPTIONS=\"--max_old_space_size=8096\"; jest --verbose",
+    "test:integration": "jest ./integration-tests/*.test.js --verbose --watchAll",
+    "examples:all": "nodemon --exec NODE_ENV=development npx babel-node ./examples/index.js",
+    "lint": "eslint './packages/**/*.js' --max-warnings=0 --ignore-path=.prettierignore",
     "lint:fix": "eslint './src/**/*.js' --fix --ignore-path=.prettierignore",
     "format": "prettier './src/**/*.{js,json}' --write",
-    "exec": "BABEL_ENV=development; babel-node"
+    "exec": "BABEL_ENV=development; babel-node",
+    "docs": "yarn jsdoc ./packages/core/lib/** ./packages/transactions/lib/** -c ./jsdoc.conf.json",
+    "link-packages": "sh ./scripts/link-packages.sh"
   },
   "eslintConfig": {
     "extends": [
@@ -121,6 +137,42 @@
   },
   "dependencies": {
     "@babel/node": "^7.16.0",
-    "babel-node": "^0.0.1-security"
+    "@babel/plugin-transform-flow-strip-types": "^7.16.0",
+    "@babel/preset-flow": "^7.16.7",
+    "@react-native-async-storage/async-storage": "^1.15.17",
+    "@rollup/plugin-babel": "^5.3.0",
+    "@rollup/plugin-commonjs": "^21.0.1",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^13.1.3",
+    "@rollup/plugin-wasm": "^5.1.2",
+    "assert": "^2.0.0",
+    "axios": "^0.25.0",
+    "axios-mock-adapter": "^1.20.0",
+    "babel-node": "^0.0.1-security",
+    "babel-plugin-transform-flow-strip-types": "^6.22.0",
+    "babel-preset-es2015": "^6.24.1",
+    "bignumber.js": "^9.0.1",
+    "buffer": "^6.0.3",
+    "core-js": "^3.20.3",
+    "crypto-browserify": "^3.12.0",
+    "jsdoc": "^3.6.7",
+    "jsdoc-babel": "^0.5.0",
+    "jsdocs": "^1.0.0",
+    "jsdom": "^19.0.0",
+    "mock-local-storage": "^1.1.19",
+    "node-localstorage": "^2.2.1",
+    "nodemon": "^2.0.15",
+    "process": "^0.11.10",
+    "react-native-keychain": "^8.0.0",
+    "realm": "^10.10.1",
+    "regenerator-runtime": "^0.13.9",
+    "rollup": "^2.65.0",
+    "rollup-plugin-flow": "^1.1.1",
+    "rollup-plugin-multi-input": "^1.3.1",
+    "rollup-plugin-terser": "^7.0.2",
+    "sinon": "^12.0.1",
+    "stream-browserify": "^3.0.0",
+    "uuid": "^8.3.2",
+    "winston": "^3.3.3"
   }
 }
