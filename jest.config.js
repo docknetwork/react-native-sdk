@@ -5,22 +5,20 @@ module.exports = {
   "transform": {
     "^.+\\.(ts|js)$": "babel-jest"
   },
-  "setupFilesAfterEnv": ["./src/setupTests.js"],
   "resetMocks": false,
-  "setupFiles": ["jest-localstorage-mock"],
+  "setupFilesAfterEnv": [
+    "<rootDir>/setup-tests.js",
+  ],
+  "globalTeardown": './scripts/test-teardown-globals.js',
+  "setupFiles": [
+    "jest-localstorage-mock"
+  ],
   "moduleNameMapper": {
-    // "@docknetwork/sdk": "<rootDir>/node_modules/@docknetwork/sdk/index.js",
-    // "@docknetwork/sdk/resolver": "<rootDir>/node_modules/@docknetwork/sdk/resolver.js"
-    
+    "@digitalbazaar/x25519-key-agreement-key-2020": "@digitalbazaar/x25519-key-agreement-key-2020/lib/X25519KeyAgreementKey2020",
+    "@digitalbazaar/ed25519-verification-key-2020": "@digitalbazaar/ed25519-verification-key-2020/lib/Ed25519VerificationKey2020",
+    "@digitalbazaar/minimal-cipher": "@digitalbazaar/minimal-cipher/Cipher"
   },
   "transformIgnorePatterns": [
-    "/node_modules/(?!@polkadot|@babel|@docknetwork)",
-    // @docknetwork/wallet
-    // "node_modules/(?!(@polkadot"
-    //   + "|react-navigation-tabs"
-    //   + "|react-native-splash-screen"
-    //   + "|react-native-screens"
-    //   + "|react-native-reanimated"
-    // + ")/)",
+    "/node_modules/(?!@polkadot|@babel|@docknetwork|@digitalbazaar)",
   ],
 }
