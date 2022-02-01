@@ -1,3 +1,4 @@
+import { setStorage } from '@docknetwork/wallet-sdk-core/lib/core/storage';
 import {
   Wallet,
   WalletEvents,
@@ -13,10 +14,14 @@ import React, {
 import {Platform, View} from 'react-native';
 import WebView from 'react-native-webview';
 import {WebviewEventHandler} from './message-handler';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const WalletSDKContext = React.createContext({
   wallet: null,
 });
+
+
+setStorage(AsyncStorage);
 
 export function useWallet({syncDocs = true} = {}) {
   const sdkContext = useContext(WalletSDKContext);
