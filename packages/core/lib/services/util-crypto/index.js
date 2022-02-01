@@ -1,3 +1,3 @@
-import { ExampleServiceRpc } from "./service-rpc";
+import { UtilCryptoServiceRpc } from "./service-rpc";
 
-export const exampleService = new ExampleServiceRpc();
+export const utilcryptoService = new UtilCryptoServiceRpc();
