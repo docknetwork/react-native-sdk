@@ -4,11 +4,13 @@ import {DockRpc} from '../client/dock-rpc';
 import {KeyringRpc} from '../client/keyring-rpc';
 import {UtilCryptoRpc} from '../client/util-crypto-rpc';
 import {WalletRpc} from '../client/wallet-rpc';
-import {getRealm, initRealm} from '../core/realm';
+import {clearCacheData, getRealm, initRealm} from '../core/realm';
 import {DocumentType, WalletDocument} from '../types';
 import {EventManager} from './event-manager';
 import {NetworkManager} from './network-manager';
 import {Accounts} from './accounts';
+import {getStorage} from '../core/storage';
+
 // import {getEnvironment} from 'realm/lib/utils';
 export const WalletEvents = {
   ready: 'ready',
@@ -16,6 +18,7 @@ export const WalletEvents = {
   documentAdded: 'document-added',
   documentUpdated: 'document-updated',
   documentRemoved: 'document-removed',
+  walletDeleted: 'wallet-deleted',
   networkUpdated: 'network-updated',
   networkConnected: 'network-connected',
 };
@@ -88,6 +91,12 @@ export class Wallet {
     }
   }
 
+  deleteWallet() {
+    this.eventManager.emit(WalletEvents.walletDeleted); 
+    clearCacheData();
+    getStorage().removeItem(this.walletId);
+  }
+
   setStatus(status: WalletStatus) {
     assert(!!status, 'status is required');
 
@@ -147,6 +156,18 @@ export class Wallet {
    * @returns Promise<boolean>
    */
   async remove(documentId) {
+    realm.write(() => {
+      const cachedAccount = realm
+        .objects('Account')
+        .filtered('id = $0', documentId)[0];
+
+      if (!cachedAccount) {
+        return;
+      }
+
+      realm.delete(cachedAccount);
+    });
+
     await WalletRpc.remove(documentId);
     this.eventManager.emit(WalletEvents.documentRemoved, documentId);
   }
