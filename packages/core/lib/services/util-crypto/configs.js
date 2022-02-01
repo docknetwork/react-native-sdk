@@ -1,14 +1,24 @@
 import assert from 'assert';
-import { isNumberValid } from '../../core/validation';
+import { assertAddress } from '../../core/validation';
 
 export const validation = {
-  sum(params: SumParams) {
-    assert(isNumberValid(params.number1), `invalid number1`);
-    assert(isNumberValid(params.number2), `invalid number2`);
+  deriveValidate(uri: string) {
+    assert(!!uri, 'uri is required');
   },
+
+  isAddressValid(address: string) {
+    assertAddress(address);
+  },
+  
+  mnemonicGenerate(numWords: number) {
+    if (numWords) {
+      assert(typeof numWords === 'number', 'invalid number of words');
+    }
+  },
+  
+  mnemonicValidate(phrase: string) {
+    assert(typeof phrase === 'string', 'invalid mnemonic phrase');
+  }
 };
 
-export type SumParams = {
-  number1: number,
-  number2: number,
-}
+

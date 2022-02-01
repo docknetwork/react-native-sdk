@@ -1,0 +1,35 @@
+{
+  "@context": [
+    "https://www.w3.org/2018/credentials/v1",
+    "https://w3id.org/wallet/v1"
+  ],
+  "id": "did:key:z6LSp1xrJwjVUeubWSsLHogZiUX6FbKugM41imquQVsbQx95#encrypted-wallet",
+  "type": ["VerifiableCredential", "EncryptedWallet"],
+  "issuer": "did:key:z6LSp1xrJwjVUeubWSsLHogZiUX6FbKugM41imquQVsbQx95",
+  "issuanceDate": "2022-02-01T19:37:05.849Z",
+  "credentialSubject": {
+    "id": "did:key:z6LSp1xrJwjVUeubWSsLHogZiUX6FbKugM41imquQVsbQx95",
+    "encryptedWalletContents": {
+      "protected": "eyJlbmMiOiJYQzIwUCJ9",
+      "recipients": [
+        {
+          "header": {
+            "kid": "did:key:z6LSp1xrJwjVUeubWSsLHogZiUX6FbKugM41imquQVsbQx95#z6LSp1xrJwjVUeubWSsLHogZiUX6FbKugM41imquQVsbQx95",
+            "alg": "ECDH-ES+A256KW",
+            "epk": {
+              "kty": "OKP",
+              "crv": "X25519",
+              "x": "LFAlWQe53iSsKLPYYK6M-YFctJhgvFswC8jJkus5d1E"
+            },
+            "apu": "LFAlWQe53iSsKLPYYK6M-YFctJhgvFswC8jJkus5d1E",
+            "apv": "ZGlkOmtleTp6NkxTcDF4ckp3alZVZXViV1NzTEhvZ1ppVVg2RmJLdWdNNDFpbXF1UVZzYlF4OTUjejZMU3AxeHJKd2pWVWV1YldTc0xIb2daaVVYNkZiS3VnTTQxaW1xdVFWc2JReDk1"
+          },
+          "encrypted_key": "WPsyUBE9et9XHIlJqUjdnjEFUsQO-DTm1CZeLsjjjb5JYsnKKeCmug"
+        }
+      ],
+      "iv": "jBCA5lpqkOppkEJathhgAOjxyviI8kBt",
+      "ciphertext": "xg2QFgwYZ4LUZVQydUJa",
+      "tag": "C9Bov2Wks78taHizlXZq6A"
+    }
+  }
+}
