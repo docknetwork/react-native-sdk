@@ -29,4 +29,6 @@ export type TransactionParams = {
   toAddress: string,
   fromAddress: string,
   amount: number | string,
+  transferAll?: boolean,
 };
+
