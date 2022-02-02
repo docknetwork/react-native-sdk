@@ -1,5 +1,5 @@
 import assert from 'assert';
-import {EventEmitter, once} from 'events';
+import {EventEmitter} from 'events';
 import {decodeAddress, encodeAddress} from '@polkadot/keyring';
 import {hexToU8a, isHex} from '@polkadot/util';
 import {
@@ -78,5 +78,5 @@ export class UtilCryptoService {
 }
 
 
-export const utilcryptoService:UtilCryptoService = new UtilCryptoService();
+export const utilCryptoService:UtilCryptoService = new UtilCryptoService();
 

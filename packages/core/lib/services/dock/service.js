@@ -1,8 +1,9 @@
 import assert from 'assert';
-import {EventEmitter, once} from 'events';
+import {EventEmitter} from 'events';
 import {DockAPI} from '@docknetwork/sdk';
 import {validation, InitParams} from './configs';
 import { Logger } from '../../core/logger';
+import { once } from '../../modules/event-manager';
 
 /**
  * 
@@ -47,7 +48,7 @@ export class DockService {
   async init(params: InitParams) {
     validation.init(params);
 
-    assert(!this.connectionInProgress, 'there is a connection in progress');
+    // assert(!this.connectionInProgress, 'there is a connection in progress');
     assert(!this.isDockReady, 'dock is already initialized');
     
     this.connectionInProgress = true;

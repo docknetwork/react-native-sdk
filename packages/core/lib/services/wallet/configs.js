@@ -41,8 +41,9 @@ export const validation = {
   add(params: AddParams) {
     assertContent(params);
   },
-  remove(params: RemoveParams) {
-    assertContent(params);
+  remove(id: string) {
+    assert(typeof id === 'string', `invalid documentId`);
+    assert(!!id, `documentId is required`);
   },
   update(params: UpdateParams) {
     assertContent(params);

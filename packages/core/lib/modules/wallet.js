@@ -10,6 +10,10 @@ import {EventManager} from './event-manager';
 import {NetworkManager} from './network-manager';
 import {Accounts} from './accounts';
 import {getStorage} from '../core/storage';
+import { walletService } from '../services/wallet';
+import { utilCryptoService } from '../services/util-crypto';
+import { keyringService } from '../services/keyring';
+import { dockService } from '../services/dock';
 
 // import {getEnvironment} from 'realm/lib/utils';
 export const WalletEvents = {
@@ -60,6 +64,7 @@ export class Wallet {
     await DockRpc.disconnect();
     this.setStatus('closed');
   }
+
   /**
    * Load wallet
    */
@@ -76,11 +81,16 @@ export class Wallet {
 
     try {
       await initRealm();
-      await UtilCryptoRpc.cryptoWaitReady();
-      await WalletRpc.create(this.walletId);
-      await WalletRpc.load();
+      await utilCryptoService.cryptoWaitReady();
+
+      const result = await walletService.create({
+        walletId: this.walletId,
+      });
+
+      await walletService.load();
 
       this.setStatus('ready');
+
       this.eventManager.emit(WalletEvents.ready);
 
       this.initNetwork();
@@ -117,17 +127,17 @@ export class Wallet {
       this.connectionInProgress = true;
 
       const networkInfo = this.networkManager.getNetworkInfo();
-      await KeyringRpc.initialize({
+      await keyringService.initialize({
         ss58Format: networkInfo.addressPrefix,
       });
 
-      const isDockConnected = await DockRpc.isApiConnected();
+      const isDockConnected = await dockService.isApiConnected();
 
       if (isDockConnected) {
-        await DockRpc.disconnect();
+        await dockService.disconnect();
       }
 
-      await DockRpc.init({
+      await dockService.init({
         address: networkInfo.substrateUrl,
       });
 
@@ -137,6 +147,14 @@ export class Wallet {
     }
   }
 
+  async waitReady() {
+      if (this.status === 'ready') {
+        return;
+      }
+
+      return await this.eventManager.waitFor(WalletEvents.ready);
+  }
+  
   getContext() {
     return this.getContext;
   }
@@ -146,29 +164,27 @@ export class Wallet {
   }
 
   assertReady() {
-    assert(
-      this.status === 'ready',
-      `The wallet is not ready yet, the current status is: ${this.status}`,
-    );
+    return this.waitReady();
   }
   /**
    * Remove document
    * @returns Promise<boolean>
    */
   async remove(documentId) {
-    realm.write(() => {
-      const cachedAccount = realm
-        .objects('Account')
-        .filtered('id = $0', documentId)[0];
+    const realm = getRealm();
+    // realm.write(() => {
+    //   const cachedAccount = realm
+    //     .objects('Account')
+    //     .filtered('id = $0', documentId)[0];
 
-      if (!cachedAccount) {
-        return;
-      }
+    //   if (!cachedAccount) {
+    //     return;
+    //   }
 
-      realm.delete(cachedAccount);
-    });
+    //   realm.delete(cachedAccount);
+    // });
 
-    await WalletRpc.remove(documentId);
+    await walletService.remove(documentId);
     this.eventManager.emit(WalletEvents.documentRemoved, documentId);
   }
 
@@ -179,7 +195,7 @@ export class Wallet {
    * @returns document
    */
   async add(document: WalletDocument) {
-    this.assertReady();
+    await this.assertReady();
 
     const newDocument = {
       ...document,
@@ -187,7 +203,7 @@ export class Wallet {
       '@context': document.context || this.context,
     };
 
-    await WalletRpc.add(newDocument);
+    await walletService.add(newDocument);
 
     this.eventManager.emit(WalletEvents.documentAdded, newDocument);
 
@@ -195,29 +211,29 @@ export class Wallet {
   }
 
   async update(document: WalletDocument) {
-    this.assertReady();
+    await this.assertReady();
 
-    await WalletRpc.update(document);
+    await walletService.update(document);
     this.eventManager.emit(WalletEvents.documentUpdated, document);
     return document;
   }
 
   async export(password) {
-    return WalletRpc.exportWallet(password);
+    return walletService.exportWallet(password);
   }
   /**
    * Add all documents in the wallet
    * @param {*} options
    * @returns document
    */
-  query(
+  async query(
     params: {
       type: DocumentType,
       id: string,
       name: string,
     } = {},
   ): Promise<WalletDocument[]> {
-    this.assertReady();
+    await this.assertReady();
 
     let equals;
 
@@ -235,13 +251,13 @@ export class Wallet {
       equals[`content.${key}`] = value;
     });
 
-    return WalletRpc.query({
+    return walletService.query({
       equals,
     });
   }
 
   async getDocumentById(documentId) {
-    this.assertReady();
+    await this.assertReady();
 
     const result = await this.query({id: documentId});
     return result[0];
@@ -253,7 +269,7 @@ export class Wallet {
     await wallet.load();
 
     if (json) {
-      await WalletRpc.importWallet(json, password);
+      await walletService.importWallet({ json, password });
     }
 
     return wallet;

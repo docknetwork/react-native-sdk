@@ -1,6 +1,9 @@
-import rpcServer from './rpc-server';
 import {getRpcClient, initRpcClient} from './rpc-client';
 import {getLogger, setLogger} from './logger';
+import rpcServer from './rpc-server';
+
+console.log('testing');
+
 
 initRpcClient(jsonRPCRequest => {
   postMessage({
@@ -14,6 +17,8 @@ initRpcClient(jsonRPCRequest => {
 const postMessage = message => {
   if (window.ReactNativeWebView) {
     window.ReactNativeWebView.postMessage(JSON.stringify(message));
+  } else {
+    console.log(message);
   }
 };
 
@@ -45,7 +50,7 @@ global.handleEvent = event => {
   }
 
   if (data && data.type === 'json-rpc-response') {
-    getLogger().log('Received response', data.body);
+    getLogger().log('webview: Received response', data.body);
     getRpcClient().receive(data.body);
   }
 };

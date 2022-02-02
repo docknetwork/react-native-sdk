@@ -3,9 +3,8 @@ import {dockService} from './dock/service';
 import {substrateService} from './substrate/service';
 import {walletService} from './wallet/service';
 import {polkadotService} from './polkadot/service';
-import {utilcryptoService} from './util-crypto/service';
-import storage from './storage';
-// import logger from './logger';
+import {utilCryptoService} from './util-crypto/service';
+import {storageService} from './storage/service';
 
 export default [
   keyringService,
@@ -13,5 +12,6 @@ export default [
   substrateService,
   walletService,
   polkadotService,
-  utilcryptoService,
+  utilCryptoService,
+  storageService,
 ];

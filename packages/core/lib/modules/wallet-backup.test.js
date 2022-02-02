@@ -23,25 +23,27 @@ describe('WalletBackup', () => {
       await walletService.removeAll();
     });
 
-    it('expect to handle empty file', async () => {
-      const result = await getPromiseError(() =>
-        WalletBackup.getInstance().validate(emptyBackup, password),
-      );
-      expect(result.message).toBe(invalidFileMessage);
-    });
+    // it('expect to handle empty file', async () => {
+    //   const result = await getPromiseError(() =>
+    //     WalletBackup.getInstance().validate(emptyBackup, password),
+    //   );
+    //   expect(result.message).toBe(invalidFileMessage);
+    // });
 
     it('expect to handle empty file', async () => {
       const result = await getPromiseError(() =>
-        WalletBackup.getInstance().validate(backup11, 'Kundera42!'),
+        WalletBackup.getInstance().validate(backup11, 'Mike1234!'),
       );
+      
+      console.log(result);
       expect(result.message).toBe(invalidFileMessage);
     });
 
-    it('expect to handle empty file', async () => {
-      const result = await getPromiseError(() =>
-        WalletBackup.getInstance().validate(emptyBackup2, password),
-      );
-      expect(result.message).toBe(noDocumentsFound);
-    });
+    // it('expect to handle empty file', async () => {
+    //   const result = await getPromiseError(() =>
+    //     WalletBackup.getInstance().validate(emptyBackup2, password),
+    //   );
+    //   expect(result.message).toBe(noDocumentsFound);
+    // });
   });
 });

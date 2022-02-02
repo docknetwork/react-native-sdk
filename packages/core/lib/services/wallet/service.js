@@ -1,5 +1,5 @@
 import assert from 'assert';
-import {EventEmitter, once} from 'events';
+import {EventEmitter} from 'events';
 import StorageWallet from '@docknetwork/wallet/storage-wallet';
 import {
   validation,
@@ -27,6 +27,7 @@ export class WalletService {
     WalletService.prototype.create,
     WalletService.prototype.add,
     WalletService.prototype.exportWallet,
+    WalletService.prototype.importWallet,
     WalletService.prototype.resolveCorrelations,
     WalletService.prototype.createAccountDocuments,
     WalletService.prototype.exportAccount,
@@ -41,6 +42,7 @@ export class WalletService {
     WalletService.prototype.sync,
     WalletService.prototype.unlock,
     WalletService.prototype.update,
+    WalletService.prototype.healthCheck,
   ];
 
   constructor() {
@@ -54,6 +56,10 @@ export class WalletService {
     } else {
       this.wallet = new RpcWallet(walletId);
     }
+  }
+
+  healthCheck(timestamp) {
+    return `${this.name}: ${timestamp}`;
   }
 
   load() {
@@ -121,6 +127,7 @@ export class WalletService {
     validation.exportWallet(password);
     return this.wallet.export(password);
   }
+
   /**
    *
    * @param {*} param0

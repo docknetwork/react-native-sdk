@@ -8,8 +8,8 @@ export function createRpcService(service) {
   assert(typeof name === 'string', `invalid name: ${name} for service ${service.constructor.name}`);
   assert(typeof rpcMethods === 'object', `invalid routes: ${rpcMethods} for service ${service.constructor.name}`);
 
-  return rpcMethods.map(routeName => {
-    const methodResolver = rpcMethods[routeName];
+  return rpcMethods.map(methodResolver => {
+    const routeName = methodResolver.name;
     const methodName = `${name}.${routeName}`;
 
     return {
@@ -23,9 +23,9 @@ export function createRpcService(service) {
           }
 
           if (params.__args) {
-            result = methodResolver(...params.__args);
+            result = methodResolver.apply(service, params.__args);
           } else {
-            result = methodResolver(params);
+            result = methodResolver.apply(service, [params]);
           }
 
           return Promise.resolve(result).then(value => {

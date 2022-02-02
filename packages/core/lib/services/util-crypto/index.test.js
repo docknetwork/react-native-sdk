@@ -1,4 +1,4 @@
-import {UtilCryptoService, utilcryptoService as service} from './service';
+import {UtilCryptoService, utilCryptoService as service} from './service';
 import {UtilCryptoServiceRpc} from './service-rpc';
 import {NetworkManager} from '../../modules/network-manager';
 import {

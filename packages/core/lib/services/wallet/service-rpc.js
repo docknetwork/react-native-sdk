@@ -32,6 +32,9 @@ export class WalletServiceRpc extends RpcService {
   lock(password) {
     return this.call('lock');
   }
+  healthCheck(timestamp) {
+    return this.call('healthCheck', timestamp);
+  }
   unlock(password) {
     return this.call('unlock');
   }
