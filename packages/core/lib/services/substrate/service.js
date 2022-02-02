@@ -10,6 +10,7 @@ import {
   TransactionParams,
   serviceName,
 } from './configs';
+import { BN_HUNDRED } from "@polkadot/util";
 
 
 export class SubstrateService {
@@ -58,6 +59,25 @@ export class SubstrateService {
 
     dock.setAccount(account);
 
+    if (params.transferAll) {
+      const api = dock.api;
+      const balances = await api.derive.balances.all(account.address);
+
+      await api.tx.balances
+        .transfer(fromAddress, balances.availableBalance)
+        .paymentInfo(account)
+        .then(async ({ partialFee }): void => {
+          const adjFee = partialFee.muln(110).div(BN_HUNDRED);
+          let maxTransfer = balances.availableBalance.sub(adjFee);
+
+          if (!maxTransfer.gt(api.consts.balances.existentialDeposit)) {
+            throw new Error("balance too low");
+          }
+
+          amount = maxTransfer;
+        });
+    }
+    
     return new Promise((resolve, reject) => {
       const extrinsic = dock.api.tx.balances.transfer(toAddress, amount);
 
