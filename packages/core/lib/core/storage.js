@@ -1,20 +1,20 @@
 
 
 
-export interface StorageInterface {
+export type StorageInterface = string;
   
-  setItem(key, data) {
+//   setItem(key, data) {
     
-  }
+//   }
   
-  getItem(key) {
+//   getItem(key) {
     
-  }
+//   }
   
-  removeItem(key) {
+//   removeItem(key) {
     
-  }
-}
+//   }
+// }
 
 let storage: StorageInterface;
 

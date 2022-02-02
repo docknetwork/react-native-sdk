@@ -7,13 +7,13 @@ export class RpcService {
   constructor(serviceName) {
     assert(!!serviceName, 'serviceName is required');
 
-    this.serviceName;
+    this.serviceName = serviceName;
   }
 
   call(method, params) {
     assert(typeof method === 'string', 'method is required');
 
-    rpcRequest(`${this.serviceName}.${method}`, params);
+    return rpcRequest(`${this.serviceName}.${method}`, params);
   }
 }
 

@@ -1,7 +1,7 @@
 import Keyring from '@polkadot/keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 import assert from 'assert';
-import {EventEmitter, once} from 'events';
+import {EventEmitter} from 'events';
 import {validation, AddFromJsonParams, InitializeParams, AddFromMnemonicParams, CreateFromUriParams, serviceName} from './configs';
 
 export class KeyringService {

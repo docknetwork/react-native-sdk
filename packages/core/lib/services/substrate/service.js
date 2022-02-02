@@ -1,5 +1,5 @@
 import assert from 'assert';
-import {EventEmitter, once} from 'events';
+import {EventEmitter} from 'events';
 import { DOCK_TOKEN_UNIT } from '../../core/format-utils';
 import {dockService} from '../dock/service';
 import { walletService } from '../wallet/service';

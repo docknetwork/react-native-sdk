@@ -1,7 +1,7 @@
 import assert from 'assert';
-import {EventEmitter, once} from 'events';
+import {EventEmitter} from 'events';
 
-import {validation, SumParams} from './configs';
+import {validation} from './configs';
 
 export class StorageService {
   

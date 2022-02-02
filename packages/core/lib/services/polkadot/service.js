@@ -1,5 +1,5 @@
 import assert from 'assert';
-import {EventEmitter, once} from 'events';
+import {EventEmitter} from 'events';
 import {polkadotIcon} from '@polkadot/ui-shared';
 import {validation, GetAddressSvgParams} from './configs';
 
