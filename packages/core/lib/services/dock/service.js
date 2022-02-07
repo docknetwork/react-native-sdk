@@ -48,6 +48,10 @@ export class DockService {
   async init(params: InitParams) {
     validation.init(params);
 
+    if (this) {
+      return;
+    }
+
     // assert(!this.connectionInProgress, 'there is a connection in progress');
     assert(!this.isDockReady, 'dock is already initialized');
     

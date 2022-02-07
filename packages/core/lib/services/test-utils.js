@@ -1,8 +1,8 @@
 import {cryptoWaitReady} from '@polkadot/util-crypto';
 import {TestFixtures} from '../fixtures';
-import KeyringService from './keyring';
+import {keyringService} from './keyring';
 import {dockService} from './dock/service';
-import WalletService from './wallet';
+import {walletService} from './wallet';
 import {RpcService} from './rpc-service-client';
 import {DOCK_TOKEN_UNIT} from '../core/format-utils';
 import assert from 'assert';
@@ -13,10 +13,10 @@ import {NetworkManager} from '../modules/network-manager';
 
 export async function initializeWalletService() {
   await cryptoWaitReady();
-  await KeyringService.routes.initialize({
+  await keyringService.initialize({
     ss58Format: 21,
   });
-  await WalletService.routes.create('test-wallet', 'memory');
+  await walletService.create('test-wallet', 'memory');
 }
 
 export const TEST_FEE_AMOUNT = 2.48;
@@ -105,11 +105,11 @@ export async function setupTestWallet() {
   }
 
   await cryptoWaitReady();
-  await KeyringService.routes.initialize({
+  await keyringService.initialize({
     ss58Format: NetworkManager.getInstance().getNetworkInfo().addressPrefix,
   });
-  await WalletService.routes.create('test-wallet', 'memory');
-  await WalletService.routes.createAccountDocuments({
+  await walletService.create('test-wallet', 'memory');
+  await walletService.createAccountDocuments({
     mnemonic: TestFixtures.account1.mnemonic,
     name: TestFixtures.account1.name,
   });
