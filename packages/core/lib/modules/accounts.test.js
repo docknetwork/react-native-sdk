@@ -1,4 +1,4 @@
-import { substrateService } from '../services/substrate';
+import {substrateService} from '../services/substrate';
 import {TestFixtures} from '../fixtures';
 import {Accounts} from './accounts';
 import {Wallet} from './wallet';

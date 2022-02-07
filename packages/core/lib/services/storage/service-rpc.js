@@ -1,7 +1,7 @@
-import { RpcService } from "../rpc-service-client";
-import { validation, InitParams } from "./configs";
+import {RpcService} from '../rpc-service-client';
+import {validation, InitParams} from './configs';
 
-export class StorageServiceRpc extends RpcService {  
+export class StorageServiceRpc extends RpcService {
   constructor() {
     super('storage');
   }
@@ -9,7 +9,7 @@ export class StorageServiceRpc extends RpcService {
   setItem(...args): Promise<any> {
     return this.call('setItem', ...args);
   }
-  
+
   removeItem(...args): Promise<any> {
     return this.call('removeItem', ...args);
   }

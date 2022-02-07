@@ -1,3 +1,3 @@
-import { WalletServiceRpc } from "./service-rpc";
+import {WalletServiceRpc} from './service-rpc';
 
 export const walletService = new WalletServiceRpc();

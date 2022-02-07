@@ -116,11 +116,11 @@ export class WalletService {
     validation.query(search);
     return this.wallet.query(search);
   }
-  
+
   /**
-   * 
-   * @param {*} password 
-   * @returns 
+   *
+   * @param {*} password
+   * @returns
    */
   exportWallet(password) {
     this._assertWallet();
@@ -140,11 +140,11 @@ export class WalletService {
     const {json, password} = params;
     return this.wallet.import(json, password);
   }
-  
+
   async removeAll() {
     this._assertWallet();
     const documents = await this.wallet.query({});
-    
+
     for (let doc of documents) {
       await this.wallet.remove(doc.id);
     }
@@ -243,7 +243,7 @@ export class WalletService {
   }
 
   _assertWallet() {
-    assert(!!this.wallet, `wallet is not created`);
+    assert(!!this.wallet, 'wallet is not created');
   }
 
   async getAccountKeypair(accountId) {

@@ -1,3 +1,3 @@
-import { ExampleServiceRpc } from "./service-rpc";
+import {ExampleServiceRpc} from './service-rpc';
 
 export const exampleService = new ExampleServiceRpc();

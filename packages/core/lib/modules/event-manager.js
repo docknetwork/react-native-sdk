@@ -1,9 +1,9 @@
-import {EventEmitter } from 'events';
+import {EventEmitter} from 'events';
 import assert from 'assert';
-import { Logger } from '../core/logger';
+import {Logger} from '../core/logger';
 
 export function once(emitter: EventEmitter, eventName: string) {
-  return new Promise((resolve) => emitter.once(eventName, resolve));
+  return new Promise(resolve => emitter.once(eventName, resolve));
 }
 export class EventManager {
   eventEmitter: EventEmitter;

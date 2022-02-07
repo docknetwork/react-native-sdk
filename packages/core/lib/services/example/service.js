@@ -4,14 +4,9 @@ import {EventEmitter} from 'events';
 import {validation, SumParams} from './configs';
 
 export class ExampleService {
-  
-  rpcMethods = [
-    ExampleService.prototype.sum,
-  ];
+  rpcMethods = [ExampleService.prototype.sum];
 
-  constructor() {
-      
-  }
+  constructor() {}
 
   sum(params: SumParams) {
     validation.sum(params);
@@ -20,6 +15,4 @@ export class ExampleService {
   }
 }
 
-
-export const exampleService:ExampleService = new ExampleService();
-
+export const exampleService: ExampleService = new ExampleService();

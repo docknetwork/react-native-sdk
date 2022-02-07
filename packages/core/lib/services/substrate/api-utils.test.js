@@ -1,7 +1,6 @@
-
 import {DOCK_TOKEN_UNIT} from '../../core/format-utils';
 import {TestFixtures} from '../../fixtures';
-import { once } from '../../modules/event-manager';
+import {once} from '../../modules/event-manager';
 import {dockService} from '../dock/service';
 import {getKeyring} from '../keyring';
 import {mockDockService, setMockTransactionError} from '../test-utils';

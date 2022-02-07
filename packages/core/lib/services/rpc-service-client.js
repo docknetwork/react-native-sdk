@@ -1,5 +1,5 @@
-import assert from "assert";
-import { rpcRequest } from "../rpc-client";
+import assert from 'assert';
+import {rpcRequest} from '../rpc-client';
 
 export class RpcService {
   serviceName: string;
@@ -16,4 +16,3 @@ export class RpcService {
     return rpcRequest(`${this.serviceName}.${method}`, params);
   }
 }
-

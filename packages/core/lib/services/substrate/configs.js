@@ -31,4 +31,3 @@ export type TransactionParams = {
   amount: number | string,
   transferAll?: boolean,
 };
-

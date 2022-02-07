@@ -2,19 +2,18 @@ import assert from 'assert';
 import {EventEmitter} from 'events';
 import {DockAPI} from '@docknetwork/sdk';
 import {validation, InitParams} from './configs';
-import { Logger } from '../../core/logger';
-import { once } from '../../modules/event-manager';
+import {Logger} from '../../core/logger';
+import {once} from '../../modules/event-manager';
 
 /**
- * 
+ *
  */
 export class DockService {
-
   isDockReady = false;
   static Events = {
-    DOCK_READY: 'dock-ready'
-  }
-  
+    DOCK_READY: 'dock-ready',
+  };
+
   rpcMethods = [
     DockService.prototype.disconnect,
     DockService.prototype.ensureDockReady,
@@ -23,27 +22,27 @@ export class DockService {
   ];
 
   constructor() {
-      this.name = 'dock';
-      this.dock = new DockAPI();
-      this.emitter = new EventEmitter();
+    this.name = 'dock';
+    this.dock = new DockAPI();
+    this.emitter = new EventEmitter();
   }
 
   /**
-   * 
-   * @returns 
+   *
+   * @returns
    */
   async ensureDockReady() {
     if (this.isDockReady) {
       return;
     }
-    
+
     return once(this.emitter, DockService.Events.DOCK_READY);
   }
 
   /**
-   * 
-   * @param {*} params 
-   * @returns 
+   *
+   * @param {*} params
+   * @returns
    */
   async init(params: InitParams) {
     validation.init(params);
@@ -54,17 +53,16 @@ export class DockService {
 
     // assert(!this.connectionInProgress, 'there is a connection in progress');
     assert(!this.isDockReady, 'dock is already initialized');
-    
+
     this.connectionInProgress = true;
 
     Logger.debug(`Attempt to initialized substrate at: ${params.address}`);
-    
+
     const result = await this.dock.init(params).finally(() => {
       this.connectionInProgress = false;
     });
-    
-    Logger.debug(`Substrate initialized at: ${params.address}`);
 
+    Logger.debug(`Substrate initialized at: ${params.address}`);
 
     this._setDockReady(true);
 
@@ -72,8 +70,8 @@ export class DockService {
   }
 
   /**
-   * 
-   * @returns 
+   *
+   * @returns
    */
   async disconnect() {
     const result = await this.dock.disconnect();
@@ -82,8 +80,8 @@ export class DockService {
   }
 
   /**
-   * 
-   * @returns 
+   *
+   * @returns
    */
   async isApiConnected() {
     return this.isDockReady;
@@ -98,6 +96,4 @@ export class DockService {
   }
 }
 
-
-export const dockService:DockService = new DockService();
-
+export const dockService: DockService = new DockService();

@@ -1,4 +1,4 @@
-import {getKeyring} from './services/keyring';
+import {getKeyring} from './services/keyring/service';
 
 export const TestFixtures = {
   account1: {

@@ -34,7 +34,7 @@ describe('WalletBackup', () => {
       const result = await getPromiseError(() =>
         WalletBackup.getInstance().validate(backup11, 'Mike1234!'),
       );
-      
+
       console.log(result);
       expect(result.message).toBe(invalidFileMessage);
     });

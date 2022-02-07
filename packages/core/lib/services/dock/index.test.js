@@ -2,7 +2,9 @@ import {dockService as service} from './service';
 import {DockServiceRpc} from './service-rpc';
 import {NetworkManager} from '../../modules/network-manager';
 import {
-  assertRpcService, getPromiseError, mockDockSdkConnection,
+  assertRpcService,
+  getPromiseError,
+  mockDockSdkConnection,
 } from '../test-utils';
 import {RpcService} from '../rpc-service-client';
 import {validation} from './configs';
@@ -23,7 +25,7 @@ describe('DockService', () => {
     afterEach(async () => {
       await service.disconnect();
     });
-    
+
     it('connect and disconnect substrate node', async () => {
       const mock = mockDockSdkConnection();
       const result = await doConnect();
@@ -43,7 +45,7 @@ describe('DockService', () => {
       expect(await service.isApiConnected()).toBeFalsy();
       mock.clear();
     });
-    
+
     it('throw error for existing connection', async () => {
       const mock = mockDockSdkConnection();
       const error = await getPromiseError(async () => {
@@ -53,14 +55,14 @@ describe('DockService', () => {
       expect(error.message).toBe('dock is already initialized');
       mock.clear();
     });
-  
+
     it('throw error if connectino in progress', async () => {
       const mock = mockDockSdkConnection();
       const error = await getPromiseError(async () => {
         doConnect();
         await doConnect();
       });
-      expect(error.message).toBe('there is a connection in progress')
+      expect(error.message).toBe('there is a connection in progress');
       mock.clear();
     });
   });

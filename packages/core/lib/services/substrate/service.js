@@ -1,17 +1,16 @@
 import assert from 'assert';
 import {EventEmitter} from 'events';
-import { DOCK_TOKEN_UNIT } from '../../core/format-utils';
+import {DOCK_TOKEN_UNIT} from '../../core/format-utils';
 import {dockService} from '../dock/service';
-import { walletService } from '../wallet/service';
-import { signAndSend } from './api-utils';
+import {walletService} from '../wallet/service';
+import {signAndSend} from './api-utils';
 import {
   validation,
   GetAccountBalanceParams,
   TransactionParams,
   serviceName,
 } from './configs';
-import { BN_HUNDRED } from "@polkadot/util";
-
+import {BN_HUNDRED} from '@polkadot/util';
 
 export class SubstrateService {
   rpcMethods = [
@@ -45,17 +44,20 @@ export class SubstrateService {
 
     dockService.dock.setAccount(account);
 
-    const extrinsic = dockService.dock.api.tx.balances.transfer(toAddress, amount);
+    const extrinsic = dockService.dock.api.tx.balances.transfer(
+      toAddress,
+      amount,
+    );
     const paymentInfo = await extrinsic.paymentInfo(account);
     return paymentInfo.partialFee.toNumber() / DOCK_TOKEN_UNIT;
   }
 
   async sendTokens(params: TransactionParams) {
     validation.sendTokens(params);
-    
+
     const {toAddress, fromAddress, amount} = params;
     const account = await walletService.getAccountKeypair(fromAddress);
-    const { dock } = dockService;
+    const {dock} = dockService;
 
     dock.setAccount(account);
 
@@ -66,24 +68,22 @@ export class SubstrateService {
       await api.tx.balances
         .transfer(fromAddress, balances.availableBalance)
         .paymentInfo(account)
-        .then(async ({ partialFee }): void => {
+        .then(async ({partialFee}): void => {
           const adjFee = partialFee.muln(110).div(BN_HUNDRED);
           let maxTransfer = balances.availableBalance.sub(adjFee);
 
           if (!maxTransfer.gt(api.consts.balances.existentialDeposit)) {
-            throw new Error("balance too low");
+            throw new Error('balance too low');
           }
 
           amount = maxTransfer;
         });
     }
-    
+
     return new Promise((resolve, reject) => {
       const extrinsic = dock.api.tx.balances.transfer(toAddress, amount);
 
-      signAndSend(account, extrinsic)
-        .on('done', resolve)
-        .on('error', reject);
+      signAndSend(account, extrinsic).on('done', resolve).on('error', reject);
     });
   }
 }

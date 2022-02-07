@@ -32,9 +32,8 @@ export function useWallet({syncDocs = true} = {}) {
   console.log(wallet);
 
   useEffect(() => {
-    
-    console.log({ sdkStatus, wallet, syncDocs });
-    
+    console.log({sdkStatus, wallet, syncDocs});
+
     if (sdkStatus !== 'ready') {
       return;
     }
@@ -47,11 +46,11 @@ export function useWallet({syncDocs = true} = {}) {
       try {
         const allDocs = await wallet.query({});
         setDocuments(allDocs);
-      } catch(err) {
+      } catch (err) {
         debugger;
       }
     };
-    
+
     setStatus(wallet.status);
 
     wallet.eventManager.on(WalletEvents.statusUpdated, setStatus);
@@ -66,7 +65,6 @@ export function useWallet({syncDocs = true} = {}) {
         updateDocuments();
       }
     }
-    
   }, [sdkStatus, wallet, syncDocs]);
 
   return {

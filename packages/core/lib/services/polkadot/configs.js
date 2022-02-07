@@ -1,8 +1,8 @@
 import assert from 'assert';
-import { assertAddress } from '../../core/validation';
+import {assertAddress} from '../../core/validation';
 
 export const validation = {
-  getAddressSvg({ address, isAlternative }: GetAddressSvgParams) {
+  getAddressSvg({address, isAlternative}: GetAddressSvgParams) {
     assertAddress(address);
   },
 };
@@ -10,4 +10,4 @@ export const validation = {
 export type GetAddressSvgParams = {
   address: string,
   isAlternative?: boolean,
-}
+};

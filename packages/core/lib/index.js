@@ -4,7 +4,6 @@ import rpcServer from './rpc-server';
 
 console.log('testing');
 
-
 initRpcClient(jsonRPCRequest => {
   postMessage({
     type: 'json-rpc-request',
