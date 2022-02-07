@@ -58,7 +58,7 @@ export class Accounts {
   }
 
   async exportAccount(address, password) {
-    return walletService.exportAccount(address, password);
+    return walletService.exportAccount({ address, password });
   }
 
   async importAccount(json, password) {
@@ -71,7 +71,7 @@ export class Accounts {
   async fetchBalance(address) {
     assert(isAddressValid(address), 'invalid address');
 
-    const balance = await substrateService.getAccountBalance(address);
+    const balance = await substrateService.getAccountBalance({ address });
     const currency = await this.findCorrelationByType(
       address,
       'Currency',

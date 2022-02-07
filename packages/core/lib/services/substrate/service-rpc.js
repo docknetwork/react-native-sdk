@@ -7,7 +7,7 @@ export class SubstrateServiceRpc extends RpcService {
   }
 
   getAccountBalance(params: GetAccountBalanceParams): Promise<any> {
-    return this.call('getAccountBalance');
+    return this.call('getAccountBalance', params);
   }
   
   getFeeAmount(params: TransactionParams): Promise<any> {
