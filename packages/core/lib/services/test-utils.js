@@ -1,15 +1,13 @@
 import {cryptoWaitReady} from '@polkadot/util-crypto';
-import {TestFixtures} from '../fixtures';
-import {keyringService} from './keyring';
-import {dockService} from './dock/service';
-import {walletService} from './wallet';
-import {RpcService} from './rpc-service-client';
-import {DOCK_TOKEN_UNIT} from '../core/format-utils';
 import assert from 'assert';
 import BigNumber from 'bignumber.js';
-import wallet from './wallet';
-import keyring from './keyring';
+import {DOCK_TOKEN_UNIT} from '../core/format-utils';
+import {TestFixtures} from '../fixtures';
 import {NetworkManager} from '../modules/network-manager';
+import {dockService} from './dock/service';
+import {keyringService} from './keyring';
+import {RpcService} from './rpc-service-client';
+import {walletService} from './wallet';
 
 export async function initializeWalletService() {
   await cryptoWaitReady();
@@ -39,13 +37,13 @@ export async function mockDockService() {
     return dockService.init({
       address: NetworkManager.getInstance().getNetworkInfo().substrateUrl,
     });
-
-    return;
   }
 
   const sdkMock = mockDockSdkConnection();
   const _dockSdk = dockService.dock;
   await dockService.init({address: 'address'});
+
+  dockService.isDockReady = true;
 
   dockService.dock = {
     api: {
@@ -85,6 +83,7 @@ export async function mockDockService() {
                     },
                   },
                 ],
+              });
 
               return Promise.resolve({});
             },

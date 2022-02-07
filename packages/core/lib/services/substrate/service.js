@@ -1,16 +1,14 @@
-import assert from 'assert';
-import {EventEmitter} from 'events';
+import {BN_HUNDRED} from '@polkadot/util';
 import {DOCK_TOKEN_UNIT} from '../../core/format-utils';
 import {dockService} from '../dock/service';
 import {walletService} from '../wallet/service';
 import {signAndSend} from './api-utils';
 import {
-  validation,
   GetAccountBalanceParams,
-  TransactionParams,
   serviceName,
+  TransactionParams,
+  validation,
 } from './configs';
-import {BN_HUNDRED} from '@polkadot/util';
 
 export class SubstrateService {
   rpcMethods = [
@@ -55,7 +53,7 @@ export class SubstrateService {
   async sendTokens(params: TransactionParams) {
     validation.sendTokens(params);
 
-    const {toAddress, fromAddress, amount} = params;
+    let {toAddress, fromAddress, amount} = params;
     const account = await walletService.getAccountKeypair(fromAddress);
     const {dock} = dockService;
 
