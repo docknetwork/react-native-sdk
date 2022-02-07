@@ -66,7 +66,7 @@ function build({entry, path, filename, callback}) {
       }),
       new webpack.ProvidePlugin({
         Buffer: ['buffer', 'Buffer'],
-        process: require.resolve("process/browser"),
+        process: require.resolve('process/browser'),
       }),
     ],
   });

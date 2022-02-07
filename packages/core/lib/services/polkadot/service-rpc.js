@@ -1,7 +1,7 @@
-import { RpcService } from "../rpc-service-client";
-import { validation, getAddressSvg } from "./configs";
+import {RpcService} from '../rpc-service-client';
+import {validation, getAddressSvg} from './configs';
 
-export class PolkadotServiceRpc extends RpcService {  
+export class PolkadotServiceRpc extends RpcService {
   constructor() {
     super('polkadot');
   }

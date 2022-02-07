@@ -18,18 +18,18 @@ function assertContent(content: WalletContent) {
 
 export const validation = {
   getDocumentById(id: string) {
-    assert(typeof id === 'string', `invalid documentId`);
-    assert(!!id, `documentId is required`);
+    assert(typeof id === 'string', 'invalid documentId');
+    assert(!!id, 'documentId is required');
   },
   resolveCorrelations(address) {
-    assert(typeof address === 'string', `invalid documentId`);
-    assert(!!address, `documentId is required`);
+    assert(typeof address === 'string', 'invalid documentId');
+    assert(!!address, 'documentId is required');
   },
   exportAccount({address, password}: ExportAccountParams) {
     assertAddress(address);
     assertPassword(password);
   },
-  create({ walletId }: CreateParams): Promise<any> {
+  create({walletId}: CreateParams): Promise<any> {
     assert(typeof params.walletId === 'string', `invalid walletId ${walletId}`);
   },
   lock(password: string) {
@@ -42,8 +42,8 @@ export const validation = {
     assertContent(params);
   },
   remove(id: string) {
-    assert(typeof id === 'string', `invalid documentId`);
-    assert(!!id, `documentId is required`);
+    assert(typeof id === 'string', 'invalid documentId');
+    assert(!!id, 'documentId is required');
   },
   update(params: UpdateParams) {
     assertContent(params);
@@ -75,7 +75,7 @@ export const validation = {
     } else {
       assert(typeof mnemonic === 'string', `invalid mnemonic: ${mnemonic}`);
     }
-    
+
     if (type) {
       assertKeyType(type);
     }

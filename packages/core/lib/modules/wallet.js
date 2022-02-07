@@ -6,10 +6,10 @@ import {EventManager} from './event-manager';
 import {NetworkManager} from './network-manager';
 import {Accounts} from './accounts';
 import {getStorage} from '../core/storage';
-import { walletService } from '../services/wallet';
-import { utilCryptoService } from '../services/util-crypto';
-import { keyringService } from '../services/keyring';
-import { dockService } from '../services/dock';
+import {walletService} from '../services/wallet';
+import {utilCryptoService} from '../services/util-crypto';
+import {keyringService} from '../services/keyring';
+import {dockService} from '../services/dock';
 
 // import {getEnvironment} from 'realm/lib/utils';
 export const WalletEvents = {
@@ -101,7 +101,7 @@ export class Wallet {
   }
 
   deleteWallet() {
-    this.eventManager.emit(WalletEvents.walletDeleted); 
+    this.eventManager.emit(WalletEvents.walletDeleted);
     clearCacheData();
     getStorage().removeItem(this.walletId);
   }
@@ -147,13 +147,13 @@ export class Wallet {
   }
 
   async waitReady() {
-      if (this.status === 'ready') {
-        return;
-      }
+    if (this.status === 'ready') {
+      return;
+    }
 
-      return await this.eventManager.waitFor(WalletEvents.ready);
+    return await this.eventManager.waitFor(WalletEvents.ready);
   }
-  
+
   getContext() {
     return this.getContext;
   }
@@ -268,7 +268,7 @@ export class Wallet {
     await wallet.load();
 
     if (json) {
-      await walletService.importWallet({ json, password });
+      await walletService.importWallet({json, password});
     }
 
     return wallet;

@@ -1,8 +1,8 @@
 import assert from 'assert';
-import { walletService } from '../services/wallet';
-import { utilCryptoService } from '../services/util-crypto';
-import { keyringService } from '../services/keyring'; 
-import { substrateService } from '../services/substrate';
+import {walletService} from '../services/wallet';
+import {utilCryptoService} from '../services/util-crypto';
+import {keyringService} from '../services/keyring';
+import {substrateService} from '../services/substrate';
 import {polkadotService} from '../services/polkadot';
 import {Wallet, WalletEvents} from './wallet';
 import {Errors} from '../errors';
@@ -58,7 +58,7 @@ export class Accounts {
   }
 
   async exportAccount(address, password) {
-    return walletService.exportAccount({ address, password });
+    return walletService.exportAccount({address, password});
   }
 
   async importAccount(json, password) {
@@ -71,7 +71,7 @@ export class Accounts {
   async fetchBalance(address) {
     assert(isAddressValid(address), 'invalid address');
 
-    const balance = await substrateService.getAccountBalance({ address });
+    const balance = await substrateService.getAccountBalance({address});
     const currency = await this.findCorrelationByType(
       address,
       'Currency',
@@ -188,7 +188,7 @@ export class Accounts {
     assert(!accountExists, Errors.accountAlreadyExists);
 
     if (json) {
-      const pair = await keyringService.addFromJson(json, password);
+      const pair = await keyringService.addFromJson({jsonData: json, password});
 
       assert(pair && pair.type, 'invalid keypair');
 

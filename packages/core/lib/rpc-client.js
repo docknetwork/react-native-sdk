@@ -5,17 +5,18 @@ import {Logger} from './core/logger';
 import {getLogger} from './logger';
 import {patchRpcServer} from './rpc-util';
 
-const waitForClient = async () => new Promise((resolve) => {
-  const checkClient = () => {
-    if (global.client) {
-      return resolve();
-    }
-    
-    setTimeout(checkClient, 200);
-  }
-  
-  checkClient();
-});
+const waitForClient = async () =>
+  new Promise(resolve => {
+    const checkClient = () => {
+      if (global.client) {
+        return resolve();
+      }
+
+      setTimeout(checkClient, 200);
+    };
+
+    checkClient();
+  });
 
 export const getRpcClient = () => global.client;
 export const rpcRequest = async (method, ...params) => {
@@ -46,7 +47,6 @@ export function initRpcClient(requestHandler) {
   console.log('Rpc client initialized', global.client);
 
   global.client = new JSONRPCClient(requestHandler);
-
 
   global.client.__request = client.request;
   global.client.request = function (name, ...params) {

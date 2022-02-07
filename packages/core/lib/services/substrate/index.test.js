@@ -10,7 +10,7 @@ import {
 } from '../test-utils';
 import {validation} from './configs';
 import {dockService} from '../dock/service';
-import { TestFixtures } from '../../fixtures';
+import {TestFixtures} from '../../fixtures';
 
 describe('ExampleService', () => {
   it('ServiceRpc', () => {
@@ -27,7 +27,9 @@ describe('ExampleService', () => {
 
     describe('getAccountBalance', () => {
       it('expect to get account balance', async () => {
-        const balance = await service.getAccountBalance({address: TestFixtures.account1.address });
+        const balance = await service.getAccountBalance({
+          address: TestFixtures.account1.address,
+        });
         expect(typeof balance).toBe('number');
       });
 
@@ -60,7 +62,7 @@ describe('ExampleService', () => {
         expect(error.message).toBe('invalid amount');
       });
     });
-    
+
     describe('sendTokens', () => {
       it('expect to send tokens', async () => {
         setMockTransactionError(null);
@@ -69,26 +71,28 @@ describe('ExampleService', () => {
           fromAddress: TestFixtures.account1.address,
           toAddress: TestFixtures.account2.address,
         });
-  
+
         console.log('tx hash', hash);
-  
-        expect(typeof hash).toBe('string');    
-      })
+
+        expect(typeof hash).toBe('string');
+      });
 
       it('expect to handle transaction error', async () => {
         const errorMessage = 'some error from substrate';
 
         setMockTransactionError(errorMessage);
 
-        const error = await getPromiseError(() => service.sendTokens({
-          amount: 1,
-          fromAddress: TestFixtures.account1.address,
-          toAddress: TestFixtures.account2.address,
-        }));
-  
-        expect(error.message).toBe(errorMessage);    
-      })
-    })
+        const error = await getPromiseError(() =>
+          service.sendTokens({
+            amount: 1,
+            fromAddress: TestFixtures.account1.address,
+            toAddress: TestFixtures.account2.address,
+          }),
+        );
+
+        expect(error.message).toBe(errorMessage);
+      });
+    });
 
     afterAll(async () => {
       await unmockDockService();

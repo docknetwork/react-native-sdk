@@ -1,7 +1,7 @@
-import { RpcService } from "../rpc-service-client";
-import { validation, InitParams } from "./configs";
+import {RpcService} from '../rpc-service-client';
+import {validation, InitParams} from './configs';
 
-export class ExampleServiceRpc extends RpcService {  
+export class ExampleServiceRpc extends RpcService {
   constructor() {
     super('example');
   }

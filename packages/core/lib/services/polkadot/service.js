@@ -4,24 +4,19 @@ import {polkadotIcon} from '@polkadot/ui-shared';
 import {validation, GetAddressSvgParams} from './configs';
 
 export class PolkadotService {
-  
-  rpcMethods = [
-    PolkadotService.prototype.getAddressSvg,
-  ];
+  rpcMethods = [PolkadotService.prototype.getAddressSvg];
 
   constructor() {
-    this.name = 'polkadot'   
+    this.name = 'polkadot';
   }
 
   async getAddressSvg(params: GetAddressSvgParams) {
     validation.getAddressSvg(params);
 
     return polkadotIcon(params.address, {
-      isAlternative: params.isAlternative
+      isAlternative: params.isAlternative,
     });
   }
 }
 
-
-export const polkadotService:PolkadotService = new PolkadotService();
-
+export const polkadotService: PolkadotService = new PolkadotService();

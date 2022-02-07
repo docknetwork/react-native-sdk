@@ -1,11 +1,22 @@
 import Keyring from '@polkadot/keyring';
-import { cryptoWaitReady } from '@polkadot/util-crypto';
+import {cryptoWaitReady} from '@polkadot/util-crypto';
 import assert from 'assert';
 import {EventEmitter} from 'events';
-import {validation, AddFromJsonParams, InitializeParams, AddFromMnemonicParams, CreateFromUriParams, serviceName} from './configs';
+import {NetworkManager} from '../../modules/network-manager';
+import {
+  validation,
+  AddFromJsonParams,
+  InitializeParams,
+  AddFromMnemonicParams,
+  CreateFromUriParams,
+  serviceName,
+} from './configs';
+
+export function getKeyring() {
+  return keyringService.keyring;
+}
 
 export class KeyringService {
-
   keyring: Keyring;
 
   rpcMethods = [
@@ -30,13 +41,13 @@ export class KeyringService {
     return true;
   }
 
-  addFromMnemonic({ mnemonic, meta, type }: AddFromMnemonicParams) {
-    validation.addFromMnemonic({ mnemonic, meta, type });
+  addFromMnemonic({mnemonic, meta, type}: AddFromMnemonicParams) {
+    validation.addFromMnemonic({mnemonic, meta, type});
     return this.keyring.addFromMnemonic(mnemonic, meta, type);
   }
 
-  addFromJson({ jsonData, password }: AddFromJsonParams) {
-    validation.addFromJson({ jsonData, password });
+  addFromJson({jsonData, password}: AddFromJsonParams) {
+    validation.addFromJson({jsonData, password});
 
     const pair = this.keyring.addFromJson(jsonData);
 
@@ -47,12 +58,7 @@ export class KeyringService {
   getKeyringPair(params: CreateFromUriParams): KeyringPair {
     validation.getKeyringPair(params);
 
-    const {
-      mnemonic,
-      meta,
-      type,
-      derivePath = '',
-    } = params;
+    const {mnemonic, meta, type, derivePath = ''} = params;
 
     return this.keyring.createFromUri(
       `${mnemonic.trim()}${derivePath}`,
@@ -66,6 +72,4 @@ export class KeyringService {
   }
 }
 
-
-export const keyringService:KeyringService = new KeyringService();
-
+export const keyringService: KeyringService = new KeyringService();

@@ -1,3 +1,3 @@
-import { SubstrateServiceRpc } from "./service-rpc";
+import {SubstrateServiceRpc} from './service-rpc';
 
 export const substrateService = new SubstrateServiceRpc();

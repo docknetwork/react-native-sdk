@@ -12,7 +12,6 @@ import {
 import {validation, SumParams} from './configs';
 
 export class UtilCryptoService {
-
   rpcMethods = [
     UtilCryptoService.prototype.mnemonicGenerate,
     UtilCryptoService.prototype.mnemonicValidate,
@@ -29,21 +28,21 @@ export class UtilCryptoService {
   mnemonicGenerate(numWords) {
     validation.mnemonicGenerate(numWords);
 
-    return mnemonicGenerate(numWords)
+    return mnemonicGenerate(numWords);
   }
-  
+
   mnemonicValidate(phrase) {
     validation.mnemonicValidate(phrase);
 
-    return mnemonicValidate(phrase)
+    return mnemonicValidate(phrase);
   }
-  
+
   cryptoWaitReady() {
-    return cryptoWaitReady()
+    return cryptoWaitReady();
   }
-  
+
   cryptoIsReady(...args) {
-    return cryptoIsReady()
+    return cryptoIsReady();
   }
 
   isAddressValid(address) {
@@ -77,6 +76,4 @@ export class UtilCryptoService {
   }
 }
 
-
-export const utilCryptoService:UtilCryptoService = new UtilCryptoService();
-
+export const utilCryptoService: UtilCryptoService = new UtilCryptoService();

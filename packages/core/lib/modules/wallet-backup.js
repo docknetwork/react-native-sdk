@@ -1,4 +1,4 @@
-import assert from "assert";
+import assert from 'assert';
 import {walletService} from '../services/wallet/service';
 
 export const invalidFileMessage = 'Invalid backup file';
@@ -9,10 +9,9 @@ export class WalletBackup {
   async validate(data, password) {
     assert(!!data.credentialSubject, invalidFileMessage);
 
-    await walletService.importWallet({ json: data, password });
+    await walletService.importWallet({json: data, password});
 
     const docs = await walletService.query({});
-    
 
     console.log(docs);
 
@@ -21,8 +20,7 @@ export class WalletBackup {
     }
 
     const accounts = docs.filter(doc => doc.type === 'Account');
-    
-    
+
     if (accounts.length === 0) {
       console.log('no accounts found');
       console.log(docs);
@@ -32,20 +30,22 @@ export class WalletBackup {
     const warnings = [];
 
     for (let account of accounts) {
-      const correlationDocs = account.correlation.map(docId => docs.find(doc => doc.id === docId));
+      const correlationDocs = account.correlation.map(docId =>
+        docs.find(doc => doc.id === docId),
+      );
       const hasMnemonic = correlationDocs.find(doc => doc.type === 'Mnemonic');
       const hasKeyPair = correlationDocs.find(doc => doc.type === 'KeyPair');
-            
+
       if (!hasMnemonic && !hasKeyPair) {
         warnings.push(`keypair not found for account ${account.id}`);
-        
+
         await walletService.update({
           ...account,
           meta: {
             ...account.meta,
             readOnly: true,
             keypairNotFoundWarning: true,
-          }
+          },
         });
       }
     }

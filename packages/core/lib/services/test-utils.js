@@ -24,12 +24,16 @@ export const API_MOCK_DISABLED = false;
 
 let mockTransactionError;
 
-export const setMockTransactionError = (error) => {
+export const setMockTransactionError = error => {
   mockTransactionError = error;
-}
+};
 
 export async function mockDockService() {
   await cryptoWaitReady();
+
+  await keyringService.initialize({
+    ss58Format: NetworkManager.getInstance().getNetworkInfo().addressPrefix,
+  });
 
   if (API_MOCK_DISABLED) {
     return dockService.init({
@@ -48,7 +52,7 @@ export async function mockDockService() {
       events: {
         system: {
           ExtrinsicFailed: {
-            is: (event) => !!mockTransactionError,
+            is: event => !!mockTransactionError,
           },
         },
       },
@@ -58,7 +62,7 @@ export async function mockDockService() {
             data: {
               free: BigNumber(TestFixtures.account1.balance * DOCK_TOKEN_UNIT),
             },
-          }))
+          })),
         },
       },
       tx: {
@@ -74,15 +78,16 @@ export async function mockDockService() {
                   isFinalized: true,
                   toHex: () => 'hash',
                 },
-                events: [{
-                  event: {
-                    data: [mockTransactionError]
-                  }
-                }]
-              });
-              
+                events: [
+                  {
+                    event: {
+                      data: [mockTransactionError],
+                    },
+                  },
+                ],
+
               return Promise.resolve({});
-            }
+            },
           })),
         },
       },
@@ -113,7 +118,7 @@ export async function setupTestWallet() {
     mnemonic: TestFixtures.account1.mnemonic,
     name: TestFixtures.account1.name,
   });
-  
+
   walletCreated = true;
 }
 
@@ -152,7 +157,7 @@ export function assertRpcService(
   service: any,
   validation: any,
 ) {
-  assert(RpcService.prototype.call, `must extend RpcServie class`);
+  assert(RpcService.prototype.call, 'must extend RpcServie class');
 
   const rpcService = new RpcService();
   const validationMocks = [];

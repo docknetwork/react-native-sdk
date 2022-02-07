@@ -4,7 +4,6 @@ import {EventEmitter} from 'events';
 import {validation} from './configs';
 
 export class StorageService {
-  
   rpcMethods = [
     StorageService.prototype.setItem,
     StorageService.prototype.getItem,
@@ -18,7 +17,7 @@ export class StorageService {
   setItem(...args): Promise<any> {
     return global.localStorage.setItem(...args);
   }
-  
+
   removeItem(...args): Promise<any> {
     return global.localStorage.removeItem(...args);
   }
@@ -28,6 +27,4 @@ export class StorageService {
   }
 }
 
-
-export const storageService:StorageService = new StorageService();
-
+export const storageService: StorageService = new StorageService();

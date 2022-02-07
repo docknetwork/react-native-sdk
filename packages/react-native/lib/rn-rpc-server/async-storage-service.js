@@ -3,7 +3,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {EventEmitter} from 'events';
 
 export class StorageService {
-  
   rpcMethods = [
     StorageService.prototype.setItem,
     StorageService.prototype.getItem,
@@ -31,6 +30,4 @@ export class StorageService {
   }
 }
 
-
-export const storageService:StorageService = new StorageService();
-
+export const storageService: StorageService = new StorageService();

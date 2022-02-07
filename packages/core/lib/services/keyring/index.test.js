@@ -7,7 +7,7 @@ import {
   mockDockSdkConnection,
 } from '../test-utils';
 import {validation} from './configs';
-import { mnemonicGenerate } from '@polkadot/util-crypto';
+import {mnemonicGenerate} from '@polkadot/util-crypto';
 
 describe('KeyringService', () => {
   it('ServiceRpc', () => {
@@ -20,20 +20,19 @@ describe('KeyringService', () => {
     describe('initialize', () => {
       it('expect to initialize keyring', async () => {
         const result = await service.initialize({
-          ss58Format: NetworkManager.getInstance().getNetworkInfo().addressPrefix,
+          ss58Format:
+            NetworkManager.getInstance().getNetworkInfo().addressPrefix,
         });
 
         expect(service.keyring).toBeDefined();
       });
 
       it('expect to validate params', async () => {
-        const error = await getPromiseError(() =>
-          service.initialize({})
-        );
+        const error = await getPromiseError(() => service.initialize({}));
         expect(error.message).toBe('invalid ss58Format');
       });
     });
-    
+
     describe('addFromMnemonic', () => {
       it('expect to add keypair from mnemonic', async () => {
         const result = await service.addFromMnemonic({
@@ -44,13 +43,10 @@ describe('KeyringService', () => {
       });
 
       it('expect to validate params', async () => {
-        const error = await getPromiseError(() =>
-          service.addFromMnemonic({})
-        );
+        const error = await getPromiseError(() => service.addFromMnemonic({}));
 
         expect(error.message).toBe('invalid mnemonic');
       });
     });
-    
   });
 });
