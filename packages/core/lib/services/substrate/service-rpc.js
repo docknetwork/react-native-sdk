@@ -11,10 +11,10 @@ export class SubstrateServiceRpc extends RpcService {
   }
   
   getFeeAmount(params: TransactionParams): Promise<any> {
-    return this.call('getFeeAmount');
+    return this.call('getFeeAmount', params);
   }
   
   sendTokens(params: TransactionParams): Promise<any> {
-    return this.call('sendTokens');
+    return this.call('sendTokens', params);
   }
 }

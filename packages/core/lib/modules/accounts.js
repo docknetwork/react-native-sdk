@@ -1,8 +1,9 @@
 import assert from 'assert';
-import {WalletRpc} from '../client/wallet-rpc';
-import {UtilCryptoRpc} from '../client/util-crypto-rpc';
-import {KeyringRpc} from '../client/keyring-rpc';
-import {ApiRpc} from '../client/api-rpc';
+import { walletService } from '../services/wallet';
+import { utilCryptoService } from '../services/util-crypto';
+import { keyringService } from '../services/keyring'; 
+import { substrateService } from '../services/substrate';
+import {polkadotService} from '../services/polkadot';
 import {Wallet, WalletEvents} from './wallet';
 import {Errors} from '../errors';
 import {
@@ -12,7 +13,6 @@ import {
   KeypairTypes,
 } from '../types';
 import {EventManager} from './event-manager';
-import {PolkadotUIRpc} from '../client/polkadot-ui-rpc';
 import {AccountDetails, Account} from './account';
 import {isAddressValid} from '../core/validation';
 
@@ -25,7 +25,7 @@ export const AccountsEvents = {
 
 export type CreateAccountParams = {
   name: string,
-  keyPairType: KeypairType,
+  type: KeypairType,
   derivationPath: string,
   mnemonic: string,
   json: string,
@@ -58,7 +58,7 @@ export class Accounts {
   }
 
   async exportAccount(address, password) {
-    return WalletRpc.exportAccount(address, password);
+    return walletService.exportAccount(address, password);
   }
 
   async importAccount(json, password) {
@@ -71,7 +71,7 @@ export class Accounts {
   async fetchBalance(address) {
     assert(isAddressValid(address), 'invalid address');
 
-    const balance = await ApiRpc.getAccountBalance(address);
+    const balance = await substrateService.getAccountBalance(address);
     const currency = await this.findCorrelationByType(
       address,
       'Currency',
@@ -106,7 +106,7 @@ export class Accounts {
   }
 
   getAccountIcon(address: string, isAlternative: boolean): Promise<any> {
-    return PolkadotUIRpc.getPolkadotSvgIcon(address, isAlternative);
+    return polkadotService.getPolkadotSvgIcon(address, isAlternative);
   }
 
   async getByAddress(address: string): Promise<AccountDetails> {
@@ -120,7 +120,7 @@ export class Accounts {
   ) {
     assert(isAddressValid(address), 'invalid address');
 
-    const correlations = await WalletRpc.resolveCorrelations(address);
+    const correlations = await walletService.resolveCorrelations(address);
     const result = correlations.find(c => c.type === type);
 
     if (assertResult) {
@@ -131,13 +131,13 @@ export class Accounts {
   }
 
   generateMnemonic(): Promise<string> {
-    return UtilCryptoRpc.mnemonicGenerate(12);
+    return utilCryptoService.mnemonicGenerate(12);
   }
 
   async update(account: AccountDetails) {
     assert(!!account, 'account is required');
 
-    await WalletRpc.update(account);
+    await walletService.update(account);
     this.eventManager.emit(AccountsEvents.accountUpdated);
     await this.load();
   }
@@ -150,13 +150,13 @@ export class Accounts {
   }
 
   async create(params: CreateAccountParams): Promise<Account> {
-    let {name, json, password, keyPairType = 'sr25519', getIfExists} = params;
+    let {name, json, password, type = 'sr25519', getIfExists} = params;
 
     assert(!!name, 'name is required');
-    assert(!!keyPairType, 'keypair type is required');
+    assert(!!type, 'keypair type is required');
     assert(
-      KeypairTypes.find(t => t === keyPairType),
-      `invalid keypair type ${keyPairType}`,
+      KeypairTypes.find(t => t === type),
+      `invalid keypair type ${type}`,
     );
 
     if (json) {
@@ -169,9 +169,9 @@ export class Accounts {
 
     const address = json
       ? json.address
-      : await KeyringRpc.addressFromUri({
+      : await keyringService.addressFromUri({
           mnemonic,
-          keyPairType,
+          type,
           derivePath,
         });
 
@@ -188,23 +188,23 @@ export class Accounts {
     assert(!accountExists, Errors.accountAlreadyExists);
 
     if (json) {
-      const pair = await KeyringRpc.addFromJson(json, password);
+      const pair = await keyringService.addFromJson(json, password);
 
       assert(pair && pair.type, 'invalid keypair');
 
-      keyPairType = pair.type;
+      type = pair.type;
     }
 
     const account: AccountDetails = {
       id: address,
       name,
-      keyPairType,
+      type,
       address,
     };
 
-    const documents = await WalletRpc.createAccountDocuments({
+    const documents = await walletService.createAccountDocuments({
       name,
-      keyPairType,
+      type,
       derivePath,
       mnemonic,
       json,

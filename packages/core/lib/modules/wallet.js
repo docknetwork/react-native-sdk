@@ -1,9 +1,5 @@
 import assert from 'assert';
 import {v4 as uuid} from 'uuid';
-import {DockRpc} from '../client/dock-rpc';
-import {KeyringRpc} from '../client/keyring-rpc';
-import {UtilCryptoRpc} from '../client/util-crypto-rpc';
-import {WalletRpc} from '../client/wallet-rpc';
 import {clearCacheData, getRealm, initRealm} from '../core/realm';
 import {DocumentType, WalletDocument} from '../types';
 import {EventManager} from './event-manager';
@@ -61,7 +57,7 @@ export class Wallet {
 
   async close() {
     getRealm().close();
-    await DockRpc.disconnect();
+    await dockService.disconnect();
     this.setStatus('closed');
   }
 
@@ -82,6 +78,9 @@ export class Wallet {
     try {
       await initRealm();
       await utilCryptoService.cryptoWaitReady();
+      await keyringService.initialize({
+        ss58Format: this.networkManager.getNetworkInfo().addressPrefix,
+      });
 
       const result = await walletService.create({
         walletId: this.walletId,

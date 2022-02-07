@@ -59,7 +59,7 @@ async function main() {
 
   // const mnemonic = await accounts.generateMnemonic();
   // const myAccounts = await accounts.create({
-  //   keyPairType: '',
+  //   type: '',
   //   mnemonic
   // });
 

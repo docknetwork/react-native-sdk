@@ -74,6 +74,9 @@ export const validation = {
       assert(typeof password === 'string', `invalid password: ${password}`);
     } else {
       assert(typeof mnemonic === 'string', `invalid mnemonic: ${mnemonic}`);
+    }
+    
+    if (type) {
       assertKeyType(type);
     }
   },
