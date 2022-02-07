@@ -12,6 +12,8 @@ describe('Account', () => {
       name: TestFixtures.account1.name,
       mnemonic: TestFixtures.account1.mnemonic,
     });
+    
+    await account.loadDetails();
   });
 
   it('expect to get account name', () => {

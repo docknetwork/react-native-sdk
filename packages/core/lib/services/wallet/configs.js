@@ -22,8 +22,8 @@ export const validation = {
     assert(!!id, `documentId is required`);
   },
   resolveCorrelations(address) {
-    assert(typeof id === 'string', `invalid documentId`);
-    assert(!!id, `documentId is required`);
+    assert(typeof address === 'string', `invalid documentId`);
+    assert(!!address, `documentId is required`);
   },
   exportAccount({address, password}: ExportAccountParams) {
     assertAddress(address);
