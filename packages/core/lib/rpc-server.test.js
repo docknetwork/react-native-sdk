@@ -12,6 +12,6 @@ describe('RpcServer', () => {
   it('expect to register utilCrypto', async () => {
     const timestamp = Date.now();
     const result = await utilCryptoService.cryptoWaitReady();
-    expect(result).toBe(`wallet: ${timestamp}`);
+    expect(result).toBe(true);
   });
 });

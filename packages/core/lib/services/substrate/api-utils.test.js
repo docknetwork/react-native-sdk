@@ -43,12 +43,12 @@ describe('ApiUtils', () => {
 
       setMockTransactionError(errorMessage);
       const emitter = signAndSend(account, extrinsic);
-      const [error] = await once(emitter, 'error');
+      const error = await once(emitter, 'error');
 
       expect(error.message).toBe(errorMessage);
     });
 
-    it('expect to get error: No enough balance', async () => {
+    it('expect to get error: Not enough balance', async () => {
       const account = TestFixtures.account1.getKeyring();
       dockService.dock.setAccount(account);
       const balance = await substrateService.getAccountBalance({
@@ -64,7 +64,7 @@ describe('ApiUtils', () => {
 
       setMockTransactionError(errorMessage);
       const emitter = signAndSend(account, extrinsic);
-      const [error] = await once(emitter, 'error');
+      const error = await once(emitter, 'error');
 
       expect(error.message).toBe(errorMessage);
     });

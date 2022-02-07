@@ -30,7 +30,7 @@ export const validation = {
     assertPassword(password);
   },
   create({walletId}: CreateParams): Promise<any> {
-    assert(typeof params.walletId === 'string', `invalid walletId ${walletId}`);
+    assert(typeof walletId === 'string', `invalid walletId ${walletId}`);
   },
   lock(password: string) {
     assertPassword(password);
