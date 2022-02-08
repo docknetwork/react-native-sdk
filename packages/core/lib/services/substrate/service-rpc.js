@@ -1,9 +1,8 @@
 import {RpcService} from '../rpc-service-client';
 import {
-  validation,
   GetAccountBalanceParams,
-  TransactionParams,
   serviceName,
+  TransactionParams,
 } from './configs';
 
 export class SubstrateServiceRpc extends RpcService {

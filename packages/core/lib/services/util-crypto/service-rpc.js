@@ -1,5 +1,5 @@
 import {RpcService} from '../rpc-service-client';
-import {validation, InitParams} from './configs';
+import {validation} from './configs';
 
 export class UtilCryptoServiceRpc extends RpcService {
   constructor() {

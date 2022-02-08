@@ -48,7 +48,7 @@ export function initRpcClient(requestHandler) {
 
   global.client = new JSONRPCClient(requestHandler);
 
-  global.client.__request = client.request;
+  global.client.__request = global.client.request;
   global.client.request = function (name, ...params) {
     let reqParams =
       params.length === 0
@@ -68,5 +68,5 @@ export function initRpcClient(requestHandler) {
     return global.client.__request(name, reqParams);
   };
 
-  patchRpcServer(client);
+  patchRpcServer(global.client);
 }

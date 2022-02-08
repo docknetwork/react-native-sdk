@@ -1,14 +1,13 @@
 import {RpcService} from '../rpc-service-client';
 import {
-  validation,
-  InitParams,
-  serviceName,
+  AddParams,
   CreateAccountDocumentsParams,
   ExportAccountParams,
-  AddParams,
   ImportWalletParams,
   QueryParams,
+  serviceName,
   UpdateParams,
+  validation,
 } from './configs';
 
 export class WalletServiceRpc extends RpcService {

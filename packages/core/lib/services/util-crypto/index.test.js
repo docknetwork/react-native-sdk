@@ -1,14 +1,8 @@
-import {UtilCryptoService, utilCryptoService as service} from './service';
-import {UtilCryptoServiceRpc} from './service-rpc';
-import {NetworkManager} from '../../modules/network-manager';
-import {
-  assertRpcService,
-  getPromiseError,
-  mockDockSdkConnection,
-} from '../test-utils';
-import {validation} from './configs';
-import {keyringService} from '../keyring/service';
 import {cryptoWaitReady} from '@polkadot/util-crypto';
+import {assertRpcService, getPromiseError} from '../test-utils';
+import {validation} from './configs';
+import {utilCryptoService as service} from './service';
+import {UtilCryptoServiceRpc} from './service-rpc';
 
 describe('UtilCryptoService', () => {
   it('ServiceRpc', () => {

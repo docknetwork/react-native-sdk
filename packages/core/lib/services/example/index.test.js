@@ -1,12 +1,7 @@
-import {ExampleService, exampleService as service} from './service';
-import {ExampleServiceRpc} from './service-rpc';
-import {NetworkManager} from '../../modules/network-manager';
-import {
-  assertRpcService,
-  getPromiseError,
-  mockDockSdkConnection,
-} from '../test-utils';
+import {assertRpcService, getPromiseError} from '../test-utils';
 import {validation} from './configs';
+import {exampleService as service} from './service';
+import {ExampleServiceRpc} from './service-rpc';
 
 describe('ExampleService', () => {
   it('ServiceRpc', () => {

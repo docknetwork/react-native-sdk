@@ -1,18 +1,10 @@
-import {
-  WalletService,
-  walletService as service,
-  walletService,
-} from './service';
-import {WalletServiceRpc} from './service-rpc';
-import {NetworkManager} from '../../modules/network-manager';
-import {
-  assertRpcService,
-  getPromiseError,
-  mockDockSdkConnection,
-} from '../test-utils';
-import {validation} from './configs';
 import {mnemonicGenerate} from '@polkadot/util-crypto';
+import {NetworkManager} from '../../modules/network-manager';
 import {keyringService} from '../keyring/service';
+import {assertRpcService, getPromiseError} from '../test-utils';
+import {validation} from './configs';
+import {walletService as service, walletService} from './service';
+import {WalletServiceRpc} from './service-rpc';
 
 describe('WalletService', () => {
   it('ServiceRpc', () => {

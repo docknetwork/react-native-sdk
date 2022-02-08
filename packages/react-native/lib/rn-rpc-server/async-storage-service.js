@@ -1,6 +1,4 @@
-import assert from 'assert';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {EventEmitter} from 'events';
 
 export class StorageService {
   rpcMethods = [

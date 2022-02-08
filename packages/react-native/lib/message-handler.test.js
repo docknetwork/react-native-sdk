@@ -6,7 +6,6 @@ const testData = {test: true};
 
 function createTestEvent(type, data = testData) {
   return {
-    
     nativeEvent: {
       data: JSON.stringify({
         body: data,

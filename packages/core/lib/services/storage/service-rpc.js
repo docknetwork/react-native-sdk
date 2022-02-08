@@ -1,5 +1,4 @@
 import {RpcService} from '../rpc-service-client';
-import {validation, InitParams} from './configs';
 
 export class StorageServiceRpc extends RpcService {
   constructor() {

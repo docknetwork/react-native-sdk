@@ -1,13 +1,17 @@
 import StorageWallet from '@docknetwork/wallet/storage-wallet';
 import assert from 'assert';
-import { v4 as uuid } from 'uuid';
-import { WalletDocument } from '../../types';
+import {v4 as uuid} from 'uuid';
+import {WalletDocument} from '../../types';
 import MemoryWallet from '../../wallet/memory-storage-wallet';
 import RpcWallet from '../../wallet/rpc-storage-wallet';
-import { keyringService } from '../keyring/service';
+import {keyringService} from '../keyring/service';
 import {
-  CreateAccountDocumentsParams, CreateParams, ExportAccountParams,
-  ImportWalletParams, serviceName, validation
+  CreateAccountDocumentsParams,
+  CreateParams,
+  ExportAccountParams,
+  ImportWalletParams,
+  serviceName,
+  validation,
 } from './configs';
 
 export class WalletService {

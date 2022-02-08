@@ -1,4 +1,3 @@
-import assert from 'assert';
 import {assertAddress} from '../../core/validation';
 
 export const validation = {

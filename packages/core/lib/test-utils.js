@@ -1,5 +1,4 @@
 import {getRpcClient} from './rpc-client';
-import {getRpcEventEmitter} from './events';
 
 let request;
 

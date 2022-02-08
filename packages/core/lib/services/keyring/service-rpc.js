@@ -1,12 +1,11 @@
 import {RpcService} from '../rpc-service-client';
 import {
-  validation,
-  InitParams,
-  serviceName,
   AddFromJsonParams,
   AddFromMnemonicParams,
-  GetKeyringParams,
   AddressFromUriParams,
+  GetKeyringParams,
+  serviceName,
+  validation,
 } from './configs';
 
 export class KeyringServiceRpc extends RpcService {

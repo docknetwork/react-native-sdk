@@ -1,7 +1,5 @@
-import assert from 'assert';
-import {EventEmitter} from 'events';
 import {polkadotIcon} from '@polkadot/ui-shared';
-import {validation, GetAddressSvgParams} from './configs';
+import {GetAddressSvgParams, validation} from './configs';
 
 export class PolkadotService {
   rpcMethods = [PolkadotService.prototype.getAddressSvg];

@@ -1,15 +1,15 @@
 import assert from 'assert';
 import {v4 as uuid} from 'uuid';
 import {clearCacheData, getRealm, initRealm} from '../core/realm';
+import {getStorage} from '../core/storage';
+import {dockService} from '../services/dock';
+import {keyringService} from '../services/keyring';
+import {utilCryptoService} from '../services/util-crypto';
+import {walletService} from '../services/wallet';
 import {DocumentType, WalletDocument} from '../types';
+import {Accounts} from './accounts';
 import {EventManager} from './event-manager';
 import {NetworkManager} from './network-manager';
-import {Accounts} from './accounts';
-import {getStorage} from '../core/storage';
-import {walletService} from '../services/wallet';
-import {utilCryptoService} from '../services/util-crypto';
-import {keyringService} from '../services/keyring';
-import {dockService} from '../services/dock';
 
 // import {getEnvironment} from 'realm/lib/utils';
 export const WalletEvents = {
@@ -82,7 +82,7 @@ export class Wallet {
         ss58Format: this.networkManager.getNetworkInfo().addressPrefix,
       });
 
-      const result = await walletService.create({
+      await walletService.create({
         walletId: this.walletId,
       });
 
@@ -171,17 +171,17 @@ export class Wallet {
    */
   async remove(documentId) {
     const realm = getRealm();
-    // realm.write(() => {
-    //   const cachedAccount = realm
-    //     .objects('Account')
-    //     .filtered('id = $0', documentId)[0];
+    realm.write(() => {
+      const cachedAccount = realm
+        .objects('Account')
+        .filtered('id = $0', documentId)[0];
 
-    //   if (!cachedAccount) {
-    //     return;
-    //   }
+      if (!cachedAccount) {
+        return;
+      }
 
-    //   realm.delete(cachedAccount);
-    // });
+      realm.delete(cachedAccount);
+    });
 
     await walletService.remove(documentId);
     this.eventManager.emit(WalletEvents.documentRemoved, documentId);

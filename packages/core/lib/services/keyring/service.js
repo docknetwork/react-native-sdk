@@ -1,15 +1,12 @@
 import Keyring from '@polkadot/keyring';
 import {cryptoWaitReady} from '@polkadot/util-crypto';
-import assert from 'assert';
-import {EventEmitter} from 'events';
-import {NetworkManager} from '../../modules/network-manager';
 import {
-  validation,
   AddFromJsonParams,
-  InitializeParams,
   AddFromMnemonicParams,
   CreateFromUriParams,
+  InitializeParams,
   serviceName,
+  validation,
 } from './configs';
 
 export function getKeyring() {
