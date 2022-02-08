@@ -3,33 +3,33 @@
     "https://www.w3.org/2018/credentials/v1",
     "https://w3id.org/wallet/v1"
   ],
-  "id": "did:key:z6LSdCt1aWmuWv73mfYZfihT13hrf3p73bFr3QotqwwRixsn#encrypted-wallet",
+  "id": "did:key:z6LSs7dYJgMT7CXjcwNDRBWvbJrhrz8euoXGCH1qF5dXD2YE#encrypted-wallet",
   "type": ["VerifiableCredential", "EncryptedWallet"],
-  "issuer": "did:key:z6LSdCt1aWmuWv73mfYZfihT13hrf3p73bFr3QotqwwRixsn",
-  "issuanceDate": "2022-02-02T01:08:59.401Z",
+  "issuer": "did:key:z6LSs7dYJgMT7CXjcwNDRBWvbJrhrz8euoXGCH1qF5dXD2YE",
+  "issuanceDate": "2021-11-23T17:56:22.272Z",
   "credentialSubject": {
-    "id": "did:key:z6LSdCt1aWmuWv73mfYZfihT13hrf3p73bFr3QotqwwRixsn",
+    "id": "did:key:z6LSs7dYJgMT7CXjcwNDRBWvbJrhrz8euoXGCH1qF5dXD2YE",
     "encryptedWalletContents": {
       "protected": "eyJlbmMiOiJYQzIwUCJ9",
       "recipients": [
         {
           "header": {
-            "kid": "did:key:z6LSdCt1aWmuWv73mfYZfihT13hrf3p73bFr3QotqwwRixsn#z6LSdCt1aWmuWv73mfYZfihT13hrf3p73bFr3QotqwwRixsn",
+            "kid": "did:key:z6LSs7dYJgMT7CXjcwNDRBWvbJrhrz8euoXGCH1qF5dXD2YE#z6LSs7dYJgMT7CXjcwNDRBWvbJrhrz8euoXGCH1qF5dXD2YE",
             "alg": "ECDH-ES+A256KW",
             "epk": {
               "kty": "OKP",
               "crv": "X25519",
-              "x": "bG7UWiaojIeWBoyrUJHyOQUM4gQTx2XvpG3dEAKLaEw"
+              "x": "ZMbrToyu6yaQbdbkmxK_TX_fw6alhYP6aCya4SVyCgI"
             },
-            "apu": "bG7UWiaojIeWBoyrUJHyOQUM4gQTx2XvpG3dEAKLaEw",
-            "apv": "ZGlkOmtleTp6NkxTZEN0MWFXbXVXdjczbWZZWmZpaFQxM2hyZjNwNzNiRnIzUW90cXd3Uml4c24jejZMU2RDdDFhV211V3Y3M21mWVpmaWhUMTNocmYzcDczYkZyM1FvdHF3d1JpeHNu"
+            "apu": "ZMbrToyu6yaQbdbkmxK_TX_fw6alhYP6aCya4SVyCgI",
+            "apv": "ZGlkOmtleTp6NkxTczdkWUpnTVQ3Q1hqY3dORFJCV3ZiSnJocno4ZXVvWEdDSDFxRjVkWEQyWUUjejZMU3M3ZFlKZ01UN0NYamN3TkRSQld2YkpyaHJ6OGV1b1hHQ0gxcUY1ZFhEMllF"
           },
-          "encrypted_key": "VdKneL6MWUY3hf6y1W94ygbzBTBbYnEktvGHHDbU5AN3jDSOEJJLdg"
+          "encrypted_key": "tXSyG8TT6ouHtpwXviynL3yuf94TXF-B6TUu7d1jfjjx-WUVJCZ27Q"
         }
       ],
-      "iv": "IwC-qlsIMJukYg659Nulwhs7UGQoc762",
-      "ciphertext": "KC9UbbvXeRU55cLou4QaBZ0soMowzJ7h73Fb2LivehfBtTBfwJBQKOL2VzeZDw9gN4cKprDEGuMo2pDwfdB-jeIUjE5xJgpEV_TUkWaFTMadSqz3gGRw8cJuDCn3uNldu4XuJr8OtP9sB53mzO4vb_U6ibaVH2XZ4mnK4VaKFyD7gr_mrwoqQdQjlpqBa8oznzSNlDgZYn9AN-8MmjK3XEkMz001zZCrkwXcZKBSz4AMcoIwwmb5fsDDlhpB1uQ_AqZbxSTlyLEi3CPfHinaBftge3NOmCzw5ysfC36chTyponj7thpmAvcCo97znwUjp23PpBSi-iDnogwZbRXQoHXXXNTtKSMer4EeQv0F6xiuubH9_n2gGLe7-gKxvDn3MptLq_I8rGNOe4ril0gWHvtF_GkQmUxxODQjtHKMb05oT802QH66F8YECV25wXG9C-DszxRQyjfSjEkHu-BQGlA-bP71chaYA1DFJBGIcF7vUKeVdjCzmJQlueJajNDuxtBBmI815cHeSxNRgvH9rlTqC0FP_kytiplLUamIxtrTIr9-VaPoESBPLzDGfJ1_a6xWgjQ_soVikIsEw0nxECASCKbtZ_3Ub7W09HMEOAtXGPrK8G3DjrHXPOh9od7DyJrkK2JIO90D1Dkp3HSoX3ye5zDwoQDwvkwQh4VqPrH_s9F2z8NhThgwijv9lwNw0flRoZ7kAjNDkDpnOpBt0Z2Krm5vwvJWV23lubi93VhRk6qW1B90JZqCjodeaB3AEYUyaup2PZ8kB2V1yxHtvp3vIaXprbd7-LM5GZ2PzqnmbeR7lhWpGh6Whcc2hcKc8x4hliOj7Yq7jWhN_9shBoOlgh-qUDoK-RtbGN0AYaD_aXc4JSnPfWrWAsFPv03kWAEO-gjBcyASqC5V16YyJ8vcy9BOGi82",
-      "tag": "ABTSH7W4tp-gWqIwG8mUHw"
+      "iv": "2PgMfKAKnmIqeRGjJdN7f4EOrWxltYQ4",
+      "ciphertext": "X3p5waaruAhSnUaxpbM6",
+      "tag": "3L3hyze3fzmK0Wp68Uq2vg"
     }
   }
 }

@@ -91,6 +91,8 @@ export async function mockDockService() {
         },
       },
     },
+    init: jest.fn().mockImplementation(() => Promise.resolve({})),
+    disconnect: jest.fn(),
     setAccount: jest.fn(),
   };
 
