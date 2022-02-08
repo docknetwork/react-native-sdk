@@ -6,6 +6,7 @@ describe('ApiModule', () => {
 
   beforeAll(async () => {
     wallet = await Wallet.create();
+    await wallet.ensureNetwork();
   });
 
   it('query', async () => {
@@ -44,6 +45,8 @@ describe('ApiModule', () => {
 
   it('Expect to import wallet from backup file', async () => {
     const password = 'test';
+
+    await wallet.close();
 
     wallet = await Wallet.create({
       walletId: 'test',

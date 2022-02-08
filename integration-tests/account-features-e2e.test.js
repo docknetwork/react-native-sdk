@@ -1,12 +1,18 @@
 import {Wallet} from '@docknetwork/wallet-sdk-core/lib/modules/wallet';
+import { mockDockSdkConnection, mockDockService } from '@docknetwork/wallet-sdk-core/lib/services/test-utils';
 import {Transactions} from '@docknetwork/wallet-sdk-transactions/lib/transactions';
 
 describe('Wallet integration test', () => {
   let wallet: Wallet;
 
   it('Create wallet + add accounts + get account balance + get transaction fee', async () => {
+    const resetSdkMock = await mockDockService();
+
     wallet = await Wallet.create();
 
+
+    await wallet.ensureNetwork();
+    
     const account1 = await wallet.accounts.create({
       name: 'test',
     });
@@ -40,5 +46,7 @@ describe('Wallet integration test', () => {
     const fee = await transactions.getFee(txInput);
 
     console.log('Transaction fee', fee);
+
+    await resetSdkMock();
   });
 });
