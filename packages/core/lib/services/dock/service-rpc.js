@@ -1,5 +1,5 @@
 import {RpcService} from '../rpc-service-client';
-import {validation, InitParams} from './configs';
+import {InitParams, validation} from './configs';
 
 /**
  *

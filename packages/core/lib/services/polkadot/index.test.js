@@ -1,13 +1,8 @@
-import {PolkadotService, polkadotService as service} from './service';
-import {PolkadotServiceRpc} from './service-rpc';
-import {NetworkManager} from '../../modules/network-manager';
-import {
-  assertRpcService,
-  getPromiseError,
-  mockDockSdkConnection,
-} from '../test-utils';
-import {validation} from './configs';
 import {TestFixtures} from '../../fixtures';
+import {assertRpcService, getPromiseError} from '../test-utils';
+import {validation} from './configs';
+import {polkadotService as service} from './service';
+import {PolkadotServiceRpc} from './service-rpc';
 
 describe('PolkadotService', () => {
   it('ServiceRpc', () => {

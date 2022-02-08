@@ -1,12 +1,7 @@
-import {StorageService, storageService as service} from './service';
-import {StorageServiceRpc} from './service-rpc';
-import {NetworkManager} from '../../modules/network-manager';
-import {
-  assertRpcService,
-  getPromiseError,
-  mockDockSdkConnection,
-} from '../test-utils';
+import {assertRpcService} from '../test-utils';
 import {validation} from './configs';
+import {storageService as service} from './service';
+import {StorageServiceRpc} from './service-rpc';
 
 global.localStorage = {
   setItem: jest.fn(),
@@ -23,7 +18,7 @@ describe('StorageService', () => {
     describe('setItem', () => {
       it('expect to setItem', async () => {
         const data = 2;
-        const result = await service.setItem(data);
+        await service.setItem(data);
         expect(global.localStorage.setItem).toBeCalledWith(data);
       });
     });

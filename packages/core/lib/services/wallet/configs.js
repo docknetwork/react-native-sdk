@@ -3,7 +3,6 @@ import {
   assertAddress,
   assertKeyType,
   assertPassword,
-  isNumberValid,
 } from '../../core/validation';
 import {KeypairType} from '../../types';
 
@@ -59,7 +58,7 @@ export const validation = {
     assertPassword(password);
   },
   createAccountDocuments(params: CreateAccountDocumentsParams) {
-    const {name, json, password, mnemonic, type, derivePath} = params;
+    const {name, json, password, mnemonic, type} = params;
 
     // Property derivationPath was replaced by derivePath
     assert(

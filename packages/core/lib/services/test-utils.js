@@ -152,15 +152,13 @@ export async function getPromiseError(func) {
 }
 
 export function assertRpcService(
-  RpcService: RpcService,
+  ServiceClass: RpcService,
   service: any,
   validation: any,
 ) {
-  assert(RpcService.prototype.call, 'must extend RpcServie class');
+  assert(!!ServiceClass.prototype.call, 'must extend RpcServie class');
 
-  const rpcService = new RpcService();
-  const validationMocks = [];
-
+  const rpcService = new ServiceClass();
   const validationTmp = {};
 
   Object.keys(validation).forEach(key => {
@@ -181,7 +179,7 @@ export function assertRpcService(
     const methodArg = rpcService.call.mock.calls[0][0];
 
     assert(
-      methodArg == methodName,
+      methodArg === methodName,
       `[${methodName}]: rpc call method with wrong value "${methodArg}"`,
     );
   });

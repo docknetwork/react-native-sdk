@@ -1,9 +1,9 @@
+import {DockAPI} from '@docknetwork/sdk';
 import assert from 'assert';
 import {EventEmitter} from 'events';
-import {DockAPI} from '@docknetwork/sdk';
-import {validation, InitParams} from './configs';
 import {Logger} from '../../core/logger';
 import {once} from '../../modules/event-manager';
+import {InitParams, validation} from './configs';
 
 /**
  *

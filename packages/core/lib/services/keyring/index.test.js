@@ -1,13 +1,9 @@
-import {KeyringService, keyringService as service} from './service';
-import {KeyringServiceRpc} from './service-rpc';
-import {NetworkManager} from '../../modules/network-manager';
-import {
-  assertRpcService,
-  getPromiseError,
-  mockDockSdkConnection,
-} from '../test-utils';
-import {validation} from './configs';
 import {mnemonicGenerate} from '@polkadot/util-crypto';
+import {NetworkManager} from '../../modules/network-manager';
+import {assertRpcService, getPromiseError} from '../test-utils';
+import {validation} from './configs';
+import {keyringService as service} from './service';
+import {KeyringServiceRpc} from './service-rpc';
 
 describe('KeyringService', () => {
   it('ServiceRpc', () => {
@@ -19,7 +15,7 @@ describe('KeyringService', () => {
 
     describe('initialize', () => {
       it('expect to initialize keyring', async () => {
-        const result = await service.initialize({
+        await service.initialize({
           ss58Format:
             NetworkManager.getInstance().getNetworkInfo().addressPrefix,
         });
@@ -35,7 +31,7 @@ describe('KeyringService', () => {
 
     describe('addFromMnemonic', () => {
       it('expect to add keypair from mnemonic', async () => {
-        const result = await service.addFromMnemonic({
+        await service.addFromMnemonic({
           mnemonic: mnemonicGenerate(12),
         });
 

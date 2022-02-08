@@ -11,7 +11,7 @@ export const mapEventToErrorMessage = ({event}) => {
   console.log('Failed events', event);
   assert(!!event, 'event is required');
 
-  const [error, info] = event.data;
+  const [error] = event.data;
   assert(!!error, 'error is required');
 
   if (error.isModule) {

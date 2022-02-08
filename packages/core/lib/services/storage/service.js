@@ -1,8 +1,3 @@
-import assert from 'assert';
-import {EventEmitter} from 'events';
-
-import {validation} from './configs';
-
 export class StorageService {
   rpcMethods = [
     StorageService.prototype.setItem,

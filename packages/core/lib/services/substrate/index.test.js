@@ -1,16 +1,14 @@
-import {SubstrateService, substrateService as service} from './service';
-import {SubstrateServiceRpc} from './service-rpc';
+import {TestFixtures} from '../../fixtures';
 import {
   assertRpcService,
   getPromiseError,
   mockDockService,
   setMockTransactionError,
   setupTestWallet,
-  TEST_FEE_AMOUNT,
 } from '../test-utils';
 import {validation} from './configs';
-import {dockService} from '../dock/service';
-import {TestFixtures} from '../../fixtures';
+import {substrateService as service} from './service';
+import {SubstrateServiceRpc} from './service-rpc';
 
 describe('ExampleService', () => {
   it('ServiceRpc', () => {

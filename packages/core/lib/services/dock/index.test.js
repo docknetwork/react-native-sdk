@@ -1,13 +1,12 @@
-import {dockService as service} from './service';
-import {DockServiceRpc} from './service-rpc';
 import {NetworkManager} from '../../modules/network-manager';
 import {
   assertRpcService,
   getPromiseError,
   mockDockSdkConnection,
 } from '../test-utils';
-import {RpcService} from '../rpc-service-client';
 import {validation} from './configs';
+import {dockService as service} from './service';
+import {DockServiceRpc} from './service-rpc';
 
 const doConnect = (
   address = NetworkManager.getInstance().getNetworkInfo().substrateUrl,

@@ -47,7 +47,7 @@ export function useWallet({syncDocs = true} = {}) {
         const allDocs = await wallet.query({});
         setDocuments(allDocs);
       } catch (err) {
-        debugger;
+        console.error(err);
       }
     };
 

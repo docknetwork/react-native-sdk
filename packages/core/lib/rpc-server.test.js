@@ -1,4 +1,3 @@
-import rpcServer from './rpc-server';
 import {utilCryptoService} from './services/util-crypto/service';
 import {walletService} from './services/wallet';
 
@@ -10,7 +9,6 @@ describe('RpcServer', () => {
   });
 
   it('expect to register utilCrypto', async () => {
-    const timestamp = Date.now();
     const result = await utilCryptoService.cryptoWaitReady();
     expect(result).toBe(true);
   });

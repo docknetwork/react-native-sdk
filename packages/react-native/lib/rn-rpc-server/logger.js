@@ -1,7 +1,3 @@
-import assert from 'assert';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {EventEmitter} from 'events';
-
 export class LoggerService {
   rpcMethods = [
     LoggerService.prototype.log,

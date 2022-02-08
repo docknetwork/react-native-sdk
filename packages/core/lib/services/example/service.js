@@ -1,7 +1,4 @@
-import assert from 'assert';
-import {EventEmitter} from 'events';
-
-import {validation, SumParams} from './configs';
+import {SumParams, validation} from './configs';
 
 export class ExampleService {
   rpcMethods = [ExampleService.prototype.sum];

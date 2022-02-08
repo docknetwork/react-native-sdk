@@ -1,5 +1,5 @@
 import assert from 'assert';
-import {assertKeyType, isNumberValid} from '../../core/validation';
+import {assertKeyType} from '../../core/validation';
 
 export const validation = {
   addFromJson({jsonData, password}: AddFromJsonParams) {

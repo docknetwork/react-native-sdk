@@ -1,5 +1,3 @@
-import assert from 'assert';
-import {EventEmitter} from 'events';
 import {decodeAddress, encodeAddress} from '@polkadot/keyring';
 import {hexToU8a, isHex} from '@polkadot/util';
 import {
@@ -9,7 +7,8 @@ import {
   mnemonicGenerate,
   mnemonicValidate,
 } from '@polkadot/util-crypto';
-import {validation, SumParams} from './configs';
+import assert from 'assert';
+import {validation} from './configs';
 
 export class UtilCryptoService {
   rpcMethods = [
