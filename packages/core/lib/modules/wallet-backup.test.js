@@ -1,7 +1,7 @@
-import { getPromiseError } from '../services/test-utils';
-import { walletService } from '../services/wallet/service';
+import {getPromiseError} from '../services/test-utils';
+import {walletService} from '../services/wallet/service';
 import backup11 from '../test/fixtures/backup-files/wallet-backup-11.json';
-import { WalletBackup } from './wallet-backup';
+import {WalletBackup} from './wallet-backup';
 
 describe('WalletBackup', () => {
   describe('validate', () => {
