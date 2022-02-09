@@ -116,6 +116,8 @@ export class Wallet {
   async ensureNetwork() {
     if (!this.connectionInProgress) {
       this.initNetwork();
+    } else if (this.networkReady) {
+      return;
     }
 
     await this.eventManager.waitFor(WalletEvents.networkConnected);
@@ -143,6 +145,7 @@ export class Wallet {
       this.eventManager.emit(WalletEvents.networkConnected);
     } finally {
       this.connectionInProgress = false;
+      this.networkReady = true;
     }
   }
 

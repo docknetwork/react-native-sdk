@@ -9,6 +9,8 @@ describe('Accounts module', () => {
 
   beforeAll(async () => {
     wallet = await Wallet.create();
+    await wallet.ensureNetwork();
+
     accounts = wallet.accounts;
   });
 
