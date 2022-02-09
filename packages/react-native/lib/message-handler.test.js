@@ -62,22 +62,22 @@ describe('Message handler', () => {
     expect(eventHandler._handleRpcResponse).toBeCalled();
   });
 
-  // it('expect to handle json-rpc-request event', async () => {
-  //   const event = createTestEvent('json-rpc-request');
-  //   await eventHandler.handleEvent(event);
-  //   expect(eventHandler._handleRpcRequest).toBeCalled();
-  //   expect(rnRpcServer.receive).toBeCalled();
-  // });
+  it('expect to handle json-rpc-request event', async () => {
+    const event = createTestEvent('json-rpc-request');
+    await eventHandler.handleEvent(event);
+    expect(eventHandler._handleRpcRequest).toBeCalled();
+    expect(rnRpcServer.receive).toBeCalled();
+  });
 
-  // it('expect to handle log event', async () => {
-  //   const event = createTestEvent('log');
-  //   await eventHandler.handleEvent(event);
-  //   expect(eventHandler._handleLog).toBeCalled();
-  // });
+  it('expect to handle log event', async () => {
+    const event = createTestEvent('log');
+    await eventHandler.handleEvent(event);
+    expect(eventHandler._handleLog).toBeCalled();
+  });
 
-  // it('expect to dispatchEvent to webview', async () => {
-  //   const body = {test: true};
-  //   await eventHandler._dispatchEvent('test', body);
-  //   expect(webViewRef.current.injectJavaScript).toBeCalled();
-  // });
+  it('expect to dispatchEvent to webview', async () => {
+    const body = {test: true};
+    await eventHandler._dispatchEvent('test', body);
+    expect(webViewRef.current.injectJavaScript).toBeCalled();
+  });
 });
