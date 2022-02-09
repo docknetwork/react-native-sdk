@@ -2,8 +2,6 @@ import {getRpcClient, initRpcClient} from './rpc-client';
 import {getLogger, setLogger} from './logger';
 import rpcServer from './rpc-server';
 
-console.log('testing');
-
 initRpcClient(jsonRPCRequest => {
   postMessage({
     type: 'json-rpc-request',
