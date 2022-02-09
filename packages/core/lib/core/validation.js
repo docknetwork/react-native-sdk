@@ -15,7 +15,7 @@ export function isNumberValid(v: any) {
 export function assertKeyType(type) {
   assert(
     !!KeypairTypes.find(t => t === type),
-    `Invalid keypair type ${type}. Expected on of ${KeypairTypes.join(',')}`,
+    `Invalid keypair type ${type}. Expected one of ${KeypairTypes.join(',')}`,
   );
 }
 
