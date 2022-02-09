@@ -1,10 +1,14 @@
 import {Wallet} from './wallet';
 import walletJson from '../test/fixtures/wallet-backup.json';
+import {mockDockService} from '../services/test-utils';
 
 describe('ApiModule', () => {
   let wallet: Wallet;
+  let unmockDockService;
 
   beforeAll(async () => {
+    unmockDockService = await mockDockService();
+
     wallet = await Wallet.create();
     await wallet.ensureNetwork();
   });
@@ -76,6 +80,7 @@ describe('ApiModule', () => {
   });
 
   afterAll(async () => {
+    await unmockDockService();
     await wallet.close();
   });
 });
