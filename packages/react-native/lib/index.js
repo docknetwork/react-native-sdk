@@ -1,3 +1,4 @@
+import {setStorage} from '@docknetwork/wallet-sdk-core/lib/core/storage';
 import {
   Wallet,
   WalletEvents,
@@ -13,10 +14,13 @@ import React, {
 import {Platform, View} from 'react-native';
 import WebView from 'react-native-webview';
 import {WebviewEventHandler} from './message-handler';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const WalletSDKContext = React.createContext({
   wallet: null,
 });
+
+setStorage(AsyncStorage);
 
 export function useWallet({syncDocs = true} = {}) {
   const sdkContext = useContext(WalletSDKContext);
@@ -28,14 +32,26 @@ export function useWallet({syncDocs = true} = {}) {
   console.log(wallet);
 
   useEffect(() => {
+    console.log({sdkStatus, wallet, syncDocs});
+
     if (sdkStatus !== 'ready') {
       return;
     }
 
+    if (!wallet) {
+      return;
+    }
+
     const updateDocuments = async () => {
-      const allDocs = await wallet.query();
-      setDocuments(allDocs);
+      try {
+        const allDocs = await wallet.query({});
+        setDocuments(allDocs);
+      } catch (err) {
+        console.error(err);
+      }
     };
+
+    setStatus(wallet.status);
 
     wallet.eventManager.on(WalletEvents.statusUpdated, setStatus);
 
@@ -44,6 +60,10 @@ export function useWallet({syncDocs = true} = {}) {
       wallet.eventManager.on(WalletEvents.documentAdded, updateDocuments);
       wallet.eventManager.on(WalletEvents.documentRemoved, updateDocuments);
       wallet.eventManager.on(WalletEvents.documentUpdated, updateDocuments);
+
+      if (wallet && wallet.status === 'ready') {
+        updateDocuments();
+      }
     }
   }, [sdkStatus, wallet, syncDocs]);
 
@@ -63,9 +83,9 @@ export function WalletSDKProvider({onError, customUri, children, onReady}) {
     Platform.OS === 'ios' ? 'app-html' : 'file:///android_asset/app-html';
 
   const handleReady = useCallback(() => {
-    const newWallet = Wallet.getInstance();
-    newWallet.load();
+    const newWallet = new Wallet({});
     setWallet(newWallet);
+    newWallet.load();
 
     setSdkStatus('ready');
 
@@ -85,7 +105,9 @@ export function WalletSDKProvider({onError, customUri, children, onReady}) {
 
   const webviewContainer = (
     <WebView
-      style={{display: 'none'}}
+      style={{
+        display: 'none',
+      }}
       ref={webViewRef}
       originWhitelist={['*']}
       source={
@@ -111,11 +133,11 @@ export function WalletSDKProvider({onError, customUri, children, onReady}) {
   );
 
   return (
-    <View>
-      {webviewContainer}
+    <View flex={1}>
       <WalletSDKContext.Provider value={{wallet, sdkStatus}}>
         {children}
       </WalletSDKContext.Provider>
+      <View style={{height: 0}}>{webviewContainer}</View>
     </View>
   );
 }

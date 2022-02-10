@@ -6,9 +6,11 @@ const testData = {test: true};
 
 function createTestEvent(type, data = testData) {
   return {
-    type,
     nativeEvent: {
-      data: JSON.stringify({body: data}),
+      data: JSON.stringify({
+        body: data,
+        type,
+      }),
     },
   };
 }

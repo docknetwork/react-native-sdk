@@ -1,19 +1,17 @@
-import utilCryptoMethods from './util-crypto';
-import keyring from './keyring';
-import dock from './dock';
-import api from './api';
-import wallet from './wallet';
-import storage from './storage';
-import logger from './logger';
-import polkadotUI from './polkadot-ui';
+import {keyringService} from './keyring/service';
+import {dockService} from './dock/service';
+import {substrateService} from './substrate/service';
+import {walletService} from './wallet/service';
+import {polkadotService} from './polkadot/service';
+import {utilCryptoService} from './util-crypto/service';
+import {storageService} from './storage/service';
 
 export default [
-  utilCryptoMethods,
-  keyring,
-  dock,
-  api,
-  wallet,
-  storage,
-  logger,
-  polkadotUI,
+  keyringService,
+  dockService,
+  substrateService,
+  walletService,
+  polkadotService,
+  utilCryptoService,
+  storageService,
 ];

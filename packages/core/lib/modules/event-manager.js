@@ -1,6 +1,10 @@
-import {EventEmitter, once} from 'events';
+import {EventEmitter} from 'events';
 import assert from 'assert';
+import {Logger} from '../core/logger';
 
+export function once(emitter: EventEmitter, eventName: string) {
+  return new Promise(resolve => emitter.once(eventName, resolve));
+}
 export class EventManager {
   eventEmitter: EventEmitter;
   eventNames: string[];
@@ -39,6 +43,7 @@ export class EventManager {
 
   emit(eventName: string, payload?: any) {
     this.assertEvent(eventName);
+    Logger.debug(`Emit event: ${eventName}`);
     this.eventEmitter.emit(eventName, payload);
     return this;
   }

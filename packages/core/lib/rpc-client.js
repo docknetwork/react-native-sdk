@@ -5,10 +5,21 @@ import {Logger} from './core/logger';
 import {getLogger} from './logger';
 import {patchRpcServer} from './rpc-util';
 
-let client;
+const waitForClient = async () =>
+  new Promise(resolve => {
+    const checkClient = () => {
+      if (global.client) {
+        return resolve();
+      }
 
-export const getRpcClient = () => client;
-export const rpcRequest = (method, ...params) => {
+      setTimeout(checkClient, 200);
+    };
+
+    checkClient();
+  });
+
+export const getRpcClient = () => global.client;
+export const rpcRequest = async (method, ...params) => {
   assert(typeof method === 'string', `invalid method: ${method}`);
 
   try {
@@ -17,7 +28,8 @@ export const rpcRequest = (method, ...params) => {
       params,
     });
 
-    assert(!!client, 'json rpc client not found');
+    await waitForClient();
+    // assert(!!getRpcClient(), 'json rpc client not found');
 
     return getRpcClient()
       .request(method, ...params)
@@ -32,10 +44,12 @@ export const rpcRequest = (method, ...params) => {
 };
 
 export function initRpcClient(requestHandler) {
-  client = new JSONRPCClient(requestHandler);
+  console.log('Rpc client initialized', global.client);
 
-  client.__request = client.request;
-  client.request = function (name, ...params) {
+  global.client = new JSONRPCClient(requestHandler);
+
+  global.client.__request = global.client.request;
+  global.client.request = function (name, ...params) {
     let reqParams =
       params.length === 0
         ? params[0]
@@ -51,8 +65,8 @@ export function initRpcClient(requestHandler) {
       );
     }
 
-    return client.__request(name, reqParams);
+    return global.client.__request(name, reqParams);
   };
 
-  patchRpcServer(client);
+  patchRpcServer(global.client);
 }

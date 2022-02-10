@@ -8,6 +8,16 @@ class MemoryWallet extends StorageWallet {
       storageOptions.storageInterface || new MemoryStorageInterface(id);
     super(id, storageInterface);
   }
+
+  async import(data, password) {
+    const result = await super.import(data, password);
+
+    this.contents.forEach(content => {
+      this.promises.push(this.insertToStorage(content));
+    });
+
+    return result;
+  }
 }
 
 export default MemoryWallet;

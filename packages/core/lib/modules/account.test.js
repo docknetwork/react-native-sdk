@@ -8,10 +8,13 @@ describe('Account', () => {
 
   beforeAll(async () => {
     wallet = await Wallet.create();
+    await wallet.ensureNetwork();
     account = await wallet.accounts.create({
       name: TestFixtures.account1.name,
       mnemonic: TestFixtures.account1.mnemonic,
     });
+
+    await account.loadDetails();
   });
 
   it('expect to get account name', () => {
