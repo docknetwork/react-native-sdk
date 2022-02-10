@@ -1,6 +1,6 @@
 import StorageInterface from '@docknetwork/wallet/storage/storage-interface';
 import {v4 as uuid} from 'uuid';
-import {StorageRpc} from '../client/storage-rpc';
+import {storageService} from '../services/storage';
 import {Logger} from '../core/logger';
 
 function generateDocumentId() {
@@ -18,7 +18,7 @@ class RpcStorageInterface extends StorageInterface {
 
   async loadStorage(directory) {
     try {
-      const data = await StorageRpc.getItem(directory);
+      const data = await storageService.getItem(directory);
 
       this.documents = JSON.parse(data);
 
@@ -34,7 +34,7 @@ class RpcStorageInterface extends StorageInterface {
   }
 
   updateLocalStorage() {
-    StorageRpc.setItem(this.directory, JSON.stringify(this.documents));
+    storageService.setItem(this.directory, JSON.stringify(this.documents));
   }
 
   async get({id}) {

@@ -1,13 +1,25 @@
-// import {Logger} from 'src/core/logger';
+export class LoggerService {
+  rpcMethods = [
+    LoggerService.prototype.log,
+    LoggerService.prototype.info,
+    LoggerService.prototype.debug,
+  ];
 
-export default {
-  name: 'logger',
-  routes: {
-    async log(...params) {
-      console.log(...params);
-      // Logger.debug('====> Webview logger:');
-      // Logger.debug(...params);
-      return 'ok';
-    },
-  },
-};
+  constructor() {
+    this.name = 'logger';
+  }
+
+  log(...args): Promise<any> {
+    console.log(...args);
+  }
+
+  info(...args): Promise<any> {
+    console.log(...args);
+  }
+
+  debug(...args): Promise<any> {
+    console.log(...args);
+  }
+}
+
+export const loggerService: LoggerService = new LoggerService();

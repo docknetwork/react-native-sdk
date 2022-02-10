@@ -1,6 +1,4 @@
-import {ApiRpc} from './client/api-rpc';
 import {getRpcClient} from './rpc-client';
-import {getRpcEventEmitter} from './events';
 
 let request;
 
@@ -32,26 +30,6 @@ export const waitFor = timeout => new Promise(res => setTimeout(res, timeout));
 
 let sendTokensSpy;
 let getFeeSpy;
-
-export function mockTransaction({hash, error, delay = 300, fee}) {
-  sendTokensSpy = jest.spyOn(ApiRpc, 'sendTokens').mockImplementation(() => {
-    // Emit events
-    setTimeout(() => {
-      if (error) {
-        getRpcEventEmitter().emit(`${hash}-failed`, error);
-        return;
-      }
-
-      getRpcEventEmitter().emit(`${hash}-complete`);
-    }, delay);
-
-    return Promise.resolve(hash);
-  });
-
-  getFeeSpy = jest
-    .spyOn(ApiRpc, 'getFeeAmount')
-    .mockReturnValue(Promise.resolve(fee));
-}
 
 export function resetMockTransaction() {
   if (sendTokensSpy) {

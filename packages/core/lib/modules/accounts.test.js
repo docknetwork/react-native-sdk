@@ -1,4 +1,4 @@
-import {ApiRpc} from '../client/api-rpc';
+import {substrateService} from '../services/substrate';
 import {TestFixtures} from '../fixtures';
 import {Accounts} from './accounts';
 import {Wallet} from './wallet';
@@ -9,6 +9,8 @@ describe('Accounts module', () => {
 
   beforeAll(async () => {
     wallet = await Wallet.create();
+    await wallet.ensureNetwork();
+
     accounts = wallet.accounts;
   });
 
@@ -41,11 +43,11 @@ describe('Accounts module', () => {
       name: 'test',
     });
     const balance = 10;
-    jest.spyOn(ApiRpc, 'getAccountBalance').mockReturnValue(balance);
+    jest.spyOn(substrateService, 'getAccountBalance').mockReturnValue(balance);
 
     let result = await accounts.fetchBalance(account.address);
 
-    expect(ApiRpc.getAccountBalance).toBeCalled();
+    expect(substrateService.getAccountBalance).toBeCalled();
     expect(result).toBe(balance);
 
     const currency = await accounts.findCorrelationByType(

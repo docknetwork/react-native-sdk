@@ -4,7 +4,7 @@ import {DOCK_TOKEN_UNIT} from '@docknetwork/wallet-sdk-core/lib/core/format-util
 import BigNumber from 'bignumber.js';
 import {Accounts} from '@docknetwork/wallet-sdk-core/lib/modules/accounts';
 import {Account} from '@docknetwork/wallet-sdk-core/lib/modules/account';
-import {ApiRpc} from '@docknetwork/wallet-sdk-core/lib/client/api-rpc';
+import {substrateService} from '@docknetwork/wallet-sdk-core/lib/services/substrate';
 import {NetworkManager} from '@docknetwork/wallet-sdk-core/lib/modules/network-manager';
 import {getRealm} from '@docknetwork/wallet-sdk-core/lib/core/realm';
 import {getRpcEventEmitter} from '@docknetwork/wallet-sdk-core/lib/events';
@@ -244,7 +244,7 @@ export class Transactions {
 
     await this.wallet.ensureNetwork();
 
-    const fee = await ApiRpc.getFeeAmount({
+    const fee = await substrateService.getFeeAmount({
       fromAddress: fromAddress,
       toAddress,
       amount,
@@ -270,7 +270,7 @@ export class Transactions {
 
     await this.wallet.ensureNetwork();
 
-    const hash = await ApiRpc.sendTokens({
+    const hash = await substrateService.sendTokens({
       toAddress,
       fromAddress,
       amount: amountUnits,

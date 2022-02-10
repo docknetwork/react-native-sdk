@@ -25,6 +25,13 @@ function build({entry, path, filename, callback}) {
         stream: require.resolve('stream-browserify'),
         assert: require.resolve('assert'),
         buffer: require.resolve('buffer'),
+        os: require.resolve('os-browserify'),
+        process: require.resolve('process'),
+        https: false,
+        http: false,
+        fs: false,
+        zlib: false,
+        path: false,
       },
     },
     module: {
@@ -52,9 +59,14 @@ function build({entry, path, filename, callback}) {
     plugins: [
       new webpack.DefinePlugin({
         'process.env': JSON.stringify(process.env),
+        // 'process.argv': '""',
+        // 'process.stdout': '""',
+        // "process.stderr": '""',
+        // "process.platform": ""
       }),
       new webpack.ProvidePlugin({
         Buffer: ['buffer', 'Buffer'],
+        process: require.resolve('process/browser'),
       }),
     ],
   });
