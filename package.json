@@ -1,7 +1,7 @@
 {
   "name": "@docknetwork/react-native-sdk",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "workspaces": {
     "packages": [
       "packages/**"
