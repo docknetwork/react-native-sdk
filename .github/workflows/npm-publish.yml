@@ -12,7 +12,7 @@ jobs:
           node-version: '14.x'
           registry-url: https://registry.npmjs.org/
       - run: yarn install
-      - run:
+      - run: |
           cd ./packages/core && ls
           cd ../react-native && ls
           cd ../transactions && ls
