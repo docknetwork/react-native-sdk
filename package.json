@@ -1,7 +1,7 @@
 {
   "name": "@docknetwork/react-native-sdk",
   "version": "0.1.0",
-  "private": false,
+  "private": true,
   "workspaces": {
     "packages": [
       "packages/**"
@@ -167,7 +167,7 @@
     "os-browserify": "^0.3.0",
     "process": "^0.11.10",
     "react-native-keychain": "^8.0.0",
-    "realm": "^10.10.1",
+    "realm": "10.20.0-alpha.2",
     "regenerator-runtime": "^0.13.9",
     "rollup": "^2.65.0",
     "rollup-plugin-flow": "^1.1.1",
