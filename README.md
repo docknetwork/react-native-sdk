@@ -4,7 +4,8 @@ Handles polkadot-js and provides webassembly support
 
 ## Installation
 ```js
-yarn add https://github.com/docknetwork/react-native-sdk
+yarn add @docknetwork/wallet-sdk-core
+yarn add @docknetwork/wallet-sdk-transactions
 
 ```
 
