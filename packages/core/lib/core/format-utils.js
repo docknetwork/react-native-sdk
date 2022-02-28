@@ -4,7 +4,14 @@ import {isNumberValid} from './validation';
 
 export const DOCK_TOKEN_UNIT = 1000000;
 
-export function formatCurrency(value, currency = 'USD') {
+/**
+ * Format number as currency
+ *
+ * @param {number} value
+ * @param {string} currency
+ * @returns
+ */
+export function formatCurrency(value, currency = 'USD'): string {
   assert(!!value, 'value is required');
   assert(
     typeof value === 'number' || typeof value === 'bigint',

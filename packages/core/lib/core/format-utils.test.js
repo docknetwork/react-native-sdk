@@ -1,4 +1,8 @@
-import {formatAddress, getPlainDockAmount} from './format-utils';
+import {
+  formatAddress,
+  formatCurrency,
+  getPlainDockAmount,
+} from './format-utils';
 
 const sr25519Address = '395pw1L5R4XiScC2BGRrSSSH6fadFuGSTfUcqA5cHPyA21eQ';
 const ed25519Address = '38yWnWt8k3j5BuxssLAH43t5cNevxyShkCAMEx8su3nSsayh';
@@ -21,5 +25,10 @@ describe('Format util', () => {
   it('getPlainDockAmount', () => {
     const amount = getPlainDockAmount(10);
     expect(amount.toNumber()).toBe(10000000);
+  });
+
+  it('formatCurrency', () => {
+    const result = formatCurrency(12.55);
+    expect(result).toBe('$12.55');
   });
 });
