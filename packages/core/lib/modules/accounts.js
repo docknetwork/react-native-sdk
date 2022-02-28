@@ -233,8 +233,8 @@ export class Accounts {
     this.load();
   }
 
-  static getInstance(options = {}): Accounts {
-    if (!Accounts.instance) {
+  static getInstance(options): Accounts {
+    if (!Accounts.instance || options) {
       Accounts.instance = new Accounts(options);
     }
 
