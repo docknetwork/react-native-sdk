@@ -1,3 +1,8 @@
+/**
+ * module description
+ * @module Account
+ */
+
 import assert from 'assert';
 import {isAddressValid} from '../core/validation';
 import {Accounts} from './accounts';

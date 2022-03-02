@@ -1,3 +1,5 @@
+/** @module wallet */
+
 import assert from 'assert';
 import {v4 as uuid} from 'uuid';
 import {clearCacheData, getRealm, initRealm} from '../core/realm';
@@ -12,6 +14,8 @@ import {EventManager} from './event-manager';
 import {NetworkManager} from './network-manager';
 
 // import {getEnvironment} from 'realm/lib/utils';
+
+/** Wallet events */
 export const WalletEvents = {
   ready: 'ready',
   statusUpdated: 'status-updated',
@@ -23,6 +27,7 @@ export const WalletEvents = {
   networkConnected: 'network-connected',
 };
 
+/** Wallet status */
 export type WalletStatus = 'closed' | 'loading' | 'ready' | 'error';
 
 // const environment = getEnvironment();
@@ -31,8 +36,13 @@ export type WalletStatus = 'closed' | 'loading' | 'ready' | 'error';
 // require('../setup-nodejs');
 // }
 
-/** Wallet */
-export class Wallet {
+/**
+ * @class module:wallet.Wallet
+ * @property {NetworkManager} networkManager {@link module:wallet.Wallet#networkManager}
+ * @property {String[]} context {@link module:wallet.Wallet#context}
+ *
+ */
+class Wallet {
   networkManager: NetworkManager;
   context: string[];
   status: WalletStatus;
@@ -41,6 +51,10 @@ export class Wallet {
   walletId: string;
   accounts: Accounts;
 
+  /**
+   * @constructor
+   * @param {object} params
+   */
   constructor({
     walletId = 'dock-wallet',
     context = ['https://w3id.org/wallet/v1'],
@@ -55,14 +69,10 @@ export class Wallet {
     this.setStatus('closed');
   }
 
-  async close() {
-    getRealm().close();
-    await dockService.disconnect();
-    this.setStatus('closed');
-  }
-
   /**
-   * Load wallet
+   * Get the y value.
+   * @return {Promise} The y value.
+   * @method module:wallet.Wallet#load
    */
   async load() {
     if (this.status === 'loading') {
@@ -100,12 +110,31 @@ export class Wallet {
     }
   }
 
+  /**
+   *
+   * Close wallet
+   * @method module:wallet.Wallet#close
+   */
+  async close() {
+    getRealm().close();
+    await dockService.disconnect();
+    this.setStatus('closed');
+  }
+
+  /**
+   * delete wallet
+   * @method module:wallet.Wallet#delete
+   */
   deleteWallet() {
     this.eventManager.emit(WalletEvents.walletDeleted);
     clearCacheData();
     getStorage().removeItem(this.walletId);
   }
 
+  /**
+   *
+   * @param {*} status
+   */
   setStatus(status: WalletStatus) {
     assert(!!status, 'status is required');
 
@@ -113,6 +142,11 @@ export class Wallet {
     this.eventManager.emit(WalletEvents.statusUpdated, status);
   }
 
+  /**
+   * Ensure network
+   *
+   * @returns Promise
+   */
   async ensureNetwork() {
     if (!this.connectionInProgress) {
       this.initNetwork();
@@ -289,3 +323,5 @@ export class Wallet {
     return Wallet.instance;
   }
 }
+
+export {Wallet};

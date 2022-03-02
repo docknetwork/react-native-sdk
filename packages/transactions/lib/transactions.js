@@ -93,9 +93,7 @@ export const TransactionEvents = {
   updated: 'transaction-updated',
 };
 
-/**
- * Transactions Module
- */
+/** Transactions */
 export class Transactions {
   constructor(accounts: Accounts) {
     this.accounts = accounts || Accounts.getInstance();

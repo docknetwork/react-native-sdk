@@ -6,7 +6,7 @@ function generateDocumentId() {
   return `doc${Math.floor(Math.random() * 10000)}`;
 }
 
-/** An example file system storage interface implementation. This is not secure and shouldn't be used in production */
+/* An example file system storage interface implementation. This is not secure and shouldn't be used in production */
 class MemoryStorageInterface extends StorageInterface {
   constructor(directory) {
     super();
