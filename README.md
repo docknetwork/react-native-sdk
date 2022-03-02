@@ -1,10 +1,10 @@
 # React native SDK for Dock app
 
-Using polkadot-js libraries in reacdt native is a challange, due to lack of webassembly support.
+Using polkadot-js libraries in react native is a challange, due to a lack of webassembly support.
 
-This sdk handles all the polkadot web assembly in a webview and comunicate to the react native thread trough a json rpc layer
+The Dock Wallet SDK handles all the polkadot web assembly in a webview, sending messages to the react native thread trough a Json RPC layer
 
-All you need to do is wrap your app in with a WalletSDKProvider and start build your polkadot wallet.
+All you need to do is wrap your app in with a WalletSDKProvider and start building your polkadot wallet.
 
 ## Installation
 ```js
@@ -15,6 +15,9 @@ yarn add @docknetwork/wallet-sdk-transactions
 
 
 ## React Native Example
+The following example will create a wallet and allow the user to add accounts on it. Displaying the count of documents added to the wallet.
+
+Notice that the account documents are accessible through the `documents` object, and for each account created multiple documents will be added to the wallet.
 
 ```js
 import {Box, Button, NativeBaseProvider, Text} from 'native-base';
@@ -32,7 +35,7 @@ const WalletDetails = function () {
       <Text>Wallet status: {status}</Text>
       <Text>Wallet docs: {documents.length}</Text>
       <Button onPress={() => wallet.accounts.create({name: 'test'})}>
-        <Text>Add document</Text>
+        <Text>Add Account</Text>
       </Button>
     </Box>
   );
@@ -44,7 +47,7 @@ const App = () => {
       <WalletSDKProvider>
         <Box p={8}>
           <Text>SDK Demo</Text>
-          <Text>Test</Text>
+          <Text>Press on `add document` button to create a new account</Text>
         </Box>
         <WalletDetails />
       </WalletSDKProvider>
@@ -69,6 +72,7 @@ const account1 = await wallet.accounts.create({
 });
 
 console.log(`Account1 address ${account1.address}`);
+// result: Account1 address 3D1M9UnR684eBfVujjQr6ucPqvXERSxYxcVBFGAhRohhRXxq
 
 // Create account using an existing mnemonic
 const mnemonic =
@@ -80,10 +84,14 @@ const account2 = await wallet.accounts.create({
 
 console.log(`Account2 address ${account2.address}`);
 
+// result: Account2 address 3FENesfZgFmBruv2H9Hc17GmobeTfxFAp8gHKXFmUtA38hcW
+
 // Fetch accounts balance
 const balance = await account1.getBalance();
 
 console.log('Account1 balance', balance);
+
+// result: Account1 balance 0
 
 // Handle transactions
 const transactions = Transactions.with(account1);
@@ -93,15 +101,19 @@ const txInput = {
   amount: 3
 };
 
-// Get transaction fee
+// Get transaction fee in DOCK tokens
 const fee = await transactions.getFee(txInput);
 
 console.log('Transaction fee', fee);
+
+// result: Transaction fee 2.3
 
 // Send transaction
 const hash = await transactions.send(txInput);
 
 console.log('Transaction hash', fee);
+
+// result: Transaction hash 0x1c1c5ca40acafb830460dccb492be4ac7181e9d700ab78853df052e478e8b2a9
 
 ```
 
