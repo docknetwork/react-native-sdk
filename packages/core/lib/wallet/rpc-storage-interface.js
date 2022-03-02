@@ -7,7 +7,7 @@ function generateDocumentId() {
   return `doc:${uuid()}`;
 }
 
-/** An example file system storage interface implementation. This is not secure and shouldn't be used in production */
+/* An example file system storage interface implementation. This is not secure and shouldn't be used in production */
 class RpcStorageInterface extends StorageInterface {
   constructor(directory) {
     super();

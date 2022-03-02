@@ -9,7 +9,7 @@ export const DOCK_TOKEN_UNIT = 1000000;
  *
  * @param {number} value
  * @param {string} currency
- * @returns
+ * @returns string
  */
 export function formatCurrency(value, currency = 'USD'): string {
   assert(!!value, 'value is required');

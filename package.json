@@ -109,7 +109,7 @@
     "lint:fix": "eslint './src/**/*.js' --fix --ignore-path=.prettierignore",
     "format": "prettier './src/**/*.{js,json}' --write",
     "exec": "BABEL_ENV=development; babel-node",
-    "docs": "yarn jsdoc ./packages/core/lib/** ./packages/transactions/lib/** -c ./jsdoc.conf.json",
+    "docs": "jsdoc ./packages/core/lib/modules/wallet.js  -c ./jsdoc.conf.json",
     "link-packages": "sh ./scripts/link-packages.sh"
   },
   "eslintConfig": {
