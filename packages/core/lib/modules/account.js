@@ -26,7 +26,11 @@ export class Account {
   }
 
   /**
+   * Get account for a given address
+   * The account needs to exist in the wallet
    * 
+   * @example
+   * const accounts = Account.with('some-address')
    * @param {string} address 
    * @returns 
    */
