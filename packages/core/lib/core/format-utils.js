@@ -1,3 +1,9 @@
+/**
+ * Format utils module
+ *
+ * @module core/format-utils
+ */
+
 import assert from 'assert';
 import BigNumber from 'bignumber.js';
 import {isNumberValid} from './validation';
@@ -6,7 +12,7 @@ export const DOCK_TOKEN_UNIT = 1000000;
 
 /**
  * Format number as currency
- *
+ * @alias core/format-utils#formatCurrency
  * @param {number} value
  * @param {string} currency
  * @returns string

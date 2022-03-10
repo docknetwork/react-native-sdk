@@ -34,6 +34,9 @@ function getNetworkInfo(networkId): NetworkInfo {
   return networkInfo;
 }
 
+/**
+ * NetworkManager
+ */
 export class NetworkManager {
   networkId: NetworkId;
   isOnline: boolean;

@@ -2,7 +2,7 @@ name: Deploy js docs
 on:
   push:
     branches:
-      - master
+      - docs-test
 jobs:
   deployJsDocs:
     runs-on: ubuntu-latest

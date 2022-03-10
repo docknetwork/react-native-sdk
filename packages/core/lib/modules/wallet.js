@@ -1,5 +1,3 @@
-/** @module wallet */
-
 import assert from 'assert';
 import {v4 as uuid} from 'uuid';
 import {clearCacheData, getRealm, initRealm} from '../core/realm';
@@ -37,10 +35,7 @@ export type WalletStatus = 'closed' | 'loading' | 'ready' | 'error';
 // }
 
 /**
- * @class module:wallet.Wallet
- * @property {NetworkManager} networkManager {@link module:wallet.Wallet#networkManager}
- * @property {String[]} context {@link module:wallet.Wallet#context}
- *
+ * Wallet
  */
 class Wallet {
   networkManager: NetworkManager;
@@ -72,7 +67,6 @@ class Wallet {
   /**
    * Get the y value.
    * @return {Promise} The y value.
-   * @method module:wallet.Wallet#load
    */
   async load() {
     if (this.status === 'loading') {
@@ -113,7 +107,6 @@ class Wallet {
   /**
    *
    * Close wallet
-   * @method module:wallet.Wallet#close
    */
   async close() {
     getRealm().close();
@@ -123,7 +116,6 @@ class Wallet {
 
   /**
    * delete wallet
-   * @method module:wallet.Wallet#delete
    */
   deleteWallet() {
     this.eventManager.emit(WalletEvents.walletDeleted);
