@@ -13,6 +13,10 @@ export const DOCK_TOKEN_UNIT = 1000000;
 /**
  * Format number as currency
  * @alias core/format-utils#formatCurrency
+ * @example
+ * const value = formatCurrency(10.5);
+ * // value = $10.50
+ * 
  * @param {number} value
  * @param {string} currency
  * @returns string
