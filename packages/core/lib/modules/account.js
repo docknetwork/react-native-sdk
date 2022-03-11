@@ -1,8 +1,3 @@
-/**
- * module description
- * @module Account
- */
-
 import assert from 'assert';
 import {isAddressValid} from '../core/validation';
 import {Accounts} from './accounts';
@@ -15,6 +10,9 @@ export type AccountDetails = {
   correlations: any[],
 };
 
+/**
+ * Account
+ */
 export class Account {
   details: AccountDetails;
   address: string;
@@ -27,6 +25,15 @@ export class Account {
     this.id = address;
   }
 
+  /**
+   * Get account for a given address
+   * The account needs to exist in the wallet
+   *
+   * @example
+   * const accounts = Account.with('some-address')
+   * @param {string} address
+   * @returns
+   */
   static with(address) {
     assert(isAddressValid(address), 'invalid address');
 
@@ -37,6 +44,11 @@ export class Account {
     return account;
   }
 
+  /**
+   *
+   * @param {string} address
+   * @returns
+   */
   static async withAsync(address) {
     const account = Account.with(address);
 
@@ -45,6 +57,9 @@ export class Account {
     return account;
   }
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadDetails() {
     this.details = await this.accounts.wallet.getDocumentById(this.address);
     this.name = this.details.name;
