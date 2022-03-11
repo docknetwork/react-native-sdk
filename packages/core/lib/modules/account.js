@@ -28,11 +28,11 @@ export class Account {
   /**
    * Get account for a given address
    * The account needs to exist in the wallet
-   * 
+   *
    * @example
    * const accounts = Account.with('some-address')
-   * @param {string} address 
-   * @returns 
+   * @param {string} address
+   * @returns
    */
   static with(address) {
     assert(isAddressValid(address), 'invalid address');
@@ -45,9 +45,9 @@ export class Account {
   }
 
   /**
-   * 
-   * @param {string} address 
-   * @returns 
+   *
+   * @param {string} address
+   * @returns
    */
   static async withAsync(address) {
     const account = Account.with(address);
