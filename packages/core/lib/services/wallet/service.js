@@ -14,6 +14,9 @@ import {
   validation,
 } from './configs';
 
+/**
+ * WalletService
+ */
 export class WalletService {
   wallet: StorageWallet;
 
