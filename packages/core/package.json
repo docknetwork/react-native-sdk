@@ -2,7 +2,7 @@
     "name": "@docknetwork/wallet-sdk-core",
     "version": "0.1.1",
     "license": "MIT",
-    "repository": { 
+    "repository": {
         "type": "git",
         "url": "https://github.com/docknetwork/react-native-sdk"
     },
@@ -17,6 +17,7 @@
         "bignumber.js": "^9.0.1",
         "react-native-keychain": "^8.0.0",
         "realm": "^10.10.1",
+        "axios": "^0.25.0",
         "uuid": "^8.3.2",
         "winston": "^3.3.3"
     },
