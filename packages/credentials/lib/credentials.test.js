@@ -39,7 +39,7 @@ describe('Credentials module', () => {
     };
     const credentials = new Credentials({wallet});
 
-    const addedCredential = await credentials.add(input);
+    await credentials.add(input);
 
     expect(wallet.add).toBeCalledWith({
       type: 'VerifiableCredential',
