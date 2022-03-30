@@ -1,6 +1,7 @@
 import {Wallet} from '@docknetwork/wallet-sdk-core/lib/modules/wallet';
 import type {WalletDocument} from '@docknetwork/wallet-sdk-core/lib/types';
 import {assert} from '@docknetwork/wallet-sdk-core/lib/core/validation';
+import axios from 'axios';
 
 export type Credential = {
   id: string,
@@ -19,6 +20,10 @@ export class Credentials {
     this.wallet = wallet || Wallet.getInstance();
   }
 
+  validateCredential(content) {
+    assert(!!content.type, 'Invalid credential');
+  }
+
   /**
    * Add credential to the wallet
    *
@@ -27,6 +32,7 @@ export class Credentials {
    */
   async add(credentialContent: any): Promise<Credential> {
     assert(!!credentialContent, 'credentialContent is required');
+    this.validateCredential(credentialContent);
 
     const doc = await this.wallet.add({
       value: credentialContent,
@@ -45,8 +51,10 @@ export class Credentials {
    * @param url
    * @returns Promise<Credential>
    */
-  addFromUrl(url: string): Promise<Credential> {
-    throw new Error('Not implemented');
+  async addFromUrl(url: string): Promise<Credential> {
+    const {data} = await axios.get(url);
+
+    return this.add(data);
   }
 
   /**

@@ -1,5 +1,7 @@
 import {Credentials} from './index';
 import {Wallet} from '@docknetwork/wallet-sdk-core/lib/modules/wallet';
+import testCredential from '../fixtures/test-credential.json';
+import {getPromiseError} from '@docknetwork/wallet-sdk-core/lib/services/test-utils';
 
 describe('Credentials module', () => {
   it('expect to create instance', () => {
@@ -27,11 +29,8 @@ describe('Credentials module', () => {
   });
 
   it('expect to add credential to the wallet', async () => {
-    const input = {
-      credentialData: 1,
-    };
     const walletDocResult = {
-      value: input.content,
+      value: testCredential,
       id: 1,
     };
     const wallet = {
@@ -39,11 +38,11 @@ describe('Credentials module', () => {
     };
     const credentials = new Credentials({wallet});
 
-    await credentials.add(input);
+    await credentials.add(testCredential);
 
     expect(wallet.add).toBeCalledWith({
       type: 'VerifiableCredential',
-      value: input,
+      value: testCredential,
     });
   });
 
@@ -61,5 +60,30 @@ describe('Credentials module', () => {
 
     expect(result).toBe(removalResult);
     expect(wallet.remove).toBeCalledWith(credential.id);
+  });
+
+  describe('add from url', () => {
+    const wallet = {
+      add: jest.fn().mockReturnValue({
+        id: 1,
+        value: testCredential,
+      }),
+    };
+    const credentials = new Credentials({wallet});
+
+    it('Expect to download credential', async () => {
+      const url =
+        'https://creds.dock.io/1d28317eb63495340414fb11346d5b7f5fd50b65aa06c8064d88ec3ec993a29b?p=dGVzdA%3D%3D';
+      const credential = await credentials.addFromUrl(url);
+
+      expect(credential.id).toBeDefined();
+      expect(credential.content).toStrictEqual(testCredential);
+    });
+
+    it('Expect to handle invalid url', async () => {
+      const url = 'https://www.google.com';
+      const error = await getPromiseError(() => credentials.addFromUrl(url));
+      expect(error.message).toBe('Invalid credential');
+    });
   });
 });
