@@ -71,9 +71,24 @@ describe('Credentials module', () => {
     };
     const credentials = new Credentials({wallet});
 
+    it('fetch data from url', async () => {
+      const url =
+        'https://creds.dock.io/1d28317eb63495340414fb11346d5b7f5fd50b65aa06c8064d88ec3ec993a29b?p=dGVzdA%3D%3D';
+      const data = await credentials.fetchData(url);
+      expect(data).toStrictEqual(testCredential);
+    });
+
+    it('getCredentialFromUrl', async () => {
+      const url =
+        'https://creds.dock.io/1d28317eb63495340414fb11346d5b7f5fd50b65aa06c8064d88ec3ec993a29b?p=dGVzdA%3D%3D';
+      const data = await credentials.getCredentialFromUrl(url);
+      expect(data).toStrictEqual(testCredential);
+    });
+
     it('Expect to download credential', async () => {
       const url =
         'https://creds.dock.io/1d28317eb63495340414fb11346d5b7f5fd50b65aa06c8064d88ec3ec993a29b?p=dGVzdA%3D%3D';
+
       const credential = await credentials.addFromUrl(url);
 
       expect(credential.id).toBeDefined();

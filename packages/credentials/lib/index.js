@@ -46,14 +46,36 @@ export class Credentials {
   }
 
   /**
+   * Fetch data from url
+   *
+   * @returns {Promise<any>}
+   */
+  async fetchData(url): Promise<any> {
+    const {data} = await axios.get(url);
+    return data;
+  }
+
+  /**
+   * Return credential data from an URL if its valid
+   *
+   * @param url
+   * @returns {Promise<*>}
+   */
+  async getCredentialFromUrl(url: string): Promise<Credential> {
+    const data = await this.fetchData(url);
+
+    this.validateCredential(data);
+
+    return data;
+  }
+  /**
    * Downloads credential content from url and store in the wallet
    *
    * @param url
    * @returns Promise<Credential>
    */
   async addFromUrl(url: string): Promise<Credential> {
-    const {data} = await axios.get(url);
-
+    const data = await this.fetchData(url);
     return this.add(data);
   }
 
