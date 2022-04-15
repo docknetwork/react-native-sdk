@@ -111,7 +111,7 @@ export class Credentials {
    *
    * @returns {Promise<Wallet>}
    */
-  static getInstance(): Wallet {
+  static getInstance(): Credentials {
     if (!this.instance) {
       this.instance = new Credentials();
     }

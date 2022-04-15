@@ -34,6 +34,10 @@ export type WalletStatus = 'closed' | 'loading' | 'ready' | 'error';
 // require('../setup-nodejs');
 // }
 
+if (!global.walletInstances) {
+  global.walletInstances = 0;
+}
+
 /**
  * Wallet
  */
@@ -60,6 +64,16 @@ class Wallet {
     this.eventManager = new EventManager();
     this.eventManager.registerEvents(WalletEvents);
     this.accounts = Accounts.getInstance({wallet: this});
+
+    global.walletInstances++;
+
+    setTimeout(() => {
+      if (global.walletInstances > 0) {
+        console.warn(
+          "Multiple wallet instances were created. If that's not intentional please check your code, and use the Wallet.getInstance() instead of creating a new instance",
+        );
+      }
+    }, 2000);
 
     this.setStatus('closed');
   }
@@ -180,7 +194,15 @@ class Wallet {
       return;
     }
 
-    return await this.eventManager.waitFor(WalletEvents.ready);
+    let warningTimeout = setTimeout(() => {
+      throw new Error(
+        'Wallet module timed out. Make sure the wallet is loaded, or you are not using multiple instances',
+      );
+    }, 6000);
+
+    await this.eventManager.waitFor(WalletEvents.ready);
+
+    clearTimeout(warningTimeout);
   }
 
   getContext() {
