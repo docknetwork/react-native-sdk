@@ -15,12 +15,61 @@ import {Platform, View} from 'react-native';
 import WebView from 'react-native-webview';
 import {WebviewEventHandler} from './message-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {AccountDetails} from "@docknetwork/wallet-sdk-core/lib/modules/account";
+import {DocumentType} from "@docknetwork/wallet-sdk-core/lib/types";
+
+export type WalletSDKContextProps = {
+  wallet: Wallet,
+  sdkStatus: string,
+};
 
 export const WalletSDKContext = React.createContext({
   wallet: null,
 });
 
 setStorage(AsyncStorage);
+
+export function getStorage() {
+  return AsyncStorage;
+}
+
+export const filterDocsByType = (type: DocumentType) => doc => doc.type === type;
+export const filterByIds = idList => doc => idList.find(v => v === doc.id);
+export const findDocument = (address, documents) =>
+  documents.filter(doc => doc.id === address)[0];
+export const findRelatedDocs = (document, documentList) =>
+  document && document.correlation
+    ? documentList.filter(doc => document.correlation.find(id => id === doc.id))
+    : [];
+
+function getAccount(address, documents): AccountDetails {
+  const addressDoc = findDocument(address, documents);
+
+  if (!addressDoc) {
+    return null;
+  }
+
+  const correlation = findRelatedDocs(addressDoc, documents);
+  const currencyDoc = correlation.find(filterDocsByType('Currency'));
+  const mnemonic = correlation.find(filterDocsByType('Mnemonic'));
+
+  return {
+    address,
+    name: addressDoc.name,
+    balance: currencyDoc && currencyDoc.value,
+    mnemonic: mnemonic && mnemonic.value,
+  };
+}
+
+export function useAccount(address) {
+  const {documents} = useWallet({syncDocs: true});
+  const account = getAccount(address, documents);
+
+  console.log('account', account);
+  return {
+    account,
+  };
+}
 
 export function useWallet({syncDocs = true} = {}) {
   const sdkContext = useContext(WalletSDKContext);
@@ -83,7 +132,7 @@ export function WalletSDKProvider({onError, customUri, children, onReady}) {
     Platform.OS === 'ios' ? 'app-html' : 'file:///android_asset/app-html';
 
   const handleReady = useCallback(() => {
-    const newWallet = new Wallet({});
+    const newWallet = Wallet.getInstance({});
     setWallet(newWallet);
     newWallet.load();
 
