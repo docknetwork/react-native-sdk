@@ -109,9 +109,9 @@ export class Credentials {
   /**
    * Get instance
    *
-   * @returns {Promise<Wallet>}
+   * @returns {Promise<Credentials>}
    */
-  static getInstance(): Wallet {
+  static getInstance(): Credentials {
     if (!this.instance) {
       this.instance = new Credentials();
     }
