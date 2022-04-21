@@ -1,6 +1,6 @@
 {
     "name": "@docknetwork/wallet-sdk-react-native",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "dependencies": {
         "@polkadot/keyring": "^7.2.1",
         "@polkadot/types-known": "5.6.1",
