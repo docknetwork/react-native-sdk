@@ -6,9 +6,16 @@ The Dock Wallet SDK handles all the Polkadot web assembly in a webview, sending 
 
 All you need to do is wrap your app in a `WalletSDKProvider` and start building your Polkadot wallet.
 
+## Dependencies
+1. Install @react-native-async-storage/async-storage
+2. Nodify react native project using this steps
+https://nicedoc.io/tradle/rn-nodeify
+
+
 ## Installation
 ```js
 yarn add @docknetwork/wallet-sdk-core
+yarn add @docknetwork/wallet-sdk-react-native
 yarn add @docknetwork/wallet-sdk-transactions
 
 ```
