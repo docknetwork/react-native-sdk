@@ -1,0 +1,11 @@
+{
+  "name": "@docknetwork/wallet-sdk-dids",
+  "version": "0.1.2",
+  "dependencies": {
+    "@docknetwork/wallet-sdk-core": "^0.1.3",
+    "axios": "^0.25.0"
+  },
+  "devDependencies": {
+
+  }
+}
