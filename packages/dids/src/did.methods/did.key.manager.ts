@@ -1,48 +1,52 @@
 import { driver } from 'did-method-key';
-import { IDidManager } from '../interface/i.did.manager';
+import { IDidManager, DIDResponse } from '../interface/i.did.manager';
 import {Wallet} from '@docknetwork/wallet-sdk-core/lib/modules/wallet';
 
 export class DidKeyManager  implements IDidManager{
   private static instance: IDidManager;
 
-
-  private wallet;
+  private readonly wallet;
 
   private constructor() {
     this.wallet = Wallet.getInstance();
   }
-  async createDID(options = {}): Promise<string> {
+  async createDID(options = {}): Promise<DIDResponse> {
     const didDocument = await driver().generate();
-    return didDocument.id.toString()
+    return this.saveDID(didDocument)
   }
 
-  async resolveDID(did: string): Promise<any> {
-    return  driver().get({did});
-  }
 
   public static getInstance(): IDidManager {
     if (!DidKeyManager.instance) {
       DidKeyManager.instance = new DidKeyManager();
     }
-
     return DidKeyManager.instance;
   }
 
 
-  async saveDID(did: string): Promise<boolean> {
-    try {
-      await this.wallet.add({
-        type: 'DID',
-        value: did
-      })
-      return true
-    } catch (e) {
-      console.error(e)
-      return  false
-    }
+  async saveDID(didDocument: any): Promise<DIDResponse> {
+    const doc = await this.wallet.add({
+      type: 'DID',
+      value: didDocument
+    })
+    return {
+      id: doc.id,
+      content: doc.value,
+    };
   }
 
   getWallet(): any {
     return this.wallet
+  }
+
+  async getDIDs(): Promise<Array<DIDResponse>> {
+    const documents = await this.wallet.query({
+      type: 'DID',
+    });
+
+    return documents.map((document: any) => ({
+      content: document.value,
+      id: document.id,
+    }));
   }
 }
