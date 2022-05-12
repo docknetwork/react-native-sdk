@@ -1,11 +1,47 @@
 {
   "name": "@docknetwork/wallet-sdk-dids",
-  "version": "0.1.2",
+  "version": "0.0.1",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "format": "prettier --write \"src/**/*.(js|ts)\"",
+    "lint": "eslint src --ext .js,.ts",
+    "lint:fix": "eslint src --fix --ext .js,.ts",
+    "test": "jest --config jest.config.js",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test && npm run lint",
+    "preversion": "npm run lint",
+    "version": "npm run format && git add -A src",
+    "postversion": "git push && git push --tags"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/docknetwork/react-native-sdk.git"
+  },
+  "keywords": [],
+  "author": "Osinakayah Ifeanyi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/docknetwork/react-native-sdk/issues"
+  },
+  "homepage": "https://github.com/docknetwork/react-native-sdk",
+  "devDependencies": {
+    "@types/jest": "27.4.0",
+    "@typescript-eslint/eslint-plugin": "5.10.2",
+    "@typescript-eslint/parser": "5.10.2",
+    "eslint": "7.32.0",
+    "eslint-plugin-jest": "26.0.0",
+    "jest": "27.4.7",
+    "prettier": "2.5.1",
+    "ts-jest": "27.1.3",
+    "typescript": "4.5.5"
+  },
+  "files": [
+    "lib/**/*"
+  ],
   "dependencies": {
     "@docknetwork/wallet-sdk-core": "^0.1.3",
-    "axios": "^0.25.0"
-  },
-  "devDependencies": {
-
+    "did-method-key": "^0.7.0"
   }
 }
