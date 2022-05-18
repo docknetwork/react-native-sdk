@@ -13,7 +13,6 @@ export class WalletBackup {
 
     const docs = await walletService.query({});
 
-
     if (docs.length === 0) {
       throw new Error(noDocumentsFound);
     }

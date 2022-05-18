@@ -25,7 +25,6 @@ describe('ApiUtils', () => {
       const emitter = signAndSend(account, extrinsic);
       const [result] = await once(emitter, 'done');
 
-
       expect(typeof result).toBe('string');
     });
 

@@ -70,7 +70,6 @@ describe('ExampleService', () => {
           toAddress: TestFixtures.account2.address,
         });
 
-
         expect(typeof hash).toBe('string');
       });
 

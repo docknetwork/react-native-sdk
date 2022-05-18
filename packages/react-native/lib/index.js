@@ -29,9 +29,7 @@ export function useWallet({syncDocs = true} = {}) {
   const [documents, setDocuments] = useState([]);
   const [status, setStatus] = useState('loading');
 
-
   useEffect(() => {
-
     if (sdkStatus !== 'ready') {
       return;
     }
