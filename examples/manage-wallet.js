@@ -44,7 +44,6 @@ async function main() {
   });
 
   const docs = await wallet.query();
-  console.log(docs);
 
   // await wallet.add({
   //   type: 'DID'

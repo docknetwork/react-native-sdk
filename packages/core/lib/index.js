@@ -15,7 +15,6 @@ const postMessage = message => {
   if (window.ReactNativeWebView) {
     window.ReactNativeWebView.postMessage(JSON.stringify(message));
   } else {
-    console.log(message);
   }
 };
 

@@ -75,7 +75,6 @@ export class WebviewEventHandler {
    * @param {*} data
    */
   _handleRpcRequest(data) {
-    console.log('response rpc request', data);
 
     rnRpcServer.receive(data.body).then(response => {
       this._dispatchEvent('json-rpc-response', response);

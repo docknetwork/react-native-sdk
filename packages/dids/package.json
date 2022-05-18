@@ -1,0 +1,19 @@
+{
+    "name": "@docknetwork/wallet-sdk-dids",
+    "main": "lib/index.js",
+    "version": "0.0.1",
+    "type": "module",
+    "dependencies": {
+        "@digitalbazaar/did-method-key": "^2.0.0",
+        "@digitalbazaar/ed25519-verification-key-2020": "^3.3.0",
+        "crypto-ld": "^6.0.0"
+    },
+    "scripts": {
+        "build": "babel src/ --out-dir lib/"
+    },
+    "devDependencies": {
+        "@babel/cli": "^7.17.10",
+        "@babel/core": "^7.17.12",
+        "@babel/preset-env": "^7.17.12"
+    }
+}

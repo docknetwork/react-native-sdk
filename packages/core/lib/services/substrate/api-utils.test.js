@@ -25,7 +25,6 @@ describe('ApiUtils', () => {
       const emitter = signAndSend(account, extrinsic);
       const [result] = await once(emitter, 'done');
 
-      console.log('tx hash', result);
 
       expect(typeof result).toBe('string');
     });

@@ -12,12 +12,11 @@ describe('Wallet integration test', () => {
 
 
     await wallet.ensureNetwork();
-    
+
     const account1 = await wallet.accounts.create({
       name: 'test',
     });
 
-    console.log(`Account1 address ${account1.address}`);
 
     // Create account with existing mnemonic
     const mnemonic =
@@ -27,12 +26,10 @@ describe('Wallet integration test', () => {
       mnemonic,
     });
 
-    console.log(`Account2 address ${account2.address}`);
 
     // Fetch accounts balance
     const balance = await account1.getBalance();
 
-    console.log('Account balance', balance);
 
     // Working with transactions
     const transactions = Transactions.with(account1);
@@ -45,7 +42,6 @@ describe('Wallet integration test', () => {
     // Get transaction fee
     const fee = await transactions.getFee(txInput);
 
-    console.log('Transaction fee', fee);
 
     await resetSdkMock();
   });

@@ -13,7 +13,6 @@ export class WalletBackup {
 
     const docs = await walletService.query({});
 
-    console.log(docs);
 
     if (docs.length === 0) {
       throw new Error(noDocumentsFound);
@@ -22,8 +21,6 @@ export class WalletBackup {
     const accounts = docs.filter(doc => doc.type === 'Account');
 
     if (accounts.length === 0) {
-      console.log('no accounts found');
-      console.log(docs);
       throw new Error(noAccountsFound);
     }
 
