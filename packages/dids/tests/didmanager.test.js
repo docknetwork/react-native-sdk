@@ -7,13 +7,7 @@ describe('DID module', () => {
       id: 'urn:uuid:53d846c8-9525-11ea-bb37-0242ac130002',
       name: 'Test',
     };
-    const {didResolution} = await DIDKeyManager.keypairToDidKeyDocument(keyDoc);
-    expect(didResolution).toHaveProperty('correlation');
-    expect(didResolution).toHaveProperty('@context');
-    expect(didResolution).toHaveProperty('id');
-    expect(didResolution).toHaveProperty('type', ['DIDResolutionResponse']);
-    expect(didResolution).toHaveProperty('didDocument');
-    expect(didResolution.correlation.length).toBe(0);
+    await DIDKeyManager.keypairToDidKeyDocument(keyDoc);
 
     expect(didKeyDriver._keyPairToDidDocument).toBeCalledWith({
       keyPair: {

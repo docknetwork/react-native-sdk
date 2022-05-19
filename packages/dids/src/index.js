@@ -16,18 +16,7 @@ export const DIDKeyManager = (function () {
       },
     });
 
-    const expiryDate = new Date();
-    expiryDate.setFullYear(expiryDate.getFullYear() + 1000);
-    const didResolution = {
-      '@context': DID_DEFAULT_CONTEXT,
-      id: uuidv4(),
-      type: ['DIDResolutionResponse'],
-      correlation: [],
-      created: new Date().toISOString(),
-      expires: expiryDate.toISOString(),
-      didDocument,
-    };
-    return {didResolution, keyDoc};
+    return {didDocument, keyDoc};
   };
 
   return {
