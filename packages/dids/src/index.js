@@ -1,12 +1,14 @@
 import {v4 as uuidv4} from 'uuid';
-const didKeyDriver = require('@digitalbazaar/did-method-key').driver();
+import {driver} from '@digitalbazaar/did-method-key';
+
+const didKeyDriver = driver();
 
 const DID_DEFAULT_CONTEXT = [
   'https://w3id.org/wallet/v1',
   'https://w3id.org/did-resolution/v1',
 ];
 export const DIDKeyManager = (function () {
-  const createDID = async keyDoc => {
+  const keypairToDidKeyDocument = async keyDoc => {
     const {didDocument} = await didKeyDriver._keyPairToDidDocument({
       keyPair: {
         ...keyDoc,
@@ -29,6 +31,6 @@ export const DIDKeyManager = (function () {
   };
 
   return {
-    createDID,
+    keypairToDidKeyDocument,
   };
 })();
