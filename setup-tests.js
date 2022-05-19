@@ -26,3 +26,16 @@ require('./packages/core/lib/setup-tests');
 NetworkManager.getInstance().setNetworkId('testnet');
 
 jest.mock('@react-native-async-storage/async-storage', () => 'AsyncStorage');
+jest.mock('@digitalbazaar/did-method-key', () => {
+  const originalModule = jest.requireActual('@digitalbazaar/did-method-key');
+  const driverFunctions = {
+    _keyPairToDidDocument: jest.fn().mockReturnValue({
+      didDocument: {},
+    }),
+  };
+
+  return {
+    ...originalModule,
+    driver: () => driverFunctions,
+  };
+});
