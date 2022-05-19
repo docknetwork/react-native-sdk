@@ -924,7 +924,7 @@
     "@digitalbazaar/x25519-key-agreement-key-2020" "^2.0.0"
     esm "^3.2.25"
 
-"@digitalbazaar/ed25519-verification-key-2020@^3.0.0", "@digitalbazaar/ed25519-verification-key-2020@^3.3.0":
+"@digitalbazaar/ed25519-verification-key-2020@^3.0.0":
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/@digitalbazaar/ed25519-verification-key-2020/-/ed25519-verification-key-2020-3.3.0.tgz#226b2aac6ec5a3b53a11b280bfc8695512aeedf0"
   integrity sha512-/euFk/BNnwLIbaWxHW76PW26emuGjaJ8vbTMgdcIcx3TbDE1dsAbmLSzE9122KLT59CLLfOXvl5uA9xa14VRqQ==
@@ -1196,11 +1196,6 @@ crypto-ld@^5.0.0, crypto-ld@^5.1.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/crypto-ld/-/crypto-ld-5.1.0.tgz#fbc1344c553f10aa1bcfc9d94c8c161a56c07150"
   integrity sha512-Dy1QoQzj+2K6UlGZ9l34cPp+g/YHOd+r3/DXXQTnnz5btGb0vqDlkZBn+icYmwntEmW0bvGVwFWvcwZSbk1EEQ==
-
-crypto-ld@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/crypto-ld/-/crypto-ld-6.0.0.tgz#cf8dcf566cb3020bdb27f0279e6cc9b46d031cd7"
-  integrity sha512-XWL1LslqggNoaCI/m3I7HcvaSt9b2tYzdrXO+jHLUj9G1BvRfvV7ZTFDVY5nifYuIGAPdAGu7unPxLRustw3VA==
 
 debug@^4.1.0, debug@^4.1.1:
   version "4.3.4"
@@ -1631,6 +1626,11 @@ unicode-property-aliases-ecmascript@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/unicode-property-aliases-ecmascript/-/unicode-property-aliases-ecmascript-2.0.0.tgz#0a36cb9a585c4f6abd51ad1deddb285c165297c8"
   integrity sha512-5Zfuy9q/DFr4tfO7ZPeVXb1aPoeQSdeFMLpYuFebehDAhbuevLs5yxSZmIFN1tP5F9Wl4IpJrYojg85/zgyZHQ==
+
+uuid@^8.3.2:
+  version "8.3.2"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
+  integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
 
 wrappy@1:
   version "1.0.2"

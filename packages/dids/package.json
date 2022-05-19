@@ -5,8 +5,7 @@
     "type": "module",
     "dependencies": {
         "@digitalbazaar/did-method-key": "^2.0.0",
-        "@digitalbazaar/ed25519-verification-key-2020": "^3.3.0",
-        "crypto-ld": "^6.0.0"
+        "uuid": "^8.3.2"
     },
     "scripts": {
         "build": "babel src/ --out-dir lib/"
