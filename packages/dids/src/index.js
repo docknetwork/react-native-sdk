@@ -1,7 +1,10 @@
 import {driver} from '@digitalbazaar/did-method-key';
-
+import {v4 as uuidv4} from 'uuid';
 const didKeyDriver = driver();
-
+const DID_DEFAULT_CONTEXT = [
+  'https://w3id.org/wallet/v1',
+  'https://w3id.org/did-resolution/v1',
+];
 export const DIDKeyManager = (function () {
   const keypairToDidKeyDocument = async keyDoc => {
     const {didDocument} = await didKeyDriver._keyPairToDidDocument({
@@ -14,7 +17,22 @@ export const DIDKeyManager = (function () {
     return {didDocument, keyDoc};
   };
 
+  const getDidResolution = didDocument => {
+    const expiryDate = new Date();
+    expiryDate.setFullYear(expiryDate.getFullYear() + 1000);
+    return {
+      '@context': DID_DEFAULT_CONTEXT,
+      id: uuidv4(),
+      type: ['DIDResolutionResponse'],
+      correlation: [],
+      created: new Date().toISOString(),
+      expires: expiryDate.toISOString(),
+      didDocument,
+    };
+  };
+
   return {
     keypairToDidKeyDocument,
+    getDidResolution,
   };
 })();
