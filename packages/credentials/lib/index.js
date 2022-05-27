@@ -109,7 +109,7 @@ export class Credentials {
   /**
    * Get instance
    *
-   * @returns {Promise<Wallet>}
+   * @returns {Promise<Credentials>}
    */
   static getInstance(): Credentials {
     if (!this.instance) {
