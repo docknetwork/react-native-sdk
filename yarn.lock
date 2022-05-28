@@ -3377,6 +3377,13 @@
     uuid "^8.3.2"
     winston "^3.3.3"
 
+"@docknetwork/wallet-sdk-dids@file:../dids/docknetwork-wallet-sdk-dids-0.0.2.tgz":
+  version "0.0.2"
+  resolved "file:../dids/docknetwork-wallet-sdk-dids-0.0.2.tgz#b55b0dae53bc03b966f20c63b62f3cbc0dd159c7"
+  dependencies:
+    "@digitalbazaar/did-method-key" "^2.0.0"
+    uuid "^8.3.2"
+
 "@docknetwork/wallet@0.0.3":
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/@docknetwork/wallet/-/wallet-0.0.3.tgz#98cf53e724f33b31a672f830982fa7ce70f76433"
