@@ -7,6 +7,7 @@ export type DocumentType =
   | 'KeyringPair'
   | 'Address'
   | 'Currency'
+  | 'Metadata'
   | 'VerifiableCredential'
   | 'Key'
   | 'DID'
