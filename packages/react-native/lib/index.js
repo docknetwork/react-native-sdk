@@ -15,8 +15,8 @@ import {Platform, View} from 'react-native';
 import WebView from 'react-native-webview';
 import {WebviewEventHandler} from './message-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {AccountDetails} from "@docknetwork/wallet-sdk-core/lib/modules/account";
-import {DocumentType} from "@docknetwork/wallet-sdk-core/lib/types";
+import {AccountDetails} from '@docknetwork/wallet-sdk-core/lib/modules/account';
+import {DocumentType} from '@docknetwork/wallet-sdk-core/lib/types';
 
 export type WalletSDKContextProps = {
   wallet: Wallet,
@@ -33,7 +33,8 @@ export function getStorage() {
   return AsyncStorage;
 }
 
-export const filterDocsByType = (type: DocumentType) => doc => doc.type === type;
+export const filterDocsByType = (type: DocumentType) => doc =>
+  doc.type === type;
 export const filterByIds = idList => doc => idList.find(v => v === doc.id);
 export const findDocument = (address, documents) =>
   documents.filter(doc => doc.id === address)[0];
