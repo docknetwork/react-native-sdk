@@ -1,6 +1,5 @@
 import StorageWallet from '@docknetwork/wallet/storage-wallet';
 import assert from 'assert';
-import {polkadotToKeydoc} from '@docknetwork/wallet/polkadot-utils';
 import {v4 as uuid} from 'uuid';
 import {WalletDocument} from '../../types';
 import MemoryWallet from '../../wallet/memory-storage-wallet';
@@ -209,15 +208,6 @@ export class WalletService {
         type: 'Mnemonic',
         value: mnemonic,
       });
-
-      const keydocKeyPair = await keyringService.getKeyringPair({
-        mnemonic,
-        type: 'ed25519',
-        derivePath,
-        meta: {},
-      });
-      const keyDoc = polkadotToKeydoc(keydocKeyPair);
-      correlationDocs.push(keyDoc);
     }
 
     const addressDocument: WalletDocument = {
