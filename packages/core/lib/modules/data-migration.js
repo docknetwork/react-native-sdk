@@ -2,24 +2,22 @@ import {WalletDocument} from '../types';
 import {Logger} from '../core/logger';
 import {Wallet} from './wallet';
 
-export const getWalletVersion = (docs: WalletDocument): String => {
-  const doc = docs.find((item: WalletDocument) => item.type === 'Metadata');
-  return (doc && doc.walletVersion) || '0.1';
-};
 
 type MigrateParams = {
   wallet: Wallet,
 };
 
 export async function migrate({wallet}: MigrateParams) {
-  Logger.debug('Stating wallet migration');
+  Logger.debug('Starting wallet migration');
 
   const docs = await wallet.query({});
-  // detect wallet version
-  const version = getWalletVersion(docs);
+  const version = await wallet.getVersion();
+
+  Logger.debug(`Wallet version ${version}`);
 
   if (version === '0.1') {
-    Logger.debug(`Migrating wallet ${version} to 0.2`);
+    const targetVersion = '0.2';
+    Logger.debug(`Migrating wallet ${version} to ${targetVersion}`);
     const lagacyAccounts = docs.filter((doc: any) => doc.type === 'Account');
     await Promise.all(
       lagacyAccounts.map(async (account: any) => {
@@ -43,5 +41,10 @@ export async function migrate({wallet}: MigrateParams) {
         });
       }),
     );
+
+    await wallet.add({
+      type: 'Metadata',
+      walletVersion: `${targetVersion}`,
+    });
   }
 }
