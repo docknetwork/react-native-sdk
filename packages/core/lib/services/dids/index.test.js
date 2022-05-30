@@ -8,6 +8,7 @@ describe('DID Service', () => {
   it('ServiceRpc', () => {
     assertRpcService(DIDServiceRPC, service, validation);
   });
+
   it('keypairToDidKeyDocument', async () => {
     const keypairDoc = {
       '@context': ['https://w3id.org/wallet/v1'],
@@ -24,8 +25,11 @@ describe('DID Service', () => {
       publicKeyBase58: '6GwnHZARcEkJio9dxPYy6SC5sAL6PxpZAB6VYwoFjGMU',
     };
     const res = await service.keypairToDidKeyDocument({keypairDoc});
+
     expect(DIDKeyManager.keypairToDidKeyDocument).toBeCalledWith(keypairDoc);
     expect(res).toBeDefined();
+    expect(res).toHaveProperty('didDocument');
+    expect(res).toHaveProperty('keyDoc');
   });
 
   it('getDidResolution', async () => {
@@ -75,5 +79,6 @@ describe('DID Service', () => {
     const res = await service.getDidResolution({didDocument});
     expect(DIDKeyManager.getDidResolution).toBeCalledWith(didDocument);
     expect(res).toBeDefined();
+    expect(res).toHaveProperty('id');
   });
 });
