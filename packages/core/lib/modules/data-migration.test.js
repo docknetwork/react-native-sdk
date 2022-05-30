@@ -18,7 +18,6 @@ describe('DataMigration', () => {
   });
 
   it('expect to create wallet with legacy data', async () => {
-    await migrate({wallet});
     const accounts = await wallet.accounts.getAccounts();
     expect(accounts.length).toBe(2);
   });
