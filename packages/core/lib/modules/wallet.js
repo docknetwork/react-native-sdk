@@ -107,13 +107,13 @@ class Wallet {
 
       await walletService.load();
 
-      migrate({wallet: this});
-
       this.setStatus('ready');
 
       this.eventManager.emit(WalletEvents.ready);
 
       this.initNetwork();
+
+      await migrate({wallet: this});
     } catch (err) {
       this.setStatus('error');
 
@@ -121,6 +121,14 @@ class Wallet {
     }
   }
 
+  async getVersion() {
+    const docs = await this.query({});
+    const versionDoc = docs.find(
+      (item: WalletDocument) =>
+        item.type === 'Metadata' && !!item.walletVersion,
+    );
+    return (versionDoc && versionDoc.walletVersion) || '0.1';
+  }
   /**
    *
    * Close wallet
