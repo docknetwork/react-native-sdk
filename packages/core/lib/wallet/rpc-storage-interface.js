@@ -17,16 +17,18 @@ class RpcStorageInterface extends StorageInterface {
   }
 
   async loadStorage(directory) {
+    let data;
     try {
-      const data = await storageService.getItem(directory);
-
-      this.documents = JSON.parse(data);
+      data = await storageService.getItem(directory);
+      this.documents = typeof data === 'string' ? JSON.parse(data) : data;
 
       if (!this.documents) {
         this.documents = {};
       }
     } catch (err) {
-      Logger.info('error to retrieve data from rpc storage', err.toString());
+      Logger.error('error to retrieve data from rpc storage');
+      Logger.error(JSON.stringify(data));
+      Logger.error(err);
       this.documents = {};
 
       throw err;

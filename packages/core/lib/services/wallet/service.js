@@ -13,6 +13,7 @@ import {
   serviceName,
   validation,
 } from './configs';
+import {Logger} from '../../core/logger';
 
 /**
  * WalletService
@@ -48,6 +49,8 @@ export class WalletService {
 
   create(params: CreateParams) {
     const {walletId, type} = params;
+    Logger.debug('Creating wallet', params);
+
     if (type === 'memory') {
       this.wallet = new MemoryWallet(walletId);
     } else {
