@@ -1,7 +1,6 @@
 import {Wallet} from './wallet';
 import {mockDockService} from '../services/test-utils';
 import walletLegacyData from '../test/fixtures/lagacy-wallet-schema.json';
-import {migrate} from './data-migration';
 
 describe('DataMigration', () => {
   let unmockDockService;
