@@ -10,6 +10,7 @@ import {DocumentType, WalletDocument} from '../types';
 import {Accounts} from './accounts';
 import {EventManager} from './event-manager';
 import {NetworkManager} from './network-manager';
+import {migrate} from './data-migration';
 
 // import {getEnvironment} from 'realm/lib/utils';
 
@@ -105,6 +106,8 @@ class Wallet {
       });
 
       await walletService.load();
+
+      migrate({wallet: this});
 
       this.setStatus('ready');
 
