@@ -1,0 +1,42 @@
+{
+  "doc:d8650f2f-c9c1-4e5b-8b7a-0a2fb617e494": {
+    "@context": ["https://w3id.org/wallet/v1"],
+    "id": "f5c0569f-ee8f-4add-aab9-0a0ddbae516b",
+    "name": "Test",
+    "type": "Mnemonic",
+    "value": "have joy fiber inspire doctor such chicken dream orphan anger transfer noble"
+  },
+  "doc:c1deff8a-dc55-4a81-8f7f-fe92b3e5687a": {
+    "@context": ["https://w3id.org/wallet/v1"],
+    "id": "3HqV2hrxq27Fw9QhvyKg7PLv2tniZgPRZo4tV4UU58sKqvsw",
+    "type": "Account",
+    "correlation": ["f5c0569f-ee8f-4add-aab9-0a0ddbae516b"],
+    "meta": {
+      "name": "Test",
+      "keypairType": "sr25519",
+      "derivationPath": "",
+      "hasBackup": false,
+      "balance": 0
+    }
+  },
+  "doc:eb2a0e70-29b0-498f-80d6-6fb90e84b9ba": {
+    "@context": ["https://w3id.org/wallet/v1"],
+    "id": "6abe60ec-c6fd-4acc-8b8b-62edaa548fff",
+    "name": "Account 3",
+    "type": "Mnemonic",
+    "value": "thank mutual remember toilet antique infant cover possible buyer lounge immune hurry"
+  },
+  "doc:fad62bc6-d7bd-470c-9445-1b41a31b8387": {
+    "@context": ["https://w3id.org/wallet/v1"],
+    "id": "3CPJGrTMv4XuKm7p2QePJCheZr7ynBn98sueFkH5gmXCLdQV",
+    "type": "Account",
+    "correlation": ["6abe60ec-c6fd-4acc-8b8b-62edaa548fff"],
+    "meta": {
+      "name": "Account 3",
+      "keypairType": "sr25519",
+      "derivationPath": "",
+      "hasBackup": false,
+      "balance": 0
+    }
+  }
+}
