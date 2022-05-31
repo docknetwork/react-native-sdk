@@ -2,16 +2,29 @@ import {WalletDocument} from '../types';
 import {Logger} from '../core/logger';
 import {Wallet} from './wallet';
 
-
 type MigrateParams = {
   wallet: Wallet,
 };
+
+const currentWalletCersion = '0.2';
 
 export async function migrate({wallet}: MigrateParams) {
   Logger.debug('Starting wallet migration');
 
   const docs = await wallet.query({});
+
+  if (!docs.length) {
+    Logger.debug(
+      `Empty wallet, adding version ${currentWalletCersion} document`,
+    );
+    await wallet.add({
+      type: 'Metadata',
+      walletVersion: currentWalletCersion,
+    });
+  }
+
   const version = await wallet.getVersion();
+  let migrated = false;
 
   Logger.debug(`Wallet version ${version}`);
 
@@ -46,5 +59,9 @@ export async function migrate({wallet}: MigrateParams) {
       type: 'Metadata',
       walletVersion: `${targetVersion}`,
     });
+
+    migrated = true;
   }
+
+  return migrated;
 }
