@@ -46,6 +46,11 @@ export const validation = {
       assert(typeof meta === 'object', 'invalid meta');
     }
   },
+
+  signData(params: SignDataParams) {
+    assert(!!params.keyPair, 'invalid keypair');
+    assert(!!params.data, 'invalid data');
+  },
 };
 
 validation.addressFromUri = validation.getKeyringPair;
@@ -75,4 +80,9 @@ export type AddFromMnemonicParams = {
   mnemonic: string,
   meta?: any,
   type: string,
+};
+
+export type SignDataParams = {
+  keyPair: any,
+  data: any,
 };

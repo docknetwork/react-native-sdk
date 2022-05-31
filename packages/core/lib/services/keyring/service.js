@@ -7,6 +7,7 @@ import {
   InitializeParams,
   serviceName,
   validation,
+  SignDataParams,
 } from './configs';
 
 export function getKeyring() {
@@ -22,6 +23,7 @@ export class KeyringService {
     KeyringService.prototype.addressFromUri,
     KeyringService.prototype.getKeyringPair,
     KeyringService.prototype.initialize,
+    KeyringService.prototype.signData,
   ];
 
   constructor() {
@@ -50,6 +52,12 @@ export class KeyringService {
 
     pair.unlock(password);
     return pair;
+  }
+
+  signData(params: SignDataParams): any {
+    validation.signData(params);
+    const account = this.keyring.addFromPair(params.keyPair);
+    return account.sign(params.data);
   }
 
   getKeyringPair(params: CreateFromUriParams): KeyringPair {
