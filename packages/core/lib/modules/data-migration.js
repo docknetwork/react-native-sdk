@@ -30,9 +30,9 @@ export async function migrate({wallet}: MigrateParams) {
   if (version === '0.1') {
     const targetVersion = '0.2';
     Logger.debug(`Migrating wallet ${version} to ${targetVersion}`);
-    const lagacyAccounts = docs.filter((doc: any) => doc.type === 'Account');
+    const legacyAccounts = docs.filter((doc: any) => doc.type === 'Account');
     await Promise.all(
-      lagacyAccounts.map(async (account: any) => {
+      legacyAccounts.map(async (account: any) => {
         const relatedDocs = docs.filter(doc =>
           account.correlation.find(id => id === doc.id),
         );

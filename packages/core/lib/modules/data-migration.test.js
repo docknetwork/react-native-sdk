@@ -1,5 +1,5 @@
 import {Wallet} from './wallet';
-import walletLegacyData from '../test/fixtures/lagacy-wallet-schema.json';
+import walletLegacyData from '../test/fixtures/legacy-wallet-schema.json';
 import {mockDockService} from '../services/test-utils';
 
 describe('DataMigration', () => {
