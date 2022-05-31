@@ -19,11 +19,16 @@ class RpcStorageInterface extends StorageInterface {
   async loadStorage(directory) {
     let data;
     try {
+      Logger.debug(`Wallet: Loading storage from ${directory}`);
       data = await storageService.getItem(directory);
+
       this.documents = typeof data === 'string' ? JSON.parse(data) : data;
 
       if (!this.documents) {
+        Logger.debug(`Wallet: no storage found, creating empty wallet`);
         this.documents = {};
+      } else {
+        Logger.debug(`Wallet: existing storage found: ${JSON.stringify(data)}`);
       }
     } catch (err) {
       Logger.error('error to retrieve data from rpc storage');

@@ -113,7 +113,7 @@ class Wallet {
 
       this.initNetwork();
 
-      await migrate({wallet: this});
+      this.migrated = await migrate({wallet: this});
     } catch (err) {
       this.setStatus('error');
 
