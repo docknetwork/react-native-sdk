@@ -2,7 +2,7 @@ import assert from 'assert';
 
 export const serviceName = 'didManager';
 export const validation = {
-  keypairToDidKeyDocument: ({keypairDoc}) => {
+  keypairToDIDKeyDocument: ({keypairDoc}: KeypairToDIDKeyDocumentParams) => {
     assert(typeof keypairDoc === 'object', 'invalid keypairDoc');
     assert(keypairDoc.type === 'Ed25519VerificationKey2018', 'invalid type');
 
@@ -11,15 +11,15 @@ export const validation = {
       'publicKeyBase58 is not present',
     );
   },
-  getDidResolution: ({didDocument}) => {
+  getDIDResolution: ({didDocument}: GetDIDResolutionParams) => {
     assert(typeof didDocument.id === 'string', 'invalid didDocument');
   },
 };
 
-export type KeypairToDidKeyDocumentParams = {
+export type KeypairToDIDKeyDocumentParams = {
   keypairDoc: any,
 };
 
-export type GetDidResolutionParams = {
+export type GetDIDResolutionParams = {
   didDocument: any,
 };

@@ -24,9 +24,9 @@ describe('DID Service', () => {
         '3CQCBKF3Mf1tU5q1FLpHpbxYrNYxLiZk4adDtfyPEfc39Wk6gsTb2qoc1ZtpqzJYdM1rG4gpaD3ZVKdkiDrkLF1p',
       publicKeyBase58: '6GwnHZARcEkJio9dxPYy6SC5sAL6PxpZAB6VYwoFjGMU',
     };
-    const res = await service.keypairToDidKeyDocument({keypairDoc});
+    const res = await service.keypairToDIDKeyDocument({keypairDoc});
 
-    expect(DIDKeyManager.keypairToDidKeyDocument).toBeCalledWith(keypairDoc);
+    expect(DIDKeyManager.keypairToDIDKeyDocument).toBeCalledWith(keypairDoc);
     expect(res).toBeDefined();
     expect(res).toHaveProperty('didDocument');
     expect(res).toHaveProperty('keyDoc');
@@ -76,8 +76,8 @@ describe('DID Service', () => {
       ],
       keyAgreement: ['#z6LScrLMVd9jvbphPeQkGffSeB99EWSYqAnMg8rGiHCgz5ha'],
     };
-    const res = await service.getDidResolution({didDocument});
-    expect(DIDKeyManager.getDidResolution).toBeCalledWith(didDocument);
+    const res = await service.getDIDResolution({didDocument});
+    expect(DIDKeyManager.getDIDResolution).toBeCalledWith(didDocument);
     expect(res).toBeDefined();
     expect(res).toHaveProperty('id');
   });
