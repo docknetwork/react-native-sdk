@@ -31,9 +31,10 @@ class RpcStorageInterface extends StorageInterface {
         Logger.debug(`Wallet: existing storage found: ${JSON.stringify(data)}`);
       }
     } catch (err) {
-      Logger.error('error to retrieve data from rpc storage');
-      Logger.error(JSON.stringify(data));
-      Logger.error(err);
+      Logger.error(
+        `error to retrieve data from rpc storage: ${err.toString()}`,
+      );
+      Logger.info(JSON.stringify(data));
       this.documents = {};
 
       throw err;
