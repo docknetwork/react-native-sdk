@@ -26,12 +26,12 @@ describe('DataMigration', () => {
     it('expect to migrate accounts', async () => {
       const accounts = await wallet.accounts.getAccounts();
       expect(accounts.length).toBe(2);
+      expect(wallet.migrated).toBeTruthy();
     });
 
     it('expect wallet version to be the latest', async () => {
       const version = await wallet.getVersion();
       expect(version).toBe('0.2');
-      expect(wallet.migrated).toBeTruthy();
     });
   });
 

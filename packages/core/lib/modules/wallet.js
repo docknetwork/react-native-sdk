@@ -142,10 +142,16 @@ class Wallet {
   /**
    * delete wallet
    */
-  deleteWallet() {
+  async deleteWallet() {
     this.eventManager.emit(WalletEvents.walletDeleted);
     clearCacheData();
     getStorage().removeItem(this.walletId);
+    await walletService.create({
+      walletId: this.walletId,
+    });
+    await walletService.load();
+    await walletService.sync();
+    await migrate({wallet: this});
   }
 
   /**
@@ -334,6 +340,11 @@ class Wallet {
     }
 
     return wallet;
+  }
+
+  async importWallet({json, password}) {
+    await walletService.importWallet({json, password});
+    this.migrated = await migrate({wallet: this});
   }
 
   /**
