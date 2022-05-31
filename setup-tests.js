@@ -39,3 +39,21 @@ jest.mock('@digitalbazaar/did-method-key', () => {
     driver: () => driverFunctions,
   };
 });
+
+jest.mock('@docknetwork/wallet-sdk-dids', () => {
+  const originalModule = jest.requireActual('@docknetwork/wallet-sdk-dids');
+  const moduleFunctions = {
+    keypairToDidKeyDocument: jest.fn().mockResolvedValue({
+      didDocument: {},
+      keyDoc: {},
+    }),
+    getDidResolution: jest.fn().mockReturnValue({
+      id: '',
+    }),
+  };
+
+  return {
+    ...originalModule,
+    DIDKeyManager: moduleFunctions,
+  };
+});

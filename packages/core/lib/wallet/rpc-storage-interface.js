@@ -25,7 +25,7 @@ class RpcStorageInterface extends StorageInterface {
       this.documents = typeof data === 'string' ? JSON.parse(data) : data;
 
       if (!this.documents) {
-        Logger.debug(`Wallet: no storage found, creating empty wallet`);
+        Logger.debug('Wallet: no storage found, creating empty wallet');
         this.documents = {};
       } else {
         Logger.debug(`Wallet: existing storage found: ${JSON.stringify(data)}`);

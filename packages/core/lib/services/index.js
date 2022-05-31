@@ -5,6 +5,7 @@ import {walletService} from './wallet/service';
 import {polkadotService} from './polkadot/service';
 import {utilCryptoService} from './util-crypto/service';
 import {storageService} from './storage/service';
+import {didService} from './dids/service';
 
 export default [
   keyringService,
@@ -14,4 +15,5 @@ export default [
   polkadotService,
   utilCryptoService,
   storageService,
+  didService,
 ];

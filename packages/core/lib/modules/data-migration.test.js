@@ -1,15 +1,18 @@
 import {Wallet} from './wallet';
-import {mockDockService} from '../services/test-utils';
 import walletLegacyData from '../test/fixtures/lagacy-wallet-schema.json';
-import {getWalletVersion} from './data-migration';
+import {mockDockService} from '../services/test-utils';
 
 describe('DataMigration', () => {
+  let unmockDockService;
+
+  beforeAll(async () => {
+    unmockDockService = await mockDockService();
+  });
+
   describe('migrate wallet from v0.1 to v0.2', () => {
-    let unmockDockService;
     let wallet: Wallet;
 
     beforeAll(async () => {
-      unmockDockService = await mockDockService();
       global.localStorage.setItem(
         'dock-wallet',
         JSON.stringify(walletLegacyData),
@@ -43,5 +46,9 @@ describe('DataMigration', () => {
 
     expect(accounts.length).toBe(0);
     expect(wallet.migrated).toBeFalsy();
+  });
+
+  afterAll(() => {
+    return unmockDockService();
   });
 });

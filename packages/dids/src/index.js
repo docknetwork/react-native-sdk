@@ -13,7 +13,6 @@ export const DIDKeyManager = (function () {
         keyPair: keyDoc,
       },
     });
-
     return {didDocument, keyDoc};
   };
 
@@ -23,7 +22,7 @@ export const DIDKeyManager = (function () {
     return {
       '@context': DID_DEFAULT_CONTEXT,
       id: uuidv4(),
-      type: ['DIDResolutionResponse'],
+      type: 'DIDResolutionResponse',
       correlation: [],
       created: new Date().toISOString(),
       expires: expiryDate.toISOString(),
