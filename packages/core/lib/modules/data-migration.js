@@ -1,4 +1,3 @@
-import {WalletDocument} from '../types';
 import {Logger} from '../core/logger';
 import {Wallet} from './wallet';
 
