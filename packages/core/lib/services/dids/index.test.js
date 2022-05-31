@@ -9,7 +9,7 @@ describe('DID Service', () => {
     assertRpcService(DIDServiceRPC, service, validation);
   });
 
-  it('keypairToDidKeyDocument', async () => {
+  it('expect to generate DID Key Document from keypair', async () => {
     const keypairDoc = {
       '@context': ['https://w3id.org/wallet/v1'],
       id: 'urn:uuid:e8fc7810-9524-11ea-bb37-0242ac130002',
@@ -32,7 +32,7 @@ describe('DID Service', () => {
     expect(res).toHaveProperty('keyDoc');
   });
 
-  it('getDidResolution', async () => {
+  it('expect to get DID Resolution from DID document', async () => {
     const didDocument = {
       '@context': [
         'https://www.w3.org/ns/did/v1',
