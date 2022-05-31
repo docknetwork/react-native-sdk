@@ -2,8 +2,8 @@ import {DIDKeyManager} from '@docknetwork/wallet-sdk-dids';
 import {
   serviceName,
   validation,
-  KeypairToDidKeyDocumentParams,
-  GetDidResolutionParams,
+  KeypairToDIDKeyDocumentParams,
+  GetDIDResolutionParams,
 } from './config';
 import {polkadotToKeydoc} from '@docknetwork/wallet/polkadot-utils';
 import {keyringService} from '../keyring/service';
@@ -14,20 +14,20 @@ class DIDService {
     this.name = serviceName;
   }
   rpcMethods = [
-    DIDService.prototype.keypairToDidKeyDocument,
-    DIDService.prototype.getDidResolution,
+    DIDService.prototype.keypairToDIDKeyDocument,
+    DIDService.prototype.getDIDResolution,
     DIDService.prototype.generateKeyDoc,
   ];
-  keypairToDidKeyDocument(params: KeypairToDidKeyDocumentParams) {
-    validation.keypairToDidKeyDocument(params);
+  keypairToDIDKeyDocument(params: KeypairToDIDKeyDocumentParams) {
+    validation.keypairToDIDKeyDocument(params);
 
     const {keypairDoc} = params;
-    return DIDKeyManager.keypairToDidKeyDocument(keypairDoc);
+    return DIDKeyManager.keypairToDIDKeyDocument(keypairDoc);
   }
-  getDidResolution(params: GetDidResolutionParams) {
-    validation.getDidResolution(params);
+  getDIDResolution(params: GetDIDResolutionParams) {
+    validation.getDIDResolution(params);
     const {didDocument} = params;
-    return DIDKeyManager.getDidResolution(didDocument);
+    return DIDKeyManager.getDIDResolution(didDocument);
   }
   async generateKeyDoc() {
     const mnemonic = await utilCryptoService.mnemonicGenerate(12);

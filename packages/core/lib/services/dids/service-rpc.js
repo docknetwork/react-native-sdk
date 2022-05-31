@@ -1,19 +1,19 @@
 import {RpcService} from '../rpc-service-client';
 import {
   serviceName,
-  KeypairToDidKeyDocumentParams,
-  GetDidResolutionParams,
+  KeypairToDIDKeyDocumentParams,
+  GetDIDResolutionParams,
 } from './config';
 
 export class DIDServiceRPC extends RpcService {
   constructor() {
     super(serviceName);
   }
-  keypairToDidKeyDocument(params: KeypairToDidKeyDocumentParams) {
-    return this.call('keypairToDidKeyDocument', params);
+  keypairToDIDKeyDocument(params: KeypairToDIDKeyDocumentParams) {
+    return this.call('keypairToDIDKeyDocument', params);
   }
-  getDidResolution(params: GetDidResolutionParams) {
-    return this.call('getDidResolution', params);
+  getDIDResolution(params: GetDIDResolutionParams) {
+    return this.call('getDIDResolution', params);
   }
   generateKeyDoc(params) {
     return this.call('generateKeyDoc', params);
