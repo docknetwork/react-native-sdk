@@ -14,6 +14,7 @@ describe('DID Service', () => {
     expect(vc).toHaveProperty('context');
     expect(vc).toHaveProperty('credentialSubject');
     expect(vc.type).toContain('VerifiableCredential');
+    expect(vc.type).toContain('DockAuthCredential');
   });
 
   it('should sign a vc', async () => {
