@@ -9,7 +9,7 @@
     },
     "scripts": {
         "prepublishOnly": "npm run build",
-        "build": "rm -rf dist && NODE_ENV=production babel src/ --out-dir lib --copy-files"
+        "build": "rm -rf lib && NODE_ENV=production babel src/ --out-dir lib --copy-files"
     },
     "devDependencies": {
         "@babel/cli": "^7.17.10",
