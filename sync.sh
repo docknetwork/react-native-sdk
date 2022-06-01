@@ -6,6 +6,7 @@
 # Workaround for bad build file
 node ./packages/react-native/bundler/build.js
 cp ./packages/react-native/public/bundle.js  ../dock-app/assets/app-html/
+cp ./packages/react-native/public/bundle.js  ../dock-app/android/app/src/main/assets/app-html/bundle.js
 #cp -rf ./bundle.js ../DockApp/assets/app-html/bundle.js
 #cp -rf ./bundle.js ../DockApp/android/app/src/main/assets/app-html/bundle.js
 
