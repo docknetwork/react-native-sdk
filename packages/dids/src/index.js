@@ -6,24 +6,23 @@ const DID_DEFAULT_CONTEXT = [
   'https://w3id.org/did-resolution/v1',
 ];
 export const DIDKeyManager = (function () {
-  const keypairToDidKeyDocument = async keyDoc => {
+  const keypairToDIDKeyDocument = async keyDoc => {
     const {didDocument} = await didKeyDriver._keyPairToDidDocument({
       keyPair: {
         ...keyDoc,
         keyPair: keyDoc,
       },
     });
-
     return {didDocument, keyDoc};
   };
 
-  const getDidResolution = didDocument => {
+  const getDIDResolution = didDocument => {
     const expiryDate = new Date();
     expiryDate.setFullYear(expiryDate.getFullYear() + 1000);
     return {
       '@context': DID_DEFAULT_CONTEXT,
       id: uuidv4(),
-      type: ['DIDResolutionResponse'],
+      type: 'DIDResolutionResponse',
       correlation: [],
       created: new Date().toISOString(),
       expires: expiryDate.toISOString(),
@@ -32,7 +31,7 @@ export const DIDKeyManager = (function () {
   };
 
   return {
-    keypairToDidKeyDocument,
-    getDidResolution,
+    keypairToDIDKeyDocument,
+    getDIDResolution,
   };
 })();

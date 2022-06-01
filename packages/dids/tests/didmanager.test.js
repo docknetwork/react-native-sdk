@@ -26,7 +26,7 @@ describe('DID module', () => {
     const didResolution = await DIDKeyManager.getDidResolution(didDocument);
 
     expect(didResolution).toHaveProperty('id');
-    expect(didResolution).toHaveProperty('type', ['DIDResolutionResponse']);
+    expect(didResolution).toHaveProperty('type', 'DIDResolutionResponse');
     expect(didResolution).toHaveProperty('correlation', []);
     expect(didResolution).toHaveProperty('created');
     expect(didResolution).toHaveProperty('expires');
