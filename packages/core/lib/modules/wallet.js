@@ -10,6 +10,7 @@ import {DocumentType, WalletDocument} from '../types';
 import {Accounts} from './accounts';
 import {EventManager} from './event-manager';
 import {NetworkManager} from './network-manager';
+import {migrate} from './data-migration';
 
 // import {getEnvironment} from 'realm/lib/utils';
 
@@ -33,6 +34,10 @@ export type WalletStatus = 'closed' | 'loading' | 'ready' | 'error';
 // if (environment !== 'reactnative') {
 // require('../setup-nodejs');
 // }
+
+if (!global.walletInstances) {
+  global.walletInstances = 0;
+}
 
 /**
  * Wallet
@@ -60,6 +65,16 @@ class Wallet {
     this.eventManager = new EventManager();
     this.eventManager.registerEvents(WalletEvents);
     this.accounts = Accounts.getInstance({wallet: this});
+
+    global.walletInstances++;
+
+    setTimeout(() => {
+      if (global.walletInstances > 0) {
+        console.warn(
+          "Multiple wallet instances were created. If that's not intentional please check your code, and use the Wallet.getInstance() instead of creating a new instance",
+        );
+      }
+    }, 2000);
 
     this.setStatus('closed');
   }
@@ -97,6 +112,8 @@ class Wallet {
       this.eventManager.emit(WalletEvents.ready);
 
       this.initNetwork();
+
+      this.migrated = await migrate({wallet: this});
     } catch (err) {
       this.setStatus('error');
 
@@ -104,6 +121,14 @@ class Wallet {
     }
   }
 
+  async getVersion() {
+    const docs = await this.query({});
+    const versionDoc = docs.find(
+      (item: WalletDocument) =>
+        item.type === 'Metadata' && !!item.walletVersion,
+    );
+    return (versionDoc && versionDoc.walletVersion) || '0.1';
+  }
   /**
    *
    * Close wallet
@@ -117,10 +142,16 @@ class Wallet {
   /**
    * delete wallet
    */
-  deleteWallet() {
+  async deleteWallet() {
     this.eventManager.emit(WalletEvents.walletDeleted);
     clearCacheData();
     getStorage().removeItem(this.walletId);
+    await walletService.create({
+      walletId: this.walletId,
+    });
+    await walletService.load();
+    await walletService.sync();
+    await migrate({wallet: this});
   }
 
   /**
@@ -180,7 +211,15 @@ class Wallet {
       return;
     }
 
-    return await this.eventManager.waitFor(WalletEvents.ready);
+    let warningTimeout = setTimeout(() => {
+      throw new Error(
+        'Wallet module timed out. Make sure the wallet is loaded, or you are not using multiple instances',
+      );
+    }, 6000);
+
+    await this.eventManager.waitFor(WalletEvents.ready);
+
+    clearTimeout(warningTimeout);
   }
 
   getContext() {
@@ -301,6 +340,11 @@ class Wallet {
     }
 
     return wallet;
+  }
+
+  async importWallet({json, password}) {
+    await walletService.importWallet({json, password});
+    this.migrated = await migrate({wallet: this});
   }
 
   /**

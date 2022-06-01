@@ -2,18 +2,20 @@
     "name": "@docknetwork/wallet-sdk-dids",
     "main": "lib/index.js",
     "version": "0.0.1",
-    "type": "module",
     "dependencies": {
+
         "@digitalbazaar/did-method-key": "^2.0.0",
         "uuid": "^8.3.2"
     },
     "scripts": {
         "prepublishOnly": "npm run build",
-        "build": "babel src/ --out-dir lib/"
+        "build": "rm -rf dist && NODE_ENV=production babel src/ --out-dir lib --copy-files"
     },
     "devDependencies": {
         "@babel/cli": "^7.17.10",
         "@babel/core": "^7.17.12",
-        "@babel/preset-env": "^7.17.12"
+        "@babel/preset-env": "^7.17.12",
+        "@babel/polyfill": "^7.12.1",
+        "@babel/preset-react": "^7.17.12"
     }
 }

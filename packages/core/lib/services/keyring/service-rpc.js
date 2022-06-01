@@ -6,6 +6,7 @@ import {
   GetKeyringParams,
   serviceName,
   validation,
+  SignDataParams,
 } from './configs';
 
 export class KeyringServiceRpc extends RpcService {
@@ -36,5 +37,10 @@ export class KeyringServiceRpc extends RpcService {
   addressFromUri(params: AddressFromUriParams) {
     validation.addressFromUri(params);
     return this.call('addressFromUri', params);
+  }
+
+  signData(params: SignDataParams) {
+    validation.signData(params);
+    return this.call('signData', params);
   }
 }
