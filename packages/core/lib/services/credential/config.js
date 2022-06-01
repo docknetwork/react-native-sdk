@@ -2,6 +2,13 @@ import assert from 'assert';
 
 export const serviceName = 'credentials';
 export const validation = {
+  generateCredential: params => {
+    const {subject} = params;
+    if (subject) {
+      assert(typeof subject === 'object', 'invalid subject');
+      assert(Object.keys(subject).length > 0, 'invalid subject');
+    }
+  },
   signCredential: params => {
     const {vcJson, keyDoc} = params;
     assert(typeof vcJson === 'object', 'invalid vcJson');

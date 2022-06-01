@@ -12,6 +12,7 @@ class CredentialService {
     CredentialService.prototype.signCredential,
   ];
   generateCredential(params = {}) {
+    validation.generateCredential(params);
     const {subject} = params;
     const vc = new VerifiableCredential();
     vc.addType('DockAuthCredential');
