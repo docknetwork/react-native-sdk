@@ -79,7 +79,27 @@ export function useWallet({syncDocs = true} = {}) {
   const [documents, setDocuments] = useState([]);
   const [status, setStatus] = useState('loading');
 
-  console.log(wallet);
+  const refetch = useCallback(
+    async ({fetchBalances} = {}) => {
+      try {
+        const allDocs = await wallet.query({});
+
+        if (fetchBalances) {
+          await Promise.all(
+            allDocs
+              .filter(doc => doc.type === 'Address')
+              .map((doc: any) => {
+                return wallet.accounts.getBalance(doc.address);
+              }),
+          );
+        }
+        setDocuments(allDocs);
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    [wallet, setDocuments],
+  );
 
   useEffect(() => {
     console.log({sdkStatus, wallet, syncDocs});
@@ -92,35 +112,27 @@ export function useWallet({syncDocs = true} = {}) {
       return;
     }
 
-    const updateDocuments = async () => {
-      try {
-        const allDocs = await wallet.query({});
-        setDocuments(allDocs);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
     setStatus(wallet.status);
 
     wallet.eventManager.on(WalletEvents.statusUpdated, setStatus);
 
     if (syncDocs) {
-      wallet.eventManager.on(WalletEvents.ready, updateDocuments);
-      wallet.eventManager.on(WalletEvents.documentAdded, updateDocuments);
-      wallet.eventManager.on(WalletEvents.documentRemoved, updateDocuments);
-      wallet.eventManager.on(WalletEvents.documentUpdated, updateDocuments);
+      wallet.eventManager.on(WalletEvents.ready, refetch);
+      wallet.eventManager.on(WalletEvents.documentAdded, refetch);
+      wallet.eventManager.on(WalletEvents.documentRemoved, refetch);
+      wallet.eventManager.on(WalletEvents.documentUpdated, refetch);
 
       if (wallet && wallet.status === 'ready') {
-        updateDocuments();
+        refetch();
       }
     }
-  }, [sdkStatus, wallet, syncDocs]);
+  }, [sdkStatus, wallet, syncDocs, refetch]);
 
   return {
     wallet,
     status,
     documents,
+    refetch: () => refetch({fetchBalances: true}),
   };
 }
 
