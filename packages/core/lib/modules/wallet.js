@@ -11,6 +11,7 @@ import {Accounts} from './accounts';
 import {EventManager} from './event-manager';
 import {NetworkManager} from './network-manager';
 import {migrate} from './data-migration';
+import {Logger} from '../core/logger';
 
 // import {getEnvironment} from 'realm/lib/utils';
 
@@ -94,6 +95,9 @@ class Wallet {
 
     this.setStatus('loading');
 
+    const networkId = (await getStorage().getItem('networkId')) || 'mainnet';
+    this.networkManager.setNetworkId(networkId);
+
     try {
       await initRealm();
       await utilCryptoService.cryptoWaitReady();
@@ -139,6 +143,13 @@ class Wallet {
     this.setStatus('closed');
   }
 
+  async switchNetwork(networkId) {
+    getStorage().setItem('networkId', networkId);
+
+    this.networkManager.setNetworkId(networkId);
+
+    await this.initNetwork();
+  }
   /**
    * delete wallet
    */
@@ -189,6 +200,7 @@ class Wallet {
         ss58Format: networkInfo.addressPrefix,
       });
 
+      Logger.debug(`Initializing network ${JSON.stringify(networkInfo)}`);
       const isDockConnected = await dockService.isApiConnected();
 
       if (isDockConnected) {
@@ -238,19 +250,6 @@ class Wallet {
    * @returns Promise<boolean>
    */
   async remove(documentId) {
-    const realm = getRealm();
-    realm.write(() => {
-      const cachedAccount = realm
-        .objects('Account')
-        .filtered('id = $0', documentId)[0];
-
-      if (!cachedAccount) {
-        return;
-      }
-
-      realm.delete(cachedAccount);
-    });
-
     await walletService.remove(documentId);
     this.eventManager.emit(WalletEvents.documentRemoved, documentId);
   }

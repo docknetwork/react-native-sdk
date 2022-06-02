@@ -78,9 +78,16 @@ export class Accounts {
       true,
     );
 
-    currency.value = balance;
+    console.log('fetching balance', balance);
+    if (currency.value !== balance) {
+      currency.value = balance;
 
-    await this.wallet.update(currency);
+      try {
+        await this.wallet.update(currency);
+      } catch (err) {
+        debugger;
+      }
+    }
 
     return balance;
   }
