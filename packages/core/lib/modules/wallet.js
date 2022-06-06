@@ -12,9 +12,6 @@ import {EventManager} from './event-manager';
 import {NetworkManager} from './network-manager';
 import {migrate} from './data-migration';
 import {Logger} from '../core/logger';
-import walletLegacyData from '../test/fixtures/legacy-wallet-schema.json';
-
-// import {getEnvironment} from 'realm/lib/utils';
 
 /** Wallet events */
 export const WalletEvents = {
