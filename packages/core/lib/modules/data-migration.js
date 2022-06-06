@@ -37,20 +37,35 @@ export async function migrate({wallet}: MigrateParams) {
           account.correlation.find(id => id === doc.id),
         );
         const mnemonicDoc = relatedDocs.find(doc => doc.type === 'Mnemonic');
+        const keyPairDoc = relatedDocs.find(doc => doc.type === 'KeyPair');
 
-        if (!mnemonicDoc) {
-          return;
+        try {
+          if (mnemonicDoc) {
+            await wallet.remove(mnemonicDoc.id);
+            await wallet.remove(account.id);
+            await wallet.accounts.create({
+              mnemonic: mnemonicDoc.value,
+              name: account.meta.name,
+              type: account.meta.keypairType,
+              derivationPath: account.meta.derivationPath,
+            });
+          } else if (keyPairDoc) {
+            console.log(keyPairDoc);
+            await wallet.remove(keyPairDoc.id);
+            await wallet.remove(account.id);
+            await wallet.accounts.create({
+              name: account.meta.name,
+              json: keyPairDoc.value,
+              password: '',
+            });
+          } else {
+            return;
+          }
+        } catch (err) {
+          Logger.error(`failed to migrate account ${account.id}`);
+          Logger.error(err);
+          throw err;
         }
-
-        await wallet.remove(mnemonicDoc.id);
-        await wallet.remove(account.id);
-
-        await wallet.accounts.create({
-          mnemonic: mnemonicDoc.value,
-          name: account.meta.name,
-          type: account.meta.keypairType,
-          derivationPath: account.meta.derivationPath,
-        });
       }),
     );
 

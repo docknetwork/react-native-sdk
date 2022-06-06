@@ -44,8 +44,6 @@ export const rpcRequest = async (method, ...params) => {
 };
 
 export function initRpcClient(requestHandler) {
-  console.log('Rpc client initialized', global.client);
-
   global.client = new JSONRPCClient(requestHandler);
 
   global.client.__request = global.client.request;

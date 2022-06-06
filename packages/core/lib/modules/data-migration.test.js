@@ -25,7 +25,7 @@ describe('DataMigration', () => {
 
     it('expect to migrate accounts', async () => {
       const accounts = await wallet.accounts.getAccounts();
-      expect(accounts.length).toBe(2);
+      expect(accounts.length).toBe(3);
       expect(wallet.migrated).toBeTruthy();
     });
 

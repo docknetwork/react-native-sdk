@@ -12,6 +12,7 @@ import {EventManager} from './event-manager';
 import {NetworkManager} from './network-manager';
 import {migrate} from './data-migration';
 import {Logger} from '../core/logger';
+import walletLegacyData from '../test/fixtures/legacy-wallet-schema.json';
 
 // import {getEnvironment} from 'realm/lib/utils';
 
@@ -156,13 +157,12 @@ class Wallet {
   async deleteWallet() {
     this.eventManager.emit(WalletEvents.walletDeleted);
     clearCacheData();
-    getStorage().removeItem(this.walletId);
+    await getStorage().removeItem(this.walletId);
     await walletService.create({
       walletId: this.walletId,
     });
     await walletService.load();
     await walletService.sync();
-    await migrate({wallet: this});
   }
 
   /**
@@ -342,6 +342,7 @@ class Wallet {
   }
 
   async importWallet({json, password}) {
+    await this.deleteWallet();
     await walletService.importWallet({json, password});
     this.migrated = await migrate({wallet: this});
   }
