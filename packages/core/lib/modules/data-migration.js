@@ -58,8 +58,6 @@ export async function migrate({wallet}: MigrateParams) {
               json: keyPairDoc.value,
               password: '',
             });
-          } else {
-            return;
           }
         } catch (err) {
           Logger.error(`failed to migrate account ${account.id}`);
