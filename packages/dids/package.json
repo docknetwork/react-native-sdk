@@ -1,7 +1,7 @@
 {
     "name": "@docknetwork/wallet-sdk-dids",
     "main": "lib/index.js",
-    "version": "0.2.2",
+    "version": "0.2.3",
     "dependencies": {
         "@digitalbazaar/did-method-key": "^2.0.0",
         "uuid": "^8.3.2"
