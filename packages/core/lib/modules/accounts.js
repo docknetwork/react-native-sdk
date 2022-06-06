@@ -162,7 +162,7 @@ export class Accounts {
     );
 
     if (json) {
-      assert(!!password, 'password is required');
+      assert(typeof password === 'string', 'password is required');
     }
 
     const mnemonic =

@@ -50,18 +50,13 @@ export class DockService {
     assert(!this.connectionInProgress, 'there is a connection in progress');
     assert(!this.isDockReady, 'dock is already initialized');
 
-    console.log('connectionInProgress: true');
     this.connectionInProgress = true;
 
     Logger.info(`Attempt to initialized substrate at: ${params.address}`);
 
     const result = await this.dock.init(params).finally(() => {
-      console.log('connectionInProgress: false');
-
       this.connectionInProgress = false;
     });
-
-    console.log('result connection');
 
     Logger.debug(`Substrate initialized at: ${params.address}`);
 

@@ -8,7 +8,6 @@ export const extrisicErrorsFilter = ({event}) => {
 };
 
 export const mapEventToErrorMessage = ({event}) => {
-  console.log('Failed events', event);
   assert(!!event, 'event is required');
 
   const [error] = event.data;

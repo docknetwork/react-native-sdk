@@ -13,8 +13,6 @@ import {NetworkManager} from './network-manager';
 import {migrate} from './data-migration';
 import {Logger} from '../core/logger';
 
-// import {getEnvironment} from 'realm/lib/utils';
-
 /** Wallet events */
 export const WalletEvents = {
   ready: 'ready',
@@ -156,13 +154,12 @@ class Wallet {
   async deleteWallet() {
     this.eventManager.emit(WalletEvents.walletDeleted);
     clearCacheData();
-    getStorage().removeItem(this.walletId);
+    await getStorage().removeItem(this.walletId);
     await walletService.create({
       walletId: this.walletId,
     });
     await walletService.load();
     await walletService.sync();
-    await migrate({wallet: this});
   }
 
   /**
@@ -342,6 +339,7 @@ class Wallet {
   }
 
   async importWallet({json, password}) {
+    await this.deleteWallet();
     await walletService.importWallet({json, password});
     this.migrated = await migrate({wallet: this});
   }
