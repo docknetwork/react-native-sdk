@@ -9,10 +9,13 @@ describe('DID Service', () => {
     assertRpcService(CredentialServiceRPC, service, validation);
   });
   it('should create a vc', async () => {
-    const vc = await service.generateCredential();
+    const subject = {
+      state: 'debugstate',
+    };
+    const vc = await service.generateCredential({subject});
     expect(vc).toBeDefined();
     expect(vc).toHaveProperty('context');
-    expect(vc).toHaveProperty('credentialSubject');
+    expect(vc).toHaveProperty('credentialSubject', subject);
     expect(vc.type).toContain('VerifiableCredential');
     expect(vc.type).toContain('DockAuthCredential');
   });
