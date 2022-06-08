@@ -11,9 +11,22 @@ class CredentialService {
     CredentialService.prototype.generateCredential,
     CredentialService.prototype.signCredential,
   ];
-  generateCredential() {
+  generateCredential(params = {}) {
+    validation.generateCredential(params);
+    const {subject} = params;
     const vc = new VerifiableCredential();
+
     vc.addType('DockAuthCredential');
+    vc.addContext({
+      dk: 'https://ld.dock.io/credentials#',
+      DockAuthCredential: 'dk:DockAuthCredential',
+    });
+    if (subject) {
+      vc.setSubject(subject);
+      vc.addContext({
+        state: 'dk:state',
+      });
+    }
     return vc;
   }
   async signCredential(params) {
