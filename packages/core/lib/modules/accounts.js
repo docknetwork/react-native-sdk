@@ -78,9 +78,11 @@ export class Accounts {
       true,
     );
 
-    currency.value = balance;
+    if (currency.value !== balance) {
+      currency.value = balance;
 
-    await this.wallet.update(currency);
+      await this.wallet.update(currency);
+    }
 
     return balance;
   }
@@ -160,7 +162,7 @@ export class Accounts {
     );
 
     if (json) {
-      assert(!!password, 'password is required');
+      assert(typeof password === 'string', 'password is required');
     }
 
     const mnemonic =

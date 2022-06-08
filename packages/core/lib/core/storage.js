@@ -1,17 +1,8 @@
-export type StorageInterface = string;
-
-//   setItem(key, data) {
-
-//   }
-
-//   getItem(key) {
-
-//   }
-
-//   removeItem(key) {
-
-//   }
-// }
+export interface StorageInterface {
+  setItem(key: string, item: string): Promise<void>;
+  getItem(): Promise<string>;
+  remoteItem(key: string): Promise<void>;
+}
 
 let storage: StorageInterface;
 
