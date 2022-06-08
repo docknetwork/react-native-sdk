@@ -1,5 +1,5 @@
 import {BN_HUNDRED} from '@polkadot/util';
-import {DOCK_TOKEN_UNIT} from '../../core/format-utils';
+import {DOCK_TOKEN_UNIT, formatDockAmount, getPlainDockAmount} from '../../core/format-utils';
 import {dockService} from '../dock/service';
 import {walletService} from '../wallet/service';
 import {signAndSend} from './api-utils';
@@ -53,7 +53,8 @@ export class SubstrateService {
   async sendTokens(params: TransactionParams) {
     validation.sendTokens(params);
 
-    let {toAddress, fromAddress, amount} = params;
+    let {toAddress, fromAddress} = params;
+    let amount = getPlainDockAmount(params.amount).toNumber();
     const account = await walletService.getAccountKeypair(fromAddress);
     const {dock} = dockService;
 
