@@ -1,5 +1,5 @@
 import {BN_HUNDRED} from '@polkadot/util';
-import {DOCK_TOKEN_UNIT, formatDockAmount, getPlainDockAmount} from '../../core/format-utils';
+import {DOCK_TOKEN_UNIT, getPlainDockAmount} from '../../core/format-utils';
 import {dockService} from '../dock/service';
 import {walletService} from '../wallet/service';
 import {signAndSend} from './api-utils';
