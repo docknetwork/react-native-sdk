@@ -144,7 +144,6 @@ const initMockTransactions = () => {
 
 describe('TransactionsModule', () => {
   describe('Transactions history', () => {
-    let store;
     let realm;
     beforeEach(async () => {
       realm = await initMockRealm();
