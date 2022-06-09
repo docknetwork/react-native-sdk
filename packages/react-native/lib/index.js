@@ -89,7 +89,7 @@ export function useWallet({syncDocs = true} = {}) {
             allDocs
               .filter(doc => doc.type === 'Address')
               .map((doc: any) => {
-                return wallet.accounts.getBalance(doc.address);
+                return wallet.accounts.fetchBalance(doc.address);
               }),
           );
         }

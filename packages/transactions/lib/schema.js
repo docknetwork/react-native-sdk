@@ -3,7 +3,8 @@ import {addSchema} from '@docknetwork/wallet-sdk-core/lib/core/realm';
 addSchema({
   name: 'Transaction',
   properties: {
-    hash: 'string',
+    id: 'string',
+    hash: 'string?',
     type: {
       type: 'string',
       default: 'transfer',
@@ -25,5 +26,5 @@ addSchema({
       default: false,
     },
   },
-  primaryKey: 'hash',
+  primaryKey: 'id',
 });

@@ -60,6 +60,7 @@ describe('ApiModule', () => {
     it('Expect to import wallet from backup file', async () => {
       const password = 'test';
 
+      await Wallet.getInstance().remove();
       const wallet = await Wallet.create({
         walletId: 'test',
         password,

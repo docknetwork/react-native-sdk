@@ -107,6 +107,7 @@ class Wallet {
         walletId: this.walletId,
       });
 
+      await walletService.sync();
       await walletService.load();
 
       this.setStatus('ready');
