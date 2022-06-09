@@ -9,6 +9,10 @@ export function addSchema(item) {
   schema.push(item);
 }
 
+export function getSchemas() {
+  return schema;
+}
+
 export async function initRealm() {
   realm = await Realm.open({
     path: 'dock',
@@ -41,4 +45,8 @@ export function clearCacheData() {
 
 export function getRealm(): Realm {
   return realm;
+}
+
+export function setRealm(r) {
+  realm = r;
 }

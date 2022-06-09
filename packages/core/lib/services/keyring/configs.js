@@ -35,7 +35,7 @@ export const validation = {
     assert(typeof mnemonic === 'string', 'invalid mnemonic');
 
     if (derivePath) {
-      assert(typeof derivePath === 'string', 'invalid mnemonic');
+      assert(typeof derivePath === 'string', 'invalid derivePath');
     }
 
     if (type) {

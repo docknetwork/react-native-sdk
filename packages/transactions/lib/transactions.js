@@ -193,26 +193,23 @@ export class Transactions {
    *
    * @returns transactions
    */
-  async loadTransactions() {
+  async loadTransactions(address: string) {
     const realm = getRealm();
     const networkId = NetworkManager.getInstance().networkId;
     if (networkId === 'mainnet') {
-      const accounts = Accounts.getInstance().getAccounts();
-      for (const account of accounts) {
-        try {
-          this.loadExternalTransactions(account.address);
-        } catch (err) {
-          console.error(err);
-        }
-      }
+      await this.loadExternalTransactions(address);
     }
 
-    let items = realm.objects('Transaction');
-
-    if (networkId === 'mainnet') {
-      items = items.filter(item => !(item.status === 'complete' && !item.hash));
-    }
-    return items;
+    return realm
+      .objects('Transaction')
+      .filtered(
+        `(status == "${TransactionStatus.Complete}" AND hash !="") OR (status !="${TransactionStatus.Complete}")`,
+      )
+      .filtered(
+        `fromAddress == "${address}" OR recipientAddress == "${address}"`,
+      )
+      .sorted('date', true)
+      .toJSON();
   }
 
   /**
