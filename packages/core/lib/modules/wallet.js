@@ -16,6 +16,7 @@ import {Logger} from '../core/logger';
 /** Wallet events */
 export const WalletEvents = {
   ready: 'ready',
+  error: 'error',
   statusUpdated: 'status-updated',
   documentAdded: 'document-added',
   documentUpdated: 'document-updated',
@@ -119,7 +120,7 @@ class Wallet {
       this.migrated = await migrate({wallet: this});
     } catch (err) {
       this.setStatus('error');
-
+      this.eventManager.emit(WalletEvents.error, err);
       throw err;
     }
   }
@@ -210,6 +211,9 @@ class Wallet {
       });
 
       this.eventManager.emit(WalletEvents.networkConnected);
+    } catch (err) {
+      this.eventManager.emit(WalletEvents.error, err);
+      throw err;
     } finally {
       this.connectionInProgress = false;
       this.networkReady = true;
