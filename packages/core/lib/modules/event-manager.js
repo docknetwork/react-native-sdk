@@ -16,7 +16,7 @@ export class EventManager {
 
   registerEvent(eventName) {
     if (this.getEventByName(eventName)) {
-      throw new Error('Event already exists');
+      return;
     }
 
     this.eventNames.push(eventName);
