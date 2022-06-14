@@ -1,9 +1,9 @@
 export class LoggerService {
-  rpcMethods = [
-    LoggerService.prototype.log,
-    LoggerService.prototype.info,
-    LoggerService.prototype.debug,
-  ];
+  rpcMethods = {
+    log: LoggerService.prototype.log,
+    info: LoggerService.prototype.info,
+    debug: LoggerService.prototype.debug,
+  };
 
   constructor() {
     this.name = 'logger';
