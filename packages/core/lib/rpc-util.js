@@ -2,6 +2,37 @@ import assert from 'assert';
 import {decryptData, SECURE_JSON_RPC} from './core/crypto';
 import {Logger} from './core/logger';
 
+export function createMethodResolver({service, methodFn, methodName}) {
+  const methodPath = `${service.name}.${methodName}`;
+
+  return {
+    name: methodPath,
+    resolver: async (params = {}) => {
+      try {
+        let result;
+
+        if (!methodFn) {
+          throw new Error('Resolver is undefined');
+        }
+
+        if (params.__args) {
+          result = methodFn.apply(service, params.__args);
+        } else {
+          result = methodFn.apply(service, [params]);
+        }
+
+        return Promise.resolve(result).then(value => {
+          Logger.debug(`Result for ${methodPath}`, value);
+          return value;
+        });
+      } catch (err) {
+        Logger.debug(`Error for ${methodPath}`, err.toString());
+        throw err;
+      }
+    },
+  };
+}
+
 export function createRpcService(service) {
   const {name, rpcMethods} = service;
 
@@ -14,36 +45,24 @@ export function createRpcService(service) {
     `invalid routes: ${rpcMethods} for service ${service.constructor.name}`,
   );
 
-  return rpcMethods.map(methodResolver => {
-    const routeName = methodResolver.name;
-    const methodName = `${name}.${routeName}`;
+  let methods = rpcMethods;
 
-    return {
-      name: methodName,
-      resolver: async (params = {}) => {
-        try {
-          let result;
+  if (!Array.isArray(rpcMethods)) {
+    return Object.keys(rpcMethods).map(key => {
+      return createMethodResolver({
+        methodFn: rpcMethods[key],
+        methodName: key,
+        service,
+      });
+    });
+  }
 
-          if (!methodResolver) {
-            throw new Error('Resolver is undefined');
-          }
-
-          if (params.__args) {
-            result = methodResolver.apply(service, params.__args);
-          } else {
-            result = methodResolver.apply(service, [params]);
-          }
-
-          return Promise.resolve(result).then(value => {
-            Logger.debug(`Result for ${methodName}`, value);
-            return value;
-          });
-        } catch (err) {
-          Logger.debug(`Error for ${methodName}`, err.toString());
-          throw err;
-        }
-      },
-    };
+  return methods.map(methodFn => {
+    return createMethodResolver({
+      methodFn,
+      methodName: methodFn.name,
+      service,
+    });
   });
 }
 

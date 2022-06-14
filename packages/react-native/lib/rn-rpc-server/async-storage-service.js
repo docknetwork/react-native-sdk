@@ -1,11 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export class StorageService {
-  rpcMethods = [
-    StorageService.prototype.setItem,
-    StorageService.prototype.getItem,
-    StorageService.prototype.removeItem,
-  ];
+  rpcMethods = {
+    setItem: StorageService.prototype.setItem,
+    getItem: StorageService.prototype.getItem,
+    removeItem: StorageService.prototype.removeItem,
+  };
 
   constructor() {
     this.name = 'storage';
