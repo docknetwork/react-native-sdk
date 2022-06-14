@@ -17,6 +17,7 @@ import {WebviewEventHandler} from './message-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {AccountDetails} from '@docknetwork/wallet-sdk-core/lib/modules/account';
 import {DocumentType} from '@docknetwork/wallet-sdk-core/lib/types';
+import './rn-rpc-server';
 
 export type WalletSDKContextProps = {
   wallet: Wallet,
@@ -144,16 +145,17 @@ export function WalletSDKProvider({onError, customUri, children, onReady}) {
   const baseUrl =
     Platform.OS === 'ios' ? 'app-html' : 'file:///android_asset/app-html';
 
-  const handleReady = useCallback(() => {
+  const handleReady = useCallback(async () => {
     const newWallet = Wallet.getInstance({});
     setWallet(newWallet);
     newWallet.load();
 
-    setSdkStatus('ready');
-
-    if (onReady) {
-      onReady();
-    }
+    newWallet.eventManager.on(WalletEvents.ready, () => {
+      setSdkStatus('ready');
+      if (onReady) {
+        onReady();
+      }
+    });
   }, [setWallet, onReady]);
 
   const eventHandler: WebviewEventHandler = useMemo(
