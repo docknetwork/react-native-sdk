@@ -21,7 +21,7 @@ import './rn-rpc-server';
 
 export type WalletSDKContextProps = {
   wallet: Wallet,
-  sdkStatus: string,
+  status: string,
 };
 
 export const WalletSDKContext = React.createContext({
@@ -75,18 +75,44 @@ export function useAccount(address) {
   };
 }
 
+function getStorageDocuments() {
+  return AsyncStorage.getItem('dock-wallet').then(data => {
+    if (!data) {
+      return;
+    }
+
+    data = JSON.parse(data);
+
+    return Object.keys(data).map(key => data[key]);
+  });
+}
+
 export function useWallet({syncDocs = true} = {}) {
-  const sdkContext = useContext(WalletSDKContext);
-  const wallet: Wallet = sdkContext.wallet;
-  const sdkStatus = sdkContext.sdkStatus;
-  const [documents, setDocuments] = useState([]);
+  return useContext(WalletSDKContext);
+}
+
+export function WalletSDKProvider({onError, customUri, children, onReady}) {
+  const [wallet, setWallet] = useState();
   const [status, setStatus] = useState('loading');
+  const [documents, setDocuments] = useState([]);
+  const webViewRef = useRef();
+  const baseUrl =
+    Platform.OS === 'ios' ? 'app-html' : 'file:///android_asset/app-html';
+
+  useEffect(() => {
+    if (documents.length > 0) {
+      return;
+    }
+
+    getStorageDocuments().then(docs => {
+      setDocuments(currentDocs => (currentDocs.length ? currentDocs : docs));
+    });
+  }, [documents]);
 
   const refetch = useCallback(
     async ({fetchBalances} = {}) => {
       try {
         const allDocs = await wallet.query({});
-
         if (fetchBalances) {
           await Promise.all(
             allDocs
@@ -96,6 +122,7 @@ export function useWallet({syncDocs = true} = {}) {
               }),
           );
         }
+
         setDocuments(allDocs);
       } catch (err) {
         console.error(err);
@@ -105,9 +132,7 @@ export function useWallet({syncDocs = true} = {}) {
   );
 
   useEffect(() => {
-    console.log({sdkStatus, wallet, syncDocs});
-
-    if (sdkStatus !== 'ready') {
+    if (status !== 'ready') {
       return;
     }
 
@@ -118,42 +143,23 @@ export function useWallet({syncDocs = true} = {}) {
     setStatus(wallet.status);
 
     wallet.eventManager.on(WalletEvents.statusUpdated, setStatus);
+    wallet.eventManager.on(WalletEvents.ready, refetch);
+    wallet.eventManager.on(WalletEvents.documentAdded, refetch);
+    wallet.eventManager.on(WalletEvents.documentRemoved, refetch);
+    wallet.eventManager.on(WalletEvents.documentUpdated, refetch);
 
-    if (syncDocs) {
-      wallet.eventManager.on(WalletEvents.ready, refetch);
-      wallet.eventManager.on(WalletEvents.documentAdded, refetch);
-      wallet.eventManager.on(WalletEvents.documentRemoved, refetch);
-      wallet.eventManager.on(WalletEvents.documentUpdated, refetch);
-
-      if (wallet && wallet.status === 'ready') {
-        refetch();
-      }
+    if (wallet && wallet.status === 'ready') {
+      refetch();
     }
-  }, [sdkStatus, wallet, syncDocs, refetch]);
-
-  return {
-    wallet,
-    status,
-    documents,
-    refetch: () => refetch({fetchBalances: true}),
-  };
-}
-
-export function WalletSDKProvider({onError, customUri, children, onReady}) {
-  const [wallet, setWallet] = useState();
-  const [sdkStatus, setSdkStatus] = useState('loading');
-
-  const webViewRef = useRef();
-  const baseUrl =
-    Platform.OS === 'ios' ? 'app-html' : 'file:///android_asset/app-html';
+  }, [status, wallet, refetch]);
 
   const handleReady = useCallback(async () => {
-    const newWallet = Wallet.getInstance({});
+    const newWallet = Wallet.getInstance();
     setWallet(newWallet);
     newWallet.load();
 
     newWallet.eventManager.on(WalletEvents.ready, () => {
-      setSdkStatus('ready');
+      setStatus('ready');
       if (onReady) {
         onReady();
       }
@@ -187,7 +193,7 @@ export function WalletSDKProvider({onError, customUri, children, onReady}) {
             }
       }
       onError={err => {
-        setSdkStatus('error');
+        setStatus('error');
         if (onError) {
           onError(err);
         }
@@ -200,7 +206,13 @@ export function WalletSDKProvider({onError, customUri, children, onReady}) {
 
   return (
     <View flex={1}>
-      <WalletSDKContext.Provider value={{wallet, sdkStatus}}>
+      <WalletSDKContext.Provider
+        value={{
+          wallet,
+          documents,
+          status,
+          refetch: () => refetch({fetchBalances: true}),
+        }}>
         {children}
       </WalletSDKContext.Provider>
       <View style={{height: 0}}>{webviewContainer}</View>
