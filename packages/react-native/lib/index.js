@@ -64,12 +64,14 @@ function getAccount(address, documents): AccountDetails {
 }
 
 export function useAccount(address) {
-  const {documents} = useWallet({syncDocs: true});
+  const {documents, wallet} = useWallet({syncDocs: true});
   const account = getAccount(address, documents);
 
-  console.log('account', account);
   return {
     account,
+    fetchBalance: () => {
+      wallet.accounts.fetchBalance(address);
+    },
   };
 }
 
