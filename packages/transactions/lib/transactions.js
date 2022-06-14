@@ -14,6 +14,7 @@ import {
   isAddressValid,
   isNumberValid,
 } from '@docknetwork/wallet-sdk-core/lib/core/validation';
+import {Wallet} from '@docknetwork/wallet-sdk-core/lib/modules/wallet';
 
 export const TransactionStatus = {
   InProgress: 'pending',
@@ -99,6 +100,7 @@ export class Transactions {
     this.accounts = accounts || Accounts.getInstance();
     this.wallet = this.accounts.wallet;
     this.eventManager = this.wallet.eventManager;
+    this.eventManager.registerEvents(TransactionEvents);
   }
 
   /**
@@ -155,8 +157,15 @@ export class Transactions {
   async loadExternalTransactions(address) {
     assert(isAddressValid(address), 'invalid address');
 
+    const networkId = NetworkManager.getInstance().networkId;
+
+    if (networkId !== 'mainnet') {
+      return;
+    }
+
     const realm = getRealm();
     const dbTransactions = realm.objects('Transaction');
+
     const handleTransaction = tx => {
       if (tx.from !== address && tx.to !== address) {
         return;
@@ -165,7 +174,7 @@ export class Transactions {
         return;
       }
       const newTx = {
-        amount: BigNumber(tx.amount).times(DOCK_TOKEN_UNIT).toString(),
+        amount: tx.amount,
         feeAmount: tx.fee,
         recipientAddress: tx.to,
         fromAddress: tx.from,
@@ -182,9 +191,17 @@ export class Transactions {
     let data;
     let page = 0;
     do {
-      data = await fetchTransactions({address, page});
-      data.transfers.forEach(handleTransaction);
-      page++;
+      try {
+        data = await fetchTransactions({address, page});
+        data.items.forEach(handleTransaction);
+        Wallet.getInstance().eventManager.emit(
+          TransactionEvents.added,
+          address,
+        );
+        page++;
+      } catch (err) {
+        console.error(err);
+      }
     } while (data.hasNextPage);
   }
 
@@ -195,10 +212,6 @@ export class Transactions {
    */
   async loadTransactions(address: string) {
     const realm = getRealm();
-    const networkId = NetworkManager.getInstance().networkId;
-    if (networkId === 'mainnet') {
-      await this.loadExternalTransactions(address);
-    }
 
     return realm
       .objects('Transaction')

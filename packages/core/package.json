@@ -21,7 +21,9 @@
         "json-rpc-2.0": "^0.2.16",
         "react-native-keychain": "^8.0.0",
         "uuid": "^8.3.2",
-        "winston": "^3.3.3"
+        "winston": "^3.3.3",
+        "cwait": "1.1.2",
+        "axios-retry": "^3.2.5"
     },
     "devDependencies": {
         "realm": "^10.10.1",
