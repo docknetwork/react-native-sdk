@@ -76,15 +76,17 @@ export function useAccount(address) {
 }
 
 function getStorageDocuments() {
-  return AsyncStorage.getItem('dock-wallet').then(data => {
-    if (!data) {
-      return;
-    }
+  return AsyncStorage.getItem('dock-wallet')
+    .then(data => {
+      if (!data) {
+        return [];
+      }
 
-    data = JSON.parse(data);
+      data = JSON.parse(data);
 
-    return Object.keys(data).map(key => data[key]);
-  });
+      return Object.keys(data).map(key => data[key]);
+    })
+    .catch(() => []);
 }
 
 export function useWallet({syncDocs = true} = {}) {
