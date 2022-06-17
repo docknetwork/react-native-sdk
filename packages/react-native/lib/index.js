@@ -56,6 +56,7 @@ function getAccount(address, documents): AccountDetails {
   const mnemonic = correlation.find(filterDocsByType('Mnemonic'));
 
   return {
+    ...addressDoc,
     address,
     name: addressDoc.name,
     balance: currencyDoc && currencyDoc.value,
