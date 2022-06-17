@@ -15,8 +15,8 @@ export class WalletServiceRpc extends RpcService {
     super(serviceName);
   }
 
-  getDocumentById(): Promise<any> {
-    return this.call('getDocumentById');
+  getDocumentById(id: string): Promise<any> {
+    return this.call('getDocumentById', id);
   }
 
   create(params): Promise<any> {
