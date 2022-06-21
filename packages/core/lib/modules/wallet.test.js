@@ -1,7 +1,6 @@
 import {Wallet, WalletEvents} from './wallet';
 import walletJson from '../test/fixtures/wallet-backup.json';
 import {mockDockService} from '../services/test-utils';
-import {EventManager} from './event-manager';
 
 describe('ApiModule', () => {
   let unmockDockService;
