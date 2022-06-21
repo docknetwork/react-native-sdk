@@ -22,6 +22,7 @@ export const WalletEvents = {
   documentUpdated: 'document-updated',
   documentRemoved: 'document-removed',
   walletDeleted: 'wallet-deleted',
+  walletImported: 'wallet-imported',
   networkUpdated: 'network-updated',
   networkConnected: 'network-connected',
 };
@@ -337,7 +338,7 @@ class Wallet {
     await wallet.load();
 
     if (json) {
-      await walletService.importWallet({json, password});
+      await wallet.importWallet({json, password});
     }
 
     return wallet;
@@ -347,6 +348,7 @@ class Wallet {
     await this.deleteWallet();
     await walletService.importWallet({json, password});
     this.migrated = await migrate({wallet: this});
+    await this.eventManager.emit(WalletEvents.walletImported);
   }
 
   /**
