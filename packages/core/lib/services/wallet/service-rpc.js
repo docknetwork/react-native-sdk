@@ -16,10 +16,12 @@ export class WalletServiceRpc extends RpcService {
   }
 
   getDocumentById(id: string): Promise<any> {
+    validation.getDocumentById(id);
     return this.call('getDocumentById', id);
   }
 
   create(params): Promise<any> {
+    validation.create(params);
     return this.call('create', params);
   }
   load() {
@@ -45,33 +47,45 @@ export class WalletServiceRpc extends RpcService {
   }
 
   add(params: AddParams) {
+    validation.add(params);
     return this.call('add', params);
   }
 
   remove(id: string) {
+    validation.remove(id);
     return this.call('remove', id);
   }
 
   update(params: UpdateParams) {
+    validation.update(params);
     return this.call('update', params);
   }
 
   query(params: QueryParams) {
+    validation.query(params);
     return this.call('query', params);
   }
+
   exportWallet(password: string) {
+    validation.exportWallet(password);
     return this.call('exportWallet', password);
   }
+
   importWallet(params: ImportWalletParams) {
+    validation.importWallet(params);
     return this.call('importWallet', params);
   }
+
   exportAccount(params: ExportAccountParams) {
+    validation.exportAccount(params);
     return this.call('exportAccount', params);
   }
+
   createAccountDocuments(params: CreateAccountDocumentsParams) {
     validation.createAccountDocuments(params);
     return this.call('createAccountDocuments', params);
   }
+
   resolveCorrelations(address: string) {
     validation.resolveCorrelations(address);
     return this.call('resolveCorrelations', address);
