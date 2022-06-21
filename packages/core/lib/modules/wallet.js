@@ -338,7 +338,7 @@ class Wallet {
     await wallet.load();
 
     if (json) {
-      await walletService.importWallet({json, password});
+      await wallet.importWallet({json, password});
     }
 
     return wallet;

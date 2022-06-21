@@ -1,6 +1,7 @@
-import {Wallet} from './wallet';
+import {Wallet, WalletEvents} from './wallet';
 import walletJson from '../test/fixtures/wallet-backup.json';
 import {mockDockService} from '../services/test-utils';
+import {EventManager} from './event-manager';
 
 describe('ApiModule', () => {
   let unmockDockService;
@@ -60,15 +61,23 @@ describe('ApiModule', () => {
     it('Expect to import wallet from backup file', async () => {
       const password = 'test';
 
-      await Wallet.getInstance().remove();
       const wallet = await Wallet.create({
         walletId: 'test',
-        password,
-        json: walletJson,
       });
 
+      wallet.eventManager.emit = jest.fn();
+
+      await wallet.importWallet({
+        json: walletJson,
+        password,
+      });
+
+      expect(wallet.eventManager.emit).toBeCalledWith(
+        WalletEvents.walletImported,
+      );
+
       const docs = await wallet.query();
-      expect(docs.length).toBe(4);
+      expect(docs.length).toBe(5);
 
       const addressDoc = docs.find(doc => doc.type === 'Address');
 
