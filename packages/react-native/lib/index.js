@@ -149,6 +149,7 @@ export function WalletSDKProvider({onError, customUri, children, onReady}) {
     wallet.eventManager.on(WalletEvents.documentAdded, refetch);
     wallet.eventManager.on(WalletEvents.documentRemoved, refetch);
     wallet.eventManager.on(WalletEvents.documentUpdated, refetch);
+    wallet.eventManager.on(WalletEvents.walletImported, refetch);
 
     if (wallet && wallet.status === 'ready') {
       refetch();
