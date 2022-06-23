@@ -151,6 +151,10 @@ export function WalletSDKProvider({onError, customUri, children, onReady}) {
     wallet.eventManager.on(WalletEvents.documentRemoved, refetch);
     wallet.eventManager.on(WalletEvents.documentUpdated, refetch);
     wallet.eventManager.on(WalletEvents.walletImported, refetch);
+    wallet.eventManager.on(WalletEvents.migrated, refetch);
+    wallet.eventManager.on(WalletEvents.walletDeleted, () => {
+      setDocuments([]);
+    });
 
     if (wallet && wallet.status === 'ready') {
       refetch();
