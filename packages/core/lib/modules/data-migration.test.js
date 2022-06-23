@@ -9,7 +9,7 @@ describe('DataMigration', () => {
     unmockDockService = await mockDockService();
   });
 
-  describe('migrate wallet from v0.1 to v0.2', () => {
+  describe('migrate wallet from v0.1 to v0.2 (file1)', () => {
     let wallet: Wallet;
 
     beforeAll(async () => {
