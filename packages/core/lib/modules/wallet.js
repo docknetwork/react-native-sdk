@@ -32,10 +32,10 @@ export const WalletEvents = {
 /**
  * Can be used to debug the data migration behavior in the wallet
  */
-const MOCK_STORAGE = false;
+const MOCK_STORAGE = process.env.MOCK_STORAGE;
 
 async function shouldMockStorage(walletId) {
-  if (!MOCK_STORAGE) {
+  if (MOCK_STORAGE !== 'true') {
     return;
   }
 
