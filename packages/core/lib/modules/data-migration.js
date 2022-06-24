@@ -1,11 +1,12 @@
 import {Logger} from '../core/logger';
+import {getStorage} from '../core/storage';
 import {Wallet} from './wallet';
 
 type MigrateParams = {
   wallet: Wallet,
 };
 
-const currentWalletCersion = '0.2';
+const currentWalletVersion = '0.2';
 
 export async function migrate({wallet}: MigrateParams) {
   Logger.debug('Starting wallet migration');
@@ -14,11 +15,11 @@ export async function migrate({wallet}: MigrateParams) {
 
   if (!docs.length) {
     Logger.debug(
-      `Empty wallet, adding version ${currentWalletCersion} document`,
+      `Empty wallet, adding version ${currentWalletVersion} document`,
     );
     await wallet.add({
       type: 'Metadata',
-      walletVersion: currentWalletCersion,
+      walletVersion: currentWalletVersion,
     });
   }
 
@@ -26,6 +27,11 @@ export async function migrate({wallet}: MigrateParams) {
   let migrated = false;
 
   Logger.debug(`Wallet version ${version}`);
+
+  if (version !== currentWalletVersion) {
+    const snapshot = await getStorage().getItem(wallet.walletId);
+    await getStorage().setItem(`${wallet.walletId}-snapshot`, snapshot);
+  }
 
   if (version === '0.1') {
     const targetVersion = '0.2';

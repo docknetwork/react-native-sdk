@@ -12,11 +12,13 @@ import {EventManager} from './event-manager';
 import {NetworkManager} from './network-manager';
 import {migrate} from './data-migration';
 import {Logger} from '../core/logger';
+import legacyWalletSchema from '../test/fixtures/legacy-wallet-schema.json';
 
 /** Wallet events */
 export const WalletEvents = {
   ready: 'ready',
   error: 'error',
+  migrated: 'migrated',
   statusUpdated: 'status-updated',
   documentAdded: 'document-added',
   documentUpdated: 'document-updated',
@@ -26,6 +28,19 @@ export const WalletEvents = {
   networkUpdated: 'network-updated',
   networkConnected: 'network-connected',
 };
+
+/**
+ * Can be used to debug the data migration behavior in the wallet
+ */
+const MOCK_STORAGE = process.env.MOCK_STORAGE;
+
+async function shouldMockStorage(walletId) {
+  if (MOCK_STORAGE !== 'true') {
+    return;
+  }
+
+  await getStorage().setItem(walletId, JSON.stringify(legacyWalletSchema));
+}
 
 /** Wallet status */
 export type WalletStatus = 'closed' | 'loading' | 'ready' | 'error';
@@ -98,6 +113,8 @@ class Wallet {
     const networkId = (await getStorage().getItem('networkId')) || 'mainnet';
     this.networkManager.setNetworkId(networkId);
 
+    await shouldMockStorage(this.walletId);
+
     try {
       await initRealm();
       await utilCryptoService.cryptoWaitReady();
@@ -119,6 +136,7 @@ class Wallet {
       this.initNetwork();
 
       this.migrated = await migrate({wallet: this});
+      this.eventManager.emit(WalletEvents.migrated);
     } catch (err) {
       this.setStatus('error');
       this.eventManager.emit(WalletEvents.error, err);
