@@ -16,7 +16,7 @@ describe('ApiModule', () => {
       wallet = await Wallet.create();
       await wallet.ensureNetwork();
     });
-    it('is default params', () => {
+    it('is correct default params set', () => {
       expect(wallet.walletId).toBe('wallet');
     });
 
