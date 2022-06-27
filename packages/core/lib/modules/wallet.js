@@ -72,7 +72,7 @@ class Wallet {
    * @param {object} params
    */
   constructor({
-    walletId = 'dock-wallet',
+    walletId = 'wallet',
     context = ['https://w3id.org/wallet/v1'],
   } = {}) {
     this.walletId = walletId;
