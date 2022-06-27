@@ -16,6 +16,9 @@ describe('ApiModule', () => {
       wallet = await Wallet.create();
       await wallet.ensureNetwork();
     });
+    it('is default params', () => {
+      expect(wallet.walletId).toBe('wallet');
+    });
 
     it('query', async () => {
       const accounts = await wallet.query({
