@@ -13,7 +13,7 @@ node_modules
 
 /dock
 /dock.management
-/dock.lock 
+/dock.lock
 .env
 # misc
 .DS_Store
@@ -25,6 +25,6 @@ node_modules
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-poc
 .idea
+poc
+
