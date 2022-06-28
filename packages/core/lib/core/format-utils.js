@@ -68,8 +68,8 @@ export function getPlainDockAmount(value) {
   return BigNumber(value).times(DOCK_TOKEN_UNIT);
 }
 
-const dateFormat = new Intl.DateTimeFormat(['en-US'], {
-  dateStyle: 'medium',
+const dateFormat = new Intl.DateTimeFormat(['default'], {
+  dateStyle: 'long',
   timeStyle: 'short',
 });
 
