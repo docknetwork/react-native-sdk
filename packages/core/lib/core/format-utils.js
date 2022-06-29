@@ -71,6 +71,9 @@ export function getPlainDockAmount(value) {
 const dateFormat = new Intl.DateTimeFormat(['default'], {
   dateStyle: 'long',
   timeStyle: 'short',
+  month: 'short',
+  day: 'numeric',
+  year: 'numeric',
 });
 
 export function formatDate(date) {
