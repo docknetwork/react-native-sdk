@@ -1,6 +1,7 @@
 import {
   formatAddress,
   formatCurrency,
+  formatDate,
   getPlainDockAmount,
 } from './format-utils';
 
@@ -30,5 +31,11 @@ describe('Format util', () => {
   it('formatCurrency', () => {
     const result = formatCurrency(12.55);
     expect(result).toBe('$12.55');
+  });
+
+  it('format Date', () => {
+    const date = new Date(1996, 11, 17);
+    const result = formatDate(date);
+    expect(result).toBe('December 17, 1996 at 12:00 AM');
   });
 });
