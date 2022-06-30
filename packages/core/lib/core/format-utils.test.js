@@ -36,6 +36,6 @@ describe('Format util', () => {
   it('format Date', () => {
     const date = new Date(1996, 11, 17);
     const result = formatDate(date);
-    expect(result).toBe('December 17, 1996 at 12:00 AM');
+    expect(result).toBe('December 17, 1996, 12:00 AM');
   });
 });
