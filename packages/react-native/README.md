@@ -1,6 +1,6 @@
 # Dock Wallet SDK for React Native
 
-This package includes a WalletSDKProvider to be used on react-native applications
+This package includes a WalletSDKProvider to be used on React Native applications
 
 You will have to install https://www.npmjs.com/package/nodeify in your project
 
