@@ -3,11 +3,10 @@
 
 Credential manager for the dock wallet sdk
 
-On react native it's required to setup the WalletSDKProvider, described on the following package https://www.npmjs.com/package/@docknetwork/wallet-sdk-react-native
+On react native it's required to set up the WalletSDKProvider, described on [@docknetwork/wallet-sdk-react-native](https://www.npmjs.com/package/@docknetwork/wallet-sdk-react-native)
 
-```
+```js
 import {Credentials} from '@docknetwork/wallet-sdk-credentials/lib';
-
 
 // add credential 
 const credential = await Credentials.getInstance().add({
