@@ -1,8 +1,8 @@
 # React native SDK for Dock app
 
-Using [polkadot-js](https://polkadot.js.org/) libraries in react native is a challange, due to a lack of webassembly support.
+Using [polkadot-js](https://polkadot.js.org/) libraries in react native is a challange, due to a lack of WebAssembly support.
 
-The Dock Wallet SDK handles all the Polkadot web assembly in a webview, sending messages to the react native thread trough a JSON RPC layer.
+The Dock Wallet SDK handles all the Polkadot web assembly in a webview, sending messages to the react native thread through a JSON RPC layer.
 
 All you need to do is wrap your app in a `WalletSDKProvider` and start building your Polkadot wallet.
 
@@ -47,7 +47,7 @@ const App = () => {
     <NativeBaseProvider>
       <WalletSDKProvider>
         <Box p={8}>
-          <Text>SDK Demo</Text>
+          <Text>Dock Wallet SDK Demo</Text>
           <Text>Press on `add document` button to create a new account</Text>
         </Box>
         <WalletDetails />
