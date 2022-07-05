@@ -1,7 +1,7 @@
 
 # Transactions Manager
 
-Transactions are required to send and receive (DOCK Tokens)[[https://www.dock.io/token]. This module handles the transaction history and provie methods to send DOCK tokens to any address.
+Transactions are required to send and receive (DOCK Tokens)[[https://www.dock.io/token]. This module handles the transaction history and provide methods to send DOCK tokens to any address.
 
 The Dock utility token (DOCK) plays a key role in aligning incentives across all of the Dock network’s participants including issuers, validators, token holders, and the Dock Association, and ensures collaboration and growth. Learn more (here)[https://www.dock.io/token]
 
