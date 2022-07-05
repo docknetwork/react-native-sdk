@@ -1,4 +1,4 @@
-# React native SDK for Dock app
+# Dock Wallet SDK
 
 Using [polkadot-js](https://polkadot.js.org/) libraries in react native is a challange, due to a lack of WebAssembly support.
 
