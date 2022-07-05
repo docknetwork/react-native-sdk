@@ -1,7 +1,8 @@
 
 # Credentials manager
 
-Credential manager for the dock wallet sdk
+Manager for JSON-LD Verifiable Credential that conforms to the [W3C VCDM specification](https://www.w3.org/TR/vc-data-model/). The type values and subject properties must be represented by a schema URI in the context property. You can read more about JSON-LD and contexts [here](https://json-ld.org/spec/latest/json-ld/#the-context).
+
 
 On react native it's required to set up the WalletSDKProvider, described on [@docknetwork/wallet-sdk-react-native](https://www.npmjs.com/package/@docknetwork/wallet-sdk-react-native)
 
