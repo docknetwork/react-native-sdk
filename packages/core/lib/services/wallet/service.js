@@ -213,6 +213,8 @@ export class WalletService {
       });
     }
 
+    Logger.info(`Account created: ${keyringPair.address}`);
+
     const addressDocument: WalletDocument = {
       '@context': ['https://w3id.org/wallet/v1'],
       id: keyringPair.address,
