@@ -1,4 +1,5 @@
 import {BN_HUNDRED} from '@polkadot/util';
+import assert from 'assert';
 import {DOCK_TOKEN_UNIT, getPlainDockAmount} from '../../core/format-utils';
 import {dockService} from '../dock/service';
 import {walletService} from '../wallet/service';
@@ -9,6 +10,14 @@ import {
   TransactionParams,
   validation,
 } from './configs';
+
+export const FEE_ESTIMATION_BUFFER = 1.1;
+
+export function getFeeWithBuffer(paymentFee: BigNumber) {
+  assert(!!paymentFee, 'paymentFee is required');
+
+  return paymentFee.multipliedBy(FEE_ESTIMATION_BUFFER);
+}
 
 export class SubstrateService {
   rpcMethods = [
@@ -47,10 +56,11 @@ export class SubstrateService {
       amount,
     );
     const paymentInfo = await extrinsic.paymentInfo(account);
-    return (
-      paymentInfo.partialFee.muln(110).div(BN_HUNDRED).toNumber() /
-      DOCK_TOKEN_UNIT
-    );
+    const fee = getFeeWithBuffer(paymentInfo.partialFee)
+      .dividedBy(DOCK_TOKEN_UNIT)
+      .toNumber();
+
+    return fee;
   }
 
   async sendTokens(params: TransactionParams) {
@@ -71,7 +81,7 @@ export class SubstrateService {
         .transfer(fromAddress, balances.availableBalance)
         .paymentInfo(account)
         .then(async ({partialFee}): void => {
-          const adjFee = partialFee.muln(110).div(BN_HUNDRED);
+          const adjFee = getFeeWithBuffer(partialFee);
           let maxTransfer = balances.availableBalance.sub(adjFee);
 
           if (!maxTransfer.gt(api.consts.balances.existentialDeposit)) {
