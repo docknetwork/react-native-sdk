@@ -47,7 +47,10 @@ export class SubstrateService {
       amount,
     );
     const paymentInfo = await extrinsic.paymentInfo(account);
-    return paymentInfo.partialFee.toNumber() / DOCK_TOKEN_UNIT;
+    return (
+      paymentInfo.partialFee.muln(110).div(BN_HUNDRED).toNumber() /
+      DOCK_TOKEN_UNIT
+    );
   }
 
   async sendTokens(params: TransactionParams) {
