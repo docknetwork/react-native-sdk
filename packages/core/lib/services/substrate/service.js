@@ -1,4 +1,6 @@
 import assert from 'assert';
+import BigNumber from 'bignumber.js';
+import BN from 'bn.js';
 import {DOCK_TOKEN_UNIT, getPlainDockAmount} from '../../core/format-utils';
 import {dockService} from '../dock/service';
 import {walletService} from '../wallet/service';
@@ -15,7 +17,7 @@ export const FEE_ESTIMATION_BUFFER = 1.1;
 export function getFeeWithBuffer(paymentFee: BigNumber) {
   assert(!!paymentFee, 'paymentFee is required');
 
-  return paymentFee.multipliedBy(FEE_ESTIMATION_BUFFER);
+  return new BigNumber(paymentFee).multipliedBy(FEE_ESTIMATION_BUFFER);
 }
 
 export class SubstrateService {
@@ -81,7 +83,9 @@ export class SubstrateService {
         .paymentInfo(account)
         .then(async ({partialFee}): void => {
           const adjFee = getFeeWithBuffer(partialFee);
-          let maxTransfer = balances.availableBalance.sub(adjFee);
+          let maxTransfer = balances.availableBalance.sub(
+            new BN(adjFee.toNumber()),
+          );
 
           if (!maxTransfer.gt(api.consts.balances.existentialDeposit)) {
             throw new Error('balance too low');
