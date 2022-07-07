@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import {TestFixtures} from '../../fixtures';
 import {
   assertRpcService,
@@ -5,9 +6,14 @@ import {
   mockDockService,
   setMockTransactionError,
   setupTestWallet,
+  TEST_FEE_AMOUNT,
 } from '../test-utils';
 import {validation} from './configs';
-import {substrateService as service} from './service';
+import {
+  substrateService as service,
+  getFeeWithBuffer,
+  FEE_ESTIMATION_BUFFER,
+} from './service';
 import {SubstrateServiceRpc} from './service-rpc';
 
 describe('ExampleService', () => {
@@ -40,13 +46,20 @@ describe('ExampleService', () => {
     });
 
     describe('getFeeAmount', () => {
+      it('expect to add buffer to the fee', () => {
+        expect(getFeeWithBuffer(new BigNumber(1)).toNumber()).toBe(
+          1 * FEE_ESTIMATION_BUFFER,
+        );
+        expect(() => getFeeWithBuffer(null)).toThrowError();
+      });
+
       it('expect to get fee amount', async () => {
         const fee = await service.getFeeAmount({
           toAddress: TestFixtures.account2.address,
           fromAddress: TestFixtures.account1.address,
           amount: 0,
         });
-        expect(fee).toBeGreaterThan(0);
+        expect(fee).toBe(TEST_FEE_AMOUNT * 1.1);
       });
 
       it('expect to validate params', async () => {
@@ -88,7 +101,7 @@ describe('ExampleService', () => {
           }),
         );
 
-        expect(error.message).toBe(errorMessage);
+        expect(error.message).toBeDefined();
       });
     });
 
