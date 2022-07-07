@@ -1,4 +1,3 @@
-import {BN_HUNDRED} from '@polkadot/util';
 import assert from 'assert';
 import {DOCK_TOKEN_UNIT, getPlainDockAmount} from '../../core/format-utils';
 import {dockService} from '../dock/service';
