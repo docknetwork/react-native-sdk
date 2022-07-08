@@ -14,6 +14,7 @@ jobs:
           node-version: '14.x'
           registry-url: https://registry.npmjs.org/
       - run: yarn install
+      - run: yarn build
       - run: |
           cd packages
           find . -maxdepth 1 -mindepth 1 -type d \( -path ./examples -o -path ./scripts \) -prune -o -type d -exec bash -c "cd '{}' && npm publish --access public" \;
