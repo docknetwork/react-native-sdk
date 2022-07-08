@@ -2,7 +2,7 @@ import {assertRpcService} from '../test-utils';
 import {DIDServiceRPC} from './service-rpc';
 import {didService as service} from './service';
 import {validation} from './config';
-import {DIDKeyManager} from '@docknetwork/wallet-sdk-dids';
+import {DIDKeyManager} from '@docknetwork/wallet-sdk-dids/src';
 
 describe('DID Service', () => {
   it('ServiceRpc', () => {

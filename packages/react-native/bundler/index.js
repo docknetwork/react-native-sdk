@@ -19,7 +19,6 @@ function build({entry, path, filename, callback}) {
           __dirname,
           '../../../node_modules/@polkadot/types/packageInfo.js',
         ),
-        '@docknetwork/wallet-sdk-dids': resolve(__dirname, '../../dids'),
       },
       fallback: {
         crypto: require.resolve('crypto-browserify'),
