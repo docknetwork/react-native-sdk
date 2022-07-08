@@ -10,7 +10,11 @@
         "webpack": "^5.67.0",
         "webpack-dev-server": "3.11.1",
         "react-native": "0.64.2",
-        "react-native-webview": "^11.4.3"
+        "react-native-webview": "^11.4.3",
+        "@docknetwork/wallet-sdk-core": "^0.2.3",
+        "@docknetwork/wallet-sdk-credentials": "^0.2.3",
+        "@docknetwork/wallet-sdk-transactions": "^0.2.3",
+        "@docknetwork/wallet-sdk-dids": "^0.2.3"
     },
     "devDependencies": {
 
