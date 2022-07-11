@@ -1,4 +1,4 @@
-import {DIDKeyManager} from '@docknetwork/wallet-sdk-dids';
+import {DIDKeyManager} from '@docknetwork/wallet-sdk-dids/src';
 import {
   serviceName,
   validation,
