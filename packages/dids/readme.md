@@ -5,6 +5,8 @@ DID stands for Decentralized IDentifiers. DIDs are meant to be globally unique i
 
 On React Native it's required to set up the WalletSDKProvider, described on [@docknetwork/wallet-sdk-react-native](https://www.npmjs.com/package/@docknetwork/wallet-sdk-react-native)
 
+Supports did:key
+
 ```js
 import {DIDKeyManager} from '@docknetwork/wallet-sdk-dids/lib';
 
