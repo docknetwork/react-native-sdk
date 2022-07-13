@@ -5,7 +5,7 @@ export const TestFixtures = {
     name: 'Account 1',
     mnemonic:
       'twenty fat wood hub lock cattle thought base lazy apology lyrics innocent',
-    address: '3Eq2WSbT2mZ3wJJA57CZAoURNV4FJ8z4fH4zVRJ7YTbx3rQS',
+    address: '393NFT43eUgKnEthAaKXnuCzizuxExMYULWrsjep5c1TmV4X',
     balance: 100,
     getKeyring: () =>
       getKeyring().addFromMnemonic(

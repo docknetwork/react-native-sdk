@@ -1,4 +1,6 @@
-import {BN_HUNDRED} from '@polkadot/util';
+import assert from 'assert';
+import BigNumber from 'bignumber.js';
+import BN from 'bn.js';
 import {DOCK_TOKEN_UNIT, getPlainDockAmount} from '../../core/format-utils';
 import {dockService} from '../dock/service';
 import {walletService} from '../wallet/service';
@@ -9,6 +11,14 @@ import {
   TransactionParams,
   validation,
 } from './configs';
+
+export const FEE_ESTIMATION_BUFFER = 1.1;
+
+export function getFeeWithBuffer(paymentFee: BigNumber) {
+  assert(!!paymentFee, 'paymentFee is required');
+
+  return new BigNumber(paymentFee).multipliedBy(FEE_ESTIMATION_BUFFER);
+}
 
 export class SubstrateService {
   rpcMethods = [
@@ -47,7 +57,11 @@ export class SubstrateService {
       amount,
     );
     const paymentInfo = await extrinsic.paymentInfo(account);
-    return paymentInfo.partialFee.toNumber() / DOCK_TOKEN_UNIT;
+    const fee = getFeeWithBuffer(paymentInfo.partialFee)
+      .dividedBy(DOCK_TOKEN_UNIT)
+      .toNumber();
+
+    return fee;
   }
 
   async sendTokens(params: TransactionParams) {
@@ -68,8 +82,10 @@ export class SubstrateService {
         .transfer(fromAddress, balances.availableBalance)
         .paymentInfo(account)
         .then(async ({partialFee}): void => {
-          const adjFee = partialFee.muln(110).div(BN_HUNDRED);
-          let maxTransfer = balances.availableBalance.sub(adjFee);
+          const adjFee = getFeeWithBuffer(partialFee);
+          let maxTransfer = balances.availableBalance.sub(
+            new BN(adjFee.toNumber()),
+          );
 
           if (!maxTransfer.gt(api.consts.balances.existentialDeposit)) {
             throw new Error('balance too low');
