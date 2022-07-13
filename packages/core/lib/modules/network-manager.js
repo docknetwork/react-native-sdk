@@ -11,12 +11,12 @@ export type NetworkId = 'mainnet' | 'testnet' | 'local' | 'custom';
 export const SUBSTRATE_NETWORKS = {
   mainnet: {
     name: 'Dock PoS Mainnet',
-    substrateUrl: 'wss://mainnet-node.dock.io',
+    substrateUrl: 'http://mainnet-val1.dock.io:9933',
     addressPrefix: 22,
   },
   testnet: {
     name: 'Dock PoS Testnet',
-    substrateUrl: 'wss://knox-1.dock.io',
+    substrateUrl: 'http://knox-1.dock.io:9933',
     addressPrefix: 21,
   },
   local: {
