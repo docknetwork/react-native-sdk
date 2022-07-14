@@ -5,6 +5,7 @@ The Dock Wallet SDK provides all the required functions to build a PolkaDot Wall
 For React Native usage please check [@docknetwork/wallet-sdk-react-native](https://www.npmjs.com/package/@docknetwork/wallet-sdk-react-native)
 
 This is the core package and includes basic functionalities such as:
+- Document storage following [Universal Wallet 2020 spec](https://w3c-ccg.github.io/universal-wallet-interop-spec/)
 - Manage a wallet (CRUD)
 - Manage accounts (CRUD)
 - Fetch account balances
