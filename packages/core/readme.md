@@ -1,6 +1,6 @@
 # Dock Wallet SDK
 
-The Dock Wallet SDK provides all the required functions to build a PolkaDot Wallet on top of a [Universal Wallet 2020](https://w3c-ccg.github.io/universal-wallet-interop-spec/) document storage. It supports both nodejs and React Native.
+The Dock Wallet SDK provides all the required functions to build a PolkaDot Wallet on top of a [Universal Wallet 2020](https://w3c-ccg.github.io/universal-wallet-interop-spec/) document storage. It supports both Node.js and React Native.
 
 For React Native usage please check [@docknetwork/wallet-sdk-react-native](https://www.npmjs.com/package/@docknetwork/wallet-sdk-react-native)
 
