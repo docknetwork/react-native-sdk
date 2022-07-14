@@ -1,60 +1,61 @@
-# React native SDK for Dock app
+# Dock Wallet SDK
 
-Using [polkadot-js](https://polkadot.js.org/) libraries in react native is a challange, due to a lack of WebAssembly support.
+The Dock Wallet SDK provides all the required functions to build a PolkaDot Wallet on top of a [Universal Wallet 2020](https://w3c-ccg.github.io/universal-wallet-interop-spec/) document storage. It supports both Node.js and React Native.
 
-The Dock Wallet SDK handles all the Polkadot web assembly in a webview, sending messages to the react native thread through a JSON RPC layer.
+For React Native usage please check [@docknetwork/wallet-sdk-react-native](https://www.npmjs.com/package/@docknetwork/wallet-sdk-react-native)
 
-All you need to do is wrap your app in a `WalletSDKProvider` and start building your Polkadot wallet.
+This is the core package and includes basic functionalities such as:
+- Document storage following [Universal Wallet 2020 spec](https://w3c-ccg.github.io/universal-wallet-interop-spec/)
+- Manage a wallet (CRUD)
+- Manage accounts (CRUD)
+- Fetch account balances
+- Wallet/Account backup
+- Import wallet/accounts
+
+You might require to install extra packages depending on your needs, please refer to:
+- [@docknetwork/wallet-sdk-react-native](https://www.npmjs.com/package/@docknetwork/wallet-sdk-react-native)
+- [@docknetwork/wallet-sdk-dids](https://www.npmjs.com/package/@docknetwork/wallet-sdk-dids)
+- [@docknetwork/wallet-sdk-transactions](https://www.npmjs.com/package/@docknetwork/wallet-sdk-transactions)
+- [@docknetwork/wallet-sdk-credentials](https://www.npmjs.com/package/@docknetwork/wallet-sdk-credentials)
 
 ## Installation
 ```js
 yarn add @docknetwork/wallet-sdk-core
-yarn add @docknetwork/wallet-sdk-react-native
 
 ```
 
 
 ## React Native Example
-The following example will create a wallet and allow the user to add accounts on it. Displaying the count of documents added to the wallet.
-
-Notice that the account documents are accessible through the `documents` object, and for each account created multiple documents will be added to the wallet.
 
 ```js
-import {Box, Button, NativeBaseProvider, Text} from 'native-base';
-import React, {useEffect} from 'react';
-import {
-  WalletSDKProvider,
-  useWallet,
-} from '@docknetwork/wallet-sdk-react-native/lib';
+import {Wallet} from '@docknetwork/wallet-sdk-core/lib/modules/wallet';
 
-const WalletDetails = function () {
-  const {wallet, status, documents} = useWallet();
+const wallet = await Wallet.create();
 
-  return (
-    <Box>
-      <Text>Wallet status: {status}</Text>
-      <Text>Wallet docs: {documents.length}</Text>
-      <Button onPress={() => wallet.accounts.create({name: 'test'})}>
-        <Text>Add Account</Text>
-      </Button>
-    </Box>
-  );
-};
+const account1 = await wallet.accounts.create({
+  name: 'test',
+});
 
-const App = () => {
-  return (
-    <NativeBaseProvider>
-      <WalletSDKProvider>
-        <Box p={8}>
-          <Text>Dock Wallet SDK Demo</Text>
-          <Text>Press on `add document` button to create a new account</Text>
-        </Box>
-        <WalletDetails />
-      </WalletSDKProvider>
-    </NativeBaseProvider>
-  );
-};
+console.log(`Account1 address ${account1.address}`);
+// result: Account1 address 3D1M9UnR684eBfVujjQr6ucPqvXERSxYxcVBFGAhRohhRXxq
 
-export default App;
+// Create account using an existing mnemonic
+const mnemonic =
+  'indicate mention thing discover clarify grief inherit vivid dish health market spoil';
+const account2 = await wallet.accounts.create({
+  name: 'Test',
+  mnemonic,
+});
+
+console.log(`Account2 address ${account2.address}`);
+
+// result: Account2 address 3FENesfZgFmBruv2H9Hc17GmobeTfxFAp8gHKXFmUtA38hcW
+
+// Fetch accounts balance
+const balance = await account1.getBalance();
+
+console.log('Account1 balance', balance);
+
+// result: Account1 balance 0
 
 ```
