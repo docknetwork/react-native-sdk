@@ -93,10 +93,10 @@ export function useDIDManagement() {
     [wallet],
   );
   const deleteDID = useCallback(
-    didParams => {
+    async didParams => {
       const {id} = didParams;
       if (typeof id === 'string' && id.length > 0) {
-        return wallet.remove(id);
+        return await wallet.remove(id);
       } else {
         throw Error('Document ID is not set');
       }
