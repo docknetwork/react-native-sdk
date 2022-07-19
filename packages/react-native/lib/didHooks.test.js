@@ -111,6 +111,7 @@ describe('DID Hooks', () => {
   test('Filter did list', () => {
     const {result} = renderHook(() => useDIDManagement());
     expect(result.current.didList.length).toBe(1);
+    expect(result.current.didList[0].type).toBe('DIDResolutionResponse');
   });
   test('Create new DID', async () => {
     const {result} = renderHook(() => useDIDManagement());
