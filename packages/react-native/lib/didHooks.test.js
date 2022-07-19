@@ -124,6 +124,17 @@ describe('DID Hooks', () => {
     });
     expect(walletResult.current.documents.length).toBe(4);
   });
+  test('Create new DID with invalid params', async () => {
+    const {result} = renderHook(() => useDIDManagement());
+
+    await expect(
+      result.current.createKeyDID({
+        derivePath: '',
+        type: 'sr25519',
+        name: 'DID Name',
+      }),
+    ).rejects.toThrowError('sr25519 keypair type  is not supported.');
+  });
   test('Edit DID', async () => {
     const {result} = renderHook(() => useDIDManagement());
     const {result: walletResult} = renderHook(() => useWallet());
@@ -134,6 +145,16 @@ describe('DID Hooks', () => {
     });
     expect(walletResult.current.documents[1].name).toBe('DID Name 2');
   });
+  test('Edit DID with invalid params', async () => {
+    const {result} = renderHook(() => useDIDManagement());
+
+    await expect(
+      result.current.editDID({
+        id: '',
+        name: 'DID Name 2',
+      }),
+    ).rejects.toThrowError('Document ID is not set');
+  });
   test('Delete DID', async () => {
     const {result} = renderHook(() => useDIDManagement());
 
@@ -142,5 +163,14 @@ describe('DID Hooks', () => {
     });
     const {result: walletResult} = renderHook(() => useWallet());
     expect(walletResult.current.documents.length).toBe(3);
+  });
+  test('Delete DID with invalid params', async () => {
+    const {result} = renderHook(() => useDIDManagement());
+
+    await expect(
+      result.current.deleteDID({
+        id: '',
+      }),
+    ).rejects.toThrowError('Document ID is not set');
   });
 });
