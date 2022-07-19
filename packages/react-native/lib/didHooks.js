@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo} from 'react';
+import {useCallback, useMemo} from 'react';
 import {didServiceRPC} from '@docknetwork/wallet-sdk-core/lib/services/dids';
 import {useWallet} from './index';
 export function useDIDUtils() {
@@ -60,13 +60,14 @@ export function useDIDManagement() {
       const {derivePath, type = 'ed25519', name} = didParams;
       if (type === 'ed25519') {
         const keydoc = await createDIDKeypairDocument({derivePath, type});
+
         const {didDocumentResolution} = await createDIDKeyDocument(keydoc, {
           name,
         });
         await wallet.add(keydoc);
         await wallet.add(didDocumentResolution);
       } else {
-        throw new Error(`${type} keypair type  is not supported.`);
+        throw Error(`${type} keypair type  is not supported.`);
       }
     },
     [createDIDKeyDocument, createDIDKeypairDocument, wallet],
@@ -92,12 +93,12 @@ export function useDIDManagement() {
     [wallet],
   );
   const deleteDID = useCallback(
-    async didParams => {
+    didParams => {
       const {id} = didParams;
       if (typeof id === 'string' && id.length > 0) {
-        await wallet.remove(id);
+        return wallet.remove(id);
       } else {
-        throw new Error('Document ID is not set');
+        throw Error('Document ID is not set');
       }
     },
     [wallet],
