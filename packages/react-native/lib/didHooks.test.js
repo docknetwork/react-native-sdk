@@ -123,6 +123,9 @@ describe('DID Hooks', () => {
       name: 'DID Name',
     });
     expect(walletResult.current.documents.length).toBe(4);
+    expect(
+      walletResult.current.documents[3].didDocument.id.indexOf('did:key'),
+    ).toBe(0);
   });
   test('Create new DID with invalid params', async () => {
     const {result} = renderHook(() => useDIDManagement());
