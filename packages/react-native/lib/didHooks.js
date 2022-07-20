@@ -67,7 +67,7 @@ export function useDIDManagement() {
         await wallet.add(keydoc);
         await wallet.add(didDocumentResolution);
       } else {
-        throw Error(`${type} keypair type  is not supported.`);
+        throw Error(`${type} keypair type is not supported.`);
       }
     },
     [createDIDKeyDocument, createDIDKeypairDocument, wallet],
