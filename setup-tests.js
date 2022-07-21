@@ -27,24 +27,6 @@ NetworkManager.getInstance().setNetworkId('testnet');
 
 jest.mock('@react-native-async-storage/async-storage', () => 'AsyncStorage');
 
-jest.mock('@docknetwork/wallet-sdk-dids', () => {
-  const originalModule = jest.requireActual('@docknetwork/wallet-sdk-dids');
-  const moduleFunctions = {
-    keypairToDIDKeyDocument: jest.fn().mockResolvedValue({
-      didDocument: {},
-      keyDoc: {},
-    }),
-    getDIDResolution: jest.fn().mockReturnValue({
-      id: '',
-    }),
-  };
-
-  return {
-    ...originalModule,
-    DIDKeyManager: moduleFunctions,
-  };
-});
-
 jest.mock('@docknetwork/wallet-sdk-core/lib/services/dids', () => {
   const originalModule = jest.requireActual(
     '@docknetwork/wallet-sdk-core/lib/services/dids',
