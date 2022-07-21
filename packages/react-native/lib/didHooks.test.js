@@ -136,7 +136,7 @@ describe('DID Hooks', () => {
         type: 'sr25519',
         name: 'DID Name',
       }),
-    ).rejects.toThrowError('sr25519 keypair type  is not supported.');
+    ).rejects.toThrowError('sr25519 keypair type is not supported.');
   });
   test('Edit DID', async () => {
     const {result} = renderHook(() => useDIDManagement());
