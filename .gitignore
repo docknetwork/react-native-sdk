@@ -29,3 +29,7 @@ yarn-error.log*
 .idea
 poc
 bundle.js
+
+*.lock
+*.management
+*.js.LICENSE.txt
