@@ -1,5 +1,6 @@
 import {Account} from './account';
 import {Wallet} from './wallet';
+import {NetworkManager} from './network-manager';
 import {TestFixtures} from '../fixtures';
 
 describe('Account', () => {
@@ -7,6 +8,7 @@ describe('Account', () => {
   let account: Account;
 
   beforeAll(async () => {
+    NetworkManager.getInstance().setNetworkId('testnet');
     wallet = await Wallet.create();
     await wallet.ensureNetwork();
     account = await wallet.accounts.create({

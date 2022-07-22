@@ -1,6 +1,9 @@
 import '@testing-library/jest-dom';
 import {JSDOM} from 'jsdom';
 import {NetworkManager} from './packages/core/lib/modules/network-manager';
+import {getStorage} from './packages/core/lib/core/storage';
+
+NetworkManager.getInstance().setNetworkId('testnet');
 
 process.env.ENCRYPTION_KEY =
   '776fe87eec8c9ba8417beda00b23cf22f5e134d9644d0a195cd9e0b7373760c1';
@@ -23,7 +26,7 @@ global.navigator = {
 
 require('./packages/core/lib/setup-tests');
 
-NetworkManager.getInstance().setNetworkId('testnet');
+
 
 jest.mock('@react-native-async-storage/async-storage', () => 'AsyncStorage');
 
@@ -44,3 +47,5 @@ jest.mock('@docknetwork/wallet-sdk-dids', () => {
     DIDKeyManager: moduleFunctions,
   };
 });
+
+getStorage().setItem('networkId', 'testnet');
