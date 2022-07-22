@@ -1,5 +1,6 @@
 import {fetchTransactions} from './subscan';
 import {mockSubscanParamsFailure, mockSubscanSuccess} from '../test/axiosMocks';
+import {getPromiseError} from '../services/test-utils';
 
 describe('Subscan integration', () => {
   describe('fetchTransactions', () => {
@@ -34,21 +35,22 @@ describe('Subscan integration', () => {
     });
 
     it('validate adddress param', async () => {
-      await expect(() => {
-        return fetchTransactions({});
-      }).toThrowError('address must be a string');
+      const error = await getPromiseError(() => fetchTransactions({}));
+      expect(error.message).toBe('address must be a string');
     });
 
     it('validate page param', async () => {
-      await expect(() => {
-        return fetchTransactions({address: '123', page: 'test'});
-      }).toThrowError('page must be a number');
+      const error = await getPromiseError(() =>
+        fetchTransactions({address: '123', page: 'test'}),
+      );
+      await expect(error.message).toBe('page must be a number');
     });
 
     it('validate itemsPerPage param', async () => {
-      await expect(() => {
-        return fetchTransactions({address: '123', itemsPerPage: 'test'});
-      }).toThrowError('temsPerPage must be a number');
+      const error = await getPromiseError(() =>
+        fetchTransactions({address: '123', itemsPerPage: 'test'}),
+      );
+      await expect(error.message).toBe('itemsPerPage must be a number');
     });
   });
 });

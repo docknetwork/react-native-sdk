@@ -19,6 +19,7 @@ export async function initRealm() {
     schema,
     schemaVersion: 3,
     deleteRealmIfMigrationNeeded: true,
+    inMemory: true,
     // migration: () => {
     //   // No migration required so far
     // },
