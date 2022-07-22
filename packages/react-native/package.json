@@ -17,6 +17,6 @@
         "@docknetwork/wallet-sdk-dids": "^0.2.3"
     },
     "devDependencies": {
-
+        "@testing-library/react-hooks": "^8.0.0"
     }
 }
