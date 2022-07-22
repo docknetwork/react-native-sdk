@@ -3,7 +3,9 @@ import {JSDOM} from 'jsdom';
 import {NetworkManager} from './packages/core/lib/modules/network-manager';
 import {getStorage} from './packages/core/lib/core/storage';
 import './packages/transactions/lib/schema';
+import {initRealm} from '@docknetwork/wallet-sdk-core/lib/core/realm';
 
+initRealm();
 NetworkManager.getInstance().setNetworkId('testnet');
 
 process.env.ENCRYPTION_KEY =
@@ -26,8 +28,6 @@ global.navigator = {
 };
 
 require('./packages/core/lib/setup-tests');
-
-
 
 jest.mock('@react-native-async-storage/async-storage', () => 'AsyncStorage');
 
