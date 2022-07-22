@@ -39,8 +39,4 @@ describe('DID module', () => {
     expect(didResolution).toHaveProperty('expires');
     expect(didResolution).toHaveProperty('didDocument', didDocument);
   });
-
-  it('create did dock', () => {
-    
-  })
 });
