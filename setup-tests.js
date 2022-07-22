@@ -2,6 +2,7 @@ import '@testing-library/jest-dom';
 import {JSDOM} from 'jsdom';
 import {NetworkManager} from './packages/core/lib/modules/network-manager';
 import {getStorage} from './packages/core/lib/core/storage';
+import './packages/transactions/lib/schema';
 
 NetworkManager.getInstance().setNetworkId('testnet');
 
