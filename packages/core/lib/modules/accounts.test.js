@@ -2,7 +2,6 @@ import {substrateService} from '../services/substrate';
 import {TestFixtures} from '../fixtures';
 import {Accounts} from './accounts';
 import {Wallet} from './wallet';
-import {NetworkManager} from './network-manager';
 
 describe('Accounts module', () => {
   let wallet: Wallet;
