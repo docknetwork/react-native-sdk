@@ -45,6 +45,10 @@ export function clearCacheData() {
 }
 
 export function getRealm(): Realm {
+  if (!realm) {
+    throw new Error('realm not defined');
+  }
+
   return realm;
 }
 
