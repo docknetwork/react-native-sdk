@@ -1,27 +1,5 @@
-import Realm from 'realm';
-import './schema';
 import {TransactionStatus, Transactions} from './transactions';
-import {
-  getSchemas,
-  setRealm,
-} from '@docknetwork/wallet-sdk-core/lib/core/realm';
-
-global.Realm = Realm;
-
-const initMockRealm = async () => {
-  const realm = await Realm.open({
-    path: 'dock_unit_test',
-    schema: getSchemas(),
-    schemaVersion: 3,
-    deleteRealmIfMigrationNeeded: false,
-    inMemory: true,
-    migration: () => {},
-  });
-
-  setRealm(realm);
-
-  return realm;
-};
+import {getRealm} from '@docknetwork/wallet-sdk-core/lib/core/realm';
 
 const initMockTransactions = () => {
   const today = new Date();
@@ -146,7 +124,7 @@ describe('TransactionsModule', () => {
   describe('Transactions history', () => {
     let realm;
     beforeEach(async () => {
-      realm = await initMockRealm();
+      realm = getRealm();
       for (const tx of initMockTransactions()) {
         await realm.write(() => {
           realm.create('Transaction', tx, 'modified');
@@ -157,7 +135,6 @@ describe('TransactionsModule', () => {
       realm.write(() => {
         realm.deleteAll();
       });
-      await realm.close();
     });
     it('expect to filter only transactions for the given address', async () => {
       const accountAddress = '3C7Hq5jQGxeYzL7LnVASn48tEfr6D7yKtNYSuXcgioQoWWsB';
