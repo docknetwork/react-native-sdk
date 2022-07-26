@@ -104,12 +104,51 @@ export function useDIDManagement() {
     [wallet],
   );
 
+  const importDID = useCallback(
+    async ({encryptedJSONWallet, password}) => {
+      try {
+        const rawDocs = await wallet.getDocumentsFromEncryptedWallet({
+          encryptedJSONWallet,
+          password,
+        });
+        const docs = rawDocs.map(rawDoc => {
+          if (Array.isArray(rawDoc.type) && rawDoc.type.length > 0) {
+            return {
+              ...rawDoc,
+              type: rawDoc.type[0],
+            };
+          }
+          return rawDoc;
+        });
+
+        for (const doc of docs) {
+          const existingDocs = await wallet.query({
+            id: doc.id,
+          });
+          if (existingDocs.length === 0) {
+            await wallet.add(doc);
+          }
+        }
+        return docs;
+      } catch (e) {
+        switch (e.message) {
+          case 'No matching recipient found for key agreement key.':
+            throw new Error('Incorrect password');
+          default:
+            throw e;
+        }
+      }
+    },
+    [wallet],
+  );
+
   return useMemo(() => {
     return {
       createKeyDID,
       editDID,
       deleteDID,
       didList,
+      importDID,
     };
-  }, [createKeyDID, deleteDID, editDID, didList]);
+  }, [createKeyDID, editDID, deleteDID, didList, importDID]);
 }
