@@ -85,7 +85,7 @@ describe('DID Service', () => {
     };
     const spy = jest.spyOn(DIDKeyManager, 'getDIDResolution');
     const res = await service.getDIDResolution({didDocument});
-    expect(DIDKeyManager.getDIDResolution).toBeCalledWith(didDocument);
+    expect(DIDKeyManager.getDIDResolution).toBeCalledWith(didDocument, {});
     expect(res).toBeDefined();
     expect(res).toHaveProperty('id');
     spy.mockReset();
