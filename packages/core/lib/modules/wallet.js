@@ -368,6 +368,12 @@ class Wallet {
     this.migrated = await migrate({wallet: this});
     await this.eventManager.emit(WalletEvents.walletImported);
   }
+  async getDocumentsFromEncryptedWallet({encryptedJSONWallet, password}) {
+    return walletService.getDocumentsFromEncryptedWallet({
+      encryptedJSONWallet,
+      password,
+    });
+  }
 
   /**
    * Get wallet module instance

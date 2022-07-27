@@ -1,6 +1,15 @@
 import '@testing-library/jest-dom';
 import {JSDOM} from 'jsdom';
 import {NetworkManager} from './packages/core/lib/modules/network-manager';
+import {getStorage} from './packages/core/lib/core/storage';
+import './packages/transactions/lib/schema';
+import {initRealm} from '@docknetwork/wallet-sdk-core/lib/core/realm';
+import {mockDockService} from '@docknetwork/wallet-sdk-core/lib/services/test-utils';
+
+initRealm();
+NetworkManager.getInstance().setNetworkId('testnet');
+
+mockDockService();
 
 process.env.ENCRYPTION_KEY =
   '776fe87eec8c9ba8417beda00b23cf22f5e134d9644d0a195cd9e0b7373760c1';
@@ -23,24 +32,6 @@ global.navigator = {
 
 require('./packages/core/lib/setup-tests');
 
-NetworkManager.getInstance().setNetworkId('testnet');
-
 jest.mock('@react-native-async-storage/async-storage', () => 'AsyncStorage');
 
-jest.mock('@docknetwork/wallet-sdk-dids', () => {
-  const originalModule = jest.requireActual('@docknetwork/wallet-sdk-dids');
-  const moduleFunctions = {
-    keypairToDIDKeyDocument: jest.fn().mockResolvedValue({
-      didDocument: {},
-      keyDoc: {},
-    }),
-    getDIDResolution: jest.fn().mockReturnValue({
-      id: '',
-    }),
-  };
-
-  return {
-    ...originalModule,
-    DIDKeyManager: moduleFunctions,
-  };
-});
+getStorage().setItem('networkId', 'testnet');

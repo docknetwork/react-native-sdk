@@ -1,4 +1,4 @@
-import {DIDKeyManager} from '@docknetwork/wallet-sdk-dids';
+import {DIDKeyManager} from '@docknetwork/wallet-sdk-dids/src';
 import {
   serviceName,
   validation,
@@ -26,16 +26,18 @@ class DIDService {
   }
   getDIDResolution(params: GetDIDResolutionParams) {
     validation.getDIDResolution(params);
-    const {didDocument} = params;
-    return DIDKeyManager.getDIDResolution(didDocument);
+    const {didDocument, didDocumentCustomProp = {}} = params;
+    return DIDKeyManager.getDIDResolution(didDocument, didDocumentCustomProp);
   }
-  async generateKeyDoc() {
+  async generateKeyDoc(params) {
+    validation.generateKeyDoc(params);
+    const {derivePath = '', type = 'ed25519'} = params;
     const mnemonic = await utilCryptoService.mnemonicGenerate(12);
 
     const keyring = keyringService.getKeyringPair({
       mnemonic,
-      derivePath: '',
-      type: 'ed25519',
+      derivePath,
+      type,
     });
 
     return polkadotToKeydoc(keyring);

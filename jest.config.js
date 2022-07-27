@@ -7,7 +7,7 @@ module.exports = {
       functions: 10,
       lines: 10,
       statements: 10,
-    }
+    },
   },
   transform: {
     '^.+\\.(ts|js)$': 'babel-jest',
@@ -24,6 +24,7 @@ module.exports = {
     '@digitalbazaar/ed25519-verification-key-2018':
       '@digitalbazaar/ed25519-verification-key-2018/src/Ed25519VerificationKey2018',
     '@digitalbazaar/minimal-cipher': '@digitalbazaar/minimal-cipher/Cipher',
+    '@digitalbazaar/did-method-key': '@digitalbazaar/did-method-key/lib/main',
   },
   transformIgnorePatterns: [
     '/node_modules/(?!@polkadot|@babel|@docknetwork|@digitalbazaar)',

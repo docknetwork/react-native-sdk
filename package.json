@@ -101,8 +101,10 @@
   },
   "scripts": {
     "start": "node ./scripts/start",
-    "build": "node ./scripts/build",
-    "test": "export NODE_OPTIONS=\"--max_old_space_size=8096\"; jest --verbose --coverage --collectCoverageFrom=packages/**/*.{js,jsx,ts,tsx}",
+    "build": "node  ./packages/react-native/bundler/build.js",
+    "build-and-copy": "node  ./packages/react-native/bundler/build-and-copy.js",
+    "build-packages": "yarn workspace @docknetwork/wallet-sdk-dids build",
+    "test": "yarn build-packages; export NODE_OPTIONS=\"--max_old_space_size=8096\"; jest --verbose --coverage --collectCoverageFrom=packages/**/*.{js,jsx,ts,tsx}",
     "test:integration": "jest ./integration-tests/*.test.js --verbose --watchAll",
     "examples:all": "nodemon --exec NODE_ENV=development npx babel-node ./examples/index.js",
     "lint": "eslint './packages/**/*.js' --max-warnings=0 --ignore-path=.prettierignore",
@@ -110,7 +112,8 @@
     "format": "prettier './src/**/*.{js,json}' --write",
     "exec": "BABEL_ENV=development; babel-node",
     "docs": "documentation build packages/core/lib/** -f html -o docs",
-    "link-packages": "sh ./scripts/link-packages.sh"
+    "link-packages": "sh ./scripts/link-packages.sh",
+    "postinstall": "sh ./scripts/fix-deps.sh"
   },
   "eslintConfig": {
     "extends": [
@@ -137,6 +140,8 @@
   },
   "dependencies": {
     "@babel/node": "^7.16.0",
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
+    "@babel/plugin-proposal-private-property-in-object": "^7.18.6",
     "@babel/plugin-transform-flow-strip-types": "^7.16.0",
     "@babel/preset-flow": "^7.16.7",
     "@docknetwork/wallet-sdk-dids": "^0.2.3",

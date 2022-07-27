@@ -7,7 +7,7 @@ module.exports = {
       functions: 10,
       lines: 10,
       statements: 10,
-    }
+    },
   },
   transform: {
     '^.+\\.(ts|js)$': 'babel-jest',

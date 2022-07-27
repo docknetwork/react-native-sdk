@@ -18,7 +18,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {AccountDetails} from '@docknetwork/wallet-sdk-core/lib/modules/account';
 import {DocumentType} from '@docknetwork/wallet-sdk-core/lib/types';
 import './rn-rpc-server';
-
+import {useDIDManagement, useDIDUtils} from './didHooks';
 export type WalletSDKContextProps = {
   wallet: Wallet,
   status: string,
@@ -30,6 +30,7 @@ export const WalletSDKContext = React.createContext({
 
 setStorage(AsyncStorage);
 
+export {useDIDManagement, useDIDUtils};
 export function getStorage() {
   return AsyncStorage;
 }

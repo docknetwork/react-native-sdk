@@ -10,6 +10,7 @@ node_modules
 /out
 # production
 /build
+.bundle
 
 /dock
 /dock.management
@@ -27,4 +28,8 @@ yarn-debug.log*
 yarn-error.log*
 .idea
 poc
+bundle.js
 
+*.lock
+*.management
+*.js.LICENSE.txt
