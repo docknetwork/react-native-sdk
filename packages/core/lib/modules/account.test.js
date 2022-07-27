@@ -1,5 +1,6 @@
 import {Account} from './account';
 import {Wallet} from './wallet';
+import {NetworkManager} from './network-manager';
 import {TestFixtures} from '../fixtures';
 
 describe('Account', () => {
@@ -7,6 +8,7 @@ describe('Account', () => {
   let account: Account;
 
   beforeAll(async () => {
+    NetworkManager.getInstance().setNetworkId('testnet');
     wallet = await Wallet.create();
     await wallet.ensureNetwork();
     account = await wallet.accounts.create({
@@ -33,15 +35,6 @@ describe('Account', () => {
   it('expect to get keyring pair', async () => {
     const pair = await account.getKeyPair();
     expect(pair.address).toBe(TestFixtures.account1.address);
-  });
-
-  it('expect to get balance', () => {
-    jest.spyOn(account.accounts, 'getBalance');
-    account.getBalance();
-    expect(account.accounts.getBalance).toBeCalledWith(
-      account.address,
-      undefined,
-    );
   });
 
   it('expect to export account', () => {
