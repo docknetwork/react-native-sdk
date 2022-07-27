@@ -1,7 +1,7 @@
 import {DIDKeyManager} from '../src';
 
 describe('DID module', () => {
-  it('Create DID', async () => {
+  it('Create DID key', async () => {
     const keyDoc = {
       id: 'did:key:z6MkhN7PBjWgSMQ24Bebdpvvw8fVRv7m6MHDqiwTKozzBgrJ#z6MkhN7PBjWgSMQ24Bebdpvvw8fVRv7m6MHDqiwTKozzBgrJ',
       controller: 'did:key:z6MkhN7PBjWgSMQ24Bebdpvvw8fVRv7m6MHDqiwTKozzBgrJ',

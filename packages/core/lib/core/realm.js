@@ -19,6 +19,7 @@ export async function initRealm() {
     schema,
     schemaVersion: 3,
     deleteRealmIfMigrationNeeded: true,
+    inMemory: true,
     // migration: () => {
     //   // No migration required so far
     // },
@@ -44,6 +45,10 @@ export function clearCacheData() {
 }
 
 export function getRealm(): Realm {
+  if (!realm) {
+    throw new Error('realm not defined');
+  }
+
   return realm;
 }
 
