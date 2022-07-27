@@ -41,6 +41,7 @@ export class WalletService {
     WalletService.prototype.unlock,
     WalletService.prototype.update,
     WalletService.prototype.healthCheck,
+    WalletService.prototype.getDocumentsFromEncryptedWallet,
   ];
 
   constructor() {
@@ -274,6 +275,27 @@ export class WalletService {
     validation.getDocumentById(id);
 
     return this.wallet.getStorageDocument({id}).then(doc => doc.content);
+  }
+
+  async getDocumentsFromEncryptedWallet(params) {
+    validation.getDocumentsFromEncryptedWallet(params);
+    const {encryptedJSONWallet, password} = params;
+    const tempMemoryWallet = new MemoryWallet('tempWallet');
+    await tempMemoryWallet.import(
+      typeof encryptedJSONWallet === 'object'
+        ? encryptedJSONWallet
+        : JSON.parse(encryptedJSONWallet),
+      password,
+    );
+    await tempMemoryWallet.sync();
+    const docs = tempMemoryWallet.contents.map(doc => {
+      return doc;
+    });
+    for (const doc of docs) {
+      await tempMemoryWallet.remove(doc.id);
+    }
+    await tempMemoryWallet.sync();
+    return docs;
   }
 }
 

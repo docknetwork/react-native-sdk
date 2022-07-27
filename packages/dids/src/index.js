@@ -22,9 +22,11 @@ export const DIDKeyManager = (function () {
     return {didDocument, keyDoc};
   };
 
-  const getDIDResolution = didDocument => {
+  const getDIDResolution = (didDocument, didDocumentCustomProp = {}) => {
     const expiryDate = new Date();
     expiryDate.setFullYear(expiryDate.getFullYear() + 1000);
+
+    const {name} = didDocumentCustomProp;
     return {
       '@context': DID_DEFAULT_CONTEXT,
       id: uuidv4(),
@@ -32,6 +34,7 @@ export const DIDKeyManager = (function () {
       correlation: [],
       created: new Date().toISOString(),
       expires: expiryDate.toISOString(),
+      name,
       didDocument,
     };
   };
