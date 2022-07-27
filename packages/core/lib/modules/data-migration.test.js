@@ -13,12 +13,8 @@ describe('DataMigration', () => {
     let wallet: Wallet;
 
     beforeAll(async () => {
-      global.localStorage.setItem(
-        'dock-wallet',
-        JSON.stringify(walletLegacyData),
-      );
+      global.localStorage.setItem('wallet', JSON.stringify(walletLegacyData));
       wallet = await Wallet.create();
-
       await wallet.load();
       await wallet.ensureNetwork();
     });
