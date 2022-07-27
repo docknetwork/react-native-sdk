@@ -14,6 +14,15 @@ export const validation = {
   getDIDResolution: ({didDocument}: GetDIDResolutionParams) => {
     assert(typeof didDocument.id === 'string', 'invalid didDocument');
   },
+
+  generateKeyDoc: ({derivePath, type}: GenerateKeyDocParams) => {
+    if (derivePath) {
+      assert(typeof derivePath === 'string', 'invalid derivePath');
+    }
+    if (type) {
+      assert(typeof type === 'string', 'invalid type');
+    }
+  },
 };
 
 export type KeypairToDIDKeyDocumentParams = {
@@ -22,4 +31,9 @@ export type KeypairToDIDKeyDocumentParams = {
 
 export type GetDIDResolutionParams = {
   didDocument: any,
+};
+
+export type GenerateKeyDocParams = {
+  type: string,
+  derivePath: string,
 };
