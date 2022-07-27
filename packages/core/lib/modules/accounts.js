@@ -1,5 +1,5 @@
 import assert from 'assert';
-import {walletService} from '../services/wallet';
+import {walletService} from '../services/wallet/service';
 import {utilCryptoService} from '../services/util-crypto';
 import {keyringService} from '../services/keyring';
 import {substrateService} from '../services/substrate';
