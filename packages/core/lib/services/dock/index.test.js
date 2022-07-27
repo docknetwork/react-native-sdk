@@ -54,15 +54,5 @@ describe('DockService', () => {
       expect(error.message).toBe('dock is already initialized');
       mock.clear();
     });
-
-    // it('throw error if connectino in progress', async () => {
-    //   const mock = mockDockSdkConnection();
-    //   const error = await getPromiseError(async () => {
-    //     doConnect();
-    //     await doConnect();
-    //   });
-    //   expect(error.message).toBe('there is a connection in progress');
-    //   mock.clear();
-    // });
   });
 });
