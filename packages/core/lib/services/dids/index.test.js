@@ -2,7 +2,7 @@ import {assertRpcService} from '../test-utils';
 import {DIDServiceRPC} from './service-rpc';
 import {didService as service} from './service';
 import {validation} from './config';
-import {DIDKeyManager} from '@docknetwork/wallet-sdk-dids';
+import {DIDKeyManager} from '@docknetwork/wallet-sdk-dids/src';
 
 describe('DID Service', () => {
   it('ServiceRpc', () => {
@@ -20,16 +20,23 @@ describe('DID Service', () => {
       correlation: ['4058a72a-9523-11ea-bb37-0242ac130002'],
       controller: 'did:key:z6MkjjCpsoQrwnEmqHzLdxWowXk5gjbwor4urC1RPDmGeV8r',
       type: 'Ed25519VerificationKey2018',
+      publicKeyMultibase: 'z3urLbVGF6ouYwgotxFy6637VcLqugU2s9i2XVY2yGU4v',
+      privateKeyMultibase:
+        'z3rF4Jhp7vF6tavGZCSgkdMM3ANLB7YpmzfRcB5FTs1Q7EgN6u5cCwzCaHCDYcestRSEHzjF82TvJUaj3mdqcbGnS',
       privateKeyBase58:
         '3CQCBKF3Mf1tU5q1FLpHpbxYrNYxLiZk4adDtfyPEfc39Wk6gsTb2qoc1ZtpqzJYdM1rG4gpaD3ZVKdkiDrkLF1p',
       publicKeyBase58: '6GwnHZARcEkJio9dxPYy6SC5sAL6PxpZAB6VYwoFjGMU',
     };
+    const spy = jest.spyOn(DIDKeyManager, 'keypairToDIDKeyDocument');
+
     const res = await service.keypairToDIDKeyDocument({keypairDoc});
 
     expect(DIDKeyManager.keypairToDIDKeyDocument).toBeCalledWith(keypairDoc);
     expect(res).toBeDefined();
     expect(res).toHaveProperty('didDocument');
     expect(res).toHaveProperty('keyDoc');
+
+    spy.mockReset();
   });
 
   it('expect to get DID Resolution from DID document', async () => {
@@ -76,9 +83,11 @@ describe('DID Service', () => {
       ],
       keyAgreement: ['#z6LScrLMVd9jvbphPeQkGffSeB99EWSYqAnMg8rGiHCgz5ha'],
     };
+    const spy = jest.spyOn(DIDKeyManager, 'getDIDResolution');
     const res = await service.getDIDResolution({didDocument});
-    expect(DIDKeyManager.getDIDResolution).toBeCalledWith(didDocument);
+    expect(DIDKeyManager.getDIDResolution).toBeCalledWith(didDocument, {});
     expect(res).toBeDefined();
     expect(res).toHaveProperty('id');
+    spy.mockReset();
   });
 });

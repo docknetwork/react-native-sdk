@@ -7,6 +7,7 @@ import {
   QueryParams,
   serviceName,
   UpdateParams,
+  GetDocumentsFromEncryptedWallet,
   validation,
 } from './configs';
 
@@ -89,5 +90,10 @@ export class WalletServiceRpc extends RpcService {
   resolveCorrelations(address: string) {
     validation.resolveCorrelations(address);
     return this.call('resolveCorrelations', address);
+  }
+
+  getDocumentsFromEncryptedWallet(params: GetDocumentsFromEncryptedWallet) {
+    validation.getDocumentsFromEncryptedWallet(params);
+    return this.call('getDocumentsFromEncryptedWallet', params);
   }
 }

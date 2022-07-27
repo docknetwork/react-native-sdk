@@ -53,6 +53,16 @@ export const validation = {
   exportWallet(password: string) {
     assertPassword(password);
   },
+  getDocumentsFromEncryptedWallet({
+    encryptedJSONWallet,
+    password,
+  }: GetDocumentsFromEncryptedWallet) {
+    assert(
+      typeof encryptedJSONWallet === 'object',
+      `invalid json data: ${encryptedJSONWallet}`,
+    );
+    assertPassword(password);
+  },
   importWallet({json, password}: ImportWalletParams) {
     assert(typeof json === 'object', `invalid json data: ${json}`);
     assertPassword(password);
@@ -99,6 +109,11 @@ export type CreateAccountDocumentsParams = {
   mnemonic?: string,
   type?: KeypairType,
   derivePath?: string,
+};
+
+export type GetDocumentsFromEncryptedWallet = {
+  encryptedJSONWallet: any,
+  password: string,
 };
 
 export type QueryParams = any;
