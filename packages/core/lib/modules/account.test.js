@@ -37,15 +37,6 @@ describe('Account', () => {
     expect(pair.address).toBe(TestFixtures.account1.address);
   });
 
-  // it('expect to get balance', () => {
-  //   jest.spyOn(account.accounts, 'getBalance');
-  //   account.getBalance();
-  //   expect(account.accounts.getBalance).toBeCalledWith(
-  //     account.address,
-  //     undefined,
-  //   );
-  // });
-
   it('expect to export account', () => {
     const password = '123';
     jest.spyOn(account.accounts, 'exportAccount');
