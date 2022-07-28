@@ -429,21 +429,21 @@ describe('DID Hooks', () => {
       }),
     ).rejects.toThrowError('An error occurred');
   });
-  // test('Export DID', async () => {
-  //   const {result} = renderHook(() => useDIDManagement());
-  //   const {result: walletResult} = renderHook(() => useWallet());
-  //   await result.current.exportDID({
-  //     id: 'e8fc7810-9524-11ea-bb37-0242ac130002n',
-  //     password: 'test',
-  //   });
-  //   expect(walletResult.current.wallet.exportDocuments).toBeCalled();
-  //   expect(walletResult.current.wallet.getDocumentById).toBeCalledWith(
-  //     'e8fc7810-9524-11ea-bb37-0242ac130002n',
-  //   );
-  //   expect(walletResult.current.wallet.resolveCorrelations).toBeCalledWith(
-  //     'e8fc7810-9524-11ea-bb37-0242ac130002n',
-  //   );
-  // });
+  test('Export DID', async () => {
+    const {result} = renderHook(() => useDIDManagement());
+    const {result: walletResult} = renderHook(() => useWallet());
+    await result.current.exportDID({
+      id: 'e8fc7810-9524-11ea-bb37-0242ac130002n',
+      password: 'test',
+    });
+    expect(walletResult.current.wallet.exportDocuments).toBeCalled();
+    expect(walletResult.current.wallet.getDocumentById).toBeCalledWith(
+      'e8fc7810-9524-11ea-bb37-0242ac130002n',
+    );
+    expect(walletResult.current.wallet.resolveCorrelations).toBeCalledWith(
+      'e8fc7810-9524-11ea-bb37-0242ac130002n',
+    );
+  });
   test('Export DID with invalid doc id', async () => {
     const {result} = renderHook(() => useDIDManagement());
     // const {result: walletResult} = renderHook(() => useWallet());
