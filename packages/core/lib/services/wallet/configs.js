@@ -67,8 +67,18 @@ export const validation = {
     assert(typeof json === 'object', `invalid json data: ${json}`);
     assertPassword(password);
   },
-  exportDocuments({documents}: ExportDocuments) {
+  exportDocuments({documents, password}: ExportDocuments) {
     assert(Array.isArray(documents), 'Invalid Documents');
+    assert(documents.length > 0, 'Cannot export empty documents');
+    for (const document of documents) {
+      assert(typeof document.id === 'string', 'Document ID is required');
+      assert(
+        typeof document['@context'] !== 'undefined',
+        '@context is required',
+      );
+    }
+
+    assertPassword(password);
   },
   createAccountDocuments(params: CreateAccountDocumentsParams) {
     const {name, json, password, mnemonic, type} = params;

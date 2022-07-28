@@ -271,5 +271,93 @@ describe('WalletService', () => {
         );
       });
     });
+    describe('exportDocuments', () => {
+      it('expect to validate params', async () => {
+        const error0 = await getPromiseError(() =>
+          service.exportDocuments({documents: {}}),
+        );
+        expect(error0.message).toBe('Invalid Documents');
+
+        const error1 = await getPromiseError(() =>
+          service.exportDocuments({documents: []}),
+        );
+        expect(error1.message).toBe('Cannot export empty documents');
+
+        const error2 = await getPromiseError(() =>
+          service.exportDocuments({
+            documents: [
+              {
+                '@context': [
+                  'https://www.w3.org/2018/credentials/v1',
+                  'https://w3id.org/wallet/v1',
+                ],
+                id: 'did:key:z6MkhN7PBjWgSMQ24Bebdpvvw8fVRv7m6MHDqiwTKozzBgrJ#z6MkhN7PBjWgSMQ24Bebdpvvw8fVRv7m6MHDqiwTKozzBgrJ',
+              },
+            ],
+          }),
+        );
+        expect(error2.message).toBe('invalid password: undefined');
+
+        const error3 = await getPromiseError(() =>
+          service.exportDocuments({
+            documents: [
+              {
+                '@context': [
+                  'https://www.w3.org/2018/credentials/v1',
+                  'https://w3id.org/wallet/v1',
+                ],
+              },
+            ],
+          }),
+        );
+        expect(error3.message).toBe('Document ID is required');
+
+        const error4 = await getPromiseError(() =>
+          service.exportDocuments({
+            documents: [
+              {
+                id: 'did:key:z6MkhN7PBjWgSMQ24Bebdpvvw8fVRv7m6MHDqiwTKozzBgrJ#z6MkhN7PBjWgSMQ24Bebdpvvw8fVRv7m6MHDqiwTKozzBgrJ',
+              },
+            ],
+          }),
+        );
+        expect(error4.message).toBe('@context is required');
+      });
+      it('expect to export documents', async () => {
+        const docs = [
+          {
+            '@context': [
+              'https://www.w3.org/2018/credentials/v1',
+              'https://w3id.org/wallet/v1',
+            ],
+            id: 'did:key:z6MkhN7PBjWgSMQ24Bebdpvvw8fVRv7m6MHDqiwTKozzBgrJ#z6MkhN7PBjWgSMQ24Bebdpvvw8fVRv7m6MHDqiwTKozzBgrJ',
+            controller:
+              'did:key:z6MkhN7PBjWgSMQ24Bebdpvvw8fVRv7m6MHDqiwTKozzBgrJ',
+            type: 'Ed25519VerificationKey2018',
+            publicKeyBase58: '3urLbVGF6ouYwgotxFy6637VcLqugU2s9i2XVY2yGU4v',
+            privateKeyBase58:
+              '3rF4Jhp7vF6tavGZCSgkdMM3ANLB7YpmzfRcB5FTs1Q7EgN6u5cCwzCaHCDYcestRSEHzjF82TvJUaj3mdqcbGnS',
+            publicKeyMultibase: 'z3urLbVGF6ouYwgotxFy6637VcLqugU2s9i2XVY2yGU4v',
+            privateKeyMultibase:
+              'z3rF4Jhp7vF6tavGZCSgkdMM3ANLB7YpmzfRcB5FTs1Q7EgN6u5cCwzCaHCDYcestRSEHzjF82TvJUaj3mdqcbGnS',
+          },
+        ];
+        const encryptedJSONWallet = await walletService.exportDocuments({
+          documents: docs,
+          password: 'test',
+        });
+        expect(encryptedJSONWallet).toBeDefined();
+        const retrievedDocs =
+          await walletService.getDocumentsFromEncryptedWallet({
+            encryptedJSONWallet,
+            password: 'test',
+          });
+        expect(retrievedDocs.length).toBe(1);
+        expect(retrievedDocs[0]).toHaveProperty(
+          'id',
+          'did:key:z6MkhN7PBjWgSMQ24Bebdpvvw8fVRv7m6MHDqiwTKozzBgrJ#z6MkhN7PBjWgSMQ24Bebdpvvw8fVRv7m6MHDqiwTKozzBgrJ',
+        );
+      });
+    });
   });
 });
