@@ -143,21 +143,27 @@ export function useDIDManagement() {
   );
 
   const exportDID = useCallback(
-    async ({id}) => {
+    async ({id, password}) => {
       const existingDoc = await wallet.getDocumentById(id);
       if (existingDoc) {
         const correlationDocuments = await wallet.resolveCorrelations(id);
         const didKeypairDoc = correlationDocuments.find(doc => {
           return !!(
+            doc &&
             typeof doc.type === 'string' &&
             doc.type.startsWith('Ed25519VerificationKey')
           );
         });
+
         if (didKeypairDoc) {
-          return await wallet.exportDocuments([existingDoc, didKeypairDoc]);
+          return await wallet.exportDocuments({
+            documents: [existingDoc, didKeypairDoc],
+            password,
+          });
         }
         throw new Error('DID KeyPair not found');
       }
+
       throw new Error('DID Document not found');
     },
     [wallet],

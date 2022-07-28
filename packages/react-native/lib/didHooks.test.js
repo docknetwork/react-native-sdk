@@ -138,9 +138,25 @@ jest.mock('./index.js', () => {
       id: 'e8fc7810-9524-11ea-bb37-0242ac130002',
       type: 'DIDResolutionResponse',
       didDocument,
-      correlation: [],
+      correlation: ['urn:uuid:e8fc7810-9524-11ea-bb37-0242ac130002'],
+    },
+    {
+      '@context': ['https://w3id.org/wallet/v1'],
+      id: 'urn:uuid:e8fc7810-9524-11ea-bb37-0242ac130002n',
+      type: 'Ed25519VerificationKey2018',
+    },
+    {
+      didDocument: {
+        id: didDocument.id,
+      },
+      id: 'e8fc7810-9524-11ea-bb37-0242ac130002n',
+      type: 'DIDResolutionResponse',
+      correlation: ['urn:uuid:e8fc7810-9524-11ea-bb37-0242ac130002n'],
     },
   ];
+  const mockSingleDoc = documentId => {
+    return documents.find(doc => doc.id === documentId);
+  };
   const mockFunctions = {
     wallet: {
       query: jest.fn(q => {
@@ -193,6 +209,20 @@ jest.mock('./index.js', () => {
           throw new Error('An error occurred');
         },
       ),
+      getDocumentById: jest.fn(documentId => {
+        const document = mockSingleDoc(documentId);
+        if (document) {
+          return Promise.resolve(document);
+        }
+      }),
+      resolveCorrelations: jest.fn(id => {
+        const document = mockSingleDoc(id);
+
+        if (document) {
+          const correlatedDoc = mockSingleDoc(document.correlation[0]);
+          return Promise.resolve([document, correlatedDoc]);
+        }
+      }),
       update: jest.fn(doc => {
         documents.forEach((singleDocument, index) => {
           if (doc.id === singleDocument.id) {
@@ -204,6 +234,9 @@ jest.mock('./index.js', () => {
         documents = documents.filter(doc => {
           return doc.id !== documentId;
         });
+      }),
+      exportDocuments: jest.fn(({documents, password}) => {
+        return Promise.resolve({});
       }),
       accounts: {
         fetchBalance: jest.fn(() => Promise.resolve(0)),
@@ -224,7 +257,7 @@ describe('DID Hooks', () => {
   });
   test('Filter did list', () => {
     const {result} = renderHook(() => useDIDManagement());
-    expect(result.current.didList.length).toBe(1);
+    expect(result.current.didList.length).toBe(2);
     expect(result.current.didList[0].type).toBe('DIDResolutionResponse');
   });
   test('Create new DID', async () => {
@@ -236,7 +269,7 @@ describe('DID Hooks', () => {
       type: 'ed25519',
       name: 'DID Name',
     });
-    expect(walletResult.current.documents.length).toBe(4);
+    expect(walletResult.current.documents.length).toBe(6);
     expect(walletResult.current.wallet.add).toHaveBeenCalledTimes(2);
     expect(
       walletResult.current.documents[3].didDocument.id.indexOf('did:key'),
@@ -395,5 +428,38 @@ describe('DID Hooks', () => {
         password: 't',
       }),
     ).rejects.toThrowError('An error occurred');
+  });
+  // test('Export DID', async () => {
+  //   const {result} = renderHook(() => useDIDManagement());
+  //   const {result: walletResult} = renderHook(() => useWallet());
+  //   await result.current.exportDID({
+  //     id: 'e8fc7810-9524-11ea-bb37-0242ac130002n',
+  //     password: 'test',
+  //   });
+  //   expect(walletResult.current.wallet.exportDocuments).toBeCalled();
+  //   expect(walletResult.current.wallet.getDocumentById).toBeCalledWith(
+  //     'e8fc7810-9524-11ea-bb37-0242ac130002n',
+  //   );
+  //   expect(walletResult.current.wallet.resolveCorrelations).toBeCalledWith(
+  //     'e8fc7810-9524-11ea-bb37-0242ac130002n',
+  //   );
+  // });
+  test('Export DID with invalid doc id', async () => {
+    const {result} = renderHook(() => useDIDManagement());
+    // const {result: walletResult} = renderHook(() => useWallet());
+
+    await expect(
+      result.current.exportDID({
+        id: 'x',
+        password: 'test',
+      }),
+    ).rejects.toThrowError('DID Document not found');
+
+    await expect(
+      result.current.exportDID({
+        id: 'e8fc7810-9524-11ea-bb37-0242ac130002',
+        password: 'test',
+      }),
+    ).rejects.toThrowError('DID KeyPair not found');
   });
 });

@@ -377,9 +377,10 @@ class Wallet {
   async resolveCorrelations(documentId) {
     return walletService.resolveCorrelations(documentId);
   }
-  async exportDocuments(documents) {
+  async exportDocuments({documents, password}) {
     return walletService.exportDocuments({
       documents,
+      password,
     });
   }
 
