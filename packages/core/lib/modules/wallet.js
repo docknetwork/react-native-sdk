@@ -374,6 +374,14 @@ class Wallet {
       password,
     });
   }
+  async resolveCorrelations(documentId) {
+    return walletService.resolveCorrelations(documentId);
+  }
+  async exportDocuments(documents) {
+    return walletService.exportDocuments({
+      documents,
+    });
+  }
 
   /**
    * Get wallet module instance

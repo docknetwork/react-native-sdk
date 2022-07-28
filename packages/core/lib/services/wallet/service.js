@@ -297,6 +297,12 @@ export class WalletService {
     await tempMemoryWallet.sync();
     return docs;
   }
+  async exportDocuments(params) {
+    validation.exportDocuments(params);
+    const {documents} = params;
+    // const tempMemoryWallet = new MemoryWallet('tempWallet');
+    return documents;
+  }
 }
 
 export const walletService: WalletService = new WalletService();
