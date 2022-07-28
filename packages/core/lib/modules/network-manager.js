@@ -27,13 +27,6 @@ export const SUBSTRATE_NETWORKS = {
 };
 
 function getNetworkInfo(networkId): NetworkInfo {
-  console.log('getNetworkInfo', networkId);
-
-  if (networkId === 'mainnet') {
-    console.error('invalid networkId');
-    throw 'err';
-  }
-
   const networkInfo = SUBSTRATE_NETWORKS[networkId];
 
   assert(!!networkInfo, `Network ${networkId} not found`);
