@@ -235,7 +235,7 @@ jest.mock('./index.js', () => {
           return doc.id !== documentId;
         });
       }),
-      exportDocuments: jest.fn(({documents, password}) => {
+      exportDocuments: jest.fn(() => {
         return Promise.resolve({});
       }),
       accounts: {
