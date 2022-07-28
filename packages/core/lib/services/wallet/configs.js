@@ -67,6 +67,9 @@ export const validation = {
     assert(typeof json === 'object', `invalid json data: ${json}`);
     assertPassword(password);
   },
+  exportDocuments({documents}: ExportDocuments) {
+    assert(Array.isArray(documents), 'Invalid Documents');
+  },
   createAccountDocuments(params: CreateAccountDocumentsParams) {
     const {name, json, password, mnemonic, type} = params;
 
@@ -114,6 +117,10 @@ export type CreateAccountDocumentsParams = {
 export type GetDocumentsFromEncryptedWallet = {
   encryptedJSONWallet: any,
   password: string,
+};
+
+export type ExportDocuments = {
+  documents: Array<any>,
 };
 
 export type QueryParams = any;
