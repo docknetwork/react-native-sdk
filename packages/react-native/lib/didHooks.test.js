@@ -135,6 +135,7 @@ jest.mock('./index.js', () => {
       publicKeyBase58: '6GwnHZARcEkJio9dxPYy6SC5sAL6PxpZAB6VYwoFjGMU',
     },
     {
+      '@context': ['https://w3id.org/wallet/v1'],
       id: 'e8fc7810-9524-11ea-bb37-0242ac130002',
       type: 'DIDResolutionResponse',
       didDocument,
@@ -146,6 +147,7 @@ jest.mock('./index.js', () => {
       type: 'Ed25519VerificationKey2018',
     },
     {
+      '@context': ['https://w3id.org/wallet/v1'],
       didDocument: {
         id: didDocument.id,
       },
