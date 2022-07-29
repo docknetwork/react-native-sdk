@@ -146,18 +146,14 @@ export function useDIDManagement() {
     async ({id, password}) => {
       const existingDoc = await wallet.getDocumentById(id);
       if (existingDoc) {
-        const correlationDocuments = await wallet.resolveCorrelations(id);
-        const didKeypairDoc = correlationDocuments.find(doc => {
-          return !!(
-            doc &&
-            typeof doc.type === 'string' &&
-            doc.type.startsWith('Ed25519VerificationKey')
-          );
-        });
+        const allCorrelationDocuments = await wallet.resolveCorrelations(id);
 
-        if (didKeypairDoc) {
+        const correlationDocuments = allCorrelationDocuments.filter(doc => {
+          return !!(doc && doc.type && doc.id && doc['@context']);
+        });
+        if (correlationDocuments.length > 1) {
           return await wallet.exportDocuments({
-            documents: [existingDoc, didKeypairDoc],
+            documents: correlationDocuments,
             password,
           });
         }
