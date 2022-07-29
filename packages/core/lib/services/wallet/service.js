@@ -42,6 +42,7 @@ export class WalletService {
     WalletService.prototype.update,
     WalletService.prototype.healthCheck,
     WalletService.prototype.getDocumentsFromEncryptedWallet,
+    WalletService.prototype.exportDocuments,
   ];
 
   constructor() {
@@ -296,6 +297,22 @@ export class WalletService {
     }
     await tempMemoryWallet.sync();
     return docs;
+  }
+  async exportDocuments(params) {
+    validation.exportDocuments(params);
+    const {documents, password} = params;
+    const tempMemoryWallet = new MemoryWallet('tempWallet');
+    for (const doc of documents) {
+      await tempMemoryWallet.add(doc);
+    }
+    await tempMemoryWallet.sync();
+    const encryptedWallet = await tempMemoryWallet.export(password);
+
+    for (const doc of documents) {
+      await tempMemoryWallet.remove(doc.id);
+    }
+    await tempMemoryWallet.sync();
+    return encryptedWallet;
   }
 }
 

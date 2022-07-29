@@ -142,6 +142,29 @@ export function useDIDManagement() {
     [wallet],
   );
 
+  const exportDID = useCallback(
+    async ({id, password}) => {
+      const existingDoc = await wallet.getDocumentById(id);
+      if (existingDoc) {
+        const allCorrelationDocuments = await wallet.resolveCorrelations(id);
+
+        const correlationDocuments = allCorrelationDocuments.filter(doc => {
+          return !!(doc && doc.type && doc.id && doc['@context']);
+        });
+        if (correlationDocuments.length > 1) {
+          return await wallet.exportDocuments({
+            documents: correlationDocuments,
+            password,
+          });
+        }
+        throw new Error('DID KeyPair not found');
+      }
+
+      throw new Error('DID Document not found');
+    },
+    [wallet],
+  );
+
   return useMemo(() => {
     return {
       createKeyDID,
@@ -149,6 +172,7 @@ export function useDIDManagement() {
       deleteDID,
       didList,
       importDID,
+      exportDID,
     };
-  }, [createKeyDID, editDID, deleteDID, didList, importDID]);
+  }, [createKeyDID, editDID, deleteDID, didList, importDID, exportDID]);
 }
