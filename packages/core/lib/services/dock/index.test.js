@@ -44,15 +44,5 @@ describe('DockService', () => {
       expect(await service.isApiConnected()).toBeFalsy();
       mock.clear();
     });
-
-    it('throw error for existing connection', async () => {
-      const mock = mockDockSdkConnection();
-      const error = await getPromiseError(async () => {
-        await doConnect();
-        await doConnect();
-      });
-      expect(error.message).toBe('dock is already initialized');
-      mock.clear();
-    });
   });
 });

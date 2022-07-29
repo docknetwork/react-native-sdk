@@ -1,6 +1,7 @@
 import {Wallet, WalletEvents} from './wallet';
 import walletJson from '../test/fixtures/wallet-backup.json';
 import {mockDockService} from '../services/test-utils';
+import {getTestWallet} from '../test/setup-test-state';
 
 describe('ApiModule', () => {
   let unmockDockService;
@@ -13,9 +14,10 @@ describe('ApiModule', () => {
     let wallet: Wallet;
 
     beforeAll(async () => {
-      wallet = await Wallet.create();
+      wallet = await getTestWallet();
       await wallet.ensureNetwork();
     });
+
     it('is correct default params set', () => {
       expect(wallet.walletId).toBe('wallet');
     });
@@ -29,7 +31,7 @@ describe('ApiModule', () => {
     });
 
     it('Expect document to be added', async () => {
-      await wallet.add({
+      const doc = await wallet.add({
         type: 'Account',
         name: 'cocomelon',
       });
@@ -97,8 +99,6 @@ describe('ApiModule', () => {
       expect(mnemonicDoc.value).toBe(
         'tenant jaguar icon flock prosper leave island illegal topple pig axis cactus',
       );
-
-      await wallet.close();
     });
     it('expect to get documents from encrypted wallets', async () => {
       const wallet = await Wallet.create({

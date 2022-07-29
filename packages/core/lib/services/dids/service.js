@@ -8,7 +8,8 @@ import {
 import {polkadotToKeydoc} from '@docknetwork/wallet/polkadot-utils';
 import {keyringService} from '../keyring/service';
 import {utilCryptoService} from '../util-crypto/service';
-
+import {walletService} from '../wallet/service';
+import assert from 'assert';
 class DIDService {
   constructor() {
     this.name = serviceName;
@@ -41,6 +42,13 @@ class DIDService {
     });
 
     return polkadotToKeydoc(keyring);
+  }
+
+  async registerDidDock(address) {
+    assert(!!address, 'address is required');
+    const correlations = await walletService.resolveCorrelations(address);
+    debugger;
+    return 'ok';
   }
 }
 
