@@ -14,16 +14,24 @@ export function getSchemas() {
 }
 
 export async function initRealm() {
-  realm = await Realm.open({
+  if (realm) {
+    return realm;
+  }
+
+  const inMemory = process.env.NODE_ENV === 'test';
+
+  realm = Realm.open({
     path: 'dock',
     schema,
     schemaVersion: 3,
     deleteRealmIfMigrationNeeded: true,
-    inMemory: true,
+    inMemory,
     // migration: () => {
     //   // No migration required so far
     // },
   });
+
+  return realm;
 }
 
 export function clearCacheData() {

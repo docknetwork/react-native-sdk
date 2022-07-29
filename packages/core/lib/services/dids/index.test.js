@@ -3,8 +3,17 @@ import {DIDServiceRPC} from './service-rpc';
 import {didService as service} from './service';
 import {validation} from './config';
 import {DIDKeyManager} from '@docknetwork/wallet-sdk-dids/src';
+import {walletService} from '../wallet/service';
+import {TestFixtures} from '../../fixtures';
 
 describe('DID Service', () => {
+  beforeAll(async () => {
+    // walletService.create({
+    //   walletId: 'wallet',
+    //   type: 'memory',
+    // });
+  });
+
   it('ServiceRpc', () => {
     assertRpcService(DIDServiceRPC, service, validation);
   });
@@ -89,5 +98,10 @@ describe('DID Service', () => {
     expect(res).toBeDefined();
     expect(res).toHaveProperty('id');
     spy.mockReset();
+  });
+
+  it('expect to register did dock', async () => {
+    // const result = await service.registerDidDock(TestFixtures.account1.address);
+    // expect(result).toBe('ok');
   });
 });
