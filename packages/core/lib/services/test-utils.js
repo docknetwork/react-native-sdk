@@ -18,7 +18,7 @@ export async function initializeWalletService() {
 }
 
 export const TEST_FEE_AMOUNT = 2.48;
-export const API_MOCK_DISABLED = false;
+export const API_MOCK_DISABLED = true;
 
 let mockTransactionError;
 
@@ -33,15 +33,20 @@ export async function mockDockService() {
     ss58Format: NetworkManager.getInstance().getNetworkInfo().addressPrefix,
   });
 
+  let sdkMock;
+
   if (API_MOCK_DISABLED) {
     return dockService.init({
       address: NetworkManager.getInstance().getNetworkInfo().substrateUrl,
     });
+  } else {
+    sdkMock = mockDockSdkConnection();
+    await dockService.init({
+      address: NetworkManager.getInstance().getNetworkInfo().substrateUrl,
+    });
   }
 
-  const sdkMock = mockDockSdkConnection();
   const _dockSdk = dockService.dock;
-  await dockService.init({address: 'address'});
 
   dockService.isDockReady = true;
 
@@ -98,7 +103,9 @@ export async function mockDockService() {
 
   return () => {
     dockService.dock = _dockSdk;
-    sdkMock.clear();
+    if (sdkMock) {
+      sdkMock.clear();
+    }
     dockService.disconnect();
   };
 }

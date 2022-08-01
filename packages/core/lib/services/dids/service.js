@@ -10,6 +10,12 @@ import {keyringService} from '../keyring/service';
 import {utilCryptoService} from '../util-crypto/service';
 import {walletService} from '../wallet/service';
 import assert from 'assert';
+import {createNewDockDID} from '@docknetwork/sdk/utils/did';
+import {getDock} from '../dock/service';
+import {PublicKeySr25519} from '@docknetwork/sdk';
+import publicKeySr25519 from '@docknetwork/sdk/public-keys/public-key-sr25519';
+import {DidKey, VerificationRelationship} from '@docknetwork/sdk/public-keys';
+
 class DIDService {
   constructor() {
     this.name = serviceName;
@@ -46,8 +52,26 @@ class DIDService {
 
   async registerDidDock(address) {
     assert(!!address, 'address is required');
+    const dockDID = createNewDockDID();
+    const dock = getDock();
     const correlations = await walletService.resolveCorrelations(address);
+    const keyPairJSON = correlations.find(item => item.type === 'KeyringPair');
+
+    assert(!!keyPairJSON, `KeyringPair not found for address ${address}`);
+
+    const keyPair = keyringService.keyring.addFromJson(keyPairJSON.value);
+    keyPair.unlock('');
+
+    const publicKey = PublicKeySr25519.fromKeyringPair(keyPair);
+
+    const didKey = new DidKey(publicKey, new VerificationRelationship());
+
+    console.log('Submitting new DID', dockDID, publicKey);
+
+    const result = await dock.did.new(dockDID, [didKey], [], false);
+
     debugger;
+
     return 'ok';
   }
 }
