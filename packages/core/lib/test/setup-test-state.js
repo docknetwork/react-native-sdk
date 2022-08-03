@@ -1,7 +1,7 @@
 import {TestFixtures} from '../fixtures';
-import { NetworkManager } from '../modules/network-manager';
+import {NetworkManager} from '../modules/network-manager';
 import {Wallet} from '../modules/wallet';
-import { dockService } from '../services/dock';
+import {dockService} from '../services/dock';
 import {mockDockService} from '../services/test-utils';
 
 export async function getTestWallet(): Wallet {

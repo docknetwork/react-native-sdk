@@ -31,11 +31,6 @@ describe('ApiModule', () => {
     });
 
     it('Expect document to be added', async () => {
-      const doc = await wallet.add({
-        type: 'Account',
-        name: 'cocomelon',
-      });
-
       const accounts = await wallet.query({
         type: 'Account',
       });

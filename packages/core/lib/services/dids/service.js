@@ -68,11 +68,11 @@ class DIDService {
 
     console.log('Submitting new DID', dockDID, publicKey);
 
+    debugger;
     const result = await dock.did.new(dockDID, [didKey], [], false);
-
     debugger;
 
-    return 'ok';
+    return result;
   }
 }
 
