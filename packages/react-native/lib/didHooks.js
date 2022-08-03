@@ -125,8 +125,14 @@ export function useDIDManagement() {
           const existingDocs = await wallet.query({
             id: doc.id,
           });
+
           if (existingDocs.length === 0) {
             await wallet.add(doc);
+          } else if (
+            existingDocs.length > 0 &&
+            existingDocs[0].type === 'DIDResolutionResponse'
+          ) {
+            throw new Error('DID already exist in wallet');
           }
         }
         return docs;
