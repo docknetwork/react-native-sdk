@@ -15,10 +15,10 @@ function build({entry, path, filename, callback}) {
           __dirname,
           '../../../node_modules/@polkadot/types/packageInfo.cjs',
         ),
-        '@polkadot/types/packageInfo.js': resolve(
-          __dirname,
-          '../../../node_modules/@polkadot/types/packageInfo.js',
-        ),
+        // '@polkadot/types/packageInfo.js': resolve(
+        //   __dirname,
+        //   '../../../node_modules/@polkadot/types/packageInfo.js',
+        // ),
       },
       fallback: {
         crypto: require.resolve('crypto-browserify'),
