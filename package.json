@@ -17,13 +17,13 @@
     "@polkadot/types-known": "5.6.1",
     "@polkadot/util": "7.2.1",
     "@polkadot/rpc-core": "5.6.1",
-    "@docknetwork/sdk": "1.2.3"
+    "@docknetwork/sdk": "2.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.16.0",
     "@babel/preset-env": "^7.14.5",
-    "@docknetwork/sdk": "1.2.3",
-    "@docknetwork/wallet": "0.0.3",
+    "@docknetwork/sdk": "2.2.0",
+    "@docknetwork/wallet": "0.2.0",
     "@pmmmwh/react-refresh-webpack-plugin": "0.4.3",
     "@polkadot/keyring": "^7.2.1",
     "@polkadot/types-known": "5.6.1",
