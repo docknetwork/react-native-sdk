@@ -1,5 +1,4 @@
 import dock, {DockAPI} from '@docknetwork/sdk';
-import assert from 'assert';
 import {EventEmitter} from 'events';
 import {Logger} from '../../core/logger';
 import {once} from '../../modules/event-manager';

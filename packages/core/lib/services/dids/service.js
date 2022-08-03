@@ -13,7 +13,6 @@ import assert from 'assert';
 import {createNewDockDID} from '@docknetwork/sdk/utils/did';
 import {getDock} from '../dock/service';
 import {PublicKeySr25519} from '@docknetwork/sdk';
-import publicKeySr25519 from '@docknetwork/sdk/public-keys/public-key-sr25519';
 import {DidKey, VerificationRelationship} from '@docknetwork/sdk/public-keys';
 
 class DIDService {
@@ -68,9 +67,7 @@ class DIDService {
 
     console.log('Submitting new DID', dockDID, publicKey);
 
-    debugger;
     const result = await dock.did.new(dockDID, [didKey], [], false);
-    debugger;
 
     return result;
   }
