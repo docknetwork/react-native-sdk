@@ -15,8 +15,6 @@ export async function getTestWallet(): Wallet {
     mnemonic: TestFixtures.account1.mnemonic,
   });
 
-  const nInfo = NetworkManager.getInstance().getNetworkInfo();
-
   await dockService.init({
     address: NetworkManager.getInstance().getNetworkInfo().substrateUrl,
   });
