@@ -48,9 +48,11 @@ export function useDIDManagement() {
 
   const didList = useMemo(() => {
     if (Array.isArray(documents)) {
-      return documents.filter(doc => {
-        return doc.type === 'DIDResolutionResponse';
-      });
+      return documents
+        .filter(doc => {
+          return doc.type === 'DIDResolutionResponse';
+        })
+        .reverse();
     }
     return [];
   }, [documents]);
