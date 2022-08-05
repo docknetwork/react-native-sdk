@@ -14,6 +14,7 @@ import {createNewDockDID} from '@docknetwork/sdk/utils/did';
 import {getDock} from '../dock/service';
 import {PublicKeySr25519} from '@docknetwork/sdk';
 import {DidKey, VerificationRelationship} from '@docknetwork/sdk/public-keys';
+import { Logger } from '../../core/logger';
 
 class DIDService {
   constructor() {
@@ -61,15 +62,20 @@ class DIDService {
     const keyPair = keyringService.keyring.addFromJson(keyPairJSON.value);
     keyPair.unlock('');
 
+    console.log(keyPair.address);
+    dock.setAccount(keyPair);
+
     const publicKey = PublicKeySr25519.fromKeyringPair(keyPair);
 
     const didKey = new DidKey(publicKey, new VerificationRelationship());
 
-    console.log('Submitting new DID', dockDID, publicKey);
+    Logger.info(`Submitting new DID: ${dockDID}`);
 
     const result = await dock.did.new(dockDID, [didKey], [], false);
 
-    return result;
+    Logger.info(`DID created with tx hash ${result.txHash.toString()}`);
+
+    return dockDID;
   }
 }
 
