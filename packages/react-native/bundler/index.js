@@ -45,14 +45,23 @@ function build({entry, path, filename, callback}) {
     module: {
       rules: [
         {
-          test: /\.m?js$/,
+          test: /\.(m|c)?js$/,
           exclude:
             /\/node_modules\/(?!@polkadot|@babel|@docknetwork|@digitalbazaar)/,
           use: {
             loader: require.resolve('babel-loader'),
             options: {
               presets: [['@babel/preset-env']],
-              plugins: ['@babel/plugin-transform-flow-strip-types'],
+              plugins: [
+                '@babel/plugin-transform-modules-commonjs',
+                ['@babel/plugin-proposal-class-properties', {loose: false}],
+                ['@babel/plugin-proposal-private-methods', {loose: false}],
+                [
+                  '@babel/plugin-proposal-private-property-in-object',
+                  {loose: false},
+                ],
+                '@babel/plugin-transform-flow-strip-types',
+              ],
             },
           },
         },

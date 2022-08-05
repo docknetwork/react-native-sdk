@@ -207,6 +207,29 @@ jest.mock('./index.js', () => {
             throw new Error(
               'No matching recipient found for key agreement key.',
             );
+          } else if (password === 'duplicate') {
+            return Promise.resolve([
+              {
+                '@context': ['https://w3id.org/wallet/v1'],
+                id: 'urn:uuid:e8fc7810-9524-11ea-bb37-0242ac130002',
+                name: 'My Test Key 2',
+                image: 'https://via.placeholder.com/150',
+                description: 'For testing only, totally compromised.',
+                tags: ['professional', 'organization', 'compromised'],
+                correlation: [],
+                controller:
+                  'did:key:z6MkjjCpsoQrwnEmqHzLdxWowXk5gjbwor4urC1RPDmGeV8r',
+                type: 'Ed25519VerificationKey2018',
+                privateKeyBase58:
+                  '3CQCBKF3Mf1tU5q1FLpHpbxYrNYxLiZk4adDtfyPEfc39Wk6gsTb2qoc1ZtpqzJYdM1rG4gpaD3ZVKdkiDrkLF1p',
+                publicKeyBase58: '6GwnHZARcEkJio9dxPYy6SC5sAL6PxpZAB6VYwoFjGMU',
+              },
+              {
+                id: 'e8fc7810-9524-11ea-bb37-0242ac130002n',
+                type: 'DIDResolutionResponse',
+                correlation: [],
+              },
+            ]);
           }
           throw new Error('An error occurred');
         },
@@ -463,5 +486,26 @@ describe('DID Hooks', () => {
         password: 'test',
       }),
     ).rejects.toThrowError('DID KeyPair not found');
+  });
+  test('Import duplicate DID ', async () => {
+    const {result} = renderHook(() => useDIDManagement());
+    const encryptedJSONWallet = {
+      '@context': [
+        'https://www.w3.org/2018/credentials/v1',
+        'https://w3id.org/wallet/v1',
+      ],
+      id: 'did:key:z6LSjTbRETJjUCDiQopbeCgZKRisy7mdchwiMBPTQktcibGh#encrypted-wallet',
+      type: ['VerifiableCredential', 'EncryptedWallet'],
+      issuer: 'did:key:z6LSjTbRETJjUCDiQopbeCgZKRisy7mdchwiMBPTQktcibGh',
+      issuanceDate: '2022-07-19T20:59:44.798Z',
+    };
+    const password = 'duplicate';
+
+    await expect(
+      result.current.importDID({
+        encryptedJSONWallet,
+        password,
+      }),
+    ).rejects.toThrowError('DID already exist in wallet');
   });
 });
