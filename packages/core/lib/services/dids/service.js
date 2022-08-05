@@ -62,7 +62,6 @@ class DIDService {
     const keyPair = keyringService.keyring.addFromJson(keyPairJSON.value);
     keyPair.unlock('');
 
-    console.log(keyPair.address);
     dock.setAccount(keyPair);
 
     const publicKey = PublicKeySr25519.fromKeyringPair(keyPair);
