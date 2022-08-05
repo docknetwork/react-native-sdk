@@ -14,7 +14,7 @@ import {createNewDockDID} from '@docknetwork/sdk/utils/did';
 import {getDock} from '../dock/service';
 import {PublicKeySr25519} from '@docknetwork/sdk';
 import {DidKey, VerificationRelationship} from '@docknetwork/sdk/public-keys';
-import { Logger } from '../../core/logger';
+import {Logger} from '../../core/logger';
 
 class DIDService {
   constructor() {
