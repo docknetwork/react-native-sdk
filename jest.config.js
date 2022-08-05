@@ -10,7 +10,13 @@ module.exports = {
     },
   },
   transform: {
-    '^.+\\.(ts|js)$': 'babel-jest',
+    '^.+\\.(ts|tsx)?$': 'ts-jest',
+    '^.+\\.(js|jsx)$': [
+      'babel-jest',
+      {
+        configFile: require.resolve('./babel.config.js'),
+      },
+    ],
   },
   resetMocks: false,
   setupFilesAfterEnv: ['<rootDir>/setup-tests.js'],
