@@ -1,4 +1,4 @@
-import {assertRpcService} from '../test-utils';
+import {assertRpcService, getPromiseError} from '../test-utils';
 import {DIDServiceRPC} from './service-rpc';
 import {didService as service} from './service';
 import {validation} from './config';
@@ -100,5 +100,44 @@ describe('DID Service', () => {
   it('expect to register did dock', async () => {
     const result = await service.registerDidDock(TestFixtures.account1.address);
     expect(result).toBeDefined();
+  });
+
+  it('expect to fail to register did dock', async () => {
+    const error = await getPromiseError(() =>
+      service.registerDidDock(TestFixtures.noBalanceAccount.address),
+    );
+    expect(error.message).toBe(
+      '1010: Invalid Transaction: Inability to pay some fees , e.g. account balance too low',
+    );
+  });
+
+  it('expect to get did document', async () => {
+    const result = await service.getDidDockDocument(
+      'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi',
+    );
+
+    expect(result).toStrictEqual({
+      '@context': ['https://www.w3.org/ns/did/v1'],
+      assertionMethod: [
+        'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi#keys-1',
+      ],
+      authentication: [
+        'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi#keys-1',
+      ],
+      capabilityInvocation: [
+        'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi#keys-1',
+      ],
+      controller: ['did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi'],
+      id: 'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi',
+      publicKey: [
+        {
+          controller:
+            'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi',
+          id: 'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi#keys-1',
+          publicKeyBase58: '8UDojkFBh5RopLKZredz8uVZV5U579voUwQFyYDmgBM3',
+          type: 'Sr25519VerificationKey2020',
+        },
+      ],
+    });
   });
 });

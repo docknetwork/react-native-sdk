@@ -15,6 +15,16 @@ export async function getTestWallet(): Wallet {
     mnemonic: TestFixtures.account1.mnemonic,
   });
 
+  await wallet.accounts.create({
+    name: TestFixtures.account2.name,
+    mnemonic: TestFixtures.account2.mnemonic,
+  });
+
+  await wallet.accounts.create({
+    name: TestFixtures.noBalanceAccount.name,
+    mnemonic: TestFixtures.noBalanceAccount.mnemonic,
+  });
+
   await dockService.init({
     address: NetworkManager.getInstance().getNetworkInfo().substrateUrl,
   });
