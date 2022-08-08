@@ -24,6 +24,7 @@ class DIDService {
     DIDService.prototype.keypairToDIDKeyDocument,
     DIDService.prototype.getDIDResolution,
     DIDService.prototype.generateKeyDoc,
+    DIDService.prototype.registerDidDock,
   ];
   keypairToDIDKeyDocument(params: KeypairToDIDKeyDocumentParams) {
     validation.keypairToDIDKeyDocument(params);
@@ -74,7 +75,10 @@ class DIDService {
 
     Logger.info(`DID created with tx hash ${result.txHash.toString()}`);
 
-    return dockDID;
+    return {
+      dockDID,
+      keyPairWalletId: keyPairJSON.id,
+    };
   }
 }
 
