@@ -1,5 +1,6 @@
 import {useCallback, useMemo} from 'react';
 import {didServiceRPC} from '@docknetwork/wallet-sdk-core/lib/services/dids';
+
 import {useWallet} from './index';
 export function useDIDUtils() {
   const createDIDKeypairDocument = useCallback(async keypairParams => {
@@ -55,22 +56,54 @@ export function useDIDManagement() {
     return [];
   }, [documents]);
 
-  const createKeyDID = useCallback(
-    async didParams => {
-      const {derivePath, type = 'ed25519', name} = didParams;
-      if (type === 'ed25519') {
-        const keydoc = await createDIDKeypairDocument({derivePath, type});
+  const didMethodKey = useCallback(
+    async ({derivePath, type, name}) => {
+      const keydoc = await createDIDKeypairDocument({derivePath, type});
+      const {didDocumentResolution} = await createDIDKeyDocument(keydoc, {
+        name,
+      });
+      await wallet.add(keydoc);
+      await wallet.add(didDocumentResolution);
+    },
+    [createDIDKeyDocument, createDIDKeypairDocument, wallet],
+  );
 
-        const {didDocumentResolution} = await createDIDKeyDocument(keydoc, {
-          name,
-        });
-        await wallet.add(keydoc);
-        await wallet.add(didDocumentResolution);
+  const didMethodDock = useCallback(
+    async ({address, name}) => {
+      const {dockDID, keyPairWalletId} = await didServiceRPC.registerDidDock(
+        address,
+      );
+      const didDocument = {
+        //TODO to use a DID resolver
+        id: dockDID,
+      };
+      const dockDIDResolution = {
+        id: dockDID,
+        type: 'DIDResolutionResponse',
+        name,
+        didDocument,
+        correlation: [keyPairWalletId],
+      };
+      await wallet.add(dockDIDResolution);
+    },
+    [wallet],
+  );
+
+  const createDID = useCallback(
+    async didParams => {
+      const {derivePath, type = 'ed25519', name, didType, address} = didParams;
+      if (type === 'ed25519') {
+        switch (didType) {
+          case 'diddock':
+            return didMethodDock({address, name});
+          case 'didkey':
+            return didMethodKey({derivePath, name, type});
+        }
       } else {
         throw Error(`${type} keypair type is not supported.`);
       }
     },
-    [createDIDKeyDocument, createDIDKeypairDocument, wallet],
+    [didMethodDock, didMethodKey],
   );
   const editDID = useCallback(
     async didParams => {
@@ -173,12 +206,12 @@ export function useDIDManagement() {
 
   return useMemo(() => {
     return {
-      createKeyDID,
+      createDID,
       editDID,
       deleteDID,
       didList,
       importDID,
       exportDID,
     };
-  }, [createKeyDID, editDID, deleteDID, didList, importDID, exportDID]);
+  }, [createDID, editDID, deleteDID, didList, importDID, exportDID]);
 }
