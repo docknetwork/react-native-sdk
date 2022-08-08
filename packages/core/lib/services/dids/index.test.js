@@ -99,7 +99,8 @@ describe('DID Service', () => {
 
   it('expect to register did dock', async () => {
     const result = await service.registerDidDock(TestFixtures.account1.address);
-    expect(result).toBeDefined();
+    expect(result.dockDID).toBeDefined();
+    expect(result.keyPairWalletId).toBeDefined();
   });
 
   it('expect to fail to register did dock', async () => {
