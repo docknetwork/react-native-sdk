@@ -50,6 +50,12 @@ class DIDService {
     return polkadotToKeydoc(keyring);
   }
 
+  async getDidDockDocument(did) {
+    const dock = getDock();
+    const result = await dock.did.getDocument(did);
+    return result;
+  }
+
   async registerDidDock(address) {
     assert(!!address, 'address is required');
     const dockDID = createNewDockDID();
