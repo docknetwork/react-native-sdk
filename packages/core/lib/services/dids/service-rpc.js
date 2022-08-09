@@ -21,4 +21,7 @@ export class DIDServiceRPC extends RpcService {
   registerDidDock(address) {
     return this.call('registerDidDock', address);
   }
+  getDidDockDocument(did) {
+    return this.call('getDidDockDocument', did);
+  }
 }

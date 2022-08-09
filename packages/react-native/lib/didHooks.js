@@ -73,10 +73,9 @@ export function useDIDManagement() {
       const {dockDID, keyPairWalletId} = await didServiceRPC.registerDidDock(
         address,
       );
-      const didDocument = {
-        //TODO to use a DID resolver
-        id: dockDID,
-      };
+
+      const didDocument = await didServiceRPC.getDidDockDocument(dockDID);
+
       const dockDIDResolution = {
         id: dockDID,
         type: 'DIDResolutionResponse',

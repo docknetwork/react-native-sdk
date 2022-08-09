@@ -84,6 +84,9 @@ jest.mock('@docknetwork/wallet-sdk-core/lib/services/dids', () => {
       }
       throw new Error('address is required');
     }),
+    getDidDockDocument: jest.fn(() => {
+      return Promise.resolve();
+    }),
   };
 
   return {
@@ -534,6 +537,9 @@ describe('DID Hooks', () => {
     expect(walletResult.current.wallet.add).toHaveBeenCalled();
     expect(didServiceRPC.registerDidDock).toHaveBeenCalledWith(
       '6GwnHZARcEkJio9dxPYy6SC5sAL6PxpZAB6VYwoFjGMU',
+    );
+    expect(didServiceRPC.getDidDockDocument).toHaveBeenCalledWith(
+      'did:dock:z6MkjjCpsoQrwnEmqHzLdxWowXk5gjbwor4urC1RPDmGeV8r',
     );
   });
   test('can create new DOCK DID with invalid params', async () => {
