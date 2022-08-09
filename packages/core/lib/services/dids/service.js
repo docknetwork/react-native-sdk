@@ -25,6 +25,7 @@ class DIDService {
     DIDService.prototype.getDIDResolution,
     DIDService.prototype.generateKeyDoc,
     DIDService.prototype.registerDidDock,
+    DIDService.prototype.getDidDockDocument,
   ];
   keypairToDIDKeyDocument(params: KeypairToDIDKeyDocumentParams) {
     validation.keypairToDIDKeyDocument(params);
@@ -52,6 +53,7 @@ class DIDService {
   }
 
   async getDidDockDocument(did) {
+    assert(!!did, 'DID is required');
     const dock = getDock();
     const result = await dock.did.getDocument(did);
     return result;
