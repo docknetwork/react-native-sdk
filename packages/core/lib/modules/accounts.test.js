@@ -1,5 +1,4 @@
 import {substrateService} from '../services/substrate';
-import {TestFixtures} from '../fixtures';
 import {Accounts} from './accounts';
 import {Wallet} from './wallet';
 import {getTestWallet} from '../test/setup-test-state';
