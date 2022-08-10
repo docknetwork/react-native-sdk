@@ -5,7 +5,6 @@ import {validation} from './config';
 import {DIDKeyManager} from '@docknetwork/wallet-sdk-dids/src';
 import {TestFixtures} from '../../fixtures';
 import {getTestWallet} from '../../test/setup-test-state';
-import {getDock} from '../dock/service';
 
 describe('DID Service', () => {
   beforeAll(async () => {
@@ -111,7 +110,6 @@ describe('DID Service', () => {
     expect(error.message).toBe(
       '1010: Invalid Transaction: Inability to pay some fees , e.g. account balance too low',
     );
-
   });
 
   it('expect to get did document', async () => {
