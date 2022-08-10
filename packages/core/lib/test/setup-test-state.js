@@ -3,8 +3,10 @@ import {NetworkManager} from '../modules/network-manager';
 import {Wallet} from '../modules/wallet';
 import {dockService} from '../services/dock';
 import {mockDockService} from '../services/test-utils';
+import promiseMemoize from 'promise-memoize';
 
-export async function getTestWallet(): Wallet {
+export const getTestWallet: Wallet = promiseMemoize(async () => {
+  console.log('Start connection');
   await mockDockService();
   const wallet = Wallet.getInstance();
 
@@ -30,4 +32,4 @@ export async function getTestWallet(): Wallet {
   });
 
   return wallet;
-}
+});

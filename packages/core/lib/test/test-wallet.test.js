@@ -10,6 +10,6 @@ describe('Test wallet', () => {
 
   it('expect to have created the created', async () => {
     const accounts = await wallet.accounts.getAccounts();
-    expect(accounts.length).toBe(1);
+    expect(accounts.length).toBe(3);
   });
 });

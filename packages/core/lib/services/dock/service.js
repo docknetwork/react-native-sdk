@@ -4,10 +4,15 @@ import {Logger} from '../../core/logger';
 import {once} from '../../modules/event-manager';
 import {InitParams, validation} from './configs';
 
+let dockInstance = dock;
+
 export function getDock() {
-  return dock;
+  return dockInstance;
 }
 
+export function setDock(instance) {
+  dockInstance = instance;
+}
 /**
  *
  */
@@ -50,14 +55,10 @@ export class DockService {
   async init(params: InitParams) {
     validation.init(params);
 
-    if (this.connectionInProgress) {
+    if (!this.connectionInProgress) {
       console.warn('There is an exisiting connection');
-      return this.connectionInProgress;
+      this.connectionInProgress = getDock().init(params);
     }
-
-    this.connectionInProgress = dock.init(params).finally(() => {
-      // this.connectionInProgress = false;
-    });
 
     Logger.info(`Attempt to initialized substrate at: ${params.address}`);
 
@@ -75,7 +76,7 @@ export class DockService {
    * @returns
    */
   async disconnect() {
-    const result = await this.dock.disconnect();
+    const result = await getDock().disconnect();
     this._setDockReady(false);
     return result;
   }
