@@ -2,13 +2,14 @@ import {substrateService} from '../services/substrate';
 import {TestFixtures} from '../fixtures';
 import {Accounts} from './accounts';
 import {Wallet} from './wallet';
+import {getTestWallet} from '../test/setup-test-state';
 
 describe('Accounts module', () => {
   let wallet: Wallet;
   let accounts: Accounts;
 
   beforeAll(async () => {
-    wallet = await Wallet.create();
+    wallet = await getTestWallet();
     await wallet.ensureNetwork();
 
     accounts = wallet.accounts;
@@ -29,13 +30,18 @@ describe('Accounts module', () => {
   });
 
   it('Expect to create accounts with existing mnemonic', async () => {
+    const name = 'test';
+    const mnemonic =
+      'young defense crouch puzzle mosquito wire front town trophy assist salt entire';
+    const address = '3APujz7DViXXKyh7oKQRR2771aLxMHhh9ZwVadXQZnHSH2kF';
+
     const account = await accounts.create({
-      name: TestFixtures.account1.name,
-      mnemonic: TestFixtures.account1.mnemonic,
+      name: name,
+      mnemonic: mnemonic,
     });
 
-    expect(account.getName()).toBe(TestFixtures.account1.name);
-    expect(account.address).toBe(TestFixtures.account1.address);
+    expect(account.getName()).toBe(name);
+    expect(account.address).toBe(address);
   });
 
   it('expect to fetch account balance and update currency document', async () => {
@@ -79,9 +85,5 @@ describe('Accounts module', () => {
     });
 
     expect(account2.address).toBe(account.address);
-  });
-
-  afterAll(async () => {
-    await wallet.close();
   });
 });

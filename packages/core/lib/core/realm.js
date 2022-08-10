@@ -20,7 +20,7 @@ export async function initRealm() {
 
   const inMemory = process.env.NODE_ENV === 'test';
 
-  realm = Realm.open({
+  realm = await Realm.open({
     path: 'dock',
     schema,
     schemaVersion: 3,

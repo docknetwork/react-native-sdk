@@ -1,5 +1,5 @@
 import {TransactionStatus, Transactions} from './transactions';
-import {getRealm} from '@docknetwork/wallet-sdk-core/lib/core/realm';
+import {getRealm, initRealm} from '@docknetwork/wallet-sdk-core/lib/core/realm';
 
 const initMockTransactions = () => {
   const today = new Date();
@@ -124,12 +124,13 @@ describe('TransactionsModule', () => {
   describe('Transactions history', () => {
     let realm;
     beforeAll(async () => {
+      await initRealm();
       realm = getRealm();
-      for (const tx of initMockTransactions()) {
-        await realm.write(() => {
+      await realm.write(() => {
+        for (const tx of initMockTransactions()) {
           realm.create('Transaction', tx, 'modified');
-        });
-      }
+        }
+      });
     });
 
     it('expect to filter only transactions for the given address', async () => {

@@ -5,6 +5,7 @@ import {validation} from './config';
 import {DIDKeyManager} from '@docknetwork/wallet-sdk-dids/src';
 import {TestFixtures} from '../../fixtures';
 import {getTestWallet} from '../../test/setup-test-state';
+import {getDock} from '../dock/service';
 
 describe('DID Service', () => {
   beforeAll(async () => {
@@ -110,14 +111,11 @@ describe('DID Service', () => {
     expect(error.message).toBe(
       '1010: Invalid Transaction: Inability to pay some fees , e.g. account balance too low',
     );
+
   });
 
   it('expect to get did document', async () => {
-    const result = await service.getDidDockDocument(
-      'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi',
-    );
-
-    expect(result).toStrictEqual({
+    const document = {
       '@context': ['https://www.w3.org/ns/did/v1'],
       assertionMethod: [
         'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi#keys-1',
@@ -139,6 +137,11 @@ describe('DID Service', () => {
           type: 'Sr25519VerificationKey2020',
         },
       ],
-    });
+    };
+    const result = await service.getDidDockDocument(
+      'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi',
+    );
+
+    expect(result).toStrictEqual(document);
   });
 });
