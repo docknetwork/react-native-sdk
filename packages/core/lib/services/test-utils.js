@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js';
 import {DOCK_TOKEN_UNIT} from '../core/format-utils';
 import {TestFixtures} from '../fixtures';
 import {NetworkManager} from '../modules/network-manager';
-import {dockService} from './dock/service';
+import {dockService, getDock, setDock} from './dock/service';
 import {keyringService} from './keyring';
 import {RpcService} from './rpc-service-client';
 import {walletService} from './wallet';
@@ -33,15 +33,20 @@ export async function mockDockService() {
     ss58Format: NetworkManager.getInstance().getNetworkInfo().addressPrefix,
   });
 
+  let sdkMock;
+
   if (API_MOCK_DISABLED) {
     return dockService.init({
       address: NetworkManager.getInstance().getNetworkInfo().substrateUrl,
     });
+  } else {
+    sdkMock = mockDockSdkConnection();
+    await dockService.init({
+      address: NetworkManager.getInstance().getNetworkInfo().substrateUrl,
+    });
   }
 
-  const sdkMock = mockDockSdkConnection();
   const _dockSdk = dockService.dock;
-  await dockService.init({address: 'address'});
 
   dockService.isDockReady = true;
 
@@ -98,7 +103,9 @@ export async function mockDockService() {
 
   return () => {
     dockService.dock = _dockSdk;
-    sdkMock.clear();
+    if (sdkMock) {
+      sdkMock.clear();
+    }
     dockService.disconnect();
   };
 }
@@ -134,19 +141,66 @@ export async function setupTestWallet() {
 
 export function mockDockSdkConnection(connectionError) {
   const result = 'result';
-
+  const dock = getDock();
   const mocks = [
-    jest.spyOn(dockService.dock, 'init').mockImplementation(() => {
+    jest.spyOn(dock, 'init').mockImplementation(() => {
       if (connectionError) {
         return Promise.reject(connectionError);
       }
 
       return Promise.resolve(result);
     }),
-    jest
-      .spyOn(dockService.dock, 'disconnect')
-      .mockReturnValue(Promise.resolve(true)),
+    jest.spyOn(dock, 'disconnect').mockReturnValue(Promise.resolve(true)),
   ];
+
+  let currentAccount;
+
+  setDock({
+    ...dock,
+    setAccount(account) {
+      currentAccount = account;
+    },
+    did: {
+      new: () => {
+        if (
+          currentAccount &&
+          currentAccount.address === TestFixtures.noBalanceAccount.address
+        ) {
+          throw new Error(
+            '1010: Invalid Transaction: Inability to pay some fees , e.g. account balance too low',
+          );
+        }
+        return {
+          txHash: 'hash',
+        };
+      },
+      getDocument: () => ({
+        '@context': ['https://www.w3.org/ns/did/v1'],
+        assertionMethod: [
+          'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi#keys-1',
+        ],
+        authentication: [
+          'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi#keys-1',
+        ],
+        capabilityInvocation: [
+          'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi#keys-1',
+        ],
+        controller: [
+          'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi',
+        ],
+        id: 'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi',
+        publicKey: [
+          {
+            controller:
+              'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi',
+            id: 'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi#keys-1',
+            publicKeyBase58: '8UDojkFBh5RopLKZredz8uVZV5U579voUwQFyYDmgBM3',
+            type: 'Sr25519VerificationKey2020',
+          },
+        ],
+      }),
+    },
+  });
 
   return {
     result,

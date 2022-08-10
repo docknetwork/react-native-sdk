@@ -2,6 +2,7 @@ import {Account} from './account';
 import {Wallet} from './wallet';
 import {NetworkManager} from './network-manager';
 import {TestFixtures} from '../fixtures';
+import {getTestWallet} from '../test/setup-test-state';
 
 describe('Account', () => {
   let wallet: Wallet;
@@ -9,13 +10,9 @@ describe('Account', () => {
 
   beforeAll(async () => {
     NetworkManager.getInstance().setNetworkId('testnet');
-    wallet = await Wallet.create();
+    wallet = await getTestWallet();
     await wallet.ensureNetwork();
-    account = await wallet.accounts.create({
-      name: TestFixtures.account1.name,
-      mnemonic: TestFixtures.account1.mnemonic,
-    });
-
+    account = await wallet.accounts.getByAddress(TestFixtures.account1.address);
     await account.loadDetails();
   });
 

@@ -1,6 +1,7 @@
 import {renderHook} from '@testing-library/react-hooks';
 import {useDIDManagement} from './didHooks';
 import {useWallet} from './index';
+import {didServiceRPC} from '@docknetwork/wallet-sdk-core/lib/services/dids';
 
 jest.mock('@docknetwork/wallet-sdk-core/lib/services/dids', () => {
   const originalModule = jest.requireActual(
@@ -73,6 +74,18 @@ jest.mock('@docknetwork/wallet-sdk-core/lib/services/dids', () => {
         didDocument,
         correlation: [],
       };
+    }),
+    registerDidDock: jest.fn(address => {
+      if (address) {
+        return {
+          keyPairWalletId: new Date().getTime().toString(),
+          dockDID: 'did:dock:z6MkjjCpsoQrwnEmqHzLdxWowXk5gjbwor4urC1RPDmGeV8r',
+        };
+      }
+      throw new Error('address is required');
+    }),
+    getDidDockDocument: jest.fn(() => {
+      return Promise.resolve();
     }),
   };
 
@@ -285,14 +298,15 @@ describe('DID Hooks', () => {
     expect(result.current.didList.length).toBe(2);
     expect(result.current.didList[0].type).toBe('DIDResolutionResponse');
   });
-  test('Create new DID', async () => {
+  test('Create new key DID', async () => {
     const {result} = renderHook(() => useDIDManagement());
     const {result: walletResult} = renderHook(() => useWallet());
 
-    await result.current.createKeyDID({
+    await result.current.createDID({
       derivePath: '',
       type: 'ed25519',
       name: 'DID Name',
+      didType: 'didkey',
     });
     expect(walletResult.current.documents.length).toBe(6);
     expect(walletResult.current.wallet.add).toHaveBeenCalledTimes(2);
@@ -300,14 +314,15 @@ describe('DID Hooks', () => {
       walletResult.current.documents[3].didDocument.id.indexOf('did:key'),
     ).toBe(0);
   });
-  test('Create new DID with invalid params', async () => {
+  test('Create new key DID with invalid params', async () => {
     const {result} = renderHook(() => useDIDManagement());
 
     await expect(
-      result.current.createKeyDID({
+      result.current.createDID({
         derivePath: '',
         type: 'sr25519',
         name: 'DID Name',
+        didType: 'didkey',
       }),
     ).rejects.toThrowError('sr25519 keypair type is not supported.');
   });
@@ -507,5 +522,37 @@ describe('DID Hooks', () => {
         password,
       }),
     ).rejects.toThrowError('DID already exist in wallet');
+  });
+  test('can create new DOCK DID', async () => {
+    const {result} = renderHook(() => useDIDManagement());
+    const {result: walletResult} = renderHook(() => useWallet());
+
+    await result.current.createDID({
+      address: '6GwnHZARcEkJio9dxPYy6SC5sAL6PxpZAB6VYwoFjGMU',
+      derivePath: '',
+      type: 'ed25519',
+      name: 'DID Name',
+      didType: 'diddock',
+    });
+    expect(walletResult.current.wallet.add).toHaveBeenCalled();
+    expect(didServiceRPC.registerDidDock).toHaveBeenCalledWith(
+      '6GwnHZARcEkJio9dxPYy6SC5sAL6PxpZAB6VYwoFjGMU',
+    );
+    expect(didServiceRPC.getDidDockDocument).toHaveBeenCalledWith(
+      'did:dock:z6MkjjCpsoQrwnEmqHzLdxWowXk5gjbwor4urC1RPDmGeV8r',
+    );
+  });
+  test('can create new DOCK DID with invalid params', async () => {
+    const {result} = renderHook(() => useDIDManagement());
+
+    await expect(
+      result.current.createDID({
+        address: '',
+        derivePath: '',
+        type: 'ed25519',
+        name: 'DID Name',
+        didType: 'diddock',
+      }),
+    ).rejects.toThrowError('address is required');
   });
 });

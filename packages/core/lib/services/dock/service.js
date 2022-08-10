@@ -1,10 +1,18 @@
-import {DockAPI} from '@docknetwork/sdk';
-import assert from 'assert';
+import dock, {DockAPI} from '@docknetwork/sdk';
 import {EventEmitter} from 'events';
 import {Logger} from '../../core/logger';
 import {once} from '../../modules/event-manager';
 import {InitParams, validation} from './configs';
 
+let dockInstance = dock;
+
+export function getDock() {
+  return dockInstance;
+}
+
+export function setDock(instance) {
+  dockInstance = instance;
+}
 /**
  *
  */
@@ -47,15 +55,14 @@ export class DockService {
   async init(params: InitParams) {
     validation.init(params);
 
-    assert(!this.isDockReady, 'dock is already initialized');
-
-    this.connectionInProgress = true;
+    if (!this.connectionInProgress) {
+      console.warn('There is an exisiting connection');
+      this.connectionInProgress = getDock().init(params);
+    }
 
     Logger.info(`Attempt to initialized substrate at: ${params.address}`);
 
-    const result = await this.dock.init(params).finally(() => {
-      this.connectionInProgress = false;
-    });
+    const result = await this.connectionInProgress;
 
     Logger.debug(`Substrate initialized at: ${params.address}`);
 
@@ -69,7 +76,7 @@ export class DockService {
    * @returns
    */
   async disconnect() {
-    const result = await this.dock.disconnect();
+    const result = await getDock().disconnect();
     this._setDockReady(false);
     return result;
   }
