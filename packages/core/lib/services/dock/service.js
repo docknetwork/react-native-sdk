@@ -1,4 +1,4 @@
-import dock, {DockAPI} from '@docknetwork/sdk';
+import dock from '@docknetwork/sdk';
 import {EventEmitter} from 'events';
 import {Logger} from '../../core/logger';
 import {once} from '../../modules/event-manager';
@@ -31,7 +31,7 @@ export class DockService {
 
   constructor() {
     this.name = 'dock';
-    this.dock = new DockAPI();
+    this.dock = dock;
     this.emitter = new EventEmitter();
   }
 
