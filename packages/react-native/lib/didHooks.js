@@ -69,11 +69,12 @@ export function useDIDManagement() {
   );
 
   const didMethodDock = useCallback(
-    async ({address, name}) => {
+    async ({address, name, derivePath, type}) => {
       const {dockDID, keyPairWalletId} = await didServiceRPC.registerDidDock(
         address,
       );
 
+      const keydoc = await createDIDKeypairDocument({derivePath, type});
       const didDocument = await didServiceRPC.getDidDockDocument(dockDID);
 
       const dockDIDResolution = {
@@ -81,11 +82,12 @@ export function useDIDManagement() {
         type: 'DIDResolutionResponse',
         name,
         didDocument,
-        correlation: [keyPairWalletId],
+        correlation: [keydoc.id, keyPairWalletId],
       };
+      await wallet.add(keydoc);
       await wallet.add(dockDIDResolution);
     },
-    [wallet],
+    [createDIDKeypairDocument, wallet],
   );
 
   const createDID = useCallback(
@@ -94,7 +96,7 @@ export function useDIDManagement() {
       if (type === 'ed25519') {
         switch (didType) {
           case 'diddock':
-            return didMethodDock({address, name});
+            return didMethodDock({address, name, derivePath, type});
           case 'didkey':
             return didMethodKey({derivePath, name, type});
         }
