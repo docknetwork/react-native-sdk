@@ -290,9 +290,10 @@ jest.mock('./index.js', () => {
   };
 });
 describe('DID Hooks', () => {
-  afterAll(() => {
+  afterEach(() => {
     jest.clearAllMocks();
   });
+
   test('Filter did list', () => {
     const {result} = renderHook(() => useDIDManagement());
     expect(result.current.didList.length).toBe(2);
@@ -534,7 +535,11 @@ describe('DID Hooks', () => {
       name: 'DID Name',
       didType: 'diddock',
     });
-    expect(walletResult.current.wallet.add).toHaveBeenCalled();
+    expect(didServiceRPC.generateKeyDoc).toHaveBeenCalledWith({
+      derivePath: '',
+      type: 'ed25519',
+    });
+    expect(walletResult.current.wallet.add).toHaveBeenCalledTimes(2);
     expect(didServiceRPC.registerDidDock).toHaveBeenCalledWith(
       '6GwnHZARcEkJio9dxPYy6SC5sAL6PxpZAB6VYwoFjGMU',
     );
