@@ -323,9 +323,9 @@ describe('DID Hooks', () => {
         derivePath: '',
         type: 'sr25519',
         name: 'DID Name',
-        didType: 'didkey',
+        didType: '',
       }),
-    ).rejects.toThrowError('sr25519 keypair type is not supported.');
+    ).rejects.toThrowError('Invalid DID type');
   });
   test('Edit DID', async () => {
     const {result} = renderHook(() => useDIDManagement());
