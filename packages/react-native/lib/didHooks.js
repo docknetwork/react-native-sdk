@@ -93,15 +93,13 @@ export function useDIDManagement() {
   const createDID = useCallback(
     async didParams => {
       const {derivePath, type = 'ed25519', name, didType, address} = didParams;
-      if (type === 'ed25519') {
-        switch (didType) {
-          case 'diddock':
-            return didMethodDock({address, name, derivePath, type});
-          case 'didkey':
-            return didMethodKey({derivePath, name, type});
-        }
-      } else {
-        throw Error(`${type} keypair type is not supported.`);
+      switch (didType) {
+        case 'diddock':
+          return didMethodDock({address, name, derivePath, type});
+        case 'didkey':
+          return didMethodKey({derivePath, name, type});
+        default:
+          throw Error('Invalid DID type');
       }
     },
     [didMethodDock, didMethodKey],
