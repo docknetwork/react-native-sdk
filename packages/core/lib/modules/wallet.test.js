@@ -38,6 +38,28 @@ describe('ApiModule', () => {
       expect(accounts.length).toBe(3);
     });
 
+    it('Expect to upsert document', async () => {
+      jest.spyOn(wallet, 'getDocumentById');
+      const addMock = jest.spyOn(wallet, 'add');
+      jest.spyOn(wallet, 'update');
+
+      await wallet.upsert({
+        id: 'test',
+        type: 'KeyringPair',
+      });
+
+      expect(wallet.getDocumentById).toBeCalled();
+      expect(wallet.add).toBeCalled();
+
+      await wallet.upsert({
+        id: 'test',
+        type: 'KeyringPair',
+      });
+
+      expect(wallet.update).toBeCalled();
+      expect(wallet.add).toBeCalledTimes(1);
+    });
+
     it('Expect document to be removed', async () => {
       const document = await wallet.add({
         type: 'Account',
