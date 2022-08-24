@@ -278,6 +278,16 @@ class Wallet {
     this.eventManager.emit(WalletEvents.documentRemoved, documentId);
   }
 
+  async upsert(document: WalletDocument) {
+    const exists = await this.getDocumentById(document.id);
+
+    if (exists) {
+      return this.update(document);
+    }
+
+    return this.add(document);
+  }
+
   /**
    * Add document to the wallet
    * @param {*} options
