@@ -40,7 +40,7 @@ describe('ApiModule', () => {
 
     it('Expect to upsert document', async () => {
       jest.spyOn(wallet, 'getDocumentById');
-      const addMock = jest.spyOn(wallet, 'add');
+      jest.spyOn(wallet, 'add');
       jest.spyOn(wallet, 'update');
 
       await wallet.upsert({
