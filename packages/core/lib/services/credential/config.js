@@ -20,7 +20,8 @@ export const validation = {
     );
   },
   createPresentation: params => {
-    const {credentials, keyDoc, challenge} = params;
+    const {credentials, keyDoc, challenge, id} = params;
+    assert(typeof id === 'string', 'invalid id');
     assert(typeof keyDoc === 'object', 'invalid KeyDoc');
     assert(typeof challenge === 'string', 'invalid challenge');
     assert(Array.isArray(credentials), 'invalid credentials');

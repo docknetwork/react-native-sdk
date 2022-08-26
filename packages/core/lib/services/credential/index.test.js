@@ -42,15 +42,25 @@ describe('DID Service', () => {
     expect(signVc.type).toContain('VerifiableCredential');
   });
   it('expect to validate errors', async () => {
+    const error0 = await getPromiseError(() =>
+      service.createPresentation({
+        credentials: [],
+      }),
+    );
+    expect(error0.message).toBe('invalid id');
+
     const error1 = await getPromiseError(() =>
       service.createPresentation({
+        id: 'http://example.edu/credentials/1986',
         credentials: [],
       }),
     );
     expect(error1.message).toBe('invalid KeyDoc');
     const error2 = await getPromiseError(() =>
       service.createPresentation({
+        id: 'http://example.edu/credentials/1986',
         keyDoc: {},
+        credentials: [],
       }),
     );
     expect(error2.message).toBe('invalid challenge');
@@ -99,6 +109,7 @@ describe('DID Service', () => {
       credentials,
       keyDoc,
       challenge: 'Test',
+      id: 'http://example.edu/credentials/1986',
     });
     expect(presentation).toHaveProperty('proof');
     expect(presentation.type).toContain('VerifiablePresentation');
