@@ -19,6 +19,7 @@ import {AccountDetails} from '@docknetwork/wallet-sdk-core/lib/modules/account';
 import {DocumentType} from '@docknetwork/wallet-sdk-core/lib/types';
 import './rn-rpc-server';
 import {useDIDManagement, useDIDUtils} from './didHooks';
+import {usePresentation} from './credentialPresentHooks';
 import {useAccounts} from './accountsHooks';
 export type WalletSDKContextProps = {
   wallet: Wallet,
@@ -30,6 +31,7 @@ export const WalletSDKContext = React.createContext({
 });
 
 setStorage(AsyncStorage);
+export {usePresentation};
 export {useAccounts};
 export {useDIDManagement, useDIDUtils};
 export function getStorage() {

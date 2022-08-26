@@ -13,8 +13,18 @@ export const validation = {
     const {vcJson, keyDoc} = params;
     assert(typeof vcJson === 'object', 'invalid vcJson');
     assert(typeof keyDoc === 'object', 'invalid keyDoc');
-    assert(keyDoc.type === 'Ed25519VerificationKey2018', 'invalid type');
 
+    assert(
+      typeof keyDoc.publicKeyBase58 === 'string',
+      'publicKeyBase58 is not present',
+    );
+  },
+  createPresentation: params => {
+    const {credentials, keyDoc, challenge} = params;
+    assert(typeof keyDoc === 'object', 'invalid KeyDoc');
+    assert(typeof challenge === 'string', 'invalid challenge');
+    assert(Array.isArray(credentials), 'invalid credentials');
+    assert(credentials.length > 0, 'no credential found');
     assert(
       typeof keyDoc.publicKeyBase58 === 'string',
       'publicKeyBase58 is not present',
