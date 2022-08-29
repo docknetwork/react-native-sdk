@@ -3,12 +3,13 @@ import {credentialServiceRPC} from '@docknetwork/wallet-sdk-core/lib/services/cr
 
 export function usePresentation() {
   const presentCredentials = useCallback(
-    async ({credentials, keyDoc, challenge, id}) => {
+    async ({credentials, keyDoc, challenge, id, domain}) => {
       return credentialServiceRPC.createPresentation({
         credentials,
         keyDoc,
         challenge,
         id,
+        domain,
       });
     },
     [],

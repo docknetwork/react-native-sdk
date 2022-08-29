@@ -48,7 +48,7 @@ class CredentialService {
   }
   async createPresentation(params) {
     validation.createPresentation(params);
-    const {credentials, keyDoc, challenge, id} = params;
+    const {credentials, keyDoc, challenge, id, domain} = params;
     const vp = new VerifiablePresentation(id);
     for (const signedVC of credentials) {
       vp.addCredential(signedVC);
@@ -57,7 +57,7 @@ class CredentialService {
     kp.signer = kp.signer();
     const suite = getSuiteFromKeyDoc(kp);
     vp.setHolder(keyDoc.controller);
-    return vp.sign(suite, challenge);
+    return vp.sign(suite, challenge, domain);
   }
 }
 
