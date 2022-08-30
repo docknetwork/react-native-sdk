@@ -2,6 +2,7 @@ import {serviceName, validation} from './config';
 import VerifiableCredential from '@docknetwork/sdk/verifiable-credential';
 import {getKeypairFromDoc} from '@docknetwork/wallet/methods/keypairs';
 import {getSuiteFromKeyDoc} from '@docknetwork/sdk/utils/vc/helpers';
+import VerifiablePresentation from '@docknetwork/sdk/verifiable-presentation';
 
 class CredentialService {
   constructor() {
@@ -10,6 +11,7 @@ class CredentialService {
   rpcMethods = [
     CredentialService.prototype.generateCredential,
     CredentialService.prototype.signCredential,
+    CredentialService.prototype.createPresentation,
   ];
   generateCredential(params = {}) {
     validation.generateCredential(params);
@@ -43,6 +45,19 @@ class CredentialService {
     await verifiableCredential.sign(suite);
 
     return verifiableCredential;
+  }
+  async createPresentation(params) {
+    validation.createPresentation(params);
+    const {credentials, keyDoc, challenge, id, domain} = params;
+    const vp = new VerifiablePresentation(id);
+    for (const signedVC of credentials) {
+      vp.addCredential(signedVC);
+    }
+    const kp = getKeypairFromDoc(keyDoc);
+    kp.signer = kp.signer();
+    const suite = getSuiteFromKeyDoc(kp);
+    vp.setHolder(keyDoc.controller);
+    return vp.sign(suite, challenge, domain);
   }
 }
 

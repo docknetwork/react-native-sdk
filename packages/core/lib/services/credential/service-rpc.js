@@ -11,4 +11,7 @@ export class CredentialServiceRPC extends RpcService {
   async signCredential(params) {
     return this.call('signCredential', params);
   }
+  async createPresentation(params) {
+    return this.call('createPresentation', params);
+  }
 }
