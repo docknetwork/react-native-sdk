@@ -72,16 +72,21 @@ export function getPlainDockAmount(value) {
   return BigNumber(value).times(DOCK_TOKEN_UNIT);
 }
 
-const dateFormat = new Intl.DateTimeFormat('en', {
-  month: 'long',
-  day: 'numeric',
-  year: 'numeric',
-  hour: 'numeric',
-  minute: 'numeric',
-});
-
-export function formatDate(date) {
+/**
+ *
+ * @param date
+ * @param locale
+ * @returns {string}
+ */
+export function formatDate(date, locale = 'en-US') {
   assert(!!date, 'date is required');
 
+  const dateFormat = new Intl.DateTimeFormat(locale, {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+  });
   return dateFormat.format(typeof date === 'string' ? new Date(date) : date);
 }
