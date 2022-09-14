@@ -27,7 +27,7 @@ export function formatCurrency(value, currency = 'USD'): string {
     'value must be a number or bigint',
   );
 
-  var formatter = new Intl.NumberFormat('en-US', {
+  const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: currency,
 
