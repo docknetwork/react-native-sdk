@@ -22,7 +22,6 @@ export const DOCK_TOKEN_UNIT = 1000000;
  * @returns string
  */
 export function formatCurrency(value, currency = 'USD'): string {
-  assert(!!value, 'value is required');
   assert(
     typeof value === 'number' || typeof value === 'bigint',
     'value must be a number or bigint',
