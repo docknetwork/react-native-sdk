@@ -82,11 +82,8 @@ export function formatDate(date, locale = 'en-US') {
   assert(!!date, 'date is required');
 
   const dateFormat = new Intl.DateTimeFormat(locale, {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
+    dateStyle: 'long',
+    timeStyle: 'short',
   });
   return dateFormat.format(typeof date === 'string' ? new Date(date) : date);
 }
