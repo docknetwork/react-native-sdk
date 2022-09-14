@@ -19,15 +19,20 @@ export const DOCK_TOKEN_UNIT = 1000000;
  *
  * @param {number} value
  * @param {string} currency
+ * * @param {string} locale
  * @returns string
  */
-export function formatCurrency(value, currency = 'USD'): string {
+export function formatCurrency(
+  value,
+  currency = 'USD',
+  locale = 'en-US',
+): string {
   assert(
     typeof value === 'number' || typeof value === 'bigint',
     'value must be a number or bigint',
   );
 
-  const formatter = new Intl.NumberFormat('en-US', {
+  const formatter = new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: currency,
 
