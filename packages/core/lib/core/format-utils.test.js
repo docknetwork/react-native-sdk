@@ -31,6 +31,9 @@ describe('Format util', () => {
   it('formatCurrency', () => {
     const result = formatCurrency(12.55);
     expect(result).toBe('$12.55');
+
+    const result1 = formatCurrency(0);
+    expect(result1).toBe('$0.00');
   });
 
   it('format Date', () => {
