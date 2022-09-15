@@ -19,16 +19,20 @@ export const DOCK_TOKEN_UNIT = 1000000;
  *
  * @param {number} value
  * @param {string} currency
+ * * @param {string} locale
  * @returns string
  */
-export function formatCurrency(value, currency = 'USD'): string {
-  assert(!!value, 'value is required');
+export function formatCurrency(
+  value,
+  currency = 'USD',
+  locale = 'en-US',
+): string {
   assert(
     typeof value === 'number' || typeof value === 'bigint',
     'value must be a number or bigint',
   );
 
-  var formatter = new Intl.NumberFormat('en-US', {
+  const formatter = new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: currency,
 
@@ -68,16 +72,18 @@ export function getPlainDockAmount(value) {
   return BigNumber(value).times(DOCK_TOKEN_UNIT);
 }
 
-const dateFormat = new Intl.DateTimeFormat('en', {
-  month: 'long',
-  day: 'numeric',
-  year: 'numeric',
-  hour: 'numeric',
-  minute: 'numeric',
-});
-
-export function formatDate(date) {
+/**
+ *
+ * @param date
+ * @param locale
+ * @returns {string}
+ */
+export function formatDate(date, locale = 'en-US') {
   assert(!!date, 'date is required');
 
+  const dateFormat = new Intl.DateTimeFormat(locale, {
+    dateStyle: 'long',
+    timeStyle: 'short',
+  });
   return dateFormat.format(typeof date === 'string' ? new Date(date) : date);
 }
