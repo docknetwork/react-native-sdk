@@ -1,5 +1,9 @@
 import {renderHook} from '@testing-library/react-hooks';
-import {useCredentialUtils} from './credentialHooks';
+import {
+  useCredentialUtils,
+  sortByIssuanceDate,
+  getCredentialTimestamp,
+} from './credentialHooks';
 import {useWallet} from '../index';
 
 const mockCreds = [
@@ -188,5 +192,42 @@ describe('Credential Hooks', () => {
     await expect(result.current.deleteCredential()).rejects.toThrowError(
       'Credential ID is not set',
     );
+  });
+});
+
+describe('getCredentialTimestamp', () => {
+  it('expect to get credential timestamp', () => {
+    expect(
+      getCredentialTimestamp({
+        issuanceDate: '2022-03-25T10:28:18.848Z',
+      }),
+    ).toEqual(1648204098848);
+  });
+
+  it('expect handle invalid issuanceDate', () => {
+    expect(
+      getCredentialTimestamp({
+        issuanceDate: 'invalid date',
+      }),
+    ).toEqual(0);
+
+    expect(
+      getCredentialTimestamp({
+        issuanceDate: null,
+      }),
+    ).toEqual(0);
+  });
+
+  it('expect throw for invalid credential', () => {
+    expect(() => getCredentialTimestamp(null)).toThrowError();
+  });
+});
+describe('sortByIssuanceDate', () => {
+  it('expect to sort credentials', () => {
+    const result = mockCreds
+      .map(cred => ({...cred, content: cred}))
+      .sort(sortByIssuanceDate);
+
+    result.forEach((item, idx) => expect(item.id).toEqual(idx));
   });
 });
