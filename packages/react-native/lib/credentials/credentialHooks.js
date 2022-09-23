@@ -14,15 +14,20 @@ const validateCredential = credential => {
     'Credential has an invalid type',
   );
 };
+export const sortByIssuanceDate = (a, b) =>
+  getCredentialTimestamp(b.content) - getCredentialTimestamp(a.content);
 
+export function getCredentialTimestamp(credential) {
+  assert(!!credential, 'credential is required');
+
+  if (!credential.issuanceDate) {
+    return 0;
+  }
+
+  return new Date(credential.issuanceDate).getTime() || 0;
+}
 export function useCredentialUtils() {
   const {documents, wallet} = useWallet({syncDocs: true});
-
-  const doesCredentialExist = useCallback((allCredentials, credentialToAdd) => {
-    return !!allCredentials.find(
-      item => item.content.id === credentialToAdd.id,
-    );
-  }, []);
 
   const credentials = useMemo(() => {
     if (Array.isArray(documents)) {
@@ -36,10 +41,17 @@ export function useCredentialUtils() {
         .map(document => ({
           content: document.value,
           id: document.id,
-        }));
+        }))
+        .sort(sortByIssuanceDate);
     }
     return [];
   }, [documents]);
+
+  const doesCredentialExist = useCallback((allCredentials, credentialToAdd) => {
+    return !!allCredentials.find(
+      item => item.content.id === credentialToAdd.id,
+    );
+  }, []);
 
   const saveCredential = useCallback(
     async jsonData => {
