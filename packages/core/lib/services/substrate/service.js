@@ -46,7 +46,8 @@ export class SubstrateService {
   async getFeeAmount(params: TransactionParams) {
     validation.getFeeAmount(params);
 
-    const {toAddress, fromAddress, amount} = params;
+    const {toAddress, fromAddress} = params;
+    const amount = getPlainDockAmount(params.amount).toNumber();
 
     const account = await walletService.getAccountKeypair(fromAddress);
 
