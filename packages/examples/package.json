@@ -2,10 +2,10 @@
     "name": "@docknetwork/wallet-sdk-examples",
     "version": "0.2.5",
     "dependencies": {
-        "@docknetwork/wallet-sdk-core": "^0.2.5",
-        "@docknetwork/wallet-sdk-credentials": "^0.2.5",
-        "@docknetwork/wallet-sdk-transactions": "^0.2.5",
-        "@docknetwork/wallet-sdk-react-native": "^0.2.5"
+        "@docknetwork/wallet-sdk-core": "^0.2.4",
+        "@docknetwork/wallet-sdk-credentials": "^0.2.4",
+        "@docknetwork/wallet-sdk-transactions": "^0.2.4",
+        "@docknetwork/wallet-sdk-react-native": "^0.2.4"
     },
     "devDependencies": {
 
