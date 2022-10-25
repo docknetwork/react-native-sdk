@@ -50,7 +50,7 @@ export const findRelatedDocs = (document, documentList) =>
     ? documentList.filter(doc => document.correlation.find(id => id === doc.id))
     : [];
 
-function getAccount(address, documents): AccountDetails {
+export function getAccount(address, documents): AccountDetails {
   const addressDoc = findDocument(address, documents);
 
   if (!addressDoc) {
