@@ -27,6 +27,15 @@ jest.mock('./index.js', () => {
     useWallet: jest.fn(() => {
       return mockFunctions;
     }),
+    getAccount: jest.fn(() => {
+      return {
+        address: '',
+        name: '',
+        balance: '',
+        correlation: '',
+        mnemonic: '',
+      };
+    }),
   };
 });
 
@@ -34,6 +43,9 @@ describe('Accounts  Hooks', () => {
   test('filter address documents', () => {
     const {result} = renderHook(() => useAccounts());
     expect(result.current.accounts.length).toBe(1);
-    expect(result.current.accounts[0].type).toBe('Address');
+    const singleAccount = result.current.accounts[0];
+    expect(singleAccount.type).toBe('Address');
+    expect(singleAccount).toHaveProperty('fetchBalance');
+    expect(singleAccount).toHaveProperty('balance');
   });
 });
