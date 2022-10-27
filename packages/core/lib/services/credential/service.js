@@ -3,6 +3,23 @@ import VerifiableCredential from '@docknetwork/sdk/verifiable-credential';
 import {getKeypairFromDoc} from '@docknetwork/wallet/methods/keypairs';
 import {getSuiteFromKeyDoc} from '@docknetwork/sdk/utils/vc/helpers';
 import VerifiablePresentation from '@docknetwork/sdk/verifiable-presentation';
+import dock from '@docknetwork/sdk';
+import {
+  DockResolver,
+  DIDKeyResolver,
+  MultiResolver,
+  UniversalResolver,
+} from '@docknetwork/sdk/resolver';
+import {verifyCredential} from '@docknetwork/sdk/utils/vc/credentials';
+
+const resolvers = {
+  dock: new DockResolver(dock),
+  key: new DIDKeyResolver(),
+};
+const resolver = new MultiResolver(
+  resolvers,
+  new UniversalResolver('https://uniresolver.io'),
+);
 
 class CredentialService {
   constructor() {
@@ -12,6 +29,7 @@ class CredentialService {
     CredentialService.prototype.generateCredential,
     CredentialService.prototype.signCredential,
     CredentialService.prototype.createPresentation,
+    CredentialService.prototype.verifyCredential,
   ];
   generateCredential(params = {}) {
     validation.generateCredential(params);
@@ -58,6 +76,11 @@ class CredentialService {
     const suite = getSuiteFromKeyDoc(kp);
     vp.setHolder(keyDoc.controller);
     return vp.sign(suite, challenge, domain);
+  }
+  verifyCredential(params) {
+    validation.verifyCredential(params);
+    const {credential} = params;
+    return verifyCredential(credential, {resolver, revocationApi: {dock}});
   }
 }
 
