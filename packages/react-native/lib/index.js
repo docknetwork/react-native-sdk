@@ -21,7 +21,10 @@ import './rn-rpc-server';
 import {useDIDManagement, useDIDUtils} from './didHooks';
 import {usePresentation} from './credentialPresentHooks';
 import {useAccounts} from './accountsHooks';
-import {useCredentialUtils} from './credentials/credentialHooks';
+import {
+  useCredentialUtils,
+  getCredentialStatus,
+} from './credentials/credentialHooks';
 export type WalletSDKContextProps = {
   wallet: Wallet,
   status: string,
@@ -35,7 +38,7 @@ setStorage(AsyncStorage);
 export {usePresentation};
 export {useAccounts};
 export {useDIDManagement, useDIDUtils};
-export {useCredentialUtils};
+export {useCredentialUtils, getCredentialStatus};
 export function getStorage() {
   return AsyncStorage;
 }
@@ -50,7 +53,7 @@ export const findRelatedDocs = (document, documentList) =>
     ? documentList.filter(doc => document.correlation.find(id => id === doc.id))
     : [];
 
-function getAccount(address, documents): AccountDetails {
+export function getAccount(address, documents): AccountDetails {
   const addressDoc = findDocument(address, documents);
 
   if (!addressDoc) {

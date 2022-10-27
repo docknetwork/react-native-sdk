@@ -1,6 +1,7 @@
 import {useMemo, useCallback} from 'react';
 import {useWallet} from '../index';
 import assert from 'assert';
+import {credentialServiceRPC} from '@docknetwork/wallet-sdk-core/lib/services/credential';
 
 const validateCredential = credential => {
   assert(typeof credential !== 'undefined', 'Invalid Credential');
@@ -26,6 +27,10 @@ export function getCredentialTimestamp(credential) {
 
   return new Date(credential.issuanceDate).getTime() || 0;
 }
+export function getCredentialStatus(credential) {
+  return credentialServiceRPC.verifyCredential({credential});
+}
+
 export function useCredentialUtils() {
   const {documents, wallet} = useWallet({syncDocs: true});
 
