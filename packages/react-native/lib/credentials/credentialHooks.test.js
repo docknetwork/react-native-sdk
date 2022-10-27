@@ -3,9 +3,23 @@ import {
   useCredentialUtils,
   sortByIssuanceDate,
   getCredentialTimestamp,
+  getCredentialStatus,
 } from './credentialHooks';
 import {useWallet} from '../index';
+import {credentialServiceRPC} from '@docknetwork/wallet-sdk-core/lib/services/credential';
+jest.mock('@docknetwork/wallet-sdk-core/lib/services/credential', () => {
+  const originalModule = jest.requireActual(
+    '@docknetwork/wallet-sdk-core/lib/services/credential',
+  );
+  const mockFunctions = {
+    verifyCredential: jest.fn(),
+  };
 
+  return {
+    ...originalModule,
+    credentialServiceRPC: mockFunctions,
+  };
+});
 const mockCreds = [
   {
     id: 1,
@@ -194,7 +208,14 @@ describe('Credential Hooks', () => {
     );
   });
 });
-
+describe('Credential Utils', () => {
+  it('expect rpc function for verifying credential to be called', () => {
+    getCredentialStatus(mockCreds[0]);
+    expect(credentialServiceRPC.verifyCredential).toHaveBeenCalledWith({
+      credential: mockCreds[0],
+    });
+  });
+});
 describe('getCredentialTimestamp', () => {
   it('expect to get credential timestamp', () => {
     expect(

@@ -1,12 +1,73 @@
 import {assertRpcService, getPromiseError} from '../test-utils';
 import {credentialService as service} from './service';
-import {validation} from '../dids/config';
+import {validation} from './config';
+import * as credentialsUtils from '@docknetwork/sdk/utils/vc/credentials';
 
 import {CredentialServiceRPC} from './service-rpc';
 
 describe('DID Service', () => {
   it('ServiceRpc', () => {
     assertRpcService(CredentialServiceRPC, service, validation);
+  });
+  it('expect to validate errors when verifying credential', async () => {
+    const error0 = await getPromiseError(() => service.verifyCredential({}));
+    expect(error0.message).toBe('invalid credential');
+  });
+  it('expect to verify credential', async () => {
+    jest
+      .spyOn(credentialsUtils, 'verifyCredential')
+      .mockImplementationOnce(async () => ({verified: true}));
+    const credential = {
+      '@context': [
+        'https://www.w3.org/2018/credentials/v1',
+        {
+          dk: 'https://ld.dock.io/credentials#',
+          BasicCredential: 'dk:BasicCredential',
+          name: 'dk:name',
+          email: 'dk:email',
+          title: 'dk:title',
+          description: 'dk:description',
+          logo: 'dk:logo',
+        },
+        {
+          prettyVC: 'https://ld.dock.io/credentials#prettyVC',
+          orientation: 'https://ld.dock.io/credentials#orientation',
+          size: 'https://ld.dock.io/credentials#size',
+        },
+      ],
+      credentialStatus: {
+        id: 'rev-reg:dock:0xccf6767a9337d89171a478a31318db2e55a6e7bd0858e080fdd6507990072a63',
+        type: 'CredentialStatusList2017',
+      },
+      id: 'https://creds-testnet.dock.io/e185bba44983790adab513caa84c9ec4debaa2efa9f59b62d96f392eccfdefb6',
+      type: ['VerifiableCredential', 'BasicCredential'],
+      credentialSubject: {
+        id: 'ifeanyiosinakayah15@gmail.com',
+        name: 'Ifeanyi Osinakayah',
+        email: 'ifeanyiosinakayah15@gmail.com',
+        title: 'Basic Credential',
+      },
+      issuanceDate: '2022-10-26T21:01:54.492Z',
+      expirationDate: '2024-10-25T23:00:00.000Z',
+
+      proof: {
+        type: 'Ed25519Signature2018',
+        created: '2022-10-26T21:03:26Z',
+        verificationMethod:
+          'did:dock:5DXYT99kpHozJwp8TDbTiwrtoMxJ8Nbq8pSQ8w3hWMz1hw64#keys-1',
+        proofPurpose: 'assertionMethod',
+        proofValue:
+          'z54wiAXqaiwVu3z7ypPEfKrf9bfnsjjUcWkTzqJ6nCsdMjwx3KSYqPN5VoGrSqgg83Ug99QKhLJ8geQhDTaoxdyYP',
+      },
+      issuer: {
+        name: 'Ifeanyi Osinakayah',
+        description: '',
+        logo: '',
+        id: 'did:dock:5DXYT99kpHozJwp8TDbTiwrtoMxJ8Nbq8pSQ8w3hWMz1hw64',
+      },
+    };
+    await service.verifyCredential({credential});
+    expect(credentialsUtils.verifyCredential).toBeCalled();
   });
   it('should create a vc', async () => {
     const subject = {

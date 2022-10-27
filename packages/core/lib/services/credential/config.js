@@ -9,6 +9,10 @@ export const validation = {
       assert(Object.keys(subject).length > 0, 'invalid subject');
     }
   },
+  verifyCredential: params => {
+    const {credential} = params;
+    assert(typeof credential === 'object', 'invalid credential');
+  },
   signCredential: params => {
     const {vcJson, keyDoc} = params;
     assert(typeof vcJson === 'object', 'invalid vcJson');

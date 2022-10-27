@@ -14,4 +14,7 @@ export class CredentialServiceRPC extends RpcService {
   async createPresentation(params) {
     return this.call('createPresentation', params);
   }
+  async verifyCredential(params) {
+    return this.call('verifyCredential', params);
+  }
 }
