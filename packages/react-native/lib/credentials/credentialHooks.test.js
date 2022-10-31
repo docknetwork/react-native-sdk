@@ -4,6 +4,8 @@ import {
   sortByIssuanceDate,
   getCredentialTimestamp,
   getCredentialStatus,
+  isInThePast,
+  CREDENTIAL_STATUS,
 } from './credentialHooks';
 import {useWallet} from '../index';
 import {credentialServiceRPC} from '@docknetwork/wallet-sdk-core/lib/services/credential';
@@ -12,7 +14,9 @@ jest.mock('@docknetwork/wallet-sdk-core/lib/services/credential', () => {
     '@docknetwork/wallet-sdk-core/lib/services/credential',
   );
   const mockFunctions = {
-    verifyCredential: jest.fn(),
+    verifyCredential: jest.fn(credential => {
+      return {verified: false, error: 'Revocation check failed'};
+    }),
   };
 
   return {
@@ -250,5 +254,45 @@ describe('sortByIssuanceDate', () => {
       .sort(sortByIssuanceDate);
 
     result.forEach((item, idx) => expect(item.id).toEqual(idx));
+  });
+  it('check when credential has expired', () => {
+    expect(isInThePast(new Date('2022-01-25'))).toBeTruthy();
+    expect(isInThePast(new Date())).toBeFalsy();
+  });
+  it('expect to get expired credential status', async () => {
+    const credential = {
+      '@context': ['https://www.w3.org/2018/credentials/v1'],
+      id: 'https://creds.dock.io/8e02c35ae370b02f47d7faaf41cb1386768fc75c9fca7caa6bb389dbe61260eb',
+      type: ['VerifiableCredential', 'UniversityDegreeCredential'],
+      credentialSubject: {},
+      issuanceDate: '2022-06-27T12:08:30.675Z',
+      expirationDate: '2019-06-26T23:00:00.000Z',
+      issuer: {
+        name: 'John Doe',
+        description: '',
+        logo: '',
+        id: 'did:dock:5CJaTP2eGCLf5ZNPUXYbWxUvJQMTseKfc4hi8WVBC1K8eW9N',
+      },
+    };
+    const response = await getCredentialStatus(credential);
+    expect(response).toBe(CREDENTIAL_STATUS.EXPIRED);
+  });
+  it('expect to get revoked credential status', async () => {
+    const credential = {
+      '@context': ['https://www.w3.org/2018/credentials/v1'],
+      id: 'https://creds.dock.io/8e02c35ae370b02f47d7faaf41cb1386768fc75c9fca7caa6bb389dbe61260eb',
+      type: ['VerifiableCredential', 'UniversityDegreeCredential'],
+      credentialSubject: {},
+      issuanceDate: '2022-06-27T12:08:30.675Z',
+      expirationDate: '2029-06-26T23:00:00.000Z',
+      issuer: {
+        name: 'John Doe',
+        description: '',
+        logo: '',
+        id: 'did:dock:5CJaTP2eGCLf5ZNPUXYbWxUvJQMTseKfc4hi8WVBC1K8eW9N',
+      },
+    };
+    const response = await getCredentialStatus(credential);
+    expect(response).toBe(CREDENTIAL_STATUS.REVOKED);
   });
 });
