@@ -1,8 +1,14 @@
-import {useMemo, useCallback} from 'react';
+import {useMemo, useCallback, useState, useEffect} from 'react';
 import {useWallet} from '../index';
 import assert from 'assert';
 import {credentialServiceRPC} from '@docknetwork/wallet-sdk-core/lib/services/credential';
 
+export const CREDENTIAL_STATUS = {
+  INVALID: 1,
+  EXPIRED: 2,
+  VERIFIED: 3,
+  REVOKED: 4,
+};
 const validateCredential = credential => {
   assert(typeof credential !== 'undefined', 'Invalid Credential');
   assert(typeof credential?.id === 'string', 'Credential has no ID');
@@ -27,7 +33,7 @@ export function getCredentialTimestamp(credential) {
 
   return new Date(credential.issuanceDate).getTime() || 0;
 }
-export function getCredentialStatus(credential) {
+function getCredentialValidityStatus(credential) {
   return credentialServiceRPC.verifyCredential({credential});
 }
 
@@ -90,4 +96,44 @@ export function useCredentialUtils() {
       deleteCredential,
     };
   }, [credentials, doesCredentialExist, saveCredential, deleteCredential]);
+}
+export function isInThePast(date) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return date < today;
+}
+export async function getCredentialStatus(credential) {
+  assert(typeof credential !== 'undefined', 'Invalid Credential');
+  const hasExpired = credential.expirationDate
+    ? isInThePast(new Date(credential.expirationDate))
+    : false;
+
+  if (hasExpired) {
+    return CREDENTIAL_STATUS.EXPIRED;
+  }
+  const {verified, error} = await getCredentialValidityStatus(credential);
+
+  if (
+    typeof error === 'string' &&
+    error.toLowerCase().indexOf('revocation') > -1
+  ) {
+    return CREDENTIAL_STATUS.REVOKED;
+  }
+  if (verified) {
+    return CREDENTIAL_STATUS.VERIFIED;
+  }
+  return CREDENTIAL_STATUS.INVALID;
+}
+export function useGetCredentialStatus({credential}) {
+  const [status, setStatus] = useState(CREDENTIAL_STATUS.VERIFIED);
+
+  useEffect(() => {
+    getCredentialStatus(credential).then(response => {
+      setStatus(response);
+    });
+  }, [credential]);
+
+  return useMemo(() => {
+    return status;
+  }, [status]);
 }

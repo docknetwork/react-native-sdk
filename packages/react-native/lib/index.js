@@ -24,6 +24,8 @@ import {useAccounts} from './accountsHooks';
 import {
   useCredentialUtils,
   getCredentialStatus,
+  useGetCredentialStatus,
+  CREDENTIAL_STATUS,
 } from './credentials/credentialHooks';
 export type WalletSDKContextProps = {
   wallet: Wallet,
@@ -38,7 +40,12 @@ setStorage(AsyncStorage);
 export {usePresentation};
 export {useAccounts};
 export {useDIDManagement, useDIDUtils};
-export {useCredentialUtils, getCredentialStatus};
+export {
+  useCredentialUtils,
+  getCredentialStatus,
+  useGetCredentialStatus,
+  CREDENTIAL_STATUS,
+};
 export function getStorage() {
   return AsyncStorage;
 }
