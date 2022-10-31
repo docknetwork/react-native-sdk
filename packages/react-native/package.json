@@ -1,6 +1,6 @@
 {
     "name": "@docknetwork/wallet-sdk-react-native",
-    "version": "0.2.4",
+    "version": "0.2.5",
     "peerDependencies": {
         "react-native": "*"
     },
@@ -16,7 +16,7 @@
         "@docknetwork/wallet-sdk-core": "^0.2.4",
         "@docknetwork/wallet-sdk-credentials": "^0.2.4",
         "@docknetwork/wallet-sdk-transactions": "^0.2.4",
-        "@docknetwork/wallet-sdk-dids": "^0.2.3"
+        "@docknetwork/wallet-sdk-dids": "^0.2.4"
     },
     "devDependencies": {
         "@testing-library/react-hooks": "^8.0.0"
