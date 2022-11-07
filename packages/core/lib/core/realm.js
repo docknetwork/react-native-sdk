@@ -1,9 +1,9 @@
 import Realm from 'realm';
-import {Account, TokenPrice} from './realm-schemas';
+import {Account, TokenPrice, RequestLog} from './realm-schemas';
 
 let realm;
 
-const schema = [TokenPrice, Account];
+const schema = [TokenPrice, Account, RequestLog];
 
 export function addSchema(item) {
   schema.push(item);
