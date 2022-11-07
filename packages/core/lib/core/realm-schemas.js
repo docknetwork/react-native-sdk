@@ -25,3 +25,18 @@ export const Account = {
   },
   primaryKey: 'id',
 };
+
+export const RequestLog = {
+  name: 'RequestLog',
+  properties: {
+    id: 'string',
+    url: 'string',
+    status: 'int',
+    method: 'string',
+    headers: 'string',
+    body: 'string',
+    response: 'string',
+    createdAt: 'date',
+  },
+  primaryKey: 'id',
+};
