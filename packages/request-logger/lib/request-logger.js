@@ -35,8 +35,15 @@ export const RequestLogger = (function () {
     });
     return id;
   };
+  const clearLogs = () => {
+    const realm = getRealm();
+    realm.write(() => {
+      realm.delete(realm.objects('RequestLog'));
+    });
+  };
   return {
     exportLog,
     logRequest,
+    clearLogs,
   };
 })();
