@@ -47,4 +47,11 @@ describe('Request logger', () => {
     RequestLogger.exportLog();
     expect(realm.objects).toBeCalledWith('RequestLog');
   });
+  it('expect to delete logs', () => {
+    const realm = getRealm();
+    RequestLogger.clearLogs();
+    expect(realm.write).toBeCalled();
+    expect(realm.delete).toBeCalled();
+    expect(realm.objects).toBeCalledWith('RequestLog');
+  });
 });
