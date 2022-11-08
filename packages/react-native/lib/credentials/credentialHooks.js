@@ -8,6 +8,7 @@ export const CREDENTIAL_STATUS = {
   EXPIRED: 2,
   VERIFIED: 3,
   REVOKED: 4,
+  PENDING: 5,
 };
 const validateCredential = credential => {
   assert(typeof credential !== 'undefined', 'Invalid Credential');
@@ -125,7 +126,7 @@ export async function getCredentialStatus(credential) {
   return CREDENTIAL_STATUS.INVALID;
 }
 export function useGetCredentialStatus({credential}) {
-  const [status, setStatus] = useState(CREDENTIAL_STATUS.VERIFIED);
+  const [status, setStatus] = useState(CREDENTIAL_STATUS.PENDING);
 
   useEffect(() => {
     getCredentialStatus(credential).then(response => {
