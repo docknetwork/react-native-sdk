@@ -6,6 +6,21 @@ export const RequestLogger = (function () {
     const realm = getRealm();
     return realm.objects('RequestLog').toJSON();
   };
+  const subtractMonths = (numOfMonths, date = new Date()) => {
+    date.setMonth(date.getMonth() - numOfMonths);
+    return date;
+  };
+  const deleteOldLogs = () => {
+    const realm = getRealm();
+    const oneMonthAgo = subtractMonths(1);
+
+    realm.write(() => {
+      const oldLogsToClear = realm
+        .objects('RequestLog')
+        .filtered('createdAt <= $0', oneMonthAgo);
+      realm.delete(oldLogsToClear);
+    });
+  };
   const logRequest = ({
     status,
     url,
@@ -16,6 +31,7 @@ export const RequestLogger = (function () {
   }) => {
     assert(typeof url === 'string', 'invalid url');
     assert(typeof method === 'string', 'invalid method');
+    deleteOldLogs();
     const id = uuidv4();
     const realm = getRealm();
 
