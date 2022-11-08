@@ -19,6 +19,20 @@ jest.mock('@docknetwork/wallet-sdk-core/lib/core/realm', () => {
   };
 });
 describe('Request logger', () => {
+  it('expect to delete old logs before adding new log', () => {
+    const realm = getRealm();
+    const mockLog = {
+      url: 'http://localhost',
+      method: 'get',
+      headers: {},
+      body: {},
+      response: {},
+      status: 200,
+    };
+    RequestLogger.logRequest(mockLog);
+    expect(realm.write).toBeCalled();
+    expect(realm.delete).toBeCalled();
+  });
   it('expect to log request', () => {
     const realm = getRealm();
     const mockLog = {
