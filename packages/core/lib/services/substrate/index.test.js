@@ -57,7 +57,7 @@ describe('ExampleService', () => {
         const fee = await service.getFeeAmount({
           toAddress: TestFixtures.account2.address,
           fromAddress: TestFixtures.account1.address,
-          amount: 0,
+          amount: 1,
         });
         expect(fee).toBe(TEST_FEE_AMOUNT * 1.1);
       });
