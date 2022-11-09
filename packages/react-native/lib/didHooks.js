@@ -5,7 +5,7 @@ import {useWallet} from './index';
 export function useDIDUtils() {
   const createDIDKeypairDocument = useCallback(async keypairParams => {
     const {type, derivePath} = keypairParams;
-    return await didServiceRPC.generateKeyDoc({
+    return didServiceRPC.generateKeyDoc({
       type,
       derivePath,
       controller: keypairParams.controller,
@@ -201,7 +201,7 @@ export function useDIDManagement() {
           return !!(doc && doc.type && doc.id && doc['@context']);
         });
         if (correlationDocuments.length > 1) {
-          return await wallet.exportDocuments({
+          return wallet.exportDocuments({
             documents: correlationDocuments,
             password,
           });
