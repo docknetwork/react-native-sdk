@@ -49,7 +49,7 @@ class DIDService {
       type,
     });
 
-    return polkadotToKeydoc(keyring);
+    return polkadotToKeydoc(keyring, params.controller);
   }
 
   async getDidDockDocument(did) {

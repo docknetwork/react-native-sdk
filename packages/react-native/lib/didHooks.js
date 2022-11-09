@@ -5,7 +5,11 @@ import {useWallet} from './index';
 export function useDIDUtils() {
   const createDIDKeypairDocument = useCallback(async keypairParams => {
     const {type, derivePath} = keypairParams;
-    return await didServiceRPC.generateKeyDoc({type, derivePath});
+    return await didServiceRPC.generateKeyDoc({
+      type,
+      derivePath,
+      controller: keypairParams.controller,
+    });
   }, []);
 
   const createDIDKeyDocument = useCallback(
@@ -58,7 +62,10 @@ export function useDIDManagement() {
 
   const didMethodKey = useCallback(
     async ({derivePath, type, name}) => {
-      const keydoc = await createDIDKeypairDocument({derivePath, type});
+      const keydoc = await createDIDKeypairDocument({
+        derivePath,
+        type,
+      });
       const {didDocumentResolution} = await createDIDKeyDocument(keydoc, {
         name,
       });
@@ -74,7 +81,11 @@ export function useDIDManagement() {
         address,
       );
 
-      const keydoc = await createDIDKeypairDocument({derivePath, type});
+      const keydoc = await createDIDKeypairDocument({
+        derivePath,
+        type,
+        controller: dockDID,
+      });
       const didDocument = await didServiceRPC.getDidDockDocument(dockDID);
 
       const dockDIDResolution = {
