@@ -538,6 +538,7 @@ describe('DID Hooks', () => {
     expect(didServiceRPC.generateKeyDoc).toHaveBeenCalledWith({
       derivePath: '',
       type: 'ed25519',
+      controller: 'did:dock:z6MkjjCpsoQrwnEmqHzLdxWowXk5gjbwor4urC1RPDmGeV8r',
     });
     expect(walletResult.current.wallet.add).toHaveBeenCalledTimes(2);
     expect(didServiceRPC.registerDidDock).toHaveBeenCalledWith(
