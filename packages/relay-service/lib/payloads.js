@@ -4,13 +4,11 @@ import {createNewDockDID} from '@docknetwork/sdk/utils/did';
 import Keyring from '@polkadot/keyring';
 import {randomAsHex} from '@polkadot/util-crypto';
 
-export async function generatePayload(subject, _did) {
+export async function generatePayload(subject = {limit: 10}) {
   const credentialId = 'http://example.edu/credentials/1986';
   const cred = new VerifiableCredential(credentialId);
-  cred.addSubject(subject);
-
-  const keyring = new Keyring();
   const issuerDID = await createNewDockDID();
+  const keyring = new Keyring();
   const issuerSeed = randomAsHex(32);
   const issuerKey = getKeyDoc(
     issuerDID,
@@ -18,9 +16,19 @@ export async function generatePayload(subject, _did) {
     'Ed25519VerificationKey2018',
   );
 
-  await cred.sign(issuerKey);
+  cred.setExpirationDate(new Date(Date.now() + 100000000 * 1000).toISOString());
 
-  return cred.toJSON();
+  const res = await cred.sign(issuerKey);
+
+  return {
+    payload: [
+      subject,
+      cred.issuanceDate,
+      cred.expirationDate,
+      cred.toJSON().proof,
+    ],
+    did: issuerDID,
+  };
 }
 
 export function generateGetMessagePayload(did, limit = 64) {
