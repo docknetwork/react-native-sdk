@@ -1,24 +1,34 @@
-import { RelayService } from '../lib';
+import {RelayService} from '../lib';
+import {generatePayload} from '../lib/payloads';
 
+const subject = 'did:key:z6MkhN7PBjWgSMQ24Bebdpvvw8fVRv7m6MHDqiwTKozzBgrJ';
+const did = 'did:key:z6Mks8mvCnVx4HQcoq7ZwvpTbMnoRGudHSiEpXhMf6VW8XMg';
 
 describe('Relay service', () => {
+  describe('generateCredential', () => {
+    it('expect to generated verifiable credential', async () => {
+      const payload = await generatePayload(subject, did);
+      expect(payload.proof).toBeDefined();
+    });
+  });
+
   describe('getMessages', () => {
     it('expect to assert parameters', async () => {
       const error = await RelayService.getMessages({
-        recipientDid: null
+        recipientDid: null,
       }).catch(err => err);
-  
+
       expect(error.toString()).toContain('AssertionError');
     });
-  })
+  });
 
   describe('sendMessage', () => {
     it('expect to assert parameters', async () => {
       const error = await RelayService.sendMessage({
-        recipientDid: null
+        recipientDid: null,
       }).catch(err => err);
-  
+
       expect(error.toString()).toContain('AssertionError');
     });
-  })
+  });
 });
