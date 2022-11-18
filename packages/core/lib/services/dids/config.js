@@ -15,6 +15,15 @@ export const validation = {
     assert(typeof didDocument.id === 'string', 'invalid didDocument');
   },
 
+  generateDIDDockKeyDoc: params => {
+    assert(
+      typeof params !== 'undefined',
+      'keypairId and controller is required',
+    );
+    const {keypairId, controller} = params;
+    assert(typeof keypairId === 'string', 'invalid keypairId');
+    assert(typeof controller === 'string', 'invalid controller');
+  },
   generateKeyDoc: ({derivePath, type}: GenerateKeyDocParams) => {
     if (derivePath) {
       assert(typeof derivePath === 'string', 'invalid derivePath');
