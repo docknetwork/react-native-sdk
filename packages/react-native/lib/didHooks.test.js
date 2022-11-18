@@ -8,6 +8,20 @@ jest.mock('@docknetwork/wallet-sdk-core/lib/services/dids', () => {
     '@docknetwork/wallet-sdk-core/lib/services/dids',
   );
   const mockFunctions = {
+    generateDIDDockKeyDoc: jest.fn().mockResolvedValue({
+      '@context': ['https://w3id.org/wallet/v1'],
+      id: 'urn:uuid:e8fc7810-9524-11ea-bb37-0242ac130002',
+      name: 'My Test Key 2',
+      image: 'https://via.placeholder.com/150',
+      description: 'For testing only, totally compromised.',
+      tags: ['professional', 'organization', 'compromised'],
+      correlation: [],
+      controller: 'did:dock:z6MkjjCpsoQrwnEmqHzLdxWowXk5gjbwor4urC1RPDmGeV8r',
+      type: 'Ed25519VerificationKey2018',
+      privateKeyBase58:
+        '3CQCBKF3Mf1tU5q1FLpHpbxYrNYxLiZk4adDtfyPEfc39Wk6gsTb2qoc1ZtpqzJYdM1rG4gpaD3ZVKdkiDrkLF1p',
+      publicKeyBase58: '6GwnHZARcEkJio9dxPYy6SC5sAL6PxpZAB6VYwoFjGMU',
+    }),
     generateKeyDoc: jest.fn().mockReturnValue({
       '@context': ['https://w3id.org/wallet/v1'],
       id: 'urn:uuid:e8fc7810-9524-11ea-bb37-0242ac130002',
@@ -535,10 +549,9 @@ describe('DID Hooks', () => {
       name: 'DID Name',
       didType: 'diddock',
     });
-    expect(didServiceRPC.generateKeyDoc).toHaveBeenCalledWith({
-      derivePath: '',
-      type: 'ed25519',
+    expect(didServiceRPC.generateDIDDockKeyDoc).toHaveBeenCalledWith({
       controller: 'did:dock:z6MkjjCpsoQrwnEmqHzLdxWowXk5gjbwor4urC1RPDmGeV8r',
+      keypairId: expect.any(String),
     });
     expect(walletResult.current.wallet.add).toHaveBeenCalledTimes(2);
     expect(didServiceRPC.registerDidDock).toHaveBeenCalledWith(
