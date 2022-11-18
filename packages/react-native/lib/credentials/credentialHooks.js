@@ -34,8 +34,17 @@ export function getCredentialTimestamp(credential) {
 
   return new Date(credential.issuanceDate).getTime() || 0;
 }
-function getCredentialValidityStatus(credential) {
-  return credentialServiceRPC.verifyCredential({credential});
+
+async function getCredentialValidityStatus(credential) {
+  try {
+    const result = await credentialServiceRPC.verifyCredential({credential});
+    return result;
+  } catch (error) {
+    return {
+      verified: false,
+      error,
+    };
+  }
 }
 
 export function useCredentialUtils() {
