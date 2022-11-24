@@ -97,6 +97,31 @@ class Wallet {
     this.setStatus('closed');
   }
 
+  async recoverFromBadState() {
+    const storageItems = await getStorage().getItem(this.walletId);
+    const walletData = JSON.parse(storageItems);
+
+    Object.keys(walletData).forEach(docKey => {
+      const document = walletData[docKey];
+      if (!document['@context']) {
+        document['@context'] = this.context;
+      }
+    });
+
+    await getStorage().setItem(this.walletId, JSON.stringify(walletData));
+
+    await this.createWallet();
+  }
+
+  async createWallet() {
+    await walletService.create({
+      walletId: this.walletId,
+      type: process.env.NODE_ENV === 'test' ? 'memory' : 'rpc',
+    });
+
+    await walletService.sync();
+    await walletService.load();
+  }
   /**
    * Get the y value.
    * @return {Promise} The y value.
@@ -124,13 +149,11 @@ class Wallet {
         ss58Format: this.networkManager.getNetworkInfo().addressPrefix,
       });
 
-      await walletService.create({
-        walletId: this.walletId,
-        type: process.env.NODE_ENV === 'test' ? 'memory' : 'rpc',
-      });
-
-      await walletService.sync();
-      await walletService.load();
+      try {
+        await this.createWallet();
+      } catch (err) {
+        await this.recoverFromBadState();
+      }
 
       this.setStatus('ready');
 
