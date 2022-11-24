@@ -279,10 +279,13 @@ class Wallet {
   }
 
   async upsert(document: WalletDocument) {
-    const exists = await this.getDocumentById(document.id);
+    const existing = await this.getDocumentById(document.id);
 
-    if (exists) {
-      return this.update(document);
+    if (existing) {
+      return this.update({
+        ...existing,
+        ...document,
+      });
     }
 
     return this.add(document);
@@ -313,7 +316,10 @@ class Wallet {
   async update(document: WalletDocument) {
     await this.assertReady();
 
-    await walletService.update(document);
+    await walletService.update({
+      '@context': document['@context'] || this.context,
+      ...document,
+    });
     this.eventManager.emit(WalletEvents.documentUpdated, document);
     return document;
   }

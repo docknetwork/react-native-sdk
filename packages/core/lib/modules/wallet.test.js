@@ -58,6 +58,10 @@ describe('ApiModule', () => {
 
       expect(wallet.update).toBeCalled();
       expect(wallet.add).toBeCalledTimes(1);
+
+      const updatedDocument = await wallet.getDocumentById('test');
+
+      expect(updatedDocument['@context']).toBeDefined();
     });
 
     it('Expect document to be removed', async () => {
