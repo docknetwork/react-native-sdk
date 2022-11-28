@@ -26,6 +26,7 @@ class DIDService {
     DIDService.prototype.generateKeyDoc,
     DIDService.prototype.registerDidDock,
     DIDService.prototype.getDidDockDocument,
+    DIDService.prototype.generateDIDDockKeyDoc,
   ];
   keypairToDIDKeyDocument(params: KeypairToDIDKeyDocumentParams) {
     validation.keypairToDIDKeyDocument(params);
@@ -58,6 +59,15 @@ class DIDService {
     const result = await dock.did.getDocument(did);
     return result;
   }
+  async generateDIDDockKeyDoc(params) {
+    validation.generateDIDDockKeyDoc(params);
+    const {keypairId, controller} = params;
+    const keyPairJSON = await walletService.getDocumentById(keypairId);
+    assert(!!keyPairJSON, 'KeyringPair not found');
+    const keyPair = keyringService.keyring.addFromJson(keyPairJSON.value);
+    keyPair.unlock('');
+    return polkadotToKeydoc(keyPair, controller);
+  }
 
   async registerDidDock(address) {
     assert(!!address, 'address is required');
@@ -65,7 +75,6 @@ class DIDService {
     const dock = getDock();
     const correlations = await walletService.resolveCorrelations(address);
     const keyPairJSON = correlations.find(item => item.type === 'KeyringPair');
-
     assert(!!keyPairJSON, `KeyringPair not found for address ${address}`);
 
     const keyPair = keyringService.keyring.addFromJson(keyPairJSON.value);

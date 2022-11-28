@@ -97,6 +97,31 @@ class Wallet {
     this.setStatus('closed');
   }
 
+  async recoverFromBadState() {
+    const storageItems = await getStorage().getItem(this.walletId);
+    const walletData = JSON.parse(storageItems);
+
+    Object.keys(walletData).forEach(docKey => {
+      const document = walletData[docKey];
+      if (!document['@context']) {
+        document['@context'] = this.context;
+      }
+    });
+
+    await getStorage().setItem(this.walletId, JSON.stringify(walletData));
+
+    await this.createWallet();
+  }
+
+  async createWallet() {
+    await walletService.create({
+      walletId: this.walletId,
+      type: process.env.NODE_ENV === 'test' ? 'memory' : 'rpc',
+    });
+
+    await walletService.sync();
+    await walletService.load();
+  }
   /**
    * Get the y value.
    * @return {Promise} The y value.
@@ -124,13 +149,11 @@ class Wallet {
         ss58Format: this.networkManager.getNetworkInfo().addressPrefix,
       });
 
-      await walletService.create({
-        walletId: this.walletId,
-        type: process.env.NODE_ENV === 'test' ? 'memory' : 'rpc',
-      });
-
-      await walletService.sync();
-      await walletService.load();
+      try {
+        await this.createWallet();
+      } catch (err) {
+        await this.recoverFromBadState();
+      }
 
       this.setStatus('ready');
 
@@ -279,10 +302,13 @@ class Wallet {
   }
 
   async upsert(document: WalletDocument) {
-    const exists = await this.getDocumentById(document.id);
+    const existing = await this.getDocumentById(document.id);
 
-    if (exists) {
-      return this.update(document);
+    if (existing) {
+      return this.update({
+        ...existing,
+        ...document,
+      });
     }
 
     return this.add(document);
@@ -313,7 +339,10 @@ class Wallet {
   async update(document: WalletDocument) {
     await this.assertReady();
 
-    await walletService.update(document);
+    await walletService.update({
+      '@context': document['@context'] || this.context,
+      ...document,
+    });
     this.eventManager.emit(WalletEvents.documentUpdated, document);
     return document;
   }
