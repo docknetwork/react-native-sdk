@@ -7,7 +7,7 @@ const recipientDid = 'did:key:z6Mks8mvCnVx4HQcoq7ZwvpTbMnoRGudHSiEpXhMf6VW8XMg';
 describe('Relay service', () => {
   describe('generateCredential', () => {
     it('expect to generated verifiable credential', async () => {
-      const payload = await generatePayload(subject);
+      const payload = await generatePayload();
       expect(payload.proof).toBeDefined();
     });
   });
