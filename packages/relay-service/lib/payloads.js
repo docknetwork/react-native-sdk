@@ -23,11 +23,24 @@ export async function generatePayload(subject = {limit: 10}) {
   // const issuerSeed = randomAsHex(32);
   const issuerKey = getKeyDoc(did, firstPair, 'Ed25519VerificationKey2018');
 
+  cred.type = ['VerifiableCredential', 'RelayAuthCredential'];
+  cred.setContext([
+    'https://www.w3.org/2018/credentials/v1',
+    {
+      dk: 'https://ld.dock.io/credentials#',
+      RelayAuthCredential: 'dk:RelayAuthCredential',
+      limit: 'dk:limit',
+      to: 'dk:to',
+      msg: 'dk:msg',
+    },
+  ]);
+
   cred.setExpirationDate(new Date(Date.now() + 100000000 * 1000).toISOString());
   cred.setSubject(subject);
-
+  //
   const res = await cred.sign(issuerKey);
 
+  
   return {
     payload: [
       subject,
