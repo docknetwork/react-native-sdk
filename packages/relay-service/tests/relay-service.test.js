@@ -30,13 +30,13 @@ describe('Relay service', () => {
     });
   });
 
-  describe('sendMessage', () => {
-    it('expect to assert parameters', async () => {
-      const error = await RelayService.sendMessage({
-        recipientDid: null,
-      }).catch(err => err);
+  // describe('sendMessage', () => {
+  //   it('expect to assert parameters', async () => {
+  //     const error = await RelayService.sendMessage({
+  //       recipientDid: null,
+  //     }).catch(err => err);
 
-      expect(error.toString()).toContain('AssertionError');
-    });
-  });
+  //     expect(error.toString()).toContain('AssertionError');
+  //   });
+  // });
 });
