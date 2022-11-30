@@ -3,7 +3,7 @@ import type {WalletDocument} from '@docknetwork/wallet-sdk-core/lib/types';
 import {assert} from '@docknetwork/wallet-sdk-core/lib/core/validation';
 import axios from 'axios';
 import queryString from 'query-string';
-import { credentialService } from '@docknetwork/wallet-sdk-core/lib/services/credential/service';
+import {credentialService} from '@docknetwork/wallet-sdk-core/lib/services/credential/service';
 
 export type Credential = {
   id: string,
