@@ -79,15 +79,12 @@ const isDIDDockRegex = /did:dock/gi;
 const hasDIDFragmentRegex = /#/gi;
 
 export function ensureDIDDockFragment(keyDoc) {
-  if (hasDIDFragmentRegex.test(keyDoc.controller)) {
+  if (!isDIDDockRegex.test(keyDoc.id)) {
     return keyDoc;
   }
 
-  if (!isDIDDockRegex.test(keyDoc.controller)) {
-    return keyDoc;
-  }
-
-  keyDoc.id = keyDoc.id.replace(/#.+/, '#keys-1');
+  keyDoc.id = keyDoc.id.replace(/#.+/, '');
+  keyDoc.id = `${keyDoc.id}#keys-1`;
 
   return keyDoc;
 }
