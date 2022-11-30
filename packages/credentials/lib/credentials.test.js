@@ -2,6 +2,7 @@ import {Credentials} from './index';
 import {Wallet} from '@docknetwork/wallet-sdk-core/lib/modules/wallet';
 import testCredential from '../fixtures/test-credential.json';
 import {getPromiseError} from '@docknetwork/wallet-sdk-core/lib/services/test-utils';
+import {didKeyDocument} from '../fixtures/dids';
 
 describe('Credentials module', () => {
   it('expect to create instance', () => {
@@ -99,6 +100,35 @@ describe('Credentials module', () => {
       const url = 'https://www.google.com';
       const error = await getPromiseError(() => credentials.addFromUrl(url));
       expect(error.message).toBe('Invalid credential');
+    });
+  });
+
+  describe('web3 id auth', () => {
+    const credentials = Credentials.getInstance();
+    const web3IDURLExample =
+      'dockwallet://didauth?url=https%3A%2F%2Fauth.dock.io%2Fverify%3Fid%3DiW3Xe9Vl6ea8039da347b47a09654e3d44278e26aa08b08c7ff07211f70ba491ce39b643%26scope%3Dpublic%20email%26client_name%3DDock%2520Certs%26client_website%3Dhttps%253A%252F%252Fcerts.dock.io';
+    const profileData = {
+      name: 'test',
+      email: 'test@tester.com',
+    };
+
+    it('getWeb3IDReturnURL', () => {
+      expect(
+        credentials.getWeb3IDReturnURL(
+          'dockwallet://didauth?url=someReturnURL',
+        ),
+      ).toBe('someReturnURL');
+    });
+
+    it('expect to handle did:dock auth', async () => {
+      const vc = await credentials.getWeb3IDVC({
+        url: web3IDURLExample,
+        keyDoc: didKeyDocument,
+        profile: profileData,
+      });
+
+      const verification = await credentials.verifyCredential({credential: vc});
+      expect(verification.verified).toBe(true);
     });
   });
 });
