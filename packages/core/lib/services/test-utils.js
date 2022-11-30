@@ -8,6 +8,7 @@ import {dockService, getDock, setDock} from './dock/service';
 import {keyringService} from './keyring';
 import {RpcService} from './rpc-service-client';
 import {walletService} from './wallet';
+import dock from '@docknetwork/sdk';
 
 export async function initializeWalletService() {
   await cryptoWaitReady();
@@ -26,6 +27,15 @@ export const setMockTransactionError = error => {
   mockTransactionError = error;
 };
 
+export async function ensureDockAPIConnected() {
+  try {
+    await dock.init({
+      address: NetworkManager.getInstance().getNetworkInfo().substrateUrl,
+    });
+  } catch (err) {
+    console.error(err);
+  }
+}
 export async function mockDockService() {
   await cryptoWaitReady();
 
@@ -35,6 +45,9 @@ export async function mockDockService() {
 
   let sdkMock;
 
+  await ensureDockAPIConnected();
+
+  // TODO: Make sure that disabling API mock will not break tests
   if (API_MOCK_DISABLED) {
     return dockService.init({
       address: NetworkManager.getInstance().getNetworkInfo().substrateUrl,

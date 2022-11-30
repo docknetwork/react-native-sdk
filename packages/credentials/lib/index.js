@@ -75,6 +75,23 @@ export function generateAuthVC({controller}, credentialSubject) {
   };
 }
 
+const isDIDDockRegex = /did:dock/gi;
+const hasDIDFragmentRegex = /#/gi;
+
+export function ensureDIDDockFragment(keyDoc) {
+  if (hasDIDFragmentRegex.test(keyDoc.controller)) {
+    return keyDoc;
+  }
+
+  if (!isDIDDockRegex.test(keyDoc.controller)) {
+    return keyDoc;
+  }
+
+  keyDoc.id = keyDoc.id.replace(/#.+/, '#keys-1');
+
+  return keyDoc;
+}
+
 export class Credentials {
   static instance: Credentials;
   wallet: Wallet;
@@ -176,6 +193,8 @@ export class Credentials {
   }
 
   async getWeb3IDVC({url, keyDoc, profile}) {
+    keyDoc = ensureDIDDockFragment(keyDoc);
+
     const verifiableCredential = generateAuthVC(keyDoc, {
       ...profile,
       state: getParamsFromUrl(this.getWeb3IDReturnURL(url), 'id'),
