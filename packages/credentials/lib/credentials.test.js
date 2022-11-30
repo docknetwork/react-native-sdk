@@ -1,8 +1,11 @@
 import {Credentials} from './index';
 import {Wallet} from '@docknetwork/wallet-sdk-core/lib/modules/wallet';
 import testCredential from '../fixtures/test-credential.json';
-import {getPromiseError} from '@docknetwork/wallet-sdk-core/lib/services/test-utils';
-import {didKeyDocument} from '../fixtures/dids';
+import {
+  ensureDockAPIConnected,
+  getPromiseError,
+} from '@docknetwork/wallet-sdk-core/lib/services/test-utils';
+import {didDockDocument, didKeyDocument} from '../fixtures/dids';
 
 describe('Credentials module', () => {
   it('expect to create instance', () => {
@@ -112,6 +115,10 @@ describe('Credentials module', () => {
       email: 'test@tester.com',
     };
 
+    beforeAll(async () => {
+      await ensureDockAPIConnected();
+    });
+
     it('getWeb3IDReturnURL', () => {
       expect(
         credentials.getWeb3IDReturnURL(
@@ -120,7 +127,7 @@ describe('Credentials module', () => {
       ).toBe('someReturnURL');
     });
 
-    it('expect to handle did:dock auth', async () => {
+    it('expect to handle did:key auth', async () => {
       const vc = await credentials.getWeb3IDVC({
         url: web3IDURLExample,
         keyDoc: didKeyDocument,
@@ -128,6 +135,22 @@ describe('Credentials module', () => {
       });
 
       const verification = await credentials.verifyCredential({credential: vc});
+      expect(verification.verified).toBe(true);
+    });
+
+    it('expect to handle did:dock auth', async () => {
+      const vc = await credentials.getWeb3IDVC({
+        url: web3IDURLExample,
+        keyDoc: didDockDocument,
+        profile: profileData,
+      });
+
+      const verification = await credentials.verifyCredential({credential: vc});
+
+      if (!verification.verified) {
+        console.log(verification.error);
+      }
+
       expect(verification.verified).toBe(true);
     });
   });
