@@ -76,7 +76,6 @@ export function generateAuthVC({controller}, credentialSubject) {
 }
 
 const isDIDDockRegex = /did:dock/gi;
-const hasDIDFragmentRegex = /#/gi;
 
 export function ensureDIDDockFragment(keyDoc) {
   if (!isDIDDockRegex.test(keyDoc.id)) {
