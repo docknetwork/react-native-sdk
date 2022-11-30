@@ -2,6 +2,8 @@ import {Wallet} from '@docknetwork/wallet-sdk-core/lib/modules/wallet';
 import type {WalletDocument} from '@docknetwork/wallet-sdk-core/lib/types';
 import {assert} from '@docknetwork/wallet-sdk-core/lib/core/validation';
 import axios from 'axios';
+import queryString from 'query-string';
+import { credentialService } from '@docknetwork/wallet-sdk-core/lib/services/credential/service';
 
 export type Credential = {
   id: string,
@@ -11,6 +13,67 @@ export type Credential = {
 export type CredentialInput = {
   content: any,
 };
+
+// TODO: Refactor this method, add tests
+// It was moved from the dock-app repo
+export function getParamsFromUrl(url, param) {
+  const startOfQueryParams = url.indexOf('?');
+
+  const parsed = queryString.parse(url.substring(startOfQueryParams));
+  return parsed[param] ? parsed[param] : '';
+}
+
+// The issuer (the assigner) is prohibiting verifiers (the assignee) from storing the data in an archive.
+function generatePolicyNoArchiveStore(id, assigner) {
+  return {
+    type: 'IssuerPolicy',
+    id: 'https://ld.dock.io/policies/credential/1',
+    prohibition: [
+      {
+        assigner,
+        assignee: 'AllVerifiers',
+        target: id,
+        action: ['Archival'],
+      },
+    ],
+  };
+}
+
+export function generateAuthVC({controller}, credentialSubject) {
+  assert(!!controller);
+  assert(!!credentialSubject);
+
+  const AUTHCRED_EXPIRY_MINS = 10;
+  const expirationDate = new Date(
+    new Date().getTime() + AUTHCRED_EXPIRY_MINS * 60000,
+  );
+  const id = `didauth:${credentialSubject.state}`;
+  return {
+    '@context': [
+      'https://www.w3.org/2018/credentials/v1',
+      {
+        dk: 'https://ld.dock.io/credentials#',
+        DockAuthCredential: 'dk:DockAuthCredential',
+        name: 'dk:name',
+        email: 'dk:email',
+        state: 'dk:state',
+        IssuerPolicy: 'dk:IssuerPolicy',
+        AllVerifiers: 'dk:AllVerifiers',
+        Archival: 'dk:Archival',
+        prohibition: 'dk:prohibition',
+        action: 'dk:action',
+        assignee: 'dk:assignee',
+        assigner: 'dk:assigner',
+        target: 'dk:target',
+      },
+    ],
+    termsOfUse: [generatePolicyNoArchiveStore(id, controller)],
+    id,
+    type: ['VerifiableCredential', 'DockAuthCredential'],
+    credentialSubject,
+    expirationDate: expirationDate.toISOString(),
+  };
+}
 
 export class Credentials {
   static instance: Credentials;
@@ -104,6 +167,40 @@ export class Credentials {
       content: document.value,
       id: document.id,
     }));
+  }
+
+  getWeb3IDReturnURL(web3IDUrl) {
+    const url = new URL(web3IDUrl);
+    const searchParams = new URLSearchParams(url.searchParams);
+    return searchParams.get('url');
+  }
+
+  async getWeb3IDVC({url, keyDoc, profile}) {
+    const verifiableCredential = generateAuthVC(keyDoc, {
+      ...profile,
+      state: getParamsFromUrl(this.getWeb3IDReturnURL(url), 'id'),
+    });
+
+    if (verifiableCredential.context) {
+      throw new Error('context should not be defined');
+    }
+
+    const signedCredential = await credentialService.signCredential({
+      vcJson: verifiableCredential,
+      keyDoc,
+    });
+
+    delete signedCredential.context;
+
+    if (signedCredential.context) {
+      throw new Error('context should not be defined');
+    }
+
+    return signedCredential;
+  }
+
+  async verifyCredential(vc) {
+    return credentialService.verifyCredential(vc);
   }
 
   /**
