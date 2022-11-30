@@ -8,7 +8,7 @@ import {dockService, getDock, setDock} from './dock/service';
 import {keyringService} from './keyring';
 import {RpcService} from './rpc-service-client';
 import {walletService} from './wallet';
-import dock from '@docknetwork/sdk';
+import dockSdk from '@docknetwork/sdk';
 
 export async function initializeWalletService() {
   await cryptoWaitReady();
@@ -29,7 +29,7 @@ export const setMockTransactionError = error => {
 
 export async function ensureDockAPIConnected() {
   try {
-    await dock.init({
+    await dockSdk.init({
       address: NetworkManager.getInstance().getNetworkInfo().substrateUrl,
     });
   } catch (err) {
