@@ -192,10 +192,6 @@ export class Credentials {
 
     delete signedCredential.context;
 
-    if (signedCredential.context) {
-      throw new Error('context should not be defined');
-    }
-
     return signedCredential;
   }
 
