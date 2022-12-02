@@ -1,37 +1,55 @@
 import assert from 'assert';
 import axios from 'axios';
-import {generatePayload, toBase64} from './payloads';
+import { generatePayload, toBase64 } from './payloads';
 
-let URL = 'https://relay.dock.io';
+const URL = 
+// 'https://relay.dock.io'
+// 'http://localhost:3000';
+// 'https://relay.dock.io';
+'http://localhost:3000';
+//;
 
-const sendMessage = async ({senderDid, recipientDid, message}) => {
-  assert(!!senderDid, 'senderDid is required');
+const sendMessage = async ({ keyPairDoc, recipientDid, message }) => {
+  assert(!!keyPairDoc, 'senderDid is required');
   assert(!!recipientDid, 'recipientDid is required');
   assert(!!message, 'message is required');
-};
 
-const getMessages = async ({recipientDid}) => {
-  assert(!!recipientDid, 'recipientDid is required');
-  const {payload, did} = await generatePayload({limit: 10});
-  let result;
-
-  debugger;
+  const { payload, did } = await generatePayload(keyPairDoc, { to: recipientDid, msg: message });
 
   try {
-    result = await axios.get(
-      `${URL}/messages/${encodeURIComponent(did)}?payload=${toBase64(payload)}`,
+    const result = await axios.post(
+      `${URL}/messages/${encodeURIComponent(did)}`,
+      {
+        payload: toBase64(payload)
+      }
     );
+
+    return result.data;
   } catch (err) {
-    debugger;
+    console.error(err.response);
+    return err;
   }
-
-  debugger;
-
-  console.log(result);
-  return result;
 };
 
-const setServiceURL = ({url}) => {
+const getMessages = async ({ keyPairDoc, limit = 20 }) => {
+  assert(!!keyPairDoc, 'keyPairDoc is required');
+
+  const { payload, did } = await generatePayload(keyPairDoc, { limit });
+  let result;
+
+  try {
+    const result = await axios.get(
+      `${URL}/messages/${encodeURIComponent(did)}?payload=${toBase64(payload)}`,
+    );
+
+    return result.data;
+  } catch (err) {
+    console.error(err.response);
+    return err;
+  }
+};
+
+const setServiceURL = ({ url }) => {
   URL = url;
 };
 
