@@ -2,12 +2,7 @@ import assert from 'assert';
 import axios from 'axios';
 import { generatePayload, toBase64 } from './payloads';
 
-const URL = 
-// 'https://relay.dock.io'
-// 'http://localhost:3000';
-// 'https://relay.dock.io';
-'http://localhost:3000';
-//;
+const URL = 'https://relay.dock.io';
 
 const sendMessage = async ({ keyPairDoc, recipientDid, message }) => {
   assert(!!keyPairDoc, 'senderDid is required');
