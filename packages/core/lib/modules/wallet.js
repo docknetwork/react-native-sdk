@@ -82,19 +82,17 @@ class Wallet {
     this.eventManager.registerEvents(WalletEvents);
     this.accounts = Accounts.getInstance({wallet: this});
 
-    // if (process.env.NODE_ENV !== 'test') {
-    //   global.walletInstances++;
+    if (process.env.NODE_ENV !== 'test') {
+      global.walletInstances++;
 
-    //   setTimeout(() => {
-    //     if (global.walletInstances > 0) {
-    //       console.warn(
-    //         "Multiple wallet instances were created. If that's not intentional please check your code, and use the Wallet.getInstance() instead of creating a new instance",
-    //       );
-    //     }
-    //   }, 2000);
-    // }
-
-    // this.setStatus('closed');
+      setTimeout(() => {
+        if (global.walletInstances > 0) {
+          console.warn(
+            "Multiple wallet instances were created. If that's not intentional please check your code, and use the Wallet.getInstance() instead of creating a new instance",
+          );
+        }
+      }, 2000);
+    }
   }
 
   async recoverFromBadState() {
