@@ -82,19 +82,19 @@ class Wallet {
     this.eventManager.registerEvents(WalletEvents);
     this.accounts = Accounts.getInstance({wallet: this});
 
-    if (process.env.NODE_ENV !== 'test') {
-      global.walletInstances++;
+    // if (process.env.NODE_ENV !== 'test') {
+    //   global.walletInstances++;
 
-      setTimeout(() => {
-        if (global.walletInstances > 0) {
-          console.warn(
-            "Multiple wallet instances were created. If that's not intentional please check your code, and use the Wallet.getInstance() instead of creating a new instance",
-          );
-        }
-      }, 2000);
-    }
+    //   setTimeout(() => {
+    //     if (global.walletInstances > 0) {
+    //       console.warn(
+    //         "Multiple wallet instances were created. If that's not intentional please check your code, and use the Wallet.getInstance() instead of creating a new instance",
+    //       );
+    //     }
+    //   }, 2000);
+    // }
 
-    this.setStatus('closed');
+    // this.setStatus('closed');
   }
 
   async recoverFromBadState() {
@@ -274,7 +274,7 @@ class Wallet {
       throw new Error(
         'Wallet module timed out. Make sure the wallet is loaded, or you are not using multiple instances',
       );
-    }, 6000);
+    }, 30000);
 
     await this.eventManager.waitFor(WalletEvents.ready);
 

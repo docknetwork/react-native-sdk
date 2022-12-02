@@ -1,29 +1,15 @@
 import VerifiableCredential from '@docknetwork/sdk/verifiable-credential';
-import {DidKey, VerificationRelationship} from '@docknetwork/sdk/public-keys';
 import {cryptoWaitReady} from '@polkadot/util-crypto';
-import dock, {PublicKeySr25519} from '@docknetwork/sdk';
-import getKeyDoc from '@docknetwork/sdk/utils/vc/helpers';
-import {createNewDockDID} from '@docknetwork/sdk/utils/did';
-import Keyring from '@polkadot/keyring';
-import {randomAsHex} from '@polkadot/util-crypto';
+import {getKeypairFromDoc} from '@docknetwork/universal-wallet/methods/keypairs';
+import {getSuiteFromKeyDoc} from '@docknetwork/sdk/utils/vc/helpers';
 
-export async function generatePayload(subject = {limit: 10}) {
+// 1 year
+const DEFAULT_EXPIRATION = 86400 * 1000 * 365;
+
+export async function generatePayload(keyPairDoc, subject) {
   await cryptoWaitReady();
-  const credentialId = 'http://example.edu/credentials/1986';
-  const cred = new VerifiableCredential(credentialId);
-  // const issuerDID = await createNewDockDID();
-  const keyring = new Keyring();
 
-  const firstKeySeed = randomAsHex(32);
-  const firstPair = keyring.addFromUri(firstKeySeed, null, 'sr25519');
-
-  const publicKey = PublicKeySr25519.fromKeyringPair(firstPair);
-  const didKey = new DidKey(publicKey, new VerificationRelationship());
-  const did = `did:key:${firstPair.address}`;
-  // const issuerSeed = randomAsHex(32);
-  const issuerKey = getKeyDoc(did, firstPair, 'Ed25519VerificationKey2018');
-
-  cred.type = ['VerifiableCredential', 'RelayAuthCredential'];
+  const cred = new VerifiableCredential('dock:relay');
   cred.setContext([
     'https://www.w3.org/2018/credentials/v1',
     {
@@ -35,12 +21,18 @@ export async function generatePayload(subject = {limit: 10}) {
     },
   ]);
 
-  cred.setExpirationDate(new Date(Date.now() + 100000000 * 1000).toISOString());
+  cred.setIssuanceDate(new Date().toISOString());
+  cred.setExpirationDate(new Date(Date.now() + DEFAULT_EXPIRATION).toISOString());
   cred.setSubject(subject);
-  //
-  const res = await cred.sign(issuerKey);
+  cred.setIssuer(keyPairDoc.controller);
+  cred.addType('RelayAuthCredential');
 
-  
+  const keyPair = getKeypairFromDoc(keyPairDoc);
+  keyPair.signer = keyPair.signer();
+  const suite = getSuiteFromKeyDoc(keyPair);
+  const res = await cred.sign(suite);
+  const credJSON = cred.toJSON();
+
   return {
     payload: [
       subject,
@@ -48,7 +40,7 @@ export async function generatePayload(subject = {limit: 10}) {
       cred.expirationDate,
       cred.toJSON().proof,
     ],
-    did: did,
+    did: keyPairDoc.controller,
   };
 }
 

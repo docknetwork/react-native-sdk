@@ -1,14 +1,25 @@
 import {RelayService} from '../lib';
 import {generatePayload} from '../lib/payloads';
-
-const subject = 'did:key:z6MkhN7PBjWgSMQ24Bebdpvvw8fVRv7m6MHDqiwTKozzBgrJ';
-const recipientDid = 'did:key:z6Mks8mvCnVx4HQcoq7ZwvpTbMnoRGudHSiEpXhMf6VW8XMg';
+import { ALICE_KEY_PAIR_DOC, BOB_KEY_PAIR_DOC } from './mock-data';
 
 describe('Relay service', () => {
-  describe('generateCredential', () => {
-    it('expect to generated verifiable credential', async () => {
-      const payload = await generatePayload();
-      expect(payload.proof).toBeDefined();
+  describe('sendMessage', () => {
+    it('expect to assert parameters', async () => {
+      const error = await RelayService.sendMessage({
+        keyPairDoc: null,
+        message: null,
+        recipientDid: null,
+      }).catch(err => err);
+
+      expect(error.toString()).toContain('AssertionError');
+    });
+
+    it('expect to send message', async () => {
+      const result = await RelayService.sendMessage({
+        keyPairDoc: BOB_KEY_PAIR_DOC,
+        message: 'Test',
+        recipientDid: ALICE_KEY_PAIR_DOC.controller,
+      });
     });
   });
 
@@ -23,20 +34,11 @@ describe('Relay service', () => {
 
     it('expect to get messages', async () => {
       const result = await RelayService.getMessages({
-        recipientDid: recipientDid,
+        keyPairDoc: ALICE_KEY_PAIR_DOC,
+        limit: 20
       });
 
-      expect(result.length).toBe(0);
+      expect(result.length).toBeGreaterThanOrEqual(1);
     });
   });
-
-  // describe('sendMessage', () => {
-  //   it('expect to assert parameters', async () => {
-  //     const error = await RelayService.sendMessage({
-  //       recipientDid: null,
-  //     }).catch(err => err);
-
-  //     expect(error.toString()).toContain('AssertionError');
-  //   });
-  // });
 });
