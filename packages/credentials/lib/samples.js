@@ -1,6 +1,5 @@
 
-// Will be sent using relay service
-const presentationDefinition = {
+export const samplePresentationDefinition = {
   "presentation_definition": {
     "id": "first simple example",
     "input_descriptors": [
