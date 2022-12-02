@@ -2,7 +2,7 @@ import assert from 'assert';
 import axios from 'axios';
 import { generatePayload, toBase64 } from './payloads';
 
-let URL = 'https://relay.dock.io';
+let serviceURL = 'https://relay.dock.io';
 
 const sendMessage = async ({ keyPairDoc, recipientDid, message }) => {
   assert(!!keyPairDoc, 'senderDid is required');
@@ -13,7 +13,7 @@ const sendMessage = async ({ keyPairDoc, recipientDid, message }) => {
 
   try {
     const result = await axios.post(
-      `${URL}/messages/${encodeURIComponent(did)}`,
+      `${serviceURL}/messages/${encodeURIComponent(did)}`,
       {
         payload: toBase64(payload)
       }
@@ -34,7 +34,7 @@ const getMessages = async ({ keyPairDoc, limit = 20 }) => {
 
   try {
     const result = await axios.get(
-      `${URL}/messages/${encodeURIComponent(did)}?payload=${toBase64(payload)}`,
+      `${serviceURL}/messages/${encodeURIComponent(did)}?payload=${toBase64(payload)}`,
     );
 
     return result.data;
@@ -45,11 +45,12 @@ const getMessages = async ({ keyPairDoc, limit = 20 }) => {
 };
 
 const setServiceURL = ({ url }) => {
-  URL = url;
+  serviceURL = url;
 };
 
 export const RelayService = {
   sendMessage,
   getMessages,
   setServiceURL,
+  serviceURL
 };
