@@ -1,4 +1,3 @@
-import assert from 'assert';
 import {
   SendMessageParams,
   GetMessagesParams,
@@ -32,8 +31,6 @@ export class RelayService {
   }
 }
 
-export {
-  relayServiceClient
-}
+export { relayServiceClient };
 
 export const relayService: RelayService = new RelayService();

@@ -1,6 +1,6 @@
 import {RpcService} from '../rpc-service-client';
 import {
-  GetMessageParams,
+  GetMessagesParams,
   SendMessageParams,
   serviceName,
   validation,
@@ -16,7 +16,7 @@ export class RelayServiceRpc extends RpcService {
     return this.call('sendMessage', params);
   }
 
-  getMessages(params: GetMessageParams) {
+  getMessages(params: GetMessagesParams) {
     validation.getMessages(params);
     return this.call('getMessages', params);
   }

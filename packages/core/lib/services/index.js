@@ -7,6 +7,7 @@ import {utilCryptoService} from './util-crypto/service';
 import {storageService} from './storage/service';
 import {didService} from './dids/service';
 import {credentialService} from './credential/service';
+import {relayService} from './relay-service/service';
 
 export default [
   keyringService,
@@ -18,4 +19,5 @@ export default [
   storageService,
   didService,
   credentialService,
+  relayService,
 ];
