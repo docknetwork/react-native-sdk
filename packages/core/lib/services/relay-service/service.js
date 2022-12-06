@@ -31,6 +31,6 @@ export class RelayService {
   }
 }
 
-export { relayServiceClient };
+export {relayServiceClient};
 
 export const relayService: RelayService = new RelayService();

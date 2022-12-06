@@ -1,6 +1,6 @@
-import { RelayService } from '../lib';
-import { generatePayload } from '../lib/payloads';
-import { ALICE_KEY_PAIR_DOC, BOB_KEY_PAIR_DOC } from './mock-data';
+import {RelayService} from '../lib';
+import {generatePayload} from '../lib/payloads';
+import {ALICE_KEY_PAIR_DOC, BOB_KEY_PAIR_DOC} from './mock-data';
 
 describe('Relay service', () => {
   const messageContent = `Test message ${Date.now()}`;
@@ -18,7 +18,7 @@ describe('Relay service', () => {
   test('BOB can fetch message sent by Alice', async () => {
     const messages = await RelayService.getMessages({
       keyPairDoc: BOB_KEY_PAIR_DOC,
-      limit: 20
+      limit: 20,
     });
 
     const message = messages.find(msg => msg.msg === messageContent);

@@ -1,6 +1,6 @@
 import {RelayService} from '../lib';
 import {generatePayload} from '../lib/payloads';
-import { ALICE_KEY_PAIR_DOC, BOB_KEY_PAIR_DOC } from './mock-data';
+import {ALICE_KEY_PAIR_DOC, BOB_KEY_PAIR_DOC} from './mock-data';
 
 describe('Relay service', () => {
   describe('sendMessage', () => {
@@ -35,7 +35,7 @@ describe('Relay service', () => {
     it('expect to get messages', async () => {
       const result = await RelayService.getMessages({
         keyPairDoc: ALICE_KEY_PAIR_DOC,
-        limit: 20
+        limit: 20,
       });
 
       expect(result.length).toBeGreaterThanOrEqual(1);
