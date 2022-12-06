@@ -3,7 +3,7 @@ import {relayService} from '@docknetwork/wallet-sdk-core/lib/services/relay-serv
 import type {WalletDocument} from '@docknetwork/wallet-sdk-core/lib/types';
 import {assert} from '@docknetwork/wallet-sdk-core/lib/core/validation';
 import axios from 'axios';
-import { samplePresentationDefinition } from './samples';
+import {samplePresentationDefinition} from './samples';
 
 export type Credential = {
   id: string,

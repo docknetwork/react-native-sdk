@@ -1,16 +1,14 @@
 import assert from 'assert';
-import {
-  isNumberValid,
-} from '../../core/validation';
+import {isNumberValid} from '../../core/validation';
 
 export const validation = {
-  sendMessage({ keyPairDoc, recipientDid, message }: SendMessageParams) {
+  sendMessage({keyPairDoc, recipientDid, message}: SendMessageParams) {
     assert(!!keyPairDoc, 'keyPairDoc is required');
     assert(!!recipientDid, 'recipientDid is required');
     assert(typeof message === 'string', 'invalid message');
   },
 
-  getMessages({ keyPairDoc, limit }: GetMessagesParams) {
+  getMessages({keyPairDoc, limit}: GetMessagesParams) {
     assert(!!keyPairDoc, 'keyPairDoc is required');
 
     if (limit) {
@@ -29,5 +27,5 @@ export type GetMessagesParams = {
 export type SendMessageParams = {
   keyPairDoc: any,
   recipientDid: string,
-  message: string
+  message: string,
 };

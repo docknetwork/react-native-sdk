@@ -22,7 +22,9 @@ export async function generatePayload(keyPairDoc, subject) {
   ]);
 
   cred.setIssuanceDate(new Date().toISOString());
-  cred.setExpirationDate(new Date(Date.now() + DEFAULT_EXPIRATION).toISOString());
+  cred.setExpirationDate(
+    new Date(Date.now() + DEFAULT_EXPIRATION).toISOString(),
+  );
   cred.setSubject(subject);
   cred.setIssuer(keyPairDoc.controller);
   cred.addType('RelayAuthCredential');
