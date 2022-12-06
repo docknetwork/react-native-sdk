@@ -1,5 +1,4 @@
 import {RelayService} from '../lib';
-import {generatePayload} from '../lib/payloads';
 import {ALICE_KEY_PAIR_DOC, BOB_KEY_PAIR_DOC} from './mock-data';
 
 describe('Relay service', () => {

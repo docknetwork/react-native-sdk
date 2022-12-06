@@ -33,7 +33,6 @@ const getMessages = async ({keyPairDoc, limit = 20}) => {
   assert(!!keyPairDoc, 'keyPairDoc is required');
 
   const {payload, did} = await generatePayload(keyPairDoc, {limit});
-  let result;
 
   try {
     const result = await axios.get(

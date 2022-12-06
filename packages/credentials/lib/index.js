@@ -1,5 +1,4 @@
 import {Wallet} from '@docknetwork/wallet-sdk-core/lib/modules/wallet';
-import {relayService} from '@docknetwork/wallet-sdk-core/lib/services/relay-service';
 import type {WalletDocument} from '@docknetwork/wallet-sdk-core/lib/types';
 import {assert} from '@docknetwork/wallet-sdk-core/lib/core/validation';
 import axios from 'axios';
