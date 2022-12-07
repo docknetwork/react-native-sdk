@@ -4,6 +4,7 @@ import {getKeypairFromDoc} from '@docknetwork/wallet/methods/keypairs';
 import {getSuiteFromKeyDoc} from '@docknetwork/sdk/utils/vc/helpers';
 import VerifiablePresentation from '@docknetwork/sdk/verifiable-presentation';
 import dock from '@docknetwork/sdk';
+import BbsPlusPresentation from '@docknetwork/sdk/bbs-plus-presentation';
 import {
   DockResolver,
   DIDKeyResolver,
@@ -11,6 +12,7 @@ import {
   UniversalResolver,
 } from '@docknetwork/sdk/resolver';
 import {verifyCredential} from '@docknetwork/sdk/utils/vc/credentials';
+import {getDock} from '../dock/service';
 
 const resolvers = {
   dock: new DockResolver(dock),
@@ -21,6 +23,15 @@ const resolver = new MultiResolver(
   new UniversalResolver('https://uniresolver.io'),
 );
 
+let bbsPlusPresentation;
+
+export function setBbsPlusPresentation(_bbsPlusPresentation) {
+  bbsPlusPresentation = _bbsPlusPresentation;
+}
+export function getBbsPlusPresentation() {
+  return bbsPlusPresentation;
+}
+
 class CredentialService {
   constructor() {
     this.name = serviceName;
@@ -30,6 +41,7 @@ class CredentialService {
     CredentialService.prototype.signCredential,
     CredentialService.prototype.createPresentation,
     CredentialService.prototype.verifyCredential,
+    CredentialService.prototype.createBBSPresentation,
   ];
   generateCredential(params = {}) {
     validation.generateCredential(params);
@@ -81,6 +93,20 @@ class CredentialService {
     validation.verifyCredential(params);
     const {credential} = params;
     return verifyCredential(credential, {resolver, revocationApi: {dock}});
+  }
+  async createBBSPresentation(params) {
+    validation.createBBSPresentation(params);
+    const {credentials} = params;
+
+    if (!bbsPlusPresentation) {
+      bbsPlusPresentation = new BbsPlusPresentation(getDock());
+    }
+
+    for (const {credential, attributesToReveal} of credentials) {
+      const idx = await bbsPlusPresentation.addCredentialsToPresent(credential);
+      await bbsPlusPresentation.addAttributeToReveal(idx, attributesToReveal);
+    }
+    return bbsPlusPresentation.createPresentation();
   }
 }
 

@@ -13,6 +13,11 @@ export const validation = {
     const {credential} = params;
     assert(typeof credential === 'object', 'invalid credential');
   },
+  createBBSPresentation: params => {
+    const {credentials} = params;
+    assert(Array.isArray(credentials), 'invalid credentials');
+    assert(credentials.length > 0, 'no credential found');
+  },
   signCredential: params => {
     const {vcJson, keyDoc} = params;
     assert(typeof vcJson === 'object', 'invalid vcJson');
