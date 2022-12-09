@@ -5,7 +5,7 @@ export const validation = {
   sendMessage({keyPairDoc, recipientDid, message}: SendMessageParams) {
     assert(!!keyPairDoc, 'keyPairDoc is required');
     assert(!!recipientDid, 'recipientDid is required');
-    assert(typeof message === 'string', 'invalid message');
+    assert(!!message, 'message is required');
   },
 
   getMessages({keyPairDoc, limit}: GetMessagesParams) {
