@@ -6,7 +6,7 @@ import {getSuiteFromKeyDoc} from '@docknetwork/sdk/utils/vc/helpers';
 // 1 year
 const DEFAULT_EXPIRATION = 86400 * 1000 * 365;
 
-export async function generatePayload(keyPairDoc, subject) {
+export async function generateSignedPayload(keyPairDoc, subject) {
   await cryptoWaitReady();
 
   const cred = new VerifiableCredential('dock:relay');
@@ -43,14 +43,6 @@ export async function generatePayload(keyPairDoc, subject) {
     ],
     did: keyPairDoc.controller,
   };
-}
-
-export function generateGetMessagePayload(did, limit = 64) {
-  return generatePayload({limit}, did);
-}
-
-export function generatePostMessagePayload(to, msg, did) {
-  return generatePayload({to, msg}, did);
 }
 
 export function toBase64(payload) {

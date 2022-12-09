@@ -1,15 +1,15 @@
 import assert from 'assert';
 import axios from 'axios';
-import {generatePayload, toBase64} from './payloads';
+import {generateSignedPayload, toBase64} from './payloads';
 
-let serviceURL = 'https://relay.dock.io';
+let serviceURL = process.env.RELAY_SERVICE_URL || 'https://relay.dock.io';
 
 const sendMessage = async ({keyPairDoc, recipientDid, message}) => {
   assert(!!keyPairDoc, 'senderDid is required');
   assert(!!recipientDid, 'recipientDid is required');
   assert(!!message, 'message is required');
 
-  const {payload, did} = await generatePayload(keyPairDoc, {
+  const {payload, did} = await generateSignedPayload(keyPairDoc, {
     to: recipientDid,
     msg: message,
   });
@@ -32,7 +32,7 @@ const sendMessage = async ({keyPairDoc, recipientDid, message}) => {
 const getMessages = async ({keyPairDoc, limit = 20}) => {
   assert(!!keyPairDoc, 'keyPairDoc is required');
 
-  const {payload, did} = await generatePayload(keyPairDoc, {limit});
+  const {payload, did} = await generateSignedPayload(keyPairDoc, {limit});
 
   try {
     const result = await axios.get(
@@ -49,6 +49,8 @@ const getMessages = async ({keyPairDoc, limit = 20}) => {
 };
 
 const setServiceURL = ({url}) => {
+  assert(!!url, 'url is required');
+
   serviceURL = url;
 };
 
