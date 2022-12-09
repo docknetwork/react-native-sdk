@@ -272,7 +272,7 @@ class Wallet {
       throw new Error(
         'Wallet module timed out. Make sure the wallet is loaded, or you are not using multiple instances',
       );
-    }, 30000);
+    }, 6000);
 
     await this.eventManager.waitFor(WalletEvents.ready);
 
