@@ -22,7 +22,7 @@ export class WalletServiceRpc extends RpcService {
     return this.call('getDocumentById', id);
   }
 
-  create(params): Promise<any> {
+  create(params: CreateParams): Promise<any> {
     validation.create(params);
     return this.call('create', params);
   }
