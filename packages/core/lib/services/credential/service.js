@@ -1,6 +1,6 @@
 import {serviceName, validation} from './config';
 import VerifiableCredential from '@docknetwork/sdk/verifiable-credential';
-import {getKeypairFromDoc} from '@docknetwork/wallet/methods/keypairs';
+import {getKeypairFromDoc} from '@docknetwork/universal-wallet/methods/keypairs';
 import {getSuiteFromKeyDoc} from '@docknetwork/sdk/utils/vc/helpers';
 import VerifiablePresentation from '@docknetwork/sdk/verifiable-presentation';
 import dock from '@docknetwork/sdk';
