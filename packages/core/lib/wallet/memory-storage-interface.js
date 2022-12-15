@@ -1,4 +1,4 @@
-import StorageInterface from '@docknetwork/wallet/storage/storage-interface';
+import StorageInterface from '@docknetwork/universal-wallet/storage/storage-interface';
 
 const localStorage = global.localStorage;
 

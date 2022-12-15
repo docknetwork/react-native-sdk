@@ -1,4 +1,4 @@
-import StorageWallet from '@docknetwork/wallet/storage-wallet';
+import StorageWallet from '@docknetwork/universal-wallet/storage-wallet';
 import MemoryStorageInterface from './memory-storage-interface';
 
 class MemoryWallet extends StorageWallet {
