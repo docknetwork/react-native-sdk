@@ -22,7 +22,7 @@
   "devDependencies": {
     "@babel/core": "^7.16.0",
     "@babel/preset-env": "^7.14.5",
-    "@docknetwork/sdk": "2.7.0",
+    "@docknetwork/sdk": "2.8.0",
     "@docknetwork/wallet": "0.3.0",
     "@pmmmwh/react-refresh-webpack-plugin": "0.4.3",
     "@polkadot/api": "7.15.1",
