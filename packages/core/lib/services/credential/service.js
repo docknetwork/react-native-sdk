@@ -4,6 +4,7 @@ import {getKeypairFromDoc} from '@docknetwork/universal-wallet/methods/keypairs'
 import {getSuiteFromKeyDoc} from '@docknetwork/sdk/utils/vc/helpers';
 import VerifiablePresentation from '@docknetwork/sdk/verifiable-presentation';
 import dock from '@docknetwork/sdk';
+import BbsPlusPresentation from '@docknetwork/sdk/bbs-plus-presentation';
 import {
   DockResolver,
   DIDKeyResolver,
@@ -30,6 +31,7 @@ class CredentialService {
     CredentialService.prototype.signCredential,
     CredentialService.prototype.createPresentation,
     CredentialService.prototype.verifyCredential,
+    CredentialService.prototype.createBBSPresentation,
   ];
   generateCredential(params = {}) {
     validation.generateCredential(params);
@@ -81,6 +83,21 @@ class CredentialService {
     validation.verifyCredential(params);
     const {credential} = params;
     return verifyCredential(credential, {resolver, revocationApi: {dock}});
+  }
+  async createBBSPresentation(params) {
+    validation.createBBSPresentation(params);
+    const {credentials} = params;
+
+    const bbsPlusPresentation = new BbsPlusPresentation();
+    for (const {credential, attributesToReveal} of credentials) {
+      const idx = await bbsPlusPresentation.addCredentialToPresent(credential, {
+        resolver,
+      });
+      if (Array.isArray(attributesToReveal) && attributesToReveal.length > 0) {
+        await bbsPlusPresentation.addAttributeToReveal(idx, attributesToReveal);
+      }
+    }
+    return bbsPlusPresentation.createPresentation();
   }
 }
 
