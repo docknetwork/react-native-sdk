@@ -1,4 +1,4 @@
-import StorageInterface from '@docknetwork/wallet/storage/storage-interface';
+import StorageInterface from '@docknetwork/universal-wallet/storage/storage-interface';
 import {v4 as uuid} from 'uuid';
 import {storageService} from '../services/storage';
 import {Logger} from '../core/logger';
