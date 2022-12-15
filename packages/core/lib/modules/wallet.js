@@ -93,8 +93,6 @@ class Wallet {
         }
       }, 2000);
     }
-
-    this.setStatus('closed');
   }
 
   async recoverFromBadState() {
