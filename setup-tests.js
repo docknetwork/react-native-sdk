@@ -34,4 +34,16 @@ require('./packages/core/lib/setup-tests');
 
 jest.mock('@react-native-async-storage/async-storage', () => 'AsyncStorage');
 
+jest.mock('@docknetwork/sdk/bbs-plus-presentation', () => {
+  const mockAddCredentialToPresent = jest.fn(() => 0);
+  const mockAddAttributeToReveal = jest.fn();
+  const mockCreatePresentation = jest.fn();
+  return jest.fn().mockImplementation(() => {
+    return {
+      addCredentialToPresent: mockAddCredentialToPresent,
+      addAttributeToReveal: mockAddAttributeToReveal,
+      createPresentation: mockCreatePresentation,
+    };
+  });
+});
 getStorage().setItem('networkId', 'testnet');

@@ -12,7 +12,6 @@ import {
   UniversalResolver,
 } from '@docknetwork/sdk/resolver';
 import {verifyCredential} from '@docknetwork/sdk/utils/vc/credentials';
-import {getDock} from '../dock/service';
 
 const resolvers = {
   dock: new DockResolver(dock),
@@ -22,15 +21,6 @@ const resolver = new MultiResolver(
   resolvers,
   new UniversalResolver('https://uniresolver.io'),
 );
-
-let bbsPlusPresentation;
-
-export function setBbsPlusPresentation(_bbsPlusPresentation) {
-  bbsPlusPresentation = _bbsPlusPresentation;
-}
-export function getBbsPlusPresentation() {
-  return bbsPlusPresentation;
-}
 
 class CredentialService {
   constructor() {
@@ -98,13 +88,14 @@ class CredentialService {
     validation.createBBSPresentation(params);
     const {credentials} = params;
 
-    if (!bbsPlusPresentation) {
-      bbsPlusPresentation = new BbsPlusPresentation(getDock());
-    }
-
+    const bbsPlusPresentation = new BbsPlusPresentation();
     for (const {credential, attributesToReveal} of credentials) {
-      const idx = await bbsPlusPresentation.addCredentialsToPresent(credential);
-      await bbsPlusPresentation.addAttributeToReveal(idx, attributesToReveal);
+      const idx = await bbsPlusPresentation.addCredentialToPresent(credential, {
+        resolver,
+      });
+      if (Array.isArray(attributesToReveal) && attributesToReveal.length > 0) {
+        await bbsPlusPresentation.addAttributeToReveal(idx, attributesToReveal);
+      }
     }
     return bbsPlusPresentation.createPresentation();
   }
