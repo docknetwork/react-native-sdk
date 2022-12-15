@@ -238,12 +238,15 @@ describe('DID Service', () => {
       {credential, attributesToReveal: ['credentialSubject.givenName']},
     ];
 
-    const presentation = await service.createBBSPresentation({
+    await service.createBBSPresentation({
       credentials,
     });
 
     const bbsPresentation = new BbsPlusPresentation();
-    expect(bbsPresentation.addCredentialToPresent).toBeCalledWith(credential, expect.any(Object));
+    expect(bbsPresentation.addCredentialToPresent).toBeCalledWith(
+      credential,
+      expect.any(Object),
+    );
     expect(bbsPresentation.addAttributeToReveal).toBeCalledWith(0, [
       'credentialSubject.givenName',
     ]);
