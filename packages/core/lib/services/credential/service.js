@@ -32,6 +32,7 @@ class CredentialService {
     CredentialService.prototype.createPresentation,
     CredentialService.prototype.verifyCredential,
     CredentialService.prototype.createBBSPresentation,
+    CredentialService.prototype.deriveVCFromBBSPresentation,
   ];
   generateCredential(params = {}) {
     validation.generateCredential(params);
@@ -98,6 +99,20 @@ class CredentialService {
       }
     }
     return bbsPlusPresentation.createPresentation();
+  }
+  async deriveVCFromBBSPresentation(params) {
+    validation.deriveVCFromBBSPresentation(params);
+    const {credentials, options = {}} = params;
+    const bbsPlusPresentation = new BbsPlusPresentation();
+    for (const {credential, attributesToReveal} of credentials) {
+      const idx = await bbsPlusPresentation.addCredentialToPresent(credential, {
+        resolver,
+      });
+      if (Array.isArray(attributesToReveal) && attributesToReveal.length > 0) {
+        await bbsPlusPresentation.addAttributeToReveal(idx, attributesToReveal);
+      }
+    }
+    return bbsPlusPresentation.deriveCredentials(options);
   }
 }
 
