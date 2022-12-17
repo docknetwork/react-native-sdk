@@ -112,7 +112,35 @@ class CredentialService {
         await bbsPlusPresentation.addAttributeToReveal(idx, attributesToReveal);
       }
     }
-    return bbsPlusPresentation.deriveCredentials(options);
+    const credentialsFromPresentation =
+      await bbsPlusPresentation.deriveCredentials(options);
+    return credentialsFromPresentation.map(credentialJSON => {
+      const {credentialSubject} = credentialJSON;
+      let customContext = {
+        bs: 'https://ld.dock.io/bbs-pres-credentials#',
+        proofPurpose: 'bs:proofPurpose',
+        parsingOptions: 'bs:parsingOptions',
+        defaultDecimalPlaces: 'bs:defaultDecimalPlaces',
+        useDefaults: 'bs:useDefaults',
+        version: 'bs:version',
+        defaultMinimumInteger: 'bs:defaultMinimumInteger',
+        attributeCiphertexts: 'bs:attributeCiphertexts',
+        attributeEqualities: 'bs:attributeEqualities',
+        created: 'bs:created',
+        nonce: 'bs:nonce',
+        proofValue: 'bs:proofValue',
+        verificationMethod: 'bs:verificationMethod',
+        lprNumber: 'bs:lprNumber',
+      };
+      Object.keys(credentialSubject).forEach(key => {
+        customContext = {
+          ...customContext,
+          [key]: `bs:${key}`,
+        };
+      });
+      credentialJSON['@context'].push(customContext);
+      return VerifiableCredential.fromJSON(credentialJSON);
+    });
   }
 }
 
