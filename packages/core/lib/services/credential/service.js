@@ -12,6 +12,9 @@ import {
   UniversalResolver,
 } from '@docknetwork/sdk/resolver';
 import {verifyCredential} from '@docknetwork/sdk/utils/vc/credentials';
+import {PEX} from '@sphereon/pex';
+
+const pex: PEX = new PEX();
 
 const resolvers = {
   dock: new DockResolver(dock),
@@ -32,6 +35,8 @@ class CredentialService {
     CredentialService.prototype.createPresentation,
     CredentialService.prototype.verifyCredential,
     CredentialService.prototype.createBBSPresentation,
+    CredentialService.prototype.filterCredentials,
+    CredentialService.prototype.evaluatePresentation,
     CredentialService.prototype.deriveVCFromBBSPresentation,
   ];
   generateCredential(params = {}) {
@@ -85,6 +90,28 @@ class CredentialService {
     const {credential} = params;
     return verifyCredential(credential, {resolver, revocationApi: {dock}});
   }
+
+  filterCredentials(params) {
+    const {credentials, presentationDefinition, holderDid} = params;
+    const result = pex.selectFrom(
+      presentationDefinition,
+      credentials,
+      holderDid,
+    );
+
+    return result;
+  }
+
+  evaluatePresentation(params) {
+    const {presentation, presentationDefinition} = params;
+    const result = pex.evaluatePresentation(
+      presentationDefinition,
+      presentation,
+    );
+
+    return result;
+  }
+
   async createBBSPresentation(params) {
     validation.createBBSPresentation(params);
     const {credentials} = params;
