@@ -2,7 +2,7 @@ import assert from 'assert';
 import axios from 'axios';
 import {generateSignedPayload, toBase64} from './payloads';
 
-let serviceURL = 'https://relay.dock.io';
+let serviceURL = process.env.RELAY_SERVICE_URL || 'https://relay.dock.io';
 
 const sendMessage = async ({keyPairDoc, recipientDid, message}) => {
   assert(!!keyPairDoc, 'keyPairDoc is required');
