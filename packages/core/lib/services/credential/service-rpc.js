@@ -26,4 +26,7 @@ export class CredentialServiceRPC extends RpcService {
   async evaluatePresentation(params) {
     return this.call('evaluatePresentation', params);
   }
+  async deriveVCFromBBSPresentation(params) {
+    return this.call('deriveVCFromBBSPresentation', params);
+  }
 }

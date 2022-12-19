@@ -34,7 +34,6 @@ export class WalletService {
     WalletService.prototype.lock,
     WalletService.prototype.query,
     WalletService.prototype.remove,
-    WalletService.prototype.resolveCorrelations,
     WalletService.prototype.status,
     WalletService.prototype.toJSON,
     WalletService.prototype.sync,
