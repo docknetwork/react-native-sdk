@@ -20,4 +20,10 @@ export class CredentialServiceRPC extends RpcService {
   async createBBSPresentation(params) {
     return this.call('createBBSPresentation', params);
   }
+  async filterCredentials(params) {
+    return this.call('filterCredentials', params);
+  }
+  async evaluatePresentation(params) {
+    return this.call('evaluatePresentation', params);
+  }
 }
