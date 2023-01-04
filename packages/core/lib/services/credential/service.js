@@ -159,10 +159,12 @@ class CredentialService {
         verificationMethod: 'bs:verificationMethod',
       };
       Object.keys(credentialSubject || {}).forEach(key => {
-        customContext = {
-          ...customContext,
-          [key]: `bs:${key}`,
-        };
+        if (key !== 'id') {
+          customContext = {
+            ...customContext,
+            [key]: `bs:${key}`,
+          };
+        }
       });
       credentialJSON['@context'].push(customContext);
       return VerifiableCredential.fromJSON(credentialJSON);
