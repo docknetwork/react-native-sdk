@@ -38,7 +38,7 @@ jest.mock('@docknetwork/sdk/bbs-plus-presentation', () => {
   const mockAddCredentialToPresent = jest.fn(() => 0);
   const mockAddAttributeToReveal = jest.fn();
   const mockCreatePresentation = jest.fn();
-  const mockDeriveCredentials = jest.fn();
+  const mockDeriveCredentials = jest.fn(() => []);
   return jest.fn().mockImplementation(() => {
     return {
       addCredentialToPresent: mockAddCredentialToPresent,
