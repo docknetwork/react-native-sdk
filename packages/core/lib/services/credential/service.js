@@ -157,9 +157,8 @@ class CredentialService {
         nonce: 'bs:nonce',
         proofValue: 'bs:proofValue',
         verificationMethod: 'bs:verificationMethod',
-        lprNumber: 'bs:lprNumber',
       };
-      Object.keys(credentialSubject).forEach(key => {
+      Object.keys(credentialSubject || {}).forEach(key => {
         customContext = {
           ...customContext,
           [key]: `bs:${key}`,
