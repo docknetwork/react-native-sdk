@@ -157,13 +157,14 @@ class CredentialService {
         nonce: 'bs:nonce',
         proofValue: 'bs:proofValue',
         verificationMethod: 'bs:verificationMethod',
-        lprNumber: 'bs:lprNumber',
       };
-      Object.keys(credentialSubject).forEach(key => {
-        customContext = {
-          ...customContext,
-          [key]: `bs:${key}`,
-        };
+      Object.keys(credentialSubject || {}).forEach(key => {
+        if (key !== 'id') {
+          customContext = {
+            ...customContext,
+            [key]: `bs:${key}`,
+          };
+        }
       });
       credentialJSON['@context'].push(customContext);
       return VerifiableCredential.fromJSON(credentialJSON);
