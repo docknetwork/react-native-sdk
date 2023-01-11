@@ -100,5 +100,18 @@ describe('Credentials module', () => {
       const error = await getPromiseError(() => credentials.addFromUrl(url));
       expect(error.message).toBe('Invalid credential');
     });
+
+    it('Expect check if password is required', async () => {
+      const url =
+        'https://creds-testnet.dock.io/bdab678e5874df158f252584b6d21a139127c3bdcf7f4aff94b25f4ac8bc4044?p=1212121';
+      const result = await credentials.isPasswordRequired(url);
+      expect(result).toBeTruthy();
+    });
+    it('Expect check if password is not required', async () => {
+      const url =
+        'https://creds-testnet.dock.io/bdab678e5874df158f252584b6d21a139127c3bdcf7f4aff94b25f4ac8bc4044';
+      const result = await credentials.isPasswordRequired(url);
+      expect(result).toBeFalsy();
+    });
   });
 });
