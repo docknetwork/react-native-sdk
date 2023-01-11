@@ -80,7 +80,7 @@ export class Credentials {
       await axios.get(url);
       return false;
     } catch (e) {
-      if (e.response.status === 400) {
+      if (e?.response?.status === 400) {
         return true;
       }
       throw 'Something went wrong';
