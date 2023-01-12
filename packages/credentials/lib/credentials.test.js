@@ -2,6 +2,7 @@ import {Credentials} from './index';
 import {Wallet} from '@docknetwork/wallet-sdk-core/lib/modules/wallet';
 import testCredential from '../fixtures/test-credential.json';
 import {getPromiseError} from '@docknetwork/wallet-sdk-core/lib/services/test-utils';
+import axios from 'axios';
 
 describe('Credentials module', () => {
   it('expect to create instance', () => {
@@ -102,14 +103,18 @@ describe('Credentials module', () => {
     });
 
     it('Expect check if password is required', async () => {
-      const url =
-        'https://creds-testnet.dock.io/bdab678e5874df158f252584b6d21a139127c3bdcf7f4aff94b25f4ac8bc4044?p=1212121';
+      jest.spyOn(axios, 'get');
+      axios.get.mockImplementation(() => {
+        throw {response: {status: 400}};
+      });
+      const url = 'https://password-required.com';
       const result = await credentials.isPasswordRequired(url);
       expect(result).toBeTruthy();
     });
     it('Expect check if password is not required', async () => {
-      const url =
-        'https://creds-testnet.dock.io/bdab678e5874df158f252584b6d21a139127c3bdcf7f4aff94b25f4ac8bc4044';
+      jest.spyOn(axios, 'get');
+      axios.get.mockImplementation(() => ({}));
+      const url = 'https://no-password-required.com';
       const result = await credentials.isPasswordRequired(url);
       expect(result).toBeFalsy();
     });
