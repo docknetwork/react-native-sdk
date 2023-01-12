@@ -69,6 +69,23 @@ export class Credentials {
 
     return data;
   }
+
+  /**
+   * Checks if trying to fetch a credential would return a forbidden response.
+   * @param url {string}
+   * @returns {Promise<boolean>}
+   */
+  async isPasswordRequired(url) {
+    try {
+      await axios.get(url);
+      return false;
+    } catch (e) {
+      if (e?.response?.status === 400) {
+        return true;
+      }
+      throw 'Something went wrong';
+    }
+  }
   /**
    * Downloads credential content from url and store in the wallet
    *

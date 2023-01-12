@@ -159,7 +159,7 @@ class CredentialService {
         verificationMethod: 'bs:verificationMethod',
       };
       Object.keys(credentialSubject || {}).forEach(key => {
-        if (key !== 'id') {
+        if (key.trim() !== 'id') {
           customContext = {
             ...customContext,
             [key]: `bs:${key}`,
