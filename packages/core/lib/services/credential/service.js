@@ -13,6 +13,8 @@ import {
 } from '@docknetwork/sdk/resolver';
 import {verifyCredential} from '@docknetwork/sdk/utils/vc/credentials';
 import {PEX} from '@sphereon/pex';
+import {keyDocToKeypair} from './utils';
+import {getDock} from '../dock/service';
 
 const pex: PEX = new PEX();
 
@@ -79,11 +81,17 @@ class CredentialService {
     for (const signedVC of credentials) {
       vp.addCredential(signedVC);
     }
-    const kp = getKeypairFromDoc(keyDoc);
-    kp.signer = kp.signer();
-    const suite = getSuiteFromKeyDoc(kp);
     vp.setHolder(keyDoc.controller);
-    return vp.sign(suite, challenge, domain);
+    keyDoc.keypair = keyDocToKeypair(keyDoc, getDock());
+    return vp.sign(
+      {
+        ...keyDoc,
+        id: `${keyDoc.controller}#keys-1`, // HACK: make it work with SDK did resolution, this is an SDK limitation
+      },
+      challenge,
+      domain,
+      resolver,
+    );
   }
   verifyCredential(params) {
     validation.verifyCredential(params);
