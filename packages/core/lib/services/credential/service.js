@@ -83,15 +83,7 @@ class CredentialService {
     }
     vp.setHolder(keyDoc.controller);
     keyDoc.keypair = keyDocToKeypair(keyDoc, getDock());
-    return vp.sign(
-      {
-        ...keyDoc,
-        id: `${keyDoc.controller}#keys-1`, // HACK: make it work with SDK did resolution, this is an SDK limitation
-      },
-      challenge,
-      domain,
-      resolver,
-    );
+    return vp.sign(keyDoc, challenge, domain, resolver);
   }
   verifyCredential(params) {
     validation.verifyCredential(params);
