@@ -8,6 +8,7 @@ import {dockService, getDock, setDock} from './dock/service';
 import {keyringService} from './keyring';
 import {RpcService} from './rpc-service-client';
 import {walletService} from './wallet';
+import Keyring from '@polkadot/keyring';
 
 export async function initializeWalletService() {
   await cryptoWaitReady();
@@ -198,6 +199,12 @@ export function mockDockSdkConnection(connectionError) {
             type: 'Sr25519VerificationKey2020',
           },
         ],
+      }),
+    },
+    keyring: {
+      createFromPair: jest.fn(() => {
+        const kr = new Keyring();
+        return kr.createFromUri('//Alice');
       }),
     },
   });
