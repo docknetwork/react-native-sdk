@@ -1,13 +1,33 @@
 import VerifiableCredential from '@docknetwork/sdk/verifiable-credential';
 import {cryptoWaitReady} from '@polkadot/util-crypto';
-import {getKeypairFromDoc} from '@docknetwork/universal-wallet/methods/keypairs';
+// import {getKeypairFromDoc} from '@docknetwork/universal-wallet/methods/keypairs';
 import {getSuiteFromKeyDoc} from '@docknetwork/sdk/utils/vc/helpers';
+import {getKeypairFromDoc} from '@docknetwork/wallet/methods/keypairs';
+import assert from 'assert';
 
 // 1 year
 const DEFAULT_EXPIRATION = 86400 * 1000 * 365;
 
+const isDIDDockRegex = /did:dock/gi;
+
+export function ensureDIDDockFragment(keyDoc) {
+  if (!isDIDDockRegex.test(keyDoc.id)) {
+    return keyDoc;
+  }
+
+  keyDoc.id = keyDoc.id.replace(/#.+/, '');
+  keyDoc.id = `${keyDoc.id}#keys-1`;
+
+  return keyDoc;
+}
+
 export async function generateSignedPayload(keyPairDoc, subject) {
+  assert(!!keyPairDoc, 'keyPairDoc is required');
+  assert(!!subject, 'subject is required');
+
   await cryptoWaitReady();
+
+  keyPairDoc = ensureDIDDockFragment(keyPairDoc);
 
   const cred = new VerifiableCredential('dock:relay');
   cred.setContext([
