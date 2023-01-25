@@ -1,7 +1,30 @@
 import {RelayService} from '../lib';
+import {generateSignedPayload} from '../lib/payloads';
 import {ALICE_KEY_PAIR_DOC, BOB_KEY_PAIR_DOC} from './mock-data';
 
 describe('Relay service', () => {
+  describe('generateSignedPayload', () => {
+    it('expect to assert parameters', async () => {
+      const error = await generateSignedPayload(null, null).catch(err => err);
+
+      expect(error.toString()).toContain('AssertionError');
+    });
+
+    it('expect to generate signed payload for did:dock', async () => {
+      const result = await generateSignedPayload(ALICE_KEY_PAIR_DOC, {
+        limit: 20,
+      });
+
+      expect(result).toBeDefined();
+    });
+
+    it('expect to generate signed payload for did:key', async () => {
+      const result = await generateSignedPayload(BOB_KEY_PAIR_DOC, {limit: 20});
+
+      expect(result).toBeDefined();
+    });
+  });
+
   describe('sendMessage', () => {
     it('expect to assert parameters', async () => {
       const error = await RelayService.sendMessage({
