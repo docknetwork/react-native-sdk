@@ -1,6 +1,10 @@
 import assert from 'assert';
 import axios from 'axios';
-import {generateSignedPayload, toBase64} from './payloads';
+import {
+  generateSignedPayload,
+  generateSignedPayloadFromList,
+  toBase64,
+} from './payloads';
 
 let serviceURL = process.env.RELAY_SERVICE_URL || 'https://relay.dock.io';
 
@@ -29,16 +33,20 @@ const sendMessage = async ({keyPairDoc, recipientDid, message}) => {
   }
 };
 
-const getMessages = async ({keyPairDoc, limit = 20}) => {
-  assert(!!keyPairDoc, 'keyPairDoc is required');
+const getMessages = async ({keyPairDocs, limit = 20}) => {
+  assert(!!keyPairDocs, 'keyPairDoc is required');
+  assert(Array.isArray(keyPairDocs), 'keyPairDocs must be an array');
+  assert(!!keyPairDocs.length, 'keyPairDocs must not be empty');
 
-  const {payload, did} = await generateSignedPayload(keyPairDoc, {limit});
+  const {payload, dids} = await generateSignedPayloadFromList(keyPairDocs, {
+    limit,
+  });
 
   try {
     const result = await axios.get(
-      `${serviceURL}/messages/${encodeURIComponent(did)}?payload=${toBase64(
-        payload,
-      )}`,
+      `${serviceURL}/messages/batch-dids?dids=${encodeURIComponent(
+        JSON.stringify(dids),
+      )}&payload=${toBase64(payload)}`,
     );
 
     return result.data;

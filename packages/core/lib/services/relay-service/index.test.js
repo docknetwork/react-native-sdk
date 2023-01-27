@@ -16,7 +16,7 @@ describe('RelayService', () => {
       const getMessageMock = jest
         .spyOn(relayServiceClient, 'getMessages')
         .mockImplementation(() => mockResult);
-      const params: GetMessagesParams = {keyPairDoc: {}, limit: 10};
+      const params: GetMessagesParams = {keyPairDocs: [{}], limit: 10};
       const result = await service.getMessages(params);
 
       expect(result).toBe(mockResult);

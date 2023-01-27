@@ -8,8 +8,8 @@ export const validation = {
     assert(!!message, 'message is required');
   },
 
-  getMessages({keyPairDoc, limit}: GetMessagesParams) {
-    assert(!!keyPairDoc, 'keyPairDoc is required');
+  getMessages({keyPairDocs, limit}: GetMessagesParams) {
+    assert(!!keyPairDocs, 'keyPairDoc is required');
 
     if (limit) {
       assert(isNumberValid(limit), 'invalid limit');
@@ -20,7 +20,7 @@ export const validation = {
 export const serviceName = 'relayService';
 
 export type GetMessagesParams = {
-  keyPairDoc: any,
+  keyPairDocs: any,
   limit: number,
 };
 
