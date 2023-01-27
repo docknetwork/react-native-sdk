@@ -16,7 +16,7 @@ describe('Relay service', () => {
 
   test('BOB can fetch message sent by Alice', async () => {
     const messages = await RelayService.getMessages({
-      keyPairDoc: BOB_KEY_PAIR_DOC,
+      keyPairDocs: [BOB_KEY_PAIR_DOC, ALICE_KEY_PAIR_DOC],
       limit: 20,
     });
 
