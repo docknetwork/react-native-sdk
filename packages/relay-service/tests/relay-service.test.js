@@ -1,3 +1,4 @@
+import axios from 'axios';
 import {RelayService} from '../lib';
 import {generateSignedPayload} from '../lib/payloads';
 import {ALICE_KEY_PAIR_DOC, BOB_KEY_PAIR_DOC} from './mock-data';
@@ -50,15 +51,17 @@ describe('Relay service', () => {
   describe('getMessages', () => {
     it('expect to assert parameters', async () => {
       const error = await RelayService.getMessages({
-        recipientDid: null,
+        keyPairDocs: null,
       }).catch(err => err);
 
       expect(error.toString()).toContain('AssertionError');
     });
 
     it('expect to get messages', async () => {
+      jest.spyOn(axios, 'get').mockReturnValueOnce({data: ['test']});
+
       const result = await RelayService.getMessages({
-        keyPairDoc: ALICE_KEY_PAIR_DOC,
+        keyPairDocs: [ALICE_KEY_PAIR_DOC],
         limit: 20,
       });
 
