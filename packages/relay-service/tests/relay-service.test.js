@@ -50,7 +50,7 @@ describe('Relay service', () => {
   describe('getMessages', () => {
     it('expect to assert parameters', async () => {
       const error = await RelayService.getMessages({
-        recipientDid: null,
+        keyPairDocs: null,
       }).catch(err => err);
 
       expect(error.toString()).toContain('AssertionError');
@@ -58,7 +58,7 @@ describe('Relay service', () => {
 
     it('expect to get messages', async () => {
       const result = await RelayService.getMessages({
-        keyPairDoc: ALICE_KEY_PAIR_DOC,
+        keyPairDocs: [ALICE_KEY_PAIR_DOC],
         limit: 20,
       });
 

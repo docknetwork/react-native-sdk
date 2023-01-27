@@ -65,6 +65,25 @@ export async function generateSignedPayload(keyPairDoc, subject) {
   };
 }
 
+export async function generateSignedPayloadFromList(keyPairDocs, subject) {
+  const payload = [];
+  const dids = [];
+
+  for (const keyPairDoc of keyPairDocs) {
+    const {payload: signedPayload, did} = await generateSignedPayload(
+      keyPairDoc,
+      subject,
+    );
+    payload.push(signedPayload);
+    dids.push(did);
+  }
+
+  return {
+    payload,
+    dids,
+  };
+}
+
 export function toBase64(payload) {
   return Buffer.from(JSON.stringify(payload)).toString('base64');
 }
