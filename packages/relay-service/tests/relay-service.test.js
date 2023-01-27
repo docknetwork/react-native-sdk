@@ -58,7 +58,7 @@ describe('Relay service', () => {
 
     it('expect to get messages', async () => {
       const result = await RelayService.getMessages({
-        keyPairDocs: [ALICE_KEY_PAIR_DOC],
+        keyPairDocs: [ALICE_KEY_PAIR_DOC, BOB_KEY_PAIR_DOC],
         limit: 20,
       });
 

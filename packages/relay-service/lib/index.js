@@ -3,7 +3,6 @@ import axios from 'axios';
 import {
   generateSignedPayload,
   generateSignedPayloadFromList,
-  generateSignedPayloadList,
   toBase64,
 } from './payloads';
 
