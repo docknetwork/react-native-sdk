@@ -1,3 +1,4 @@
+import axios from 'axios';
 import {RelayService} from '../lib';
 import {generateSignedPayload} from '../lib/payloads';
 import {ALICE_KEY_PAIR_DOC, BOB_KEY_PAIR_DOC} from './mock-data';
@@ -57,8 +58,10 @@ describe('Relay service', () => {
     });
 
     it('expect to get messages', async () => {
+      jest.spyOn(axios, 'get').mockReturnValueOnce({data: ['test']});
+
       const result = await RelayService.getMessages({
-        keyPairDocs: [ALICE_KEY_PAIR_DOC, BOB_KEY_PAIR_DOC],
+        keyPairDocs: [ALICE_KEY_PAIR_DOC],
         limit: 20,
       });
 
