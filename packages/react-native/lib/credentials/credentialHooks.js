@@ -134,11 +134,17 @@ export async function getCredentialStatus(credential) {
   }
   return CREDENTIAL_STATUS.INVALID;
 }
+
+export let cachedCredentialStatus = {};
+
 export function useGetCredentialStatus({credential}) {
-  const [status, setStatus] = useState(CREDENTIAL_STATUS.PENDING);
+  const [status, setStatus] = useState(
+    cachedCredentialStatus[credential.id] || CREDENTIAL_STATUS.PENDING,
+  );
 
   useEffect(() => {
     getCredentialStatus(credential).then(response => {
+      cachedCredentialStatus[credential.id] = response;
       setStatus(response);
     });
   }, [credential]);
