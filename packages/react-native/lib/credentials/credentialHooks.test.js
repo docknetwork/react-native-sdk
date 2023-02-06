@@ -6,6 +6,8 @@ import {
   getCredentialStatus,
   isInThePast,
   CREDENTIAL_STATUS,
+  cachedCredentialStatus,
+  useGetCredentialStatus,
 } from './credentialHooks';
 import {useWallet} from '../index';
 import {credentialServiceRPC} from '@docknetwork/wallet-sdk-core/lib/services/credential';
@@ -294,5 +296,30 @@ describe('sortByIssuanceDate', () => {
     };
     const response = await getCredentialStatus(credential);
     expect(response).toBe(CREDENTIAL_STATUS.REVOKED);
+  });
+
+  it('expect to cache credential verification result', async () => {
+    const credential = {
+      '@context': ['https://www.w3.org/2018/credentials/v1'],
+      id: 'https://creds.dock.io/8e02c35ae370b02f47d7faaf41cb1386768fc75c9fca7caa6bb389dbe61260eb',
+      type: ['VerifiableCredential', 'UniversityDegreeCredential'],
+      credentialSubject: {},
+      issuanceDate: '2022-06-27T12:08:30.675Z',
+      expirationDate: '2029-06-26T23:00:00.000Z',
+      issuer: {
+        name: 'John Doe',
+        description: '',
+        logo: '',
+        id: 'did:dock:5CJaTP2eGCLf5ZNPUXYbWxUvJQMTseKfc4hi8WVBC1K8eW9N',
+      },
+    };
+    const {result, waitForNextUpdate} = renderHook(() =>
+      useGetCredentialStatus({credential}),
+    );
+
+    await waitForNextUpdate();
+
+    expect(cachedCredentialStatus[credential.id]).toBeDefined();
+    expect(result.current).toBe(CREDENTIAL_STATUS.REVOKED);
   });
 });
