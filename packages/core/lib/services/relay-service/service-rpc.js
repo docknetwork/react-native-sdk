@@ -20,4 +20,9 @@ export class RelayServiceRpc extends RpcService {
     validation.getMessages(params);
     return this.call('getMessages', params);
   }
+
+  registerDIDPushNotification(params: RegisterDIDPushNotificationParams) {
+    validation.registerDIDPushNotification(params);
+    return this.call('registerDIDPushNotification', params);
+  }
 }

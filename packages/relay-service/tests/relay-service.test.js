@@ -68,4 +68,17 @@ describe('Relay service', () => {
       expect(result.length).toBeGreaterThanOrEqual(1);
     });
   });
+
+  describe('registerDIDPushNotification', () => {
+    it('expect to registerDIDPushNotification', async () => {
+      jest.spyOn(axios, 'post').mockReturnValueOnce({data: ['test']});
+
+      const result = await RelayService.registerDIDPushNotification({
+        keyPairDocs: [ALICE_KEY_PAIR_DOC],
+        token: 'test',
+      });
+
+      expect(result.length).toBeGreaterThanOrEqual(1);
+    });
+  });
 });
