@@ -2,6 +2,7 @@ import {RpcService} from '../rpc-service-client';
 import {
   GetMessagesParams,
   SendMessageParams,
+  RegisterDIDPushNotificationParams,
   serviceName,
   validation,
 } from './configs';
