@@ -61,7 +61,7 @@ describe('Relay service', () => {
       jest.spyOn(axios, 'get').mockReturnValueOnce({data: ['test']});
 
       const result = await RelayService.getMessages({
-        keyPairDocs: [ALICE_KEY_PAIR_DOC],
+        keyPairDocs: [BOB_KEY_PAIR_DOC],
         limit: 20,
       });
 
@@ -74,7 +74,7 @@ describe('Relay service', () => {
       jest.spyOn(axios, 'post').mockReturnValueOnce({data: ['test']});
 
       const result = await RelayService.registerDIDPushNotification({
-        keyPairDocs: [ALICE_KEY_PAIR_DOC],
+        keyPairDocs: [BOB_KEY_PAIR_DOC],
         token: 'test',
       });
 
