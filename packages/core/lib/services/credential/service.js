@@ -50,7 +50,6 @@ class CredentialService {
     vc.addContext({
       dk: 'https://ld.dock.io/credentials#',
       DockAuthCredential: 'dk:DockAuthCredential',
-      token: 'dk:token',
     });
     if (subject) {
       vc.setSubject(subject);
