@@ -35,7 +35,7 @@ export async function generateSignedPayload(keyPairDoc, subject) {
     {
       dk: 'https://ld.dock.io/credentials#',
       RelayAuthCredential: 'dk:RelayAuthCredential',
-      token: 'token',
+      token: 'dk:token',
       limit: 'dk:limit',
       to: 'dk:to',
       msg: 'dk:msg',
