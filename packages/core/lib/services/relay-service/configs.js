@@ -15,6 +15,13 @@ export const validation = {
       assert(isNumberValid(limit), 'invalid limit');
     }
   },
+  registerDIDPushNotification({
+    keyPairDocs,
+    token,
+  }: RegisterDIDPushNotificationParams) {
+    assert(!!keyPairDocs, 'keyPairDoc is required');
+    assert(!!token, 'token is required');
+  },
 };
 
 export const serviceName = 'relayService';
@@ -28,4 +35,9 @@ export type SendMessageParams = {
   keyPairDoc: any,
   recipientDid: string,
   message: string,
+};
+
+export type RegisterDIDPushNotificationParams = {
+  keyPairDocs: any,
+  token: string,
 };
