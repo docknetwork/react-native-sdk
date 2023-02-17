@@ -56,6 +56,30 @@ const getMessages = async ({keyPairDocs, limit = 20}) => {
   }
 };
 
+const registerDIDPushNotification = async ({keyPairDocs, token}) => {
+  assert(!!keyPairDocs, 'keyPairDoc is required');
+  assert(Array.isArray(keyPairDocs), 'keyPairDocs must be an array');
+  assert(!!keyPairDocs.length, 'keyPairDocs must not be empty');
+  assert(!!token, 'token is required');
+
+  const {payload, dids} = await generateSignedPayloadFromList(keyPairDocs, {
+    token,
+  });
+
+  try {
+    const result = await axios.post(
+      `${serviceURL}/register/batch-dids?dids=${encodeURIComponent(
+        JSON.stringify(dids),
+      )}&payload=${toBase64(payload)}`,
+    );
+
+    return result.data;
+  } catch (err) {
+    console.error(err.response);
+    return err;
+  }
+};
+
 const setServiceURL = ({url}) => {
   assert(!!url, 'url is required');
 
@@ -65,6 +89,7 @@ const setServiceURL = ({url}) => {
 export const RelayService = {
   sendMessage,
   getMessages,
+  registerDIDPushNotification,
   setServiceURL,
   serviceURL,
 };

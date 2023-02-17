@@ -1,6 +1,7 @@
 import {
   SendMessageParams,
   GetMessagesParams,
+  RegisterDIDPushNotificationParams,
   serviceName,
   validation,
 } from './configs';
@@ -14,6 +15,7 @@ export class RelayService {
   rpcMethods = [
     RelayService.prototype.getMessages,
     RelayService.prototype.sendMessage,
+    RelayService.prototype.registerDIDPushNotification,
   ];
 
   constructor() {
@@ -28,6 +30,11 @@ export class RelayService {
   getMessages(params: GetMessagesParams) {
     validation.getMessages(params);
     return relayServiceClient.getMessages(params);
+  }
+
+  registerDIDPushNotification(params: RegisterDIDPushNotificationParams) {
+    validation.registerDIDPushNotification(params);
+    return relayServiceClient.registerDIDPushNotification(params);
   }
 }
 
