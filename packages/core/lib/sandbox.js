@@ -1,5 +1,5 @@
 import {getRpcClient, initRpcClient} from './rpc-client';
-import {getLogger, setLogger} from './logger';
+import {setLogger} from './logger';
 import rpcServer from './sandbox-rpc-server';
 
 initRpcClient(jsonRPCRequest => {
@@ -28,10 +28,9 @@ const addEventListener = (...args) =>
 setLogger({
   log: (...params) => {
     // Logger disabled for sandbox
-    postMessage({
-      type: 'log',
-      body: JSON.stringify(params),
-    });
+  },
+  debug: (...params) => {
+    // Logger disabled for sandbox
   },
 });
 
@@ -48,7 +47,6 @@ global.handleEvent = event => {
   }
 
   if (data && data.type === 'json-rpc-response') {
-    getLogger().log('webview: Received response', data.body);
     getRpcClient().receive(data.body);
   }
 };
