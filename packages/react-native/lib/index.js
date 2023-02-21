@@ -115,6 +115,7 @@ export function WalletSDKProvider({onError, customUri, children, onReady}) {
   const [status, setStatus] = useState('loading');
   const [documents, setDocuments] = useState([]);
   const webViewRef = useRef();
+  const sandboxWebViewRef = useRef();
   const baseUrl =
     Platform.OS === 'ios' ? 'app-html' : 'file:///android_asset/app-html';
 
@@ -194,6 +195,7 @@ export function WalletSDKProvider({onError, customUri, children, onReady}) {
     () =>
       new WebviewEventHandler({
         webViewRef,
+        sandboxWebViewRef,
         onReady: handleReady,
       }),
     [webViewRef, handleReady],
@@ -228,6 +230,30 @@ export function WalletSDKProvider({onError, customUri, children, onReady}) {
     />
   );
 
+  const sandboxContainer = (
+    <WebView
+      style={{
+        display: 'none',
+      }}
+      ref={sandboxWebViewRef}
+      originWhitelist={['*']}
+      source={{
+        uri: `${baseUrl}/sandbox.html`,
+        baseUrl: baseUrl,
+      }}
+      onError={err => {
+        setStatus('error');
+        if (onError) {
+          onError(err);
+        }
+      }}
+      onMessage={event => {
+        console.log('sandbox event');
+        eventHandler.handleEvent(event);
+      }}
+    />
+  );
+
   return (
     <View flex={1}>
       <WalletSDKContext.Provider
@@ -239,7 +265,10 @@ export function WalletSDKProvider({onError, customUri, children, onReady}) {
         }}>
         {children}
       </WalletSDKContext.Provider>
-      <View style={{height: 0}}>{webviewContainer}</View>
+      <View style={{height: 0}}>
+        {webviewContainer}
+        {sandboxContainer}
+      </View>
     </View>
   );
 }
