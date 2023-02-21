@@ -25,6 +25,17 @@ export class WebviewEventHandler {
     };
   }
 
+  handleSandboxEvent(event) {
+    const data = JSON.parse(event.nativeEvent.data);
+    if (data.type === 'json-rpc-ready') {
+      return;
+    }
+
+    const handler = this.getEventMapping()[data.type];
+
+    handler.apply(this, [data]);
+  }
+
   handleEvent(event) {
     assert(!!event, 'event is required');
     const data = JSON.parse(event.nativeEvent.data);
@@ -37,12 +48,14 @@ export class WebviewEventHandler {
   }
 
   _dispatchEvent(type, body) {
-    const isSendboxMessage = body?.method?.indexOf('sandbox-') === 0;
-    const webview = isSendboxMessage
+    const isSandboxMessage = body?.method?.indexOf('sandbox-') === 0;
+    const webview = isSandboxMessage
       ? this.sandboxWebViewRef.current
       : this.webViewRef.current;
 
-    console.log('dispatch event', type, body);
+    if (isSandboxMessage) {
+      body.method = body.method.replace('sandbox-', '');
+    }
 
     webview.injectJavaScript(`
       (function(){

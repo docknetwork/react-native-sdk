@@ -248,8 +248,7 @@ export function WalletSDKProvider({onError, customUri, children, onReady}) {
         }
       }}
       onMessage={event => {
-        console.log('sandbox event');
-        eventHandler.handleEvent(event);
+        eventHandler.handleSandboxEvent(event);
       }}
     />
   );
