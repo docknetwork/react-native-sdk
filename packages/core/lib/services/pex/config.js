@@ -5,7 +5,6 @@ export const validation = {
   filterCredentials: (params: FilterCredentialsParams) => {
     assert(params.credentials, 'credentials is required');
     assert(params.presentationDefinition, 'presentationDefinition is required');
-    assert(params.holderDid, 'holderDid is required');
   },
   evaluatePresentation: (params: EvaluatePresentationParams) => {
     assert(params.presentation, 'presentation is required');
