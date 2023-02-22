@@ -10,7 +10,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v1
         with:
-          node-version: '19.x'
+          node-version: '16.x'
 
       - name: Cache dependencies
         uses: actions/cache@v2
