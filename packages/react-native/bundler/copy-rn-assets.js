@@ -5,7 +5,9 @@ const fs = require('fs');
 
 const bundleDir = path.resolve(__dirname, '../public/');
 const bundlePath = path.resolve(bundleDir, './bundle.js');
+const sandboxPath = path.resolve(bundleDir, './sandbox.js');
 const htmlPath = path.resolve(bundleDir, './index.html');
+const sandboxHtmlPath = path.resolve(bundleDir, './sandbox.html');
 
 assert(fs.readFileSync(bundlePath), `bundle file not found at: ${bundlePath}`);
 
@@ -17,7 +19,9 @@ if (!fs.existsSync(destPath)) {
 }
 
 fs.copyFileSync(bundlePath, path.resolve(destPath, './bundle.js'));
+fs.copyFileSync(sandboxPath, path.resolve(destPath, './sandbox.js'));
 fs.copyFileSync(htmlPath, path.resolve(destPath, './index.html'));
+fs.copyFileSync(sandboxHtmlPath, path.resolve(destPath, './sandbox.html'));
 
 console.log('Copying files to', destPath);
 

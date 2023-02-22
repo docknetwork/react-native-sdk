@@ -8,10 +8,11 @@ import {Logger} from '@docknetwork/wallet-sdk-core/lib/core/logger';
 import rnRpcServer from './rn-rpc-server';
 
 export class WebviewEventHandler {
-  constructor({webViewRef, onReady}) {
+  constructor({webViewRef, sandboxWebViewRef, onReady}) {
     assert(!!webViewRef, 'webViewRef is required');
 
     this.webViewRef = webViewRef;
+    this.sandboxWebViewRef = sandboxWebViewRef;
     this.onReady = onReady;
   }
 
@@ -22,6 +23,17 @@ export class WebviewEventHandler {
       'json-rpc-request': this._handleRpcRequest,
       log: this._handleLog,
     };
+  }
+
+  handleSandboxEvent(event) {
+    const data = JSON.parse(event.nativeEvent.data);
+    if (data.type === 'json-rpc-ready') {
+      return;
+    }
+
+    const handler = this.getEventMapping()[data.type];
+
+    handler.apply(this, [data]);
   }
 
   handleEvent(event) {
@@ -36,7 +48,16 @@ export class WebviewEventHandler {
   }
 
   _dispatchEvent(type, body) {
-    this.webViewRef.current.injectJavaScript(`
+    const isSandboxMessage = body?.method?.indexOf('sandbox-') === 0;
+    const webview = isSandboxMessage
+      ? this.sandboxWebViewRef.current
+      : this.webViewRef.current;
+
+    if (isSandboxMessage) {
+      body.method = body.method.replace('sandbox-', '');
+    }
+
+    webview.injectJavaScript(`
       (function(){
         (navigator.appVersion.includes("Android") ? document : window).dispatchEvent(new MessageEvent('message', {data: ${JSON.stringify(
           {
