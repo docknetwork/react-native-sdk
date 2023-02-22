@@ -37,8 +37,6 @@ class CredentialService {
     CredentialService.prototype.createPresentation,
     CredentialService.prototype.verifyCredential,
     CredentialService.prototype.createBBSPresentation,
-    CredentialService.prototype.filterCredentials,
-    CredentialService.prototype.evaluatePresentation,
     CredentialService.prototype.deriveVCFromBBSPresentation,
   ];
   generateCredential(params = {}) {
