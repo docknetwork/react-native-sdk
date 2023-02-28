@@ -2,6 +2,35 @@ import {getRpcClient, initRpcClient} from './rpc-client';
 import {setLogger} from './logger';
 import rpcServer from './sandbox-rpc-server';
 
+global.fetch = () => {
+  throw new Error('fetch is not available in the sandbox');
+}
+
+global.XMLHttpRequest = () => {
+  throw new Error('XMLHttpRequest is not available in the sandbox');
+}
+
+global.WebSocket = () => {
+  throw new Error('WebSocket is not available in the sandbox');
+}
+
+// Disable location and redirects
+global.location = {
+  href: '',
+  origin: '',
+  protocol: '',
+  host: '',
+  hostname: '',
+  port: '',
+  pathname: '',
+  search: '',
+  hash: '',
+  assign: () => {},
+  reload: () => {},
+  replace: () => {},
+  toString: () => '',
+};
+
 initRpcClient(jsonRPCRequest => {
   postMessage({
     type: 'json-rpc-request',
