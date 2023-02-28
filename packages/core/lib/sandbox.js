@@ -16,13 +16,14 @@ global.WebSocket = () => {
 
 global.navigator = {
   userAgent: 'React Native',
-  appVersion: '5.0 (Linux; Android 6.0.1; Nexus 5 Build/M4B30Z) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.158 Mobile Safari/537.36',
+  appVersion:
+    '5.0 (Linux; Android 6.0.1; Nexus 5 Build/M4B30Z) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.158 Mobile Safari/537.36',
   platform: 'Linux armv8l',
   product: 'ReactNative',
   sendBeacon: () => {
     throw new Error('sendBeacon is not available in the sandbox');
   },
-}
+};
 
 global.Worker = () => {
   throw new Error('Worker is not available in the sandbox');
