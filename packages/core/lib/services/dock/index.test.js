@@ -28,7 +28,7 @@ describe('DockService', () => {
     it('connect and disconnect substrate node', async () => {
       const mock = mockDockSdkConnection();
       const result = await doConnect();
-      expect(result).toBe(mock.result);
+      expect(result).toBe(true);
       expect(await service.isApiConnected()).toBeTruthy();
       await service.disconnect();
       expect(await service.isApiConnected()).toBeFalsy();
