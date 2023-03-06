@@ -62,13 +62,13 @@ export class DockService {
 
     Logger.info(`Attempt to initialized substrate at: ${params.address}`);
 
-    const result = await this.connectionInProgress;
+    await this.connectionInProgress;
 
     Logger.debug(`Substrate initialized at: ${params.address}`);
 
     this._setDockReady(true);
 
-    return result;
+    return true;
   }
 
   /**
