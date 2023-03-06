@@ -68,7 +68,7 @@ export class DockService {
 
     this._setDockReady(true);
 
-    return result;
+    return true;
   }
 
   /**
