@@ -7,6 +7,7 @@ import { v1 as uuidv1 } from 'uuid';
 import base64url from 'base64url';
 
 import { resolveDID } from './did/dids';
+import { BOB_KEY_PAIR_DOC } from '../tests/mock-data';
 
 // TODO: restore importing from the node_modules library when its fixed
 // currently has issues with transpilation due to not exporting CJS
@@ -128,6 +129,7 @@ export async function didcommEncrypt(obj, recipients, keyResolver, senderKey) {
   }
 
   console.log('keyAgreementKey', keyAgreementKey)
+  console.log('recipients', recipients);
 
   const encryptedJWE = await cipher.encryptObject({
     obj,
@@ -218,8 +220,6 @@ export async function getAgreementKeydocFromDID(did) {
       : [didDocument.publicKey]
     : [];
 
-  console.log(didDocument); 
-  console.log(publicKeys); 
 
   // See if DID document has any derivable keys
   const derivableKey = publicKeys.filter(isDerivableKey)[0];
@@ -235,7 +235,9 @@ export async function getDerivedAgreementKey(derivableKey) {
     throw new Error(`Cannot derive X25519 KAK from type: ${derivableKey.type}`);
   }
 
-  console.log(derivableKey);
+  if (!derivableKey.publicKeyMultibase) {
+    derivableKey.publicKeyMultibase = derivableKey.publicKeyBase58;
+  }
 
   // Convert derivable key into latest 2020 format
   const ed2020VerificationKey = await Ed25519VerificationKey2020.from({
@@ -316,13 +318,25 @@ export async function didcommCreateEncrypted({
   const recipients = recipientKeyDocuments.map((keyDoc) =>
     getJWERecipientFromDocument(keyDoc, algorithm)
   );
+
+  console.log('recipientKeyDocuments');
+  console.log(recipientKeyDocuments);
+
+
   const keyResolver = async (keyId) => {
+    console.log('resolve key', keyId);
+
     const keyIdStr = keyId.id || keyId;
     const keyDoc = recipientKeyDocuments.filter((k) => k.id === keyIdStr)[0];
     if (!keyDoc) {
       throw new Error(`Cannot find key document with ID: ${keyIdStr}`);
     }
-    return await getKaKInstanceFromDocument(keyDoc);
+
+    const result = await getKaKInstanceFromDocument(keyDoc);
+
+    console.log('resolve key result', result);
+
+    return result;
   };
 
   const didcommMessage = formatPayloadToDIDComm(recipientDids, type, senderDid, payload);
