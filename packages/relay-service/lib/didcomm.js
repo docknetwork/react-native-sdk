@@ -1,20 +1,14 @@
-import { X25519KeyAgreementKey2020 } from '@digitalbazaar/x25519-key-agreement-key-2020';
-import { Ed25519VerificationKey2020 } from '@digitalbazaar/ed25519-verification-key-2020';
-import { Ed25519VerificationKey2018 } from '@digitalbazaar/ed25519-verification-key-2018';
+import {X25519KeyAgreementKey2020} from '@digitalbazaar/x25519-key-agreement-key-2020';
+import {Ed25519VerificationKey2020} from '@digitalbazaar/ed25519-verification-key-2020';
 
-import { Cipher } from '@docknetwork/minimal-cipher';
-import { v1 as uuidv1 } from 'uuid';
+import {Cipher} from '@docknetwork/minimal-cipher';
+import {v1 as uuidv1} from 'uuid';
 import base64url from 'base64url';
 
-import { resolveDID } from './did/dids';
-import { BOB_KEY_PAIR_DOC } from '../tests/mock-data';
+import {resolveDID} from './did/dids';
 
-// TODO: restore importing from the node_modules library when its fixed
-// currently has issues with transpilation due to not exporting CJS
-// import { RelayService } from '@docknetwork/wallet-sdk-relay-service';
-// import { RelayService } from '../wallet-sdk-relay-service';
-
-export const DIDCOMM_TYPE_BASIC = 'https://didcomm.org/basicmessage/1.0/message';
+export const DIDCOMM_TYPE_BASIC =
+  'https://didcomm.org/basicmessage/1.0/message';
 
 export const DIDCOMM_TYPE_ISSUE_DIRECT =
   'https://didcomm.org/issue-credential/2.0/issue-credential';
@@ -27,7 +21,7 @@ export const userFriendlyTypeMap = {
   'request-data': DIDCOMM_TYPE_REQUEST_ISSUE_WITH_DATA,
 };
 
-const cipher = new Cipher({ version: 'recommended' });
+const cipher = new Cipher({version: 'recommended'});
 
 function decodeBase64Url(string) {
   const buffer = base64url.toBuffer(string);
@@ -46,7 +40,7 @@ export async function getKeydocFromDID(didUrl) {
     ...potentialToArray(didDocument.publicKey),
   ];
 
-  const keyDoc = possibleKeys.filter((key) => key.id === didUrl)[0];
+  const keyDoc = possibleKeys.filter(key => key.id === didUrl)[0];
   return keyDoc;
 }
 
@@ -70,7 +64,7 @@ export async function defaultVerificationKeyResolver(keyId) {
   if (!keyDoc) {
     throw new Error(`Cannot find key document with ID: ${keyIdStr}`);
   }
-  return await Ed25519VerificationKey2020.from({ ...keyDoc, keyPair: keyDoc });
+  return await Ed25519VerificationKey2020.from({...keyDoc, keyPair: keyDoc});
 }
 
 export async function didcommCreateSignedJWT(payload, privateKeyDoc) {
@@ -79,7 +73,7 @@ export async function didcommCreateSignedJWT(payload, privateKeyDoc) {
     keyPair: privateKeyDoc,
   });
 
-  const { sign } = privateKey.signer();
+  const {sign} = privateKey.signer();
   const header = {
     alg: 'EdDSA',
     kid: privateKeyDoc.id,
@@ -88,31 +82,31 @@ export async function didcommCreateSignedJWT(payload, privateKeyDoc) {
   const payloadBase64URL = base64url(JSON.stringify(payload));
   const headerAndPayloadBase64URL = `${headerBase64URL}.${payloadBase64URL}`;
   const signPayload = Buffer.from(headerAndPayloadBase64URL);
-  const signature = await sign({ data: signPayload });
+  const signature = await sign({data: signPayload});
 
   return `${headerAndPayloadBase64URL}.${base64url.encode(signature)}`;
 }
 
 export async function didcommDecodeSignedJWT(jwt, keyResolver) {
   const resolveKey = keyResolver || defaultVerificationKeyResolver;
-  const jwtSplit = jwt.split('.').map((s) => s.trim());
+  const jwtSplit = jwt.split('.').map(s => s.trim());
   if (jwtSplit.length !== 3) {
     throw new Error(`Malformed JWT, got split length: ${jwtSplit.length}`);
   }
 
   const header = JSON.parse(base64url.decode(jwtSplit[0]));
-  const { alg, kid: keyId } = header;
+  const {alg, kid: keyId} = header;
   if (!alg || !keyId) {
     throw new Error('Malformed JWT header, expected alg and kid');
   }
 
   const publicKey = await resolveKey(keyId);
-  const { verify } = publicKey.verifier();
+  const {verify} = publicKey.verifier();
 
   const signature = decodeBase64Url(jwtSplit[2]);
   const signPayload = Buffer.from(`${jwtSplit[0]}.${jwtSplit[1]}`);
 
-  const isVerified = await verify({ data: signPayload, signature });
+  const isVerified = await verify({data: signPayload, signature});
   if (!isVerified) {
     throw new Error('JWT cannot be verified');
   }
@@ -166,7 +160,10 @@ export async function didcommSendMessage(to, message) {
 }
 
 export function isValidKeyAgreementDoc(keyDoc) {
-  return keyDoc.type === 'X25519KeyAgreementKey2019' || keyDoc.type === 'X25519KeyAgreementKey2020';
+  return (
+    keyDoc.type === 'X25519KeyAgreementKey2019' ||
+    keyDoc.type === 'X25519KeyAgreementKey2020'
+  );
 }
 
 export function isDerivableKey(keyDoc) {
@@ -196,7 +193,7 @@ export async function getAgreementKeydocFromDID(did) {
   // if not it may still require derivation to be valid (such as dock DIDs)
   if (isDIDUrl) {
     const foundDoc = keyAgreements.filter(
-      (keyDoc) => keyDoc.id === did && isValidKeyAgreementDoc(keyDoc)
+      keyDoc => keyDoc.id === did && isValidKeyAgreementDoc(keyDoc),
     )[0];
 
     if (foundDoc) {
@@ -217,14 +214,15 @@ export async function getAgreementKeydocFromDID(did) {
       : [didDocument.publicKey]
     : [];
 
-
   // See if DID document has any derivable keys
   const derivableKey = publicKeys.filter(isDerivableKey)[0];
   if (derivableKey) {
     return getDerivedAgreementKey(derivableKey);
   }
 
-  throw new Error(`Unable to find or derive X25519 key agreement for DID: ${did}`);
+  throw new Error(
+    `Unable to find or derive X25519 key agreement for DID: ${did}`,
+  );
 }
 
 export async function getDerivedAgreementKey(derivableKey) {
@@ -243,16 +241,19 @@ export async function getDerivedAgreementKey(derivableKey) {
   });
 
   // Convert ed25519 2020 verification key into a key agreement key
-  const derivedKeyAgreement = X25519KeyAgreementKey2020.fromEd25519VerificationKey2020({
-    keyPair: ed2020VerificationKey,
-    ...ed2020VerificationKey,
-  });
+  const derivedKeyAgreement =
+    X25519KeyAgreementKey2020.fromEd25519VerificationKey2020({
+      keyPair: ed2020VerificationKey,
+      ...ed2020VerificationKey,
+    });
   return derivedKeyAgreement;
 }
 
 export async function getKaKInstanceFromDocument(keyDoc) {
   if (!isValidKeyAgreementDoc(keyDoc)) {
-    throw new Error(`Invalid key document type for key agreement key: ${keyDoc.type}`);
+    throw new Error(
+      `Invalid key document type for key agreement key: ${keyDoc.type}`,
+    );
   }
   return await X25519KeyAgreementKey2020.from(keyDoc);
 }
@@ -267,7 +268,14 @@ export function getJWERecipientFromDocument(keyDoc, algorithm) {
 }
 
 // Defined here: https://identity.foundation/didcomm-messaging/spec/#plaintext-message-structure
-export function formatPayloadToDIDComm(to, msgType, from, body, replyUrl, replyTo) {
+export function formatPayloadToDIDComm(
+  to,
+  msgType,
+  from,
+  body,
+  replyUrl,
+  replyTo,
+) {
   const msg = {
     id: uuidv1(),
     type: userFriendlyTypeMap[msgType] || msgType || DIDCOMM_TYPE_BASIC,
@@ -311,14 +319,16 @@ export async function didcommCreateEncrypted({
     throw new Error('Recipient DID is invalid');
   }
 
-  const recipientKeyDocuments = await Promise.all(recipientDids.map(getAgreementKeydocFromDID));
-  const recipients = recipientKeyDocuments.map((keyDoc) =>
-    getJWERecipientFromDocument(keyDoc, algorithm)
+  const recipientKeyDocuments = await Promise.all(
+    recipientDids.map(getAgreementKeydocFromDID),
+  );
+  const recipients = recipientKeyDocuments.map(keyDoc =>
+    getJWERecipientFromDocument(keyDoc, algorithm),
   );
 
-  const keyResolver = async (keyId) => {
+  const keyResolver = async keyId => {
     const keyIdStr = keyId.id || keyId;
-    const keyDoc = recipientKeyDocuments.filter((k) => k.id === keyIdStr)[0];
+    const keyDoc = recipientKeyDocuments.filter(k => k.id === keyIdStr)[0];
     if (!keyDoc) {
       throw new Error(`Cannot find key document with ID: ${keyIdStr}`);
     }
@@ -328,15 +338,23 @@ export async function didcommCreateEncrypted({
     return result;
   };
 
-  const didcommMessage = formatPayloadToDIDComm(recipientDids, type, senderDid, payload);
-  
-  try {
+  const didcommMessage = formatPayloadToDIDComm(
+    recipientDids,
+    type,
+    senderDid,
+    payload,
+  );
 
-    const jweDoc = await didcommEncrypt(didcommMessage, recipients, keyResolver, keyAgreementKey);
+  try {
+    const jweDoc = await didcommEncrypt(
+      didcommMessage,
+      recipients,
+      keyResolver,
+      keyAgreementKey,
+    );
     return jweDoc;
   } catch (e) {
     console.error(e);
     throw new Error('Error encrypting message');
   }
 }
-

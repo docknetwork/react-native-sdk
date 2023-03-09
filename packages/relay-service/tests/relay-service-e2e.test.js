@@ -1,6 +1,5 @@
 import {RelayService} from '../lib';
-import { dock } from '../lib/did/did-resolver';
-import { didcommCreateEncrypted, didcommDecrypt, DIDCOMM_TYPE_ISSUE_DIRECT, getAgreementKeydocFromDidDocument, getDerivedAgreementKey, getKaKInstanceFromDocument } from '../lib/didcomm';
+import {dock} from '../lib/did/did-resolver';
 import {ALICE_KEY_PAIR_DOC, BOB_KEY_PAIR_DOC} from './mock-data';
 
 describe('Relay service', () => {
