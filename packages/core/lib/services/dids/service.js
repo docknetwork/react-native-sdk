@@ -5,7 +5,6 @@ import {
   KeypairToDIDKeyDocumentParams,
   GetDIDResolutionParams,
 } from './config';
-import {polkadotToKeydoc} from '@docknetwork/wallet/polkadot-utils';
 import {keyringService} from '../keyring/service';
 import {utilCryptoService} from '../util-crypto/service';
 import {walletService} from '../wallet/service';
@@ -15,6 +14,7 @@ import {getDock} from '../dock/service';
 import {PublicKeySr25519} from '@docknetwork/sdk';
 import {DidKey, VerificationRelationship} from '@docknetwork/sdk/public-keys';
 import {Logger} from '../../core/logger';
+import {polkadotToKeydoc} from '../../core/polkadot-utils';
 
 class DIDService {
   constructor() {

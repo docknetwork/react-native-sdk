@@ -10,6 +10,13 @@ module.exports = {
     ],
   ],
   plugins: [
+    ["module-resolver", {
+      "root": ["./src"],
+      "alias": {
+        "node:crypto": "crypto",
+        "node:util": "util",
+      }
+    }],
     "@babel/plugin-transform-modules-commonjs",
     ["@babel/plugin-proposal-class-properties", { "loose": false }],
     ["@babel/plugin-proposal-private-methods", { "loose": false }],
