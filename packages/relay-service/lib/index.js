@@ -14,13 +14,18 @@ import {
 
 let serviceURL = process.env.RELAY_SERVICE_URL || 'https://relay.dock.io';
 
+export const didcomm = {
+  encrypt: didcommCreateEncrypted,
+  decrypt: didcommDecrypt,
+};
+
 const sendMessage = async ({keyPairDoc, recipientDid, message}) => {
   assert(!!keyPairDoc, 'keyPairDoc is required');
   assert(!!recipientDid, 'recipientDid is required');
   assert(!!message, 'message is required');
 
   const keyAgreementKey = await getDerivedAgreementKey(keyPairDoc);
-  const jweMessage = await didcommCreateEncrypted({
+  const jweMessage = await didcomm.encrypt({
     recipientDids: [recipientDid],
     type: DIDCOMM_TYPE_ISSUE_DIRECT,
     senderDid: keyPairDoc.controller,
@@ -71,11 +76,11 @@ const getMessages = async ({keyPairDocs, limit = 20}) => {
         const keyAgreementKey = await getDerivedAgreementKey(keyPairDoc);
         const jwe = JSON.parse(item.msg);
 
-        const didCommMessage = await didcommDecrypt(jwe, keyAgreementKey);
+        const didCommMessage = await didcomm.decrypt(jwe, keyAgreementKey);
         return {
           ...item,
           msg: didCommMessage.body,
-        }
+        };
       }),
     );
 
