@@ -1,13 +1,13 @@
 export const ALICE_KEY_PAIR_DOC = {
-  id: 'did:dock:5FKYJqAi2GAU1BXnCirsRX41QkRdo4HnHFUooqif9fbh9ySw#5FYq7YDkcKJXSiEZQo2eCGLp8Cq2AGvzfncgRjE9vBACWFP7',
-  controller: 'did:dock:5FKYJqAi2GAU1BXnCirsRX41QkRdo4HnHFUooqif9fbh9ySw',
-  type: 'Sr25519VerificationKey2020',
-  publicKeyBase58: 'BNmAKQ8qZZSqsAr5LT7KpPYdxSoUErpmjsXydfobvYP4',
+  id: 'did:dock:5GyESjfvJnQoukNrFuXvkAtsJUs1y5Zee39Sr7eGcAcMmWnB#keys-1',
+  controller: 'did:dock:5GyESjfvJnQoukNrFuXvkAtsJUs1y5Zee39Sr7eGcAcMmWnB',
+  type: 'Ed25519VerificationKey2018',
+  publicKeyBase58: '7JkQbHvaAvGtng6yvBe98WVw3N9dWzXQ4qfqXenoJbyV',
   privateKeyBase58:
-    'VWc2wccPxbfWPs2TytA1U3MYLiCMGBerUZmV35x4dwfsfa3ACovAshxgqyN2RyohZR2dXwNqePTSBNRY8d6PZJt',
-  publicKeyMultibase: 'zBNmAKQ8qZZSqsAr5LT7KpPYdxSoUErpmjsXydfobvYP4',
+    '18CdvQzxTetKhpisG3ZiFrurTHDXPuCP9zMSokyJ9Ex8JRmAGDksx96uWSV8Jo8pDG3cw3GbBhPndCs4aZz43ib',
+  publicKeyMultibase: 'z7JkQbHvaAvGtng6yvBe98WVw3N9dWzXQ4qfqXenoJbyV',
   privateKeyMultibase:
-    'zVWc2wccPxbfWPs2TytA1U3MYLiCMGBerUZmV35x4dwfsfa3ACovAshxgqyN2RyohZR2dXwNqePTSBNRY8d6PZJt',
+    'z18CdvQzxTetKhpisG3ZiFrurTHDXPuCP9zMSokyJ9Ex8JRmAGDksx96uWSV8Jo8pDG3cw3GbBhPndCs4aZz43ib',
   '@context': ['https://w3id.org/wallet/v1'],
 };
 
