@@ -18,14 +18,20 @@ describe('DIDComm', () => {
 
     const keyAgreementKey = await getDerivedAgreementKey(ALICE_KEY_PAIR_DOC);
 
+    const payload = {domain: 'api.dock.io', message: 'test'};
     const jwe = await didcommCreateEncrypted({
       recipientDids: [BOB_KEY_PAIR_DOC.id],
       type: DIDCOMM_TYPE_ISSUE_DIRECT,
-      senderDid: ALICE_KEY_PAIR_DOC.id,
-      payload: {domain: 'api.dock.io', message: 'test'},
+      senderDid: ALICE_KEY_PAIR_DOC.controller,
+      payload,
       keyAgreementKey,
     });
 
-    console.log(jwe);
+    expect(jwe.typ).toBe('application/didcomm-encrypted+json');
+    expect(jwe.ciphertext).toBeDefined();
+
+    const decrypted = await didcommDecrypt(jwe, await getDerivedAgreementKey(BOB_KEY_PAIR_DOC));
+
+    expect(decrypted.body).toStrictEqual(payload);
   });
 });
