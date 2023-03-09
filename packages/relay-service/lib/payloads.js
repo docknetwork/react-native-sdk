@@ -2,7 +2,7 @@ import VerifiableCredential from '@docknetwork/sdk/verifiable-credential';
 import {cryptoWaitReady} from '@polkadot/util-crypto';
 // import {getKeypairFromDoc} from '@docknetwork/universal-wallet/methods/keypairs';
 import {getSuiteFromKeyDoc} from '@docknetwork/sdk/utils/vc/helpers';
-import {getKeypairFromDoc} from '@docknetwork/wallet/methods/keypairs';
+import {getKeypairFromDoc} from '@docknetwork/universal-wallet/methods/keypairs';
 import assert from 'assert';
 
 // 1 year

@@ -324,7 +324,7 @@ export async function didcommCreateEncrypted({
 
 
   const keyResolver = async (keyId) => {
-    console.log('resolve key', keyId);
+    console.log('Attempt to resolve keyId:', keyId);
 
     const keyIdStr = keyId.id || keyId;
     const keyDoc = recipientKeyDocuments.filter((k) => k.id === keyIdStr)[0];
@@ -334,13 +334,15 @@ export async function didcommCreateEncrypted({
 
     const result = await getKaKInstanceFromDocument(keyDoc);
 
-    console.log('resolve key result', result);
+    console.log('keyResolver: result', result);
 
     return result;
   };
 
   const didcommMessage = formatPayloadToDIDComm(recipientDids, type, senderDid, payload);
+  
   try {
+
     const jweDoc = await didcommEncrypt(didcommMessage, recipients, keyResolver, keyAgreementKey);
     return jweDoc;
   } catch (e) {
