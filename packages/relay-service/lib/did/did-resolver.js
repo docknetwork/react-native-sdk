@@ -11,11 +11,8 @@ export const universalResolverUrl = 'https://uniresolver.io';
 
 class WalletSDKResolver extends MultiResolver {
   async resolve(did) {
-    console.log('resolve', did);
     const trimmedDID = did.split('#')[0];
-    console.log('trimmedDID', trimmedDID);
     const document = await super.resolve(trimmedDID);
-    console.log('document', document);
     return document;
   }
 }

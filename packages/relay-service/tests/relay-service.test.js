@@ -1,9 +1,16 @@
 import axios from 'axios';
 import {RelayService} from '../lib';
+import {dock} from '../lib/did/did-resolver';
 import {generateSignedPayload} from '../lib/payloads';
 import {ALICE_KEY_PAIR_DOC, BOB_KEY_PAIR_DOC} from './mock-data';
 
 describe('Relay service', () => {
+  beforeAll(async () => {
+    await dock.init({
+      address: 'wss://knox-1.dock.io',
+    });
+  });
+
   describe('generateSignedPayload', () => {
     it('expect to assert parameters', async () => {
       const error = await generateSignedPayload(null, null).catch(err => err);
@@ -64,6 +71,8 @@ describe('Relay service', () => {
         keyPairDocs: [BOB_KEY_PAIR_DOC],
         limit: 20,
       });
+
+      console.log(result);
 
       expect(result.length).toBeGreaterThanOrEqual(1);
     });

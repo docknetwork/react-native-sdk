@@ -128,9 +128,6 @@ export async function didcommEncrypt(obj, recipients, keyResolver, senderKey) {
     keyAgreementKey = await getDerivedAgreementKey(senderKey);
   }
 
-  console.log('keyAgreementKey', keyAgreementKey)
-  console.log('recipients', recipients);
-
   const encryptedJWE = await cipher.encryptObject({
     obj,
     recipients,
@@ -319,13 +316,7 @@ export async function didcommCreateEncrypted({
     getJWERecipientFromDocument(keyDoc, algorithm)
   );
 
-  console.log('recipientKeyDocuments');
-  console.log(recipientKeyDocuments);
-
-
   const keyResolver = async (keyId) => {
-    console.log('Attempt to resolve keyId:', keyId);
-
     const keyIdStr = keyId.id || keyId;
     const keyDoc = recipientKeyDocuments.filter((k) => k.id === keyIdStr)[0];
     if (!keyDoc) {
@@ -333,8 +324,6 @@ export async function didcommCreateEncrypted({
     }
 
     const result = await getKaKInstanceFromDocument(keyDoc);
-
-    console.log('keyResolver: result', result);
 
     return result;
   };
