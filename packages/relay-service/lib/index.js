@@ -1,6 +1,12 @@
 import assert from 'assert';
 import axios from 'axios';
 import {
+  didcommCreateEncrypted,
+  didcommDecrypt,
+  DIDCOMM_TYPE_ISSUE_DIRECT,
+  getDerivedAgreementKey,
+} from './didcomm';
+import {
   generateSignedPayload,
   generateSignedPayloadFromList,
   toBase64,
@@ -13,9 +19,18 @@ const sendMessage = async ({keyPairDoc, recipientDid, message}) => {
   assert(!!recipientDid, 'recipientDid is required');
   assert(!!message, 'message is required');
 
+  const keyAgreementKey = await getDerivedAgreementKey(keyPairDoc);
+  const jweMessage = await didcommCreateEncrypted({
+    recipientDids: [recipientDid],
+    type: DIDCOMM_TYPE_ISSUE_DIRECT,
+    senderDid: keyPairDoc.controller,
+    payload: message,
+    keyAgreementKey,
+  });
+
   const {payload, did} = await generateSignedPayload(keyPairDoc, {
     to: recipientDid,
-    msg: message,
+    msg: JSON.stringify(jweMessage),
   });
 
   try {
@@ -49,7 +64,22 @@ const getMessages = async ({keyPairDocs, limit = 20}) => {
       )}&payload=${toBase64(payload)}`,
     );
 
-    return result.data;
+    const messages = await Promise.all(
+      result.data.map(async item => {
+        const keyPairDoc = keyPairDocs.find(doc => doc.controller === item.to);
+        assert(!!keyPairDoc, `keyPairDoc not found for did ${item.to}`);
+        const keyAgreementKey = await getDerivedAgreementKey(keyPairDoc);
+        const jwe = JSON.parse(item.msg);
+
+        const didCommMessage = await didcommDecrypt(jwe, keyAgreementKey);
+        return {
+          ...item,
+          msg: didCommMessage.body,
+        }
+      }),
+    );
+
+    return messages;
   } catch (err) {
     console.error(err.response);
     return err;
