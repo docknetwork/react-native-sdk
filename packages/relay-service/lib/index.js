@@ -7,6 +7,7 @@ import {
   getDerivedAgreementKey,
 } from './didcomm';
 import {
+  fromBase64,
   generateSignedPayload,
   generateSignedPayloadFromList,
   toBase64,
@@ -35,7 +36,7 @@ const sendMessage = async ({keyPairDoc, recipientDid, message}) => {
 
   const {payload, did} = await generateSignedPayload(keyPairDoc, {
     to: recipientDid,
-    msg: JSON.stringify(jweMessage),
+    msg: toBase64(jweMessage),
   });
 
   try {
@@ -69,12 +70,14 @@ const getMessages = async ({keyPairDocs, limit = 20}) => {
       )}&payload=${toBase64(payload)}`,
     );
 
+    const data = result.data;
+
     const messages = await Promise.all(
-      result.data.map(async item => {
+      data.map(async item => {
         const keyPairDoc = keyPairDocs.find(doc => doc.controller === item.to);
         assert(!!keyPairDoc, `keyPairDoc not found for did ${item.to}`);
         const keyAgreementKey = await getDerivedAgreementKey(keyPairDoc);
-        const jwe = JSON.parse(item.msg);
+        const jwe = fromBase64(item.msg);
 
         const didCommMessage = await didcomm.decrypt(jwe, keyAgreementKey);
         return {
