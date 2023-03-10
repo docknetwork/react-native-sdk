@@ -87,3 +87,7 @@ export async function generateSignedPayloadFromList(keyPairDocs, subject) {
 export function toBase64(payload) {
   return Buffer.from(JSON.stringify(payload)).toString('base64');
 }
+
+export function fromBase64(payload) {
+  return JSON.parse(Buffer.from(payload, 'base64').toString());
+}
