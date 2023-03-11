@@ -1,3 +1,4 @@
+import {isBase64} from '@polkadot/util-crypto';
 import assert from 'assert';
 import axios from 'axios';
 import {
@@ -77,7 +78,11 @@ const getMessages = async ({keyPairDocs, limit = 20}) => {
         const keyPairDoc = keyPairDocs.find(doc => doc.controller === item.to);
         assert(!!keyPairDoc, `keyPairDoc not found for did ${item.to}`);
         const keyAgreementKey = await getDerivedAgreementKey(keyPairDoc);
-        const jwe = fromBase64(item.msg);
+        let jwe = item.msg;
+
+        if (isBase64(jwe)) {
+          jwe = fromBase64(jwe);
+        }
 
         const didCommMessage = await didcomm.decrypt(jwe, keyAgreementKey);
         return {
