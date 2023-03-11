@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {didcomm, RelayService} from '../lib';
-import {generateSignedPayload} from '../lib/payloads';
+import {generateSignedPayload, toBase64} from '../lib/payloads';
 import {ALICE_KEY_PAIR_DOC, BOB_KEY_PAIR_DOC} from './mock-data';
 
 describe('Relay service', () => {
@@ -67,7 +67,7 @@ describe('Relay service', () => {
         data: [
           {
             to: BOB_KEY_PAIR_DOC.controller,
-            msg: JSON.stringify({test: 'test'}),
+            msg: toBase64(JSON.stringify({test: 'test'})),
           },
         ],
       });
