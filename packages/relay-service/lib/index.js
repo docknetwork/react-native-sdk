@@ -99,8 +99,8 @@ const getMessages = async ({keyPairDocs, limit = 20}) => {
         const didCommMessage = await didcomm.decrypt(jwe, keyAgreementKey);
         return {
           ...item,
-          msg: didCommMessage.body,
           ...didCommMessage,
+          msg: didCommMessage.body,
         };
       }),
     );
