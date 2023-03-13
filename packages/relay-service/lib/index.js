@@ -100,6 +100,7 @@ const getMessages = async ({keyPairDocs, limit = 20}) => {
         return {
           ...item,
           msg: didCommMessage.body,
+          ...didCommMessage,
         };
       }),
     );
