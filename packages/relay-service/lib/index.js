@@ -80,8 +80,20 @@ const getMessages = async ({keyPairDocs, limit = 20}) => {
         const keyAgreementKey = await getDerivedAgreementKey(keyPairDoc);
         let jwe = item.msg;
 
-        if (isBase64(jwe)) {
-          jwe = fromBase64(jwe);
+        if (typeof jwe === 'string') {
+          // TODO: check for JWT in future here
+
+          try {
+            if (isBase64(jwe)) {
+              jwe = fromBase64(jwe);
+            } else {
+              jwe = JSON.parse(jwe);
+            }
+          } catch (e) {
+            // Not valid JSON but still a string, show some kind of error?
+            console.error(e);
+            return null;
+          }
         }
 
         const didCommMessage = await didcomm.decrypt(jwe, keyAgreementKey);
@@ -92,7 +104,7 @@ const getMessages = async ({keyPairDocs, limit = 20}) => {
       }),
     );
 
-    return messages;
+    return messages.filter(item => !!item);
   } catch (err) {
     console.error(err.response);
     return err;
