@@ -3,6 +3,7 @@ import {cryptoWaitReady} from '@polkadot/util-crypto';
 import {getSuiteFromKeyDoc} from '@docknetwork/sdk/utils/vc/helpers';
 import {getKeypairFromDoc} from '@docknetwork/universal-wallet/methods/keypairs';
 import assert from 'assert';
+import base64url from 'base64url';
 
 // 1 year
 const DEFAULT_EXPIRATION = 86400 * 1000 * 365;
@@ -85,9 +86,9 @@ export async function generateSignedPayloadFromList(keyPairDocs, subject) {
 }
 
 export function toBase64(payload) {
-  return Buffer.from(JSON.stringify(payload)).toString('base64');
+  return base64url.encode(JSON.stringify(payload));
 }
 
 export function fromBase64(payload) {
-  return JSON.parse(Buffer.from(payload, 'base64').toString());
+  return JSON.parse(base64url.decode(payload));
 }
