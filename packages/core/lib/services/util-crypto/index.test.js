@@ -71,5 +71,15 @@ describe('UtilCryptoService', () => {
         expect(result.warning).toBe('slash password detected');
       });
     });
+
+    describe('isBase64', () => {
+      it('expect to be base64', async () => {
+        expect(await service.isBase64('dGVzdA==')).toBe(true);
+      });
+
+      it('expect to not be base64', async () => {
+        expect(await service.isBase64('wrong value')).toBe(false);
+      });
+    });
   });
 });
