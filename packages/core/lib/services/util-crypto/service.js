@@ -6,6 +6,7 @@ import {
   keyExtractSuri,
   mnemonicGenerate,
   mnemonicValidate,
+  isBase64,
 } from '@polkadot/util-crypto';
 import assert from 'assert';
 import {validation} from './configs';
@@ -18,6 +19,7 @@ export class UtilCryptoService {
     UtilCryptoService.prototype.cryptoIsReady,
     UtilCryptoService.prototype.isAddressValid,
     UtilCryptoService.prototype.deriveValidate,
+    UtilCryptoService.prototype.isBase64,
   ];
 
   constructor() {
@@ -28,6 +30,10 @@ export class UtilCryptoService {
     validation.mnemonicGenerate(numWords);
 
     return mnemonicGenerate(numWords);
+  }
+
+  isBase64(value) {
+    return isBase64(value);
   }
 
   mnemonicValidate(phrase) {
