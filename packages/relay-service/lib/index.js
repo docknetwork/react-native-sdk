@@ -1,6 +1,7 @@
 import {isBase64} from '@polkadot/util-crypto';
 import assert from 'assert';
 import axios from 'axios';
+import {Logger} from '@docknetwork/wallet-sdk-core/lib/core/logger';
 import {
   didcommCreateEncrypted,
   didcommDecrypt,
@@ -80,19 +81,31 @@ const getMessages = async ({keyPairDocs, limit = 20}) => {
         const keyAgreementKey = await getDerivedAgreementKey(keyPairDoc);
         let jwe = item.msg;
 
-        if (isBase64(jwe)) {
-          jwe = fromBase64(jwe);
+        if (typeof jwe === 'string') {
+          // TODO: check for JWT in future here
+          try {
+            if (isBase64(jwe)) {
+              jwe = fromBase64(jwe);
+            } else {
+              jwe = JSON.parse(jwe);
+            }
+          } catch (e) {
+            Logger.debug(`Invalid JWE message received: ${jwe}`);
+            console.error(e);
+            return null;
+          }
         }
 
         const didCommMessage = await didcomm.decrypt(jwe, keyAgreementKey);
         return {
           ...item,
+          ...didCommMessage,
           msg: didCommMessage.body,
         };
       }),
     );
 
-    return messages;
+    return messages.filter(item => !!item);
   } catch (err) {
     console.error(err.response);
     return err;
