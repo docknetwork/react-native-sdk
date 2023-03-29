@@ -2,6 +2,38 @@ import {getRpcClient, initRpcClient} from './rpc-client';
 import {setLogger} from './logger';
 import rpcServer from './sandbox-rpc-server';
 
+global.fetch = () => {
+  throw new Error('fetch is not available in the sandbox');
+};
+
+global.XMLHttpRequest = () => {
+  throw new Error('XMLHttpRequest is not available in the sandbox');
+};
+
+global.WebSocket = () => {
+  throw new Error('WebSocket is not available in the sandbox');
+};
+
+global.Worker = () => {
+  throw new Error('Worker is not available in the sandbox');
+};
+
+global.ServiceWorker = () => {
+  throw new Error('ServiceWorker is not available in the sandbox');
+};
+
+global.XMLHttpRequestEventTarget = () => {
+  throw new Error('XMLHttpRequestEventTarget is not available in the sandbox');
+};
+
+global.SharedWorker = () => {
+  throw new Error('SharedWorker is not available in the sandbox');
+};
+
+global.WebSocketEventTarget = () => {
+  throw new Error('WebSocketEventTarget is not available in the sandbox');
+};
+
 initRpcClient(jsonRPCRequest => {
   postMessage({
     type: 'json-rpc-request',

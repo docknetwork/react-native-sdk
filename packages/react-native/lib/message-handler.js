@@ -40,6 +40,7 @@ export class WebviewEventHandler {
     assert(!!event, 'event is required');
     const data = JSON.parse(event.nativeEvent.data);
 
+    console.log('#mzm messages received', data)
     const handler = this.getEventMapping()[data.type];
 
     assert(!!handler, `handler not found for event ${data.type}`);
@@ -48,6 +49,7 @@ export class WebviewEventHandler {
   }
 
   _dispatchEvent(type, body) {
+    console.log('#mzm dispatch event', { type, body });
     const isSandboxMessage = body?.method?.indexOf('sandbox-') === 0;
     const webview = isSandboxMessage
       ? this.sandboxWebViewRef.current
