@@ -8,9 +8,11 @@ import {
   CREDENTIAL_STATUS,
   cachedCredentialStatus,
   useGetCredentialStatus,
+  waitFor,
 } from './credentialHooks';
 import {useWallet} from '../index';
 import {credentialServiceRPC} from '@docknetwork/wallet-sdk-core/lib/services/credential';
+import {dockService} from '@docknetwork/wallet-sdk-core/lib/services/dock';
 jest.mock('@docknetwork/wallet-sdk-core/lib/services/credential', () => {
   const originalModule = jest.requireActual(
     '@docknetwork/wallet-sdk-core/lib/services/credential',
@@ -215,11 +217,16 @@ describe('Credential Hooks', () => {
   });
 });
 describe('Credential Utils', () => {
-  it('expect rpc function for verifying credential to be called', () => {
-    getCredentialStatus(mockCreds[0]);
+  it('expect rpc function for verifying credential to be called', async () => {
+    const isApiConnectedMock = jest
+      .spyOn(dockService, 'isApiConnected')
+      .mockReturnValue(true);
+    await getCredentialStatus(mockCreds[0]);
     expect(credentialServiceRPC.verifyCredential).toHaveBeenCalledWith({
       credential: mockCreds[0],
     });
+
+    isApiConnectedMock.mockRestore();
   });
 });
 describe('getCredentialTimestamp', () => {
@@ -321,5 +328,18 @@ describe('sortByIssuanceDate', () => {
 
     expect(cachedCredentialStatus[credential.id]).toBeDefined();
     expect(result.current).toBe(CREDENTIAL_STATUS.REVOKED);
+  });
+
+  describe('waitFor', () => {
+    it('expect to wait for condition to be true', async () => {
+      const condition = () => true;
+      const result = await waitFor(condition, 1000);
+      expect(result).toBeTruthy();
+    });
+    it('expect to throw timeout error', async () => {
+      const condition = () => false;
+
+      await expect(waitFor(condition, 1000)).rejects.toThrowError('Timed out');
+    });
   });
 });
