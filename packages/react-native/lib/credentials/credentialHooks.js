@@ -2,6 +2,7 @@ import {useMemo, useCallback, useState, useEffect} from 'react';
 import {useWallet} from '../index';
 import assert from 'assert';
 import {credentialServiceRPC} from '@docknetwork/wallet-sdk-core/lib/services/credential';
+import {dockService} from '@docknetwork/wallet-sdk-core/lib/services/dock';
 
 export const CREDENTIAL_STATUS = {
   INVALID: 1,
@@ -35,8 +36,25 @@ export function getCredentialTimestamp(credential) {
   return new Date(credential.issuanceDate).getTime() || 0;
 }
 
+export function waitFor(condition, timeout) {
+  return new Promise((resolve, reject) => {
+    const interval = setInterval(async () => {
+      if (await Promise.resolve(condition())) {
+        clearInterval(interval);
+        resolve(true);
+      }
+    }, 400);
+
+    setTimeout(() => {
+      clearInterval(interval);
+      reject(new Error('Timed out'));
+    }, timeout);
+  });
+}
+
 async function getCredentialValidityStatus(credential) {
   try {
+    await waitFor(() => dockService.isApiConnected(), 8000);
     const result = await credentialServiceRPC.verifyCredential({credential});
     return result;
   } catch (error) {
