@@ -21,6 +21,8 @@ export type DataStoreConfigs = {
   sdkConfigs?: SDKConfigs;
 
   dropSchema?: boolean;
+
+  databasePath: string;
 };
 
 export type MigrationInput = {

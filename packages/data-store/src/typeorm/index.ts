@@ -10,15 +10,9 @@ import {DocumentTypeEntity} from './entities/document-type.entity';
 let _dataSource: DataSource;
 
 export async function initializeTypeORM(options: DataStoreConfigs) {
-  let databasePath = 'wallet-data-store.sqlite';
-
-  if (process.env.NODE_ENV === 'test') {
-    databasePath = ':memory:';
-  }
-
   _dataSource = new DataSource({
     type: 'sqlite',
-    database: databasePath,
+    database: options.databasePath,
     entities: [
       SDKConfigsEntity,
       NetworkEntity,
