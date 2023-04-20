@@ -13,6 +13,7 @@ import {NetworkManager} from './network-manager';
 import {migrate} from './data-migration';
 import {Logger} from '../core/logger';
 import legacyWalletSchema from '../test/fixtures/legacy-wallet-schema.json';
+import {createDataStore} from '@docknetwork/wallet-sdk-data-store/src';
 
 /** Wallet events */
 export const WalletEvents = {
@@ -114,7 +115,7 @@ class Wallet {
   async createWallet() {
     await walletService.create({
       walletId: this.walletId,
-      type: process.env.NODE_ENV === 'test' ? 'memory' : 'rpc',
+      type: 'rpc',
     });
 
     await walletService.sync();
