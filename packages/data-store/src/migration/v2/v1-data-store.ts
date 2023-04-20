@@ -1,3 +1,5 @@
+import assert from 'assert';
+
 export type LocalStorage = {
   getItem: (key: string) => Promise<string | null>;
   setItem: (key: string, value: string) => Promise<void>;
@@ -13,6 +15,8 @@ let _localStorage: LocalStorage;
  * @param _impl
  */
 export function setV1LocalStorage(_impl: LocalStorage) {
+  assert(!!_impl, 'LocalStorage implementation is required');
+
   _localStorage = _impl;
 }
 
