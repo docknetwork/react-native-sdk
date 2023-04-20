@@ -40,8 +40,10 @@ export class DocumentEntity {
 }
 
 export async function getOrCreateDocumentTypes(
-  types,
+  types: string | string[],
 ): Promise<DocumentTypeEntity[]> {
+  assert(!!types, 'Document type must be provided');
+
   logger.debug(`getOrCreateDocumentTypes: ${JSON.stringify(types)}`);
 
   if (!Array.isArray(types)) {
