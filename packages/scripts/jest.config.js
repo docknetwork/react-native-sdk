@@ -5,7 +5,7 @@ module.exports = {
     '^.+\\.(ts|js)$': 'babel-jest',
   },
   resetMocks: false,
-  setupFilesAfterEnv: ['<rootDir>/setup-tests.js'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   setupFiles: ['jest-localstorage-mock'],
   moduleNameMapper: {},
   transformIgnorePatterns: ['/node_modules/(?!@polkadot|@babel|@docknetwork)'],
