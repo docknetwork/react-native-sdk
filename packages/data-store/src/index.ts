@@ -26,3 +26,11 @@ export async function createDataStore(_options: DataStoreConfigs = {}) {
 
   return true;
 }
+
+/**
+ * Close the data store connection with the database
+ *
+ */
+export async function closeDataStore() {
+  return getDataSource().destroy();
+}
