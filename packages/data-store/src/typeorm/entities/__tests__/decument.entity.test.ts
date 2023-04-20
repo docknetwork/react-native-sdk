@@ -1,10 +1,10 @@
-import {createDataStore} from '../../../index';
 import {
   DocumentEntity,
   createDocument,
   getDocumentById,
   getDocumentsByType,
 } from '../document.entity';
+import {createTestDataStore} from '../../../../test/test-utils';
 
 const mockDocuments = [
   {
@@ -61,9 +61,7 @@ const mockDocuments = [
 
 describe('DocumentEntity', () => {
   beforeAll(async () => {
-    await createDataStore({
-      dropSchema: true,
-    });
+    await createTestDataStore();
 
     for (const document of mockDocuments) {
       await createDocument(document);

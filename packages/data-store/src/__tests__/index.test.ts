@@ -1,5 +1,5 @@
-import {createDataStore} from '../index';
 import {
+  createTestDataStore,
   createV1EmptyDataStore,
   setupV1MockDataStore,
 } from '../../test/test-utils';
@@ -12,9 +12,7 @@ describe('Data store', () => {
   describe('v2-data-store migration', () => {
     beforeAll(async () => {
       await setupV1MockDataStore();
-      await createDataStore({
-        dropSchema: true,
-      });
+      await createTestDataStore();
     });
 
     it('should remove wallet json from local storage', async () => {
@@ -35,9 +33,7 @@ describe('Data store', () => {
   describe('empty wallet migration', () => {
     beforeAll(async () => {
       await createV1EmptyDataStore();
-      await createDataStore({
-        dropSchema: true,
-      });
+      await createTestDataStore();
     });
 
     it('should create SDKConfigs', async () => {
