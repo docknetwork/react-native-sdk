@@ -13,7 +13,3 @@ initRpcClient(req => {
     return result;
   });
 });
-
-// Buffer.from('test').toString('base64');
-
-import fetch from 'node-fetch';
