@@ -76,6 +76,8 @@ class MemoryStorageInterface extends StorageInterface {
         } else if (equals && equals['content.id']) {
           // Basic "query" support for tests
           matchesQuery = content.id === equals['content.id'];
+        } else if (equals && equals['content.type']) {
+          matchesQuery = content.type === equals['content.type'];
         }
 
         if (matchesQuery) {
