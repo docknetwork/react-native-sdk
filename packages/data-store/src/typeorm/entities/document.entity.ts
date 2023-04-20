@@ -76,7 +76,6 @@ export async function getOrCreateDocumentTypes(
 export async function createDocument(json: any): Promise<DocumentEntity> {
   assert(!!json.id, 'Document must have an id');
 
-  // TODO: get walletId from context
   const walletId = await getActiveWallet();
 
   // TODO: Check if document exists
