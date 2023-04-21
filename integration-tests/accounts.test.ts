@@ -60,8 +60,6 @@ describe('Accounts', () => {
     await importAccountJSON();
     account = await getWallet().getDocumentById(AccountJSON.address);
 
-    console.log(account);
-
     expect(account.id).toBe(AccountJSON.address);
   });
 });
