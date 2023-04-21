@@ -13,6 +13,7 @@ import {
 import {useWallet} from '../index';
 import {credentialServiceRPC} from '@docknetwork/wallet-sdk-core/lib/services/credential';
 import {dockService} from '@docknetwork/wallet-sdk-core/lib/services/dock';
+
 jest.mock('@docknetwork/wallet-sdk-core/lib/services/credential', () => {
   const originalModule = jest.requireActual(
     '@docknetwork/wallet-sdk-core/lib/services/credential',
