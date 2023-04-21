@@ -114,7 +114,7 @@ class Wallet {
   async createWallet() {
     await walletService.create({
       walletId: this.walletId,
-      type: process.env.NODE_ENV === 'test' ? 'memory' : 'rpc',
+      type: 'rpc',
     });
 
     await walletService.sync();
