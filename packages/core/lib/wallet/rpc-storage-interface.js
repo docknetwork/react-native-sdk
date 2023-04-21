@@ -12,7 +12,6 @@ class RpcStorageInterface extends StorageInterface {
   constructor(directory) {
     super();
     this.directory = directory;
-
     this.loadStorage(directory);
   }
 
