@@ -1,6 +1,8 @@
 module.exports = {
   testEnvironment: 'node',
   testTimeout: 30000,
+  maxConcurrency: 1,
+  testMatch: ['<rootDir>/integration-tests/*.test.ts'],
   coverageThreshold: {
     global: {
       branches: 10,
@@ -10,10 +12,16 @@ module.exports = {
     },
   },
   transform: {
-    '^.+\\.(ts|js)$': 'babel-jest',
+    '^.+\\.(ts|tsx)?$': 'ts-jest',
+    '^.+\\.(js|jsx)$': [
+      'babel-jest',
+      {
+        configFile: require.resolve('./babel.config.js'),
+      },
+    ],
   },
   resetMocks: false,
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+  setupFilesAfterEnv: ['<rootDir>/setup-tests.js'],
   globalTeardown: './scripts/test-teardown-globals.js',
   setupFiles: ['jest-localstorage-mock'],
   moduleNameMapper: {
@@ -21,7 +29,10 @@ module.exports = {
       '@digitalbazaar/x25519-key-agreement-key-2020/lib/X25519KeyAgreementKey2020',
     '@digitalbazaar/ed25519-verification-key-2020':
       '@digitalbazaar/ed25519-verification-key-2020/lib/Ed25519VerificationKey2020',
+    '@digitalbazaar/ed25519-verification-key-2018':
+      '@digitalbazaar/ed25519-verification-key-2018/src/Ed25519VerificationKey2018',
     '@digitalbazaar/minimal-cipher': '@digitalbazaar/minimal-cipher/Cipher',
+    '@digitalbazaar/did-method-key': '@digitalbazaar/did-method-key/lib/main',
   },
   transformIgnorePatterns: [
     '/node_modules/(?!@polkadot|@babel|@docknetwork|@digitalbazaar)',

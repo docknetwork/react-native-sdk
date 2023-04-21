@@ -1,0 +1,27 @@
+{
+    "compilerOptions": {
+      "strict": false,
+      "preserveConstEnums": true,
+      "sourceMap": true,
+      "target": "ESNext",
+      "esModuleInterop": true,
+      "downlevelIteration": true,
+      "declarationMap": true,
+      "declaration": true,
+      "composite": true,
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
+      "resolveJsonModule": true,
+      "allowSyntheticDefaultImports": true,
+      "isolatedModules": true,
+      "allowJs": true,
+      "module": "ESNext",
+      "lib": ["es2017"],
+      "jsx": "react-native",
+      "moduleResolution": "node"
+    },
+    "exclude": [
+  
+    ]
+  }
+  
