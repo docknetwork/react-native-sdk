@@ -2,7 +2,7 @@ import {JSONRPCServer} from 'json-rpc-2.0';
 import {
   createRpcService,
   patchRpcServer,
-} from '@docknetwork/wallet-sdk-core/lib/rpc-util';
+} from '@docknetwork/wallet-sdk-wasm-services/lib/rpc-util';
 import {storageService} from './async-storage-service';
 import {loggerService} from './logger';
 
