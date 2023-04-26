@@ -1,5 +1,5 @@
 {
-    "name": "@docknetwork/wallet-sdk-wasm-services",
+    "name": "@docknetwork/wallet-sdk-wasm",
     "version": "0.2.4",
     "license": "MIT",
     "repository": {
