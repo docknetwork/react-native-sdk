@@ -11,24 +11,27 @@ import {
   waitFor,
 } from './credentialHooks';
 import {useWallet} from '../index';
-import {credentialServiceRPC} from '@docknetwork/wallet-sdk-core/lib/services/credential';
-import {dockService} from '@docknetwork/wallet-sdk-core/lib/services/dock';
+import {credentialServiceRPC} from '@docknetwork/wallet-sdk-wasm-services/lib/services/credential';
+import {dockService} from '@docknetwork/wallet-sdk-wasm-services/lib/services/dock';
 
-jest.mock('@docknetwork/wallet-sdk-core/lib/services/credential', () => {
-  const originalModule = jest.requireActual(
-    '@docknetwork/wallet-sdk-core/lib/services/credential',
-  );
-  const mockFunctions = {
-    verifyCredential: jest.fn(credential => {
-      return {verified: false, error: 'Revocation check failed'};
-    }),
-  };
+jest.mock(
+  '@docknetwork/wallet-sdk-wasm-services/lib/services/credential',
+  () => {
+    const originalModule = jest.requireActual(
+      '@docknetwork/wallet-sdk-wasm-services/lib/services/credential',
+    );
+    const mockFunctions = {
+      verifyCredential: jest.fn(credential => {
+        return {verified: false, error: 'Revocation check failed'};
+      }),
+    };
 
-  return {
-    ...originalModule,
-    credentialServiceRPC: mockFunctions,
-  };
-});
+    return {
+      ...originalModule,
+      credentialServiceRPC: mockFunctions,
+    };
+  },
+);
 const mockCreds = [
   {
     id: 1,

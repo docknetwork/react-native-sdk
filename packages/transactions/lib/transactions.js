@@ -1,20 +1,20 @@
 import './schema';
 import assert from 'assert';
-import {DOCK_TOKEN_UNIT} from '@docknetwork/wallet-sdk-core/lib/core/format-utils';
+import {DOCK_TOKEN_UNIT} from '@docknetwork/wallet-sdk-wasm-services/lib/core/format-utils';
 import BigNumber from 'bignumber.js';
-import {Accounts} from '@docknetwork/wallet-sdk-core/lib/modules/accounts';
-import {Account} from '@docknetwork/wallet-sdk-core/lib/modules/account';
-import {substrateService} from '@docknetwork/wallet-sdk-core/lib/services/substrate';
-import {NetworkManager} from '@docknetwork/wallet-sdk-core/lib/modules/network-manager';
-import {getRealm} from '@docknetwork/wallet-sdk-core/lib/core/realm';
-import {getRpcEventEmitter} from '@docknetwork/wallet-sdk-core/lib/events';
+import {Accounts} from '@docknetwork/wallet-sdk-wasm-services/lib/modules/accounts';
+import {Account} from '@docknetwork/wallet-sdk-wasm-services/lib/modules/account';
+import {substrateService} from '@docknetwork/wallet-sdk-wasm-services/lib/services/substrate';
+import {NetworkManager} from '@docknetwork/wallet-sdk-wasm-services/lib/modules/network-manager';
+import {getRealm} from '@docknetwork/wallet-sdk-wasm-services/lib/core/realm';
+import {getRpcEventEmitter} from '@docknetwork/wallet-sdk-wasm-services/lib/events';
 import {TransactionDetails} from './transaction';
-import {fetchTransactions} from '@docknetwork/wallet-sdk-core/lib/core/subscan';
+import {fetchTransactions} from '@docknetwork/wallet-sdk-wasm-services/lib/core/subscan';
 import {
   isAddressValid,
   isNumberValid,
-} from '@docknetwork/wallet-sdk-core/lib/core/validation';
-import {Wallet} from '@docknetwork/wallet-sdk-core/lib/modules/wallet';
+} from '@docknetwork/wallet-sdk-wasm-services/lib/core/validation';
+import {Wallet} from '@docknetwork/wallet-sdk-wasm-services/lib/modules/wallet';
 
 export const TransactionStatus = {
   InProgress: 'pending',
