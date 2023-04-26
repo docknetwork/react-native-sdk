@@ -24,4 +24,4 @@ global.navigator = {
   appVersion: [],
 };
 
-require('@docknetwork/wallet-sdk-core/lib/setup-tests');
+require('@docknetwork/wallet-sdk-wasm-services/lib/setup-tests');

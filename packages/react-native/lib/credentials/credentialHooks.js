@@ -1,8 +1,8 @@
 import {useMemo, useCallback, useState, useEffect} from 'react';
 import {useWallet} from '../index';
 import assert from 'assert';
-import {credentialServiceRPC} from '@docknetwork/wallet-sdk-core/lib/services/credential';
-import {dockService} from '@docknetwork/wallet-sdk-core/lib/services/dock';
+import {credentialServiceRPC} from '@docknetwork/wallet-sdk-wasm-services/lib/services/credential';
+import {dockService} from '@docknetwork/wallet-sdk-wasm-services/lib/services/dock';
 
 export const CREDENTIAL_STATUS = {
   INVALID: 1,
