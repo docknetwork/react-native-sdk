@@ -4,8 +4,8 @@ import {JSDOM} from 'jsdom';
 import {NetworkManager} from './packages/wasm-services/lib/modules/network-manager';
 import {getStorage} from './packages/wasm-services/lib/core/storage';
 import './packages/transactions/lib/schema';
-import {initRealm} from '@docknetwork/wallet-sdk-wasm-services/lib/core/realm';
-import {mockDockService} from '@docknetwork/wallet-sdk-wasm-services/lib/services/test-utils';
+import {initRealm} from '@docknetwork/wallet-sdk-wasm/lib/core/realm';
+import {mockDockService} from '@docknetwork/wallet-sdk-wasm/lib/services/test-utils';
 
 initRealm();
 NetworkManager.getInstance().setNetworkId('testnet');

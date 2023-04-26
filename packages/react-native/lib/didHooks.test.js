@@ -1,11 +1,11 @@
 import {renderHook} from '@testing-library/react-hooks';
 import {useDIDManagement} from './didHooks';
 import {useWallet} from './index';
-import {didServiceRPC} from '@docknetwork/wallet-sdk-wasm-services/lib/services/dids';
+import {didServiceRPC} from '@docknetwork/wallet-sdk-wasm/lib/services/dids';
 
-jest.mock('@docknetwork/wallet-sdk-wasm-services/lib/services/dids', () => {
+jest.mock('@docknetwork/wallet-sdk-wasm/lib/services/dids', () => {
   const originalModule = jest.requireActual(
-    '@docknetwork/wallet-sdk-wasm-services/lib/services/dids',
+    '@docknetwork/wallet-sdk-wasm/lib/services/dids',
   );
   const mockFunctions = {
     generateDIDDockKeyDoc: jest.fn().mockResolvedValue({
