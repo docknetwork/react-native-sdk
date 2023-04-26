@@ -1,7 +1,7 @@
 import {isBase64} from '@polkadot/util-crypto';
 import assert from 'assert';
 import axios from 'axios';
-import {Logger} from '@docknetwork/wallet-sdk-wasm-services/lib/core/logger';
+import {Logger} from '@docknetwork/wallet-sdk-wasm/lib/core/logger';
 import {
   didcommCreateEncrypted,
   didcommDecrypt,
