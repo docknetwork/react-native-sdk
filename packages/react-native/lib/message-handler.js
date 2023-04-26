@@ -2,9 +2,9 @@ import assert from 'assert';
 import {
   getRpcClient,
   initRpcClient,
-} from '@docknetwork/wallet-sdk-wasm-services/lib/rpc-client';
+} from '@docknetwork/wallet-sdk-wasm/lib/rpc-client';
 
-import {Logger} from '@docknetwork/wallet-sdk-wasm-services/lib/core/logger';
+import {Logger} from '@docknetwork/wallet-sdk-wasm/lib/core/logger';
 import rnRpcServer from './rn-rpc-server';
 
 export class WebviewEventHandler {
