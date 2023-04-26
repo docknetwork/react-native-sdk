@@ -1,1 +1,1 @@
-import '@docknetwork/wallet-sdk-wasm-services/lib';
+import '@docknetwork/wallet-sdk-wasm/lib';
