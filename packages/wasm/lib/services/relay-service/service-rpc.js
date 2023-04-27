@@ -2,6 +2,7 @@ import {RpcService} from '../rpc-service-client';
 import {
   GetMessagesParams,
   SendMessageParams,
+  ResolveDidcommMessageParams,
   RegisterDIDPushNotificationParams,
   serviceName,
   validation,
@@ -25,5 +26,10 @@ export class RelayServiceRpc extends RpcService {
   registerDIDPushNotification(params: RegisterDIDPushNotificationParams) {
     validation.registerDIDPushNotification(params);
     return this.call('registerDIDPushNotification', params);
+  }
+
+  resolveDidcommMessage(params: ResolveDidcommMessageParams) {
+    validation.resolveDidcommMessage(params);
+    return this.call('resolveDidcommMessage', params);
   }
 }
