@@ -1,6 +1,7 @@
 import {
   SendMessageParams,
   GetMessagesParams,
+  ResolveDidcommMessageParams,
   RegisterDIDPushNotificationParams,
   serviceName,
   validation,
@@ -16,6 +17,7 @@ export class RelayService {
     RelayService.prototype.getMessages,
     RelayService.prototype.sendMessage,
     RelayService.prototype.registerDIDPushNotification,
+    RelayService.prototype.resolveDidcommMessage,
   ];
 
   constructor() {
@@ -25,6 +27,11 @@ export class RelayService {
   sendMessage(params: SendMessageParams) {
     validation.sendMessage(params);
     return relayServiceClient.sendMessage(params);
+  }
+
+  resolveDidcommMessage(params: ResolveDidcommMessageParams) {
+    validation.resolveDidcommMessage(params);
+    return relayServiceClient.resolveDidcommMessage(params);
   }
 
   getMessages(params: GetMessagesParams) {
