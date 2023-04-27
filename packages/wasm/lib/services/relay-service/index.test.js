@@ -49,4 +49,18 @@ describe('RelayService', () => {
       sendMessageMock.mockClear();
     });
   });
+
+  it('expect to resolve did comm messages', async () => {
+    const message = 'didcomm:some-base-64';
+    const mockResult = 'some-result';
+    const resolveMessageMock = jest
+      .spyOn(relayServiceClient, 'resolveDidcommMessage')
+      .mockImplementation(() => mockResult);
+
+    const result = await service.resolveDidcommMessage({message});
+
+    expect(result).toBe(mockResult);
+
+    resolveMessageMock.mockClear();
+  });
 });
