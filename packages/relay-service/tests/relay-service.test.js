@@ -95,14 +95,20 @@ describe('Relay service', () => {
   });
 
   describe('resolveDidcommMessage', () => {
-    it('expect to resolve didComm message', async () => {
-      const didCommMessage = await didcomm.encrypt({
+    let didCommMessage;
+    let payload;
+
+    beforeAll(async () => {
+      payload = {test: 'test'};
+      didCommMessage = await didcomm.encrypt({
         recipientDids: [BOB_KEY_PAIR_DOC.controller],
         type: 'test',
         senderDid: ALICE_KEY_PAIR_DOC.controller,
-        payload: {test: 'test'},
+        payload,
       });
+    });
 
+    it('expect to resolve JSON message', async () => {
       const result = await RelayService.resolveDidcommMessage({
         message: {
           to: BOB_KEY_PAIR_DOC.controller,
@@ -112,6 +118,26 @@ describe('Relay service', () => {
       });
 
       expect(result.payload).toStrictEqual({test: 'test'});
+    });
+
+    it('expect to handle URL', async () => {
+      // TODO: mock axios.get to return didComm message
+      // const result = await RelayService.resolveDidcommMessage({
+      //   message: 'didcomm://https://relay.dock.io/read/msgid',
+      //   keyPairDocs: [BOB_KEY_PAIR_DOC],
+      // });
+
+      // expect(result.payload).toStrictEqual(payload);
+    });
+
+    it('expect to handle base64 JSON', async () => {
+      // TODO: mock axios.get to return didComm message
+      // const result = await RelayService.resolveDidcommMessage({
+      //   message: `didcomm://${toBase64(didCommMessage)}`,
+      //   keyPairDocs: [BOB_KEY_PAIR_DOC],
+      // });
+
+      // expect(result.payload).toStrictEqual(payload);
     });
   });
 });
