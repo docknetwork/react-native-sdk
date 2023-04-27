@@ -205,11 +205,14 @@ export async function resolveDidcommMessage({keyPairDocs, message}) {
 
   let result = jwe;
 
-  let recipients = jwe?.recipients?.map(recipient => recipient.header.kid);
+  let didCommRecipients = jwe?.recipients?.map(
+    recipient => recipient.header.kid,
+  );
 
-  if (recipients) {
+  // if no recipients, the message is not encrypted
+  if (didCommRecipients) {
     const keyPairDoc = keyPairDocs.find(doc =>
-      recipients.find(did => did.indexOf(doc.controller) > -1),
+      didCommRecipients.find(did => did.indexOf(doc.controller) > -1),
     );
 
     assert(!!keyPairDoc, `keyPairDoc not found for did ${message.to}`);
