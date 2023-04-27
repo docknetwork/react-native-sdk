@@ -75,30 +75,14 @@ const getMessages = async ({keyPairDocs, limit = 20}) => {
     const data = result.data;
 
     const messages = await Promise.all(
-      data.map(async item => {
-        const keyPairDoc = keyPairDocs.find(doc => doc.controller === item.to);
-        assert(!!keyPairDoc, `keyPairDoc not found for did ${item.to}`);
-        const keyAgreementKey = await getDerivedAgreementKey(keyPairDoc);
-        let jwe = item.msg;
+      data.map(async message => {
+        const didCommMessage = await resolveDidcommMessage({
+          message,
+          keyPairDocs,
+        });
 
-        if (typeof jwe === 'string') {
-          // TODO: check for JWT in future here
-          try {
-            if (isBase64(jwe)) {
-              jwe = fromBase64(jwe);
-            } else {
-              jwe = JSON.parse(jwe);
-            }
-          } catch (e) {
-            Logger.debug(`Invalid JWE message received: ${jwe}`);
-            console.error(e);
-            return null;
-          }
-        }
-
-        const didCommMessage = await didcomm.decrypt(jwe, keyAgreementKey);
         return {
-          ...item,
+          ...message,
           ...didCommMessage,
           msg: didCommMessage.body,
         };
@@ -136,6 +120,41 @@ const registerDIDPushNotification = async ({keyPairDocs, token}) => {
   }
 };
 
+async function resolveDidcommMessage({keyPairDocs, message}) {
+  assert(!!keyPairDocs, 'keyPairDoc is required');
+  assert(Array.isArray(keyPairDocs), 'keyPairDocs must be an array');
+  assert(!!keyPairDocs.length, 'keyPairDocs must not be empty');
+
+  try {
+    const keyPairDoc = keyPairDocs.find(doc => doc.controller === message.to);
+    assert(!!keyPairDoc, `keyPairDoc not found for did ${message.to}`);
+    const keyAgreementKey = await getDerivedAgreementKey(keyPairDoc);
+    let jwe = message.msg;
+
+    if (typeof jwe === 'string') {
+      // TODO: check for JWT in future here
+      try {
+        if (isBase64(jwe)) {
+          jwe = fromBase64(jwe);
+        } else {
+          jwe = JSON.parse(jwe);
+        }
+      } catch (e) {
+        Logger.debug(`Invalid JWE message received: ${jwe}`);
+        console.error(e);
+        return null;
+      }
+    }
+
+    const didCommMessage = await didcomm.decrypt(jwe, keyAgreementKey);
+
+    return didCommMessage;
+  } catch (err) {
+    console.error(err.response);
+    return err;
+  }
+}
+
 const setServiceURL = ({url}) => {
   assert(!!url, 'url is required');
 
@@ -145,6 +164,7 @@ const setServiceURL = ({url}) => {
 export const RelayService = {
   sendMessage,
   getMessages,
+  resolveDidcommMessage,
   registerDIDPushNotification,
   setServiceURL,
   serviceURL,

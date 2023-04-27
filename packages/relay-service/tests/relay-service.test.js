@@ -93,4 +93,25 @@ describe('Relay service', () => {
       expect(result.length).toBeGreaterThanOrEqual(1);
     });
   });
+
+  describe('resolveDidcommMessage', () => {
+    it('expect to resolve didComm message', async () => {
+      const didCommMessage = await didcomm.encrypt({
+        recipientDids: [BOB_KEY_PAIR_DOC.controller],
+        type: 'test',
+        senderDid: ALICE_KEY_PAIR_DOC.controller,
+        payload: {test: 'test'},
+      });
+
+      const result = await RelayService.resolveDidcommMessage({
+        message: {
+          to: BOB_KEY_PAIR_DOC.controller,
+          msg: toBase64(didCommMessage),
+        },
+        keyPairDocs: [BOB_KEY_PAIR_DOC],
+      });
+
+      expect(result.payload).toStrictEqual({test: 'test'});
+    });
+  });
 });
