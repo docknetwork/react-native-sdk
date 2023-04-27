@@ -147,14 +147,16 @@ async function jsonHandler(message) {
   }
 }
 
-const messageHandlers = [jwtHandler, base64Handler, jsonHandler];
+const messageHandlers = [base64Handler, jwtHandler, jsonHandler];
 
 async function resolveJweString(message) {
+  let resolvedMessage = message;
+
   try {
     for (const handler of messageHandlers) {
-      const result = await handler(message);
-      if (result) {
-        return result;
+      let _result = await handler(resolvedMessage);
+      if (_result) {
+        resolvedMessage = _result;
       }
     }
   } catch (e) {
@@ -162,10 +164,13 @@ async function resolveJweString(message) {
     console.error(e);
     return null;
   }
+
+  return resolvedMessage;
 }
 
 function isURL(str) {
   try {
+    // eslint-disable-next-line no-new
     new URL(str);
     return true;
   } catch (err) {
@@ -200,11 +205,20 @@ export async function resolveDidcommMessage({keyPairDocs, message}) {
 
   let result = jwe;
 
-  if (message.to) {
-    const keyPairDoc = keyPairDocs.find(doc => doc.controller === message.to);
+  let recipients = jwe?.recipients?.map(recipient => recipient.header.kid);
+
+  if (recipients) {
+    const keyPairDoc = keyPairDocs.find(doc =>
+      recipients.find(did => did.indexOf(doc.controller) > -1),
+    );
+
     assert(!!keyPairDoc, `keyPairDoc not found for did ${message.to}`);
     const keyAgreementKey = await getDerivedAgreementKey(keyPairDoc);
-    result = await didcomm.decrypt(jwe, keyAgreementKey);
+    result = await didcommDecrypt(jwe, keyAgreementKey);
+  }
+
+  if (!result.body && result.payload) {
+    result.body = result.payload;
   }
 
   return result;
