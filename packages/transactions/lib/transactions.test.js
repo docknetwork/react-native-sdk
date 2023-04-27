@@ -1,5 +1,5 @@
 import {TransactionStatus, Transactions} from './transactions';
-import {getRealm, initRealm} from '@docknetwork/wallet-sdk-core/lib/core/realm';
+import {getRealm, initRealm} from '@docknetwork/wallet-sdk-wasm/lib/core/realm';
 
 const initMockTransactions = () => {
   const today = new Date();
