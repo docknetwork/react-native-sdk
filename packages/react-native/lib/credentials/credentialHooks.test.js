@@ -11,12 +11,12 @@ import {
   waitFor,
 } from './credentialHooks';
 import {useWallet} from '../index';
-import {credentialServiceRPC} from '@docknetwork/wallet-sdk-core/lib/services/credential';
-import {dockService} from '@docknetwork/wallet-sdk-core/lib/services/dock';
+import {credentialServiceRPC} from '@docknetwork/wallet-sdk-wasm/lib/services/credential';
+import {dockService} from '@docknetwork/wallet-sdk-wasm/lib/services/dock';
 
-jest.mock('@docknetwork/wallet-sdk-core/lib/services/credential', () => {
+jest.mock('@docknetwork/wallet-sdk-wasm/lib/services/credential', () => {
   const originalModule = jest.requireActual(
-    '@docknetwork/wallet-sdk-core/lib/services/credential',
+    '@docknetwork/wallet-sdk-wasm/lib/services/credential',
   );
   const mockFunctions = {
     verifyCredential: jest.fn(credential => {
