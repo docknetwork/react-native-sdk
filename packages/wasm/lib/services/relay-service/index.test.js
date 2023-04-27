@@ -57,7 +57,8 @@ describe('RelayService', () => {
       .spyOn(relayServiceClient, 'resolveDidcommMessage')
       .mockImplementation(() => mockResult);
 
-    const result = await service.resolveDidcommMessage({message});
+    const keyPairDocs = ['keyPairDoc'];
+    const result = await service.resolveDidcommMessage({message, keyPairDocs});
 
     expect(result).toBe(mockResult);
 
