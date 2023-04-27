@@ -15,7 +15,8 @@ export const validation = {
       assert(isNumberValid(limit), 'invalid limit');
     }
   },
-  resolveDidcommMessage({message}: ResolveDidcommMessageParams) {
+  resolveDidcommMessage({message, keyPairDocs}: ResolveDidcommMessageParams) {
+    assert(!!keyPairDocs, 'keyPairDoc is required');
     assert(!!message, 'message is required');
   },
   registerDIDPushNotification({
@@ -42,6 +43,7 @@ export type SendMessageParams = {
 
 export type ResolveDidcommMessageParams = {
   message: any,
+  keyPairDocs: any[],
 };
 
 export type RegisterDIDPushNotificationParams = {
