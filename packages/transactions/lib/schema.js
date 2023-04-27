@@ -1,4 +1,4 @@
-import {addSchema} from '@docknetwork/wallet-sdk-core/lib/core/realm';
+import {addSchema} from '@docknetwork/wallet-sdk-wasm/lib/core/realm';
 
 addSchema({
   name: 'Transaction',
