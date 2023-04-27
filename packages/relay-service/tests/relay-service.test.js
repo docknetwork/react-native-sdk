@@ -2,6 +2,8 @@ import axios from 'axios';
 import {didcomm, RelayService, resolveDidcommMessage} from '../lib';
 import {generateSignedPayload, toBase64} from '../lib/payloads';
 import {ALICE_KEY_PAIR_DOC, BOB_KEY_PAIR_DOC} from './mock-data';
+import {didcommCreateEncrypted} from '../lib/didcomm';
+import {getDerivedAgreementKey} from '../lib/didcomm';
 
 describe('Relay service', () => {
   beforeEach(() => {
@@ -103,11 +105,13 @@ describe('Relay service', () => {
 
     beforeAll(async () => {
       payload = {test: 'test'};
-      didCommMessage = await didcomm.encrypt({
+      const keyAgreementKey = await getDerivedAgreementKey(BOB_KEY_PAIR_DOC);
+      didCommMessage = await didcommCreateEncrypted({
         recipientDids: [BOB_KEY_PAIR_DOC.controller],
         type: 'test',
         senderDid: ALICE_KEY_PAIR_DOC.controller,
         payload,
+        keyAgreementKey,
       });
     });
 
@@ -120,7 +124,7 @@ describe('Relay service', () => {
         keyPairDocs: [BOB_KEY_PAIR_DOC],
       });
 
-      expect(result.payload).toStrictEqual(payload);
+      expect(result.body).toStrictEqual(payload);
     });
 
     it('expect to handle JWT', async () => {
@@ -129,7 +133,7 @@ describe('Relay service', () => {
         keyPairDocs: [BOB_KEY_PAIR_DOC],
       });
 
-      expect(result.payload.credentials).toBeDefined();
+      expect(result.body.credentials).toBeDefined();
     });
 
     it('expect to handle JWT with didcomm prefix', async () => {
@@ -138,7 +142,7 @@ describe('Relay service', () => {
         keyPairDocs: [BOB_KEY_PAIR_DOC],
       });
 
-      expect(result.payload.credentials).toBeDefined();
+      expect(result.body.credentials).toBeDefined();
     });
 
     it('expect to handle URL', async () => {
@@ -153,7 +157,7 @@ describe('Relay service', () => {
         keyPairDocs: [BOB_KEY_PAIR_DOC],
       });
 
-      expect(result.payload.credentials).toBeDefined();
+      expect(result.body.credentials).toBeDefined();
 
       axiosMock.mockRestore();
     });
@@ -164,7 +168,7 @@ describe('Relay service', () => {
         keyPairDocs: [BOB_KEY_PAIR_DOC],
       });
 
-      expect(result.payload).toStrictEqual(payload);
+      expect(result.body).toStrictEqual(payload);
     });
   });
 });
