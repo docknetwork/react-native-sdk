@@ -1,4 +1,4 @@
-import {getRealm} from '@docknetwork/wallet-sdk-core/lib/core/realm';
+import {getRealm} from '@docknetwork/wallet-sdk-wasm/lib/core/realm';
 import assert from 'assert';
 import {v4 as uuidv4} from 'uuid';
 export const RequestLogger = (function () {
