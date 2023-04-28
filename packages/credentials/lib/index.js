@@ -75,7 +75,7 @@ export class Credentials {
    * @param url {string}
    * @returns {Promise<boolean>}
    */
-  isDockCertURL(url) {
+  isDockCertsURL(url) {
     return (
       url.startsWith('https://creds.dock.io') ||
       url.startsWith('https://creds-staging.dock.io') ||
