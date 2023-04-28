@@ -71,20 +71,16 @@ export class Credentials {
   }
 
   /**
-   * Checks if trying to fetch a credential would return a forbidden response.
+   * Checks if url matches a valid dock certs URL
    * @param url {string}
    * @returns {Promise<boolean>}
    */
-  async isPasswordRequired(url) {
-    try {
-      await axios.get(url);
-      return false;
-    } catch (e) {
-      if (e?.response?.status === 400) {
-        return true;
-      }
-      throw 'Something went wrong';
-    }
+  isDockCertURL(url) {
+    return (
+      url.startsWith('https://creds.dock.io') ||
+      url.startsWith('https://creds-staging.dock.io') ||
+      url.startsWith('https://creds-testnet.dock.io')
+    );
   }
   /**
    * Downloads credential content from url and store in the wallet
