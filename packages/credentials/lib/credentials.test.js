@@ -102,16 +102,16 @@ describe('Credentials module', () => {
       expect(error.message).toBe('Invalid credential');
     });
 
-    it('Expect check if password is required', async () => {
+    it('should check if url is a valid dock certs url', async () => {
       jest.spyOn(axios, 'get');
       axios.get.mockImplementation(() => {
         throw {response: {status: 400}};
       });
-      const url = 'https://password-required.com';
+      const url = 'https://creds.dock.io';
       const result = await credentials.isDockCertsURL(url);
       expect(result).toBeTruthy();
     });
-    it('Expect check if password is not required', async () => {
+    it('should check if url is not a valid certs url', async () => {
       jest.spyOn(axios, 'get');
       axios.get.mockImplementation(() => ({}));
       const url = 'https://no-password-required.com';
