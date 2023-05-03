@@ -3,8 +3,8 @@
  *
  * Ensure that a new wallet can be created and will be functional
  */
-import {Wallet} from '@docknetwork/wallet-sdk-core/lib/modules/wallet';
-import {walletService} from '@docknetwork/wallet-sdk-core/lib/services/wallet';
+import {Wallet} from '@docknetwork/wallet-sdk-wasm/lib/modules/wallet';
+import {walletService} from '@docknetwork/wallet-sdk-wasm/lib/services/wallet';
 import {DataStoreSnapshotV1} from '../data/data-store';
 import {WalletBackupJSON, WalletBackupPasssword} from '../data/wallet-backup';
 
@@ -21,6 +21,10 @@ export async function createNewWallet() {
   await walletService.sync();
 
   return wallet;
+}
+
+export async function setNetwork(networkId) {
+  return Promise.resolve(wallet.networkManager.setNetworkId(networkId));
 }
 
 /**
@@ -52,4 +56,16 @@ export async function createWalletFromBackup() {
 
 export function getAllDocuments() {
   return getWallet().query({} as any);
+}
+
+export async function getDocumentsByType(type) {
+  const documents = await getAllDocuments();
+
+  return documents.filter(doc => {
+    if (Array.isArray(doc.type)) {
+      return doc.type.includes(type);
+    }
+
+    return doc.type === type;
+  });
 }

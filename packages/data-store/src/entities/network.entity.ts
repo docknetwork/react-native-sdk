@@ -7,4 +7,7 @@ export class NetworkEntity {
 
   @Column()
   name: string;
+
+  @Column()
+  configs: string;
 }
