@@ -1,31 +1,23 @@
 import {DataSource} from 'typeorm';
-import {SDKConfigsEntity} from './entities/sdk-configs.entity';
-import {logger} from '../logger';
-import {DataStoreConfigs} from '../types/types';
+// import {SDKConfigsEntity} from './entities/data-store-configs.entity';
+import {logger} from './logger';
+import {DataStoreConfigs} from './types';
 import {NetworkEntity} from './entities/network.entity';
-import {WalletEntity} from './entities/wallet.entity';
-import {DocumentEntity} from './entities/document.entity';
+import {DocumentEntity} from './entities/document/document.entity';
 import {DocumentTypeEntity} from './entities/document-type.entity';
-
-let _dataSource: DataSource;
+import {WalletEntity} from './entities/wallet.entity';
 
 export async function initializeTypeORM(options: DataStoreConfigs) {
-  _dataSource = new DataSource({
+  const dataSource = new DataSource({
     type: 'sqlite',
     database: options.databasePath,
-    entities: [
-      SDKConfigsEntity,
-      NetworkEntity,
-      WalletEntity,
-      DocumentEntity,
-      DocumentTypeEntity,
-    ],
+    entities: [WalletEntity, NetworkEntity, DocumentEntity, DocumentTypeEntity],
     // TODO: will remove this once we have all entities in place
     synchronize: true,
     dropSchema: options.dropSchema,
   });
 
-  await _dataSource
+  await dataSource
     .initialize()
     .then(() => {
       logger.debug('Data Source initialized successfully');
@@ -34,8 +26,6 @@ export async function initializeTypeORM(options: DataStoreConfigs) {
       logger.error(`Error during Data Source initialization: ${err}`);
       throw err;
     });
-}
 
-export function getDataSource(): DataSource {
-  return _dataSource;
+  return dataSource;
 }

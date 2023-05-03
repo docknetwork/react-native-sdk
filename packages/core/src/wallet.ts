@@ -1,24 +1,30 @@
 import {createDataStore} from '@docknetwork/wallet-sdk-data-store/src';
 import {
+  DataStore,
   DataStoreConfigs,
   WalletDocument,
 } from '@docknetwork/wallet-sdk-data-store/src/types';
-import {getDocumentsByType} from '@docknetwork/wallet-sdk-data-store/src/typeorm/entities/document/get-documens-by-type';
-import {getDocumentById} from '@docknetwork/wallet-sdk-data-store/src/typeorm/entities/document/get-document-by-id';
+import {
+  getDocumentsByType,
+  getDocumentById,
+  createDocument,
+  removeDocument,
+} from '@docknetwork/wallet-sdk-data-store/src/entities/document';
+import {CreateWalletProps, Wallet} from './types';
 
-interface Wallet {
-  getDocumentById: (id: string) => Promise<WalletDocument>;
-  getDocumentsByType: (type: string) => Promise<WalletDocument[]>;
-}
-
-type CreateWalletProps = DataStoreConfigs & {};
-
+/**
+ * Create wallet
+ *
+ * @param createWalletProps
+ * @returns {Promise<Wallet>}
+ */
 export async function createWallet(
   createWalletProps: CreateWalletProps,
 ): Promise<Wallet> {
   const dataStore = await createDataStore(createWalletProps);
 
   return {
+    dataStore,
     getDocumentById: id =>
       getDocumentById({
         dataStore,
@@ -29,5 +35,19 @@ export async function createWallet(
         dataStore,
         type,
       }),
-  };
+    addDocument: (json: any) => {
+      return createDocument({
+        dataStore,
+        json,
+      });
+    },
+    removeDocument: (id: string) => {
+      return removeDocument({
+        dataStore,
+        id,
+      });
+    },
+    importUniversalWalletJSON: (json: any, password: string) => {},
+    exportUniversalWalletJSON: (password: string) => {},
+  } as Wallet;
 }

@@ -1,16 +1,15 @@
-import {getDataSource, initializeTypeORM} from './typeorm';
-import {DataStoreConfigs} from './types/types';
+import {initializeTypeORM} from './typeorm';
+import {DataStore, DataStoreConfigs} from './types';
 import {migrate} from './migration';
-import {
-  defaultDataStoreConfigs,
-  getSDKConfigs,
-  setActiveWallet,
-} from './configs';
+import {DEFAULT_CONFIGS} from './configs';
 import {logger} from './logger';
+import {DataSource} from 'typeorm';
 
-export async function createDataStore(_options: DataStoreConfigs = {}) {
+export async function createDataStore(
+  _options: DataStoreConfigs,
+): Promise<DataStore> {
   const options = {
-    ...defaultDataStoreConfigs,
+    ...DEFAULT_CONFIGS,
     ..._options,
   };
 
@@ -18,19 +17,23 @@ export async function createDataStore(_options: DataStoreConfigs = {}) {
     `Initializing data store with configs: ${JSON.stringify(options)}`,
   );
 
-  await initializeTypeORM(options);
-  await migrate(options);
+  const dataSource: DataSource = await initializeTypeORM(options);
+  const dataStore: DataStore = {
+    db: dataSource,
+    networkId: options.defaultNetwork,
+    version: null,
+    resolveDocumentNetwork: options.documentNetworkResolver,
+  };
 
-  const configs = await getSDKConfigs(options);
-  setActiveWallet(configs.activeWallet);
+  await migrate({dataStore});
 
-  return true;
+  return dataStore;
 }
 
 /**
  * Close the data store connection with the database
  *
  */
-export async function closeDataStore() {
-  return getDataSource().destroy();
+export async function closeDataStore(dataStore: DataStore) {
+  await dataStore.db.destroy();
 }
