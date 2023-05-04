@@ -14,6 +14,7 @@ import {
   generateSignedPayloadFromList,
   toBase64,
 } from './payloads';
+import jwtDecode from 'jwt-decode';
 
 let serviceURL = process.env.RELAY_SERVICE_URL || 'https://relay.dock.io';
 
@@ -75,30 +76,14 @@ const getMessages = async ({keyPairDocs, limit = 20}) => {
     const data = result.data;
 
     const messages = await Promise.all(
-      data.map(async item => {
-        const keyPairDoc = keyPairDocs.find(doc => doc.controller === item.to);
-        assert(!!keyPairDoc, `keyPairDoc not found for did ${item.to}`);
-        const keyAgreementKey = await getDerivedAgreementKey(keyPairDoc);
-        let jwe = item.msg;
+      data.map(async message => {
+        const didCommMessage = await resolveDidcommMessage({
+          message,
+          keyPairDocs,
+        });
 
-        if (typeof jwe === 'string') {
-          // TODO: check for JWT in future here
-          try {
-            if (isBase64(jwe)) {
-              jwe = fromBase64(jwe);
-            } else {
-              jwe = JSON.parse(jwe);
-            }
-          } catch (e) {
-            Logger.debug(`Invalid JWE message received: ${jwe}`);
-            console.error(e);
-            return null;
-          }
-        }
-
-        const didCommMessage = await didcomm.decrypt(jwe, keyAgreementKey);
         return {
-          ...item,
+          ...message,
           ...didCommMessage,
           msg: didCommMessage.body,
         };
@@ -136,6 +121,112 @@ const registerDIDPushNotification = async ({keyPairDocs, token}) => {
   }
 };
 
+async function jwtHandler(message) {
+  try {
+    const jwt = await jwtDecode(message);
+    return jwt;
+  } catch (err) {
+    return false;
+  }
+}
+
+async function base64Handler(message) {
+  if (!isBase64(message)) {
+    return false;
+  }
+
+  return fromBase64(message);
+}
+
+async function jsonHandler(message) {
+  try {
+    const json = JSON.parse(message);
+    return json;
+  } catch (err) {
+    return false;
+  }
+}
+
+const messageHandlers = [base64Handler, jwtHandler, jsonHandler];
+
+async function resolveJweString(message) {
+  let resolvedMessage = message;
+
+  try {
+    for (const handler of messageHandlers) {
+      let _result = await handler(resolvedMessage);
+      if (_result) {
+        resolvedMessage = _result;
+      }
+    }
+  } catch (e) {
+    Logger.debug(`Invalid JWE message received: ${message}`);
+    console.error(e);
+    return null;
+  }
+
+  return resolvedMessage;
+}
+
+function isURL(str) {
+  try {
+    // eslint-disable-next-line no-new
+    new URL(str);
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
+export async function resolveDidcommMessage({keyPairDocs, message}) {
+  assert(!!keyPairDocs, 'keyPairDoc is required');
+  assert(Array.isArray(keyPairDocs), 'keyPairDocs must be an array');
+  assert(!!keyPairDocs.length, 'keyPairDocs must not be empty');
+
+  let jwe = message.msg || message;
+
+  if (jwe && jwe.indexOf('didcomm://') > -1) {
+    jwe = jwe.replace('didcomm://', '');
+  }
+
+  if (isURL(jwe)) {
+    try {
+      const {data} = await axios.get(jwe);
+      jwe = data;
+    } catch (err) {
+      console.error(err);
+      return null;
+    }
+  }
+
+  if (typeof jwe === 'string') {
+    jwe = await resolveJweString(jwe);
+  }
+
+  let result = jwe;
+
+  let didCommRecipients = jwe?.recipients?.map(
+    recipient => recipient.header.kid,
+  );
+
+  // if no recipients, the message is not encrypted
+  if (didCommRecipients) {
+    const keyPairDoc = keyPairDocs.find(doc =>
+      didCommRecipients.find(did => did.indexOf(doc.controller) > -1),
+    );
+
+    assert(!!keyPairDoc, `keyPairDoc not found for did ${message.to}`);
+    const keyAgreementKey = await getDerivedAgreementKey(keyPairDoc);
+    result = await didcommDecrypt(jwe, keyAgreementKey);
+  }
+
+  if (!result.body && result.payload) {
+    result.body = result.payload;
+  }
+
+  return result;
+}
+
 const setServiceURL = ({url}) => {
   assert(!!url, 'url is required');
 
@@ -145,6 +236,7 @@ const setServiceURL = ({url}) => {
 export const RelayService = {
   sendMessage,
   getMessages,
+  resolveDidcommMessage,
   registerDIDPushNotification,
   setServiceURL,
   serviceURL,
