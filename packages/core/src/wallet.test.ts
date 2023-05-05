@@ -1,7 +1,7 @@
-import {createWallet, Wallet} from './wallet';
+import {createWallet, IWallet} from './wallet';
 
 describe('Wallet', () => {
-  let wallet: Wallet;
+  let wallet: IWallet;
 
   beforeEach(async () => {
     wallet = await createWallet({
@@ -30,7 +30,7 @@ describe('Wallet', () => {
       expect(result.data).toStrictEqual(mockDocument);
     });
 
-    it('expect get document by type', async () => {
+    it('expect to get document by type', async () => {
       const result = await wallet.getDocumentsByType(mockDocument.type);
       expect(result[0].id).toEqual(mockDocument.id);
       expect(result[0].data).toStrictEqual(mockDocument);
