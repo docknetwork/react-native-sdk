@@ -10,21 +10,28 @@ import {
   createDocument,
   removeDocument,
 } from '@docknetwork/wallet-sdk-data-store/src/entities/document';
-import {CreateWalletProps, Wallet} from './types';
+import {CreateWalletProps, IWallet} from './types';
 
+export {IWallet};
 /**
  * Create wallet
  *
  * @param createWalletProps
- * @returns {Promise<Wallet>}
+ * @returns {Promise<IWallet>}
  */
 export async function createWallet(
   createWalletProps: CreateWalletProps,
-): Promise<Wallet> {
+): Promise<IWallet> {
   const dataStore = await createDataStore(createWalletProps);
 
   return {
     dataStore,
+    setNetworkId: (networkId: string) => {
+      dataStore.networkId = networkId;
+    },
+    getNetworkId: () => {
+      return dataStore.networkId;
+    },
     getDocumentById: id =>
       getDocumentById({
         dataStore,
@@ -49,5 +56,5 @@ export async function createWallet(
     },
     importUniversalWalletJSON: (json: any, password: string) => {},
     exportUniversalWalletJSON: (password: string) => {},
-  } as Wallet;
+  } as IWallet;
 }
