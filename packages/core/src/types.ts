@@ -4,7 +4,7 @@ import {
   WalletDocument,
 } from '@docknetwork/wallet-sdk-data-store/src/types';
 
-export interface Wallet {
+export interface IWallet {
   getDocumentById: (id: string) => Promise<WalletDocument>;
   getDocumentsByType: (type: string) => Promise<WalletDocument[]>;
   addDocument: (json: any) => Promise<WalletDocument>;
@@ -26,6 +26,9 @@ export interface Wallet {
    * @returns JSON representation of the wallet
    */
   exportUniversalWalletJSON: (password: string) => any;
+
+  setNetworkId: (networkId: string) => void;
+  getNetworkId: () => string;
   dataStore: DataStore;
 }
 

@@ -19,7 +19,10 @@ export async function getDocumentsByType({
   const documents = repository
     .createQueryBuilder('document')
     .leftJoinAndSelect('document._typeRel', 'documentType')
-    .where('documentType.id = :type', {type});
+    .where('documentType.id = :type', {type})
+    .andWhere('document.networkId = :networkId', {
+      networkId: dataStore.networkId,
+    });
 
   const result = await documents.getMany();
 
