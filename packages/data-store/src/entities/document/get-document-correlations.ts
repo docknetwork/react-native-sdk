@@ -19,7 +19,10 @@ export async function getDocumentCorrelations({
     relations: {
       correlation: true,
     },
-    where: {id: documentId},
+    where: {
+      id: documentId,
+      networkId: dataStore.networkId,
+    },
   });
 
   return entity.correlation;

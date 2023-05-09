@@ -21,20 +21,20 @@ describe('Accounts', () => {
   it('expect to have created accounts', async () => {
     // await wallet.accounts.load();
     const documents = await getAllDocuments();
-    const addressList = documents.filter(doc => doc.type === 'Address');
+    const addressList = documents.filter(doc => doc.type.includes('Address'));
     expect(addressList.length).toBe(2);
   });
 
   it('expect to have valid KeyringPair on each account', async () => {
     const documents = await getAllDocuments();
-    const addressList = documents.filter(doc => doc.type === 'Address');
+    const addressList = documents.filter(doc => doc.type.includes('Address'));
 
     for (const document of addressList) {
-      const correlations = await getWallet().resolveCorrelations(
-        document.address,
-      );
+      const correlations = await getWallet().resolveCorrelations(document.id);
 
-      const keyringPair = correlations.find(doc => doc.type === 'KeyringPair');
+      const keyringPair = correlations.find(doc =>
+        doc.type.includes('KeyringPair'),
+      );
       expect(keyringPair).toBeDefined();
     }
   });

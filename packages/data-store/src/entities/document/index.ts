@@ -6,3 +6,4 @@ export * from './get-document-by-id';
 export * from './get-all-documents';
 export * from './update-document';
 export * from './remove-document';
+export * from './get-document-correlations';
