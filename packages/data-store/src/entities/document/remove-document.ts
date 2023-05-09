@@ -11,5 +11,8 @@ export async function removeDocument({
   id,
 }: ContextProps & {id: string}): Promise<void> {
   const repository = dataStore.db.getRepository(DocumentEntity);
-  await repository.delete({id});
+  await repository.delete({
+    id,
+    networkId: dataStore.networkId,
+  });
 }

@@ -9,10 +9,13 @@ import {
   getDocumentById,
   createDocument,
   removeDocument,
+  getDocumentCorrelations,
+  getAllDocuments,
 } from '@docknetwork/wallet-sdk-data-store/src/entities/document';
 import {CreateWalletProps, IWallet} from './types';
+import {toV1Wallet} from './v1-helpers';
 
-export {IWallet};
+export type {IWallet};
 /**
  * Create wallet
  *
@@ -24,7 +27,7 @@ export async function createWallet(
 ): Promise<IWallet> {
   const dataStore = await createDataStore(createWalletProps);
 
-  return {
+  const wallet = {
     dataStore,
     setNetworkId: (networkId: string) => {
       dataStore.networkId = networkId;
@@ -37,6 +40,11 @@ export async function createWallet(
         dataStore,
         id,
       }),
+    getAllDocuments: () => {
+      return getAllDocuments({
+        dataStore,
+      });
+    },
     getDocumentsByType: type =>
       getDocumentsByType({
         dataStore,
@@ -54,7 +62,20 @@ export async function createWallet(
         id,
       });
     },
+    getDocumentCorrelations: (documentId: string) => {
+      return getDocumentCorrelations({
+        dataStore,
+        documentId,
+      });
+    },
     importUniversalWalletJSON: (json: any, password: string) => {},
     exportUniversalWalletJSON: (password: string) => {},
   } as IWallet;
+
+  const v1Wallet = await toV1Wallet(wallet);
+
+  return {
+    ...v1Wallet,
+    ...wallet,
+  };
 }

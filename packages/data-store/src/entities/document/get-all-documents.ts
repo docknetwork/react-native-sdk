@@ -9,6 +9,10 @@ import {DocumentEntity} from './document.entity';
  */
 export async function getAllDocuments({dataStore}): Promise<WalletDocument[]> {
   const repository = dataStore.db.getRepository(DocumentEntity);
-  const entities = repository.find();
+  const entities = repository.find({
+    where: {
+      networkId: dataStore.networkId,
+    },
+  });
   return Promise.all(entities.map(toWalletDocument));
 }

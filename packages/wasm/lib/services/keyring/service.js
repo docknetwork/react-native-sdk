@@ -51,7 +51,7 @@ export class KeyringService {
     const pair = this.keyring.addFromJson(jsonData);
 
     pair.unlock(password);
-    return pair;
+    return pair.toJson();
   }
 
   signData(params: SignDataParams): any {
@@ -65,11 +65,9 @@ export class KeyringService {
 
     const {mnemonic, meta, type, derivePath = ''} = params;
 
-    return this.keyring.createFromUri(
-      `${mnemonic.trim()}${derivePath}`,
-      meta,
-      type,
-    );
+    return this.keyring
+      .createFromUri(`${mnemonic.trim()}${derivePath}`, meta, type)
+      .toJson();
   }
 
   addressFromUri(params: CreateFromUriParams) {

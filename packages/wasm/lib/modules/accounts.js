@@ -1,5 +1,5 @@
 import assert from 'assert';
-import {walletService} from '../services/wallet';
+import {walletService as _walletService} from '../services/wallet';
 import {utilCryptoService} from '../services/util-crypto';
 import {keyringService} from '../services/keyring';
 import {substrateService} from '../services/substrate';
@@ -42,9 +42,10 @@ export class Accounts {
     currencyType: (item: WalletDocument) => item.type === 'Currency',
   };
 
-  constructor({wallet} = {}) {
+  constructor({wallet, walletService} = {}) {
     this.accounts = [];
     this.wallet = wallet || Wallet.getInstance();
+    this.walletService = walletService || _walletService;
     this.eventManager = new EventManager();
     this.eventManager.registerEvents(AccountsEvents);
   }
@@ -58,7 +59,7 @@ export class Accounts {
   }
 
   async exportAccount(address, password) {
-    return walletService.exportAccount({address, password});
+    return this.walletService.exportAccount({address, password});
   }
 
   async importAccount(json, password) {
@@ -122,7 +123,7 @@ export class Accounts {
   ) {
     assert(isAddressValid(address), 'invalid address');
 
-    const correlations = await walletService.resolveCorrelations(address);
+    const correlations = await this.walletService.resolveCorrelations(address);
     const result = correlations.find(c => c.type === type);
 
     if (assertResult) {
@@ -139,7 +140,7 @@ export class Accounts {
   async update(account: AccountDetails) {
     assert(!!account, 'account is required');
 
-    await walletService.update(account);
+    await this.walletService.update(account);
     this.eventManager.emit(AccountsEvents.accountUpdated);
     await this.load();
   }
@@ -204,7 +205,7 @@ export class Accounts {
       address,
     };
 
-    const documents = await walletService.createAccountDocuments({
+    const documents = await this.walletService.createAccountDocuments({
       name,
       type,
       derivePath,
