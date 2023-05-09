@@ -3,28 +3,29 @@
  *
  * Ensure that a new wallet can be created and will be functional
  */
-import {Wallet} from '@docknetwork/wallet-sdk-wasm/lib/modules/wallet';
-import {walletService} from '@docknetwork/wallet-sdk-wasm/lib/services/wallet';
 import {DataStoreSnapshotV1} from '../data/data-store';
 import {WalletBackupJSON, WalletBackupPasssword} from '../data/wallet-backup';
+import {IWallet} from '@docknetwork/wallet-sdk-core/src/types';
+import {createWallet} from '@docknetwork/wallet-sdk-core/src/wallet';
 
-let wallet: Wallet;
+let wallet: IWallet;
 
-export function getWallet(): Wallet {
+export function getWallet(): IWallet {
   return wallet;
 }
 
 export async function createNewWallet() {
-  wallet = await Wallet.create();
+  wallet = await createWallet({
+    databasePath: ':memory:',
+  });
 
   await wallet.ensureNetwork();
-  await walletService.sync();
 
   return wallet;
 }
 
 export async function setNetwork(networkId) {
-  return Promise.resolve(wallet.networkManager.setNetworkId(networkId));
+  return Promise.resolve(wallet.setNetworkId(networkId));
 }
 
 /**
@@ -34,22 +35,17 @@ export async function setNetwork(networkId) {
 export async function createWalletFromSnapshot() {
   global.localStorage.setItem('wallet', JSON.stringify(DataStoreSnapshotV1));
 
-  wallet = await Wallet.create();
-
-  await wallet.ensureNetwork();
-  await walletService.sync();
-
-  return wallet;
+  return createNewWallet();
 }
 
 export async function createWalletFromBackup() {
-  wallet = await Wallet.create({
-    json: WalletBackupJSON,
-    password: WalletBackupPasssword,
-  } as any);
+  wallet = await createNewWallet();
+  await wallet.importUniversalWalletJSON(
+    WalletBackupJSON,
+    WalletBackupPasssword,
+  );
 
   await wallet.ensureNetwork();
-  await walletService.sync();
 
   return wallet;
 }
@@ -59,13 +55,5 @@ export function getAllDocuments() {
 }
 
 export async function getDocumentsByType(type) {
-  const documents = await getAllDocuments();
-
-  return documents.filter(doc => {
-    if (Array.isArray(doc.type)) {
-      return doc.type.includes(type);
-    }
-
-    return doc.type === type;
-  });
+  return wallet.getDocumentsByType(type);
 }
