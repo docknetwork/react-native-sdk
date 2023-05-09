@@ -1,8 +1,8 @@
+// TODO: [wallet-sdk] Cleanup wallet-sdk unnused wasm services https://dock-team.atlassian.net/browse/DCKA-1658
 import {IV1Wallet, IWallet} from './types';
 import {createAccountProvider} from './account-provider';
 import {WalletDocument} from '@docknetwork/wallet-sdk-data-store/src/types';
 import * as walletServiceConfigs from '@docknetwork/wallet-sdk-wasm/lib/services/wallet/configs';
-
 import {keyringService} from '@docknetwork/wallet-sdk-wasm/lib/services/keyring/index';
 import {v4 as uuid} from 'uuid';
 import {EventEmitter} from 'events';
@@ -71,11 +71,18 @@ export async function toV1Wallet(wallet: IWallet): Promise<IV1Wallet> {
 
 export type KeypairType = 'sr25519' | 'ed25519' | 'ecdsa';
 
+/**
+ * Wallet service methods
+ * @param wallet
+ */
 export function toV1WalletService(wallet: IWallet) {
   return {
     getDocumentById: id => {
       return wallet.getDocumentById(id);
     },
+    // accounts are not required in a wallet
+    // Ideally should move this code to the accounts provider file
+    // and make account provider available on its own package
     createAccountDocuments: async (params: {
       name: string;
       json?: string;
