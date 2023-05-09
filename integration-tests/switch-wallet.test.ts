@@ -41,8 +41,8 @@ describe('Switch wallet', () => {
     await createWalletData();
     await assertWalletData();
     await setNetwork('testnet');
-    // const isEmpty = await isWalletEmpty();
-    // expect(isEmpty).toBe(true);
+    const isEmpty = await isWalletEmpty();
+    expect(isEmpty).toBe(true);
   });
 
   it('expect switch to tesnet and have an empty wallet', async () => {
@@ -50,8 +50,8 @@ describe('Switch wallet', () => {
     await createWalletData();
     await assertWalletData();
     await setNetwork('mainnet');
-    // const err = await assertWalletData().catch(err => err);
-    // expect(err).toBeDefined();
+    const err = await assertWalletData().catch(err => err);
+    expect(err).toBeDefined();
   });
 
   it('expect switch to tesnet and have an empty wallet', () => {});
