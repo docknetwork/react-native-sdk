@@ -34,10 +34,10 @@ export class Account {
    * @param {string} address
    * @returns
    */
-  static with(address) {
+  static with(address, accounts) {
     assert(isAddressValid(address), 'invalid address');
 
-    const account = new Account(address, Accounts.getInstance());
+    const account = new Account(address, accounts || Accounts.getInstance());
 
     account.loadPromise = account.loadDetails();
 
@@ -49,8 +49,8 @@ export class Account {
    * @param {string} address
    * @returns
    */
-  static async withAsync(address) {
-    const account = Account.with(address);
+  static async withAsync(address, accounts) {
+    const account = Account.with(address, accounts);
 
     await account.loadPromise;
 
@@ -61,7 +61,7 @@ export class Account {
    * @returns {Promise<void>}
    */
   async loadDetails() {
-    this.details = await this.accounts.wallet.getDocumentById(this.address);
+    this.details = await this.accounts.wallet.getDocumentById(this.id);
     this.name = this.details && this.details.name;
   }
 
