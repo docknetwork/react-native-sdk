@@ -72,10 +72,5 @@ export async function createWallet(
     exportUniversalWalletJSON: (password: string) => {},
   } as IWallet;
 
-  const v1Wallet = await toV1Wallet(wallet);
-
-  return {
-    ...v1Wallet,
-    ...wallet,
-  };
+  return toV1Wallet(wallet);
 }
