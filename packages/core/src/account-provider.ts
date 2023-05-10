@@ -6,11 +6,13 @@ interface ICreateAccountsProvider {
   wallet: IWallet;
 }
 
-export async function createAccountProvider({wallet}: ICreateAccountsProvider) {
+export function createAccountProvider({wallet}: ICreateAccountsProvider) {
   const accountsModule = new Accounts({
     wallet: wallet,
-    walletService: await toV1WalletService(wallet),
+    walletService: toV1WalletService(wallet),
   });
+
+  Accounts.instance = accountsModule;
 
   return accountsModule;
 }

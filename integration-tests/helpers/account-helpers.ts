@@ -11,7 +11,7 @@ import {createAccountProvider} from '@docknetwork/wallet-sdk-core/src/account-pr
  * Create new accounts
  */
 export async function createAccounts() {
-  await getWallet().accounts.create({
+  const account = await getWallet().accounts.create({
     name: 'Account 1',
   } as any);
 
