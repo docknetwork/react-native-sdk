@@ -222,7 +222,7 @@ export class Accounts {
 
     await this.load();
 
-    return Account.withAsync(account.address);
+    return Account.withAsync(account.address, this);
   }
 
   async remove(accountId) {

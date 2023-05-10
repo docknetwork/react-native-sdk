@@ -11,7 +11,7 @@ function once(emitter: EventEmitter, eventName: string) {
   return new Promise(resolve => emitter.once(eventName, resolve));
 }
 
-export async function toV1Wallet(wallet: IWallet): Promise<IV1Wallet> {
+export async function toV1Wallet(wallet: IWallet): Promise<IWallet> {
   const accounts = await createAccountProvider({
     wallet,
   });
@@ -64,9 +64,14 @@ export async function toV1Wallet(wallet: IWallet): Promise<IV1Wallet> {
     },
   };
 
-  accounts.wallet = v1Wallet;
+  const newWallet = {
+    ...v1Wallet,
+    ...wallet,
+  };
 
-  return v1Wallet;
+  accounts.wallet = newWallet;
+
+  return newWallet;
 }
 
 export type KeypairType = 'sr25519' | 'ed25519' | 'ecdsa';
