@@ -11,6 +11,7 @@ import {
   removeDocument,
   getDocumentCorrelations,
   getAllDocuments,
+  updateDocument,
 } from '@docknetwork/wallet-sdk-data-store/src/entities/document';
 import {CreateWalletProps, IWallet} from './types';
 import {toV1Wallet} from './v1-helpers';
@@ -56,6 +57,12 @@ export async function createWallet(
         json,
       });
     },
+    updateDocument: (document: any) => {
+      return updateDocument({
+        dataStore,
+        document,
+      });
+    },
     removeDocument: (id: string) => {
       return removeDocument({
         dataStore,
@@ -67,6 +74,18 @@ export async function createWallet(
         dataStore,
         documentId,
       });
+    },
+    getAccountKeyPair: async (accountId: string) => {
+      const correlations = await getDocumentCorrelations({
+        dataStore,
+        documentId: accountId,
+      });
+
+      const keyPair = correlations.find(
+        correlation => correlation.type === 'KeyringPair',
+      );
+
+      return keyPair?.value;
     },
     importUniversalWalletJSON: (json: any, password: string) => {},
     exportUniversalWalletJSON: (password: string) => {},

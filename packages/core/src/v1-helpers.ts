@@ -60,10 +60,10 @@ export async function toV1Wallet(wallet: IWallet): Promise<IWallet> {
       return Promise.resolve(undefined);
     },
     update(json: any): Promise<WalletDocument> {
-      return wallet.updateDocument(document);
+      return wallet.updateDocument(json);
     },
     upsert(json: any): Promise<WalletDocument> {
-      return wallet.upsertDocument(document);
+      return wallet.upsertDocument(json);
     },
   };
 

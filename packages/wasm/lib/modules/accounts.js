@@ -122,8 +122,8 @@ export class Accounts {
   ) {
     assert(isAddressValid(address), 'invalid address');
 
-    const correlations = await this.walletService.resolveCorrelations(address);
-    const result = correlations.find(c => c.type === type);
+    const correlations = await this.wallet.resolveCorrelations(address);
+    const result = correlations.find(c => c.type.includes(type));
 
     if (assertResult) {
       assert(!!result, `${type} document not found for the account ${address}`);

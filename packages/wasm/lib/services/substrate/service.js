@@ -11,6 +11,7 @@ import {
   TransactionParams,
   validation,
 } from './configs';
+import {keyringService} from '../keyring/service';
 
 export const FEE_ESTIMATION_BUFFER = 1.1;
 
@@ -46,10 +47,13 @@ export class SubstrateService {
   async getFeeAmount(params: TransactionParams) {
     validation.getFeeAmount(params);
 
-    const {toAddress, fromAddress} = params;
+    const {toAddress, fromAddress, keyPair} = params;
     const amount = getPlainDockAmount(params.amount).toNumber();
 
-    const account = await walletService.getAccountKeypair(fromAddress);
+    const account = keyringService.decryptKeyPair({
+      jsonData: keyPair,
+      password: '',
+    });
 
     dockService.dock.setAccount(account);
 
@@ -68,9 +72,12 @@ export class SubstrateService {
   async sendTokens(params: TransactionParams) {
     validation.sendTokens(params);
 
-    let {toAddress, fromAddress} = params;
+    let {toAddress, fromAddress, keyPair} = params;
     let amount = getPlainDockAmount(params.amount).toNumber();
-    const account = await walletService.getAccountKeypair(fromAddress);
+    const account = keyringService.decryptKeyPair({
+      jsonData: keyPair,
+      password: '',
+    });
     const {dock} = dockService;
 
     dock.setAccount(account);
