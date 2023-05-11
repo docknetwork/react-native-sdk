@@ -79,7 +79,6 @@ class Wallet {
     this.context = context;
     this.networkManager = NetworkManager.getInstance();
     this.eventManager = new EventManager();
-    this.eventManager.registerEvents(WalletEvents);
     this.accounts = Accounts.getInstance({wallet: this});
   }
 
