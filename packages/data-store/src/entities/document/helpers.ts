@@ -72,12 +72,7 @@ export function toWalletDocument(entity: DocumentEntity): WalletDocument {
     return entity;
   }
 
-  return {
-    id: entity.id,
-    type: entity.type,
-    networkId: entity.networkId,
-    data: JSON.parse(entity.data),
-  };
+  return JSON.parse(entity.data);
 }
 
 /**
@@ -88,19 +83,20 @@ export async function toDocumentEntity({
   dataStore,
   document,
 }: ContextProps & {
-  document: WalletDocument;
+  document: any;
 }): Promise<DocumentEntity> {
+  const type = document.type || [];
   const _typeRel = await getOrCreateDocumentTypes({
     dataStore,
-    types: document.data.type,
+    types: document.type,
   });
 
   return {
     id: document.id,
-    type: document.data.type,
-    data: JSON.stringify(document.data),
+    type: type,
+    data: JSON.stringify(document),
     _typeRel,
-    correlation: document.data.correlation || [],
-    networkId: document.networkId,
+    correlation: document.correlation || [],
+    networkId: dataStore.networkId,
   } as DocumentEntity;
 }

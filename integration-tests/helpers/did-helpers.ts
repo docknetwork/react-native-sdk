@@ -1,7 +1,7 @@
 import {getAllDocuments, getWallet} from './wallet-helpers';
 
 const isDID = doc => doc.privateKeyMultibase && doc.controller;
-const isDIDResolution = doc => doc.type === 'DIDResolutionResponse';
+const isDIDResolution = doc => doc.type.includes('DIDResolutionResponse');
 
 export async function getDIDKeyPairs() {
   const documents: any[] = await getAllDocuments();
