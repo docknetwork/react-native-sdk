@@ -8,10 +8,14 @@ import {DataSource} from 'typeorm';
 export async function createDataStore(
   _options: DataStoreConfigs,
 ): Promise<DataStore> {
-  const options = {
+  const options: DataStoreConfigs = {
     ...DEFAULT_CONFIGS,
     ..._options,
   };
+
+  if (!options.defaultNetwork) {
+    options.defaultNetwork = options.networks[0].id;
+  }
 
   logger.debug(
     `Initializing data store with configs: ${JSON.stringify(options)}`,
