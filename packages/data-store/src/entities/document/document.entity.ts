@@ -30,9 +30,10 @@ export class DocumentEntity {
   _typeRel: Relation<DocumentTypeEntity[]>;
 
   // Add the ManyToMany self-referencing relationship to track document correlations
-  @ManyToMany(() => DocumentEntity, {cascade: true, nullable: true})
-  @JoinTable()
-  correlation: DocumentEntity[];
+  // @ManyToMany(() => DocumentEntity, {cascade: true, nullable: true})
+  // @JoinTable()
+  @Column('simple-array')
+  correlation: string[];
 
   // TODO: add correlations
 

@@ -191,9 +191,12 @@ export class Accounts {
     assert(!accountExists, Errors.accountAlreadyExists);
 
     if (json) {
-      const pair = await keyringService.addFromJson({jsonData: json, password});
+      const pair = await keyringService.decryptKeyPair({
+        jsonData: json,
+        password,
+      });
 
-      assert(pair && pair.type, 'invalid keypair');
+      assert(pair && pair.address, 'invalid keypair');
 
       type = pair.type;
     }
