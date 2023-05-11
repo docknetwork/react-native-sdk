@@ -37,6 +37,11 @@ describe('Wallet', () => {
     const [result] = await wallet.getDocumentsByType(mockDocument.type);
     expect(result.networkId).toEqual('testnet');
     expect(result.id).toEqual(mockDocument.id);
+
+    wallet.setNetworkId('mainnet');
+
+    const [result2] = await wallet.getDocumentsByType(mockDocument.type);
+    expect(result2).toBeUndefined();
   });
 
   it('expect to allow adding using the same document id in different networks', async () => {
