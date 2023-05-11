@@ -47,7 +47,6 @@ export class Accounts {
     this.wallet = wallet || Wallet.getInstance();
     this.walletService = walletService || _walletService;
     this.eventManager = new EventManager();
-    this.eventManager.registerEvents(AccountsEvents);
   }
 
   async load() {
