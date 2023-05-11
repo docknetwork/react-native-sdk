@@ -100,7 +100,6 @@ export class Transactions {
     this.accounts = accounts || Accounts.getInstance();
     this.wallet = this.accounts.wallet;
     this.eventManager = this.wallet.eventManager;
-    this.eventManager.registerEvents(TransactionEvents);
   }
 
   /**
