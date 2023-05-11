@@ -3,7 +3,6 @@ import BigNumber from 'bignumber.js';
 import BN from 'bn.js';
 import {DOCK_TOKEN_UNIT, getPlainDockAmount} from '../../core/format-utils';
 import {dockService} from '../dock/service';
-import {walletService} from '../wallet/service';
 import {signAndSend} from './api-utils';
 import {
   GetAccountBalanceParams,
@@ -47,7 +46,7 @@ export class SubstrateService {
   async getFeeAmount(params: TransactionParams) {
     validation.getFeeAmount(params);
 
-    const {toAddress, fromAddress, keyPair} = params;
+    const {toAddress, keyPair} = params;
     const amount = getPlainDockAmount(params.amount).toNumber();
 
     const account = keyringService.decryptKeyPair({
