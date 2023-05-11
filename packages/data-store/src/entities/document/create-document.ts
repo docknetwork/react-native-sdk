@@ -1,5 +1,5 @@
 import {ContextProps, WalletDocument} from '../../types';
-import assert from 'assert';
+import {v4 as uuid} from 'uuid';
 import {DocumentEntity} from './document.entity';
 import {findDocumentEntitiesById, getOrCreateDocumentTypes} from './helpers';
 import {getDocumentById} from './get-document-by-id';
@@ -15,16 +15,15 @@ export async function createDocument({
 }: ContextProps & {
   json: any;
 }): Promise<WalletDocument> {
-  assert(!!json.id, 'Document must have an id');
+  if (json.id) {
+    const existingDocument = await getDocumentById({
+      dataStore,
+      id: json.id,
+    });
 
-  // TODO: Check if document exists
-  const existingDocument = await getDocumentById({
-    dataStore,
-    id: json.id,
-  });
-
-  if (existingDocument) {
-    throw new Error(`Document with id ${json.id} already exists`);
+    if (existingDocument) {
+      throw new Error(`Document with id ${json.id} already exists`);
+    }
   }
 
   const _typeRel = await getOrCreateDocumentTypes({
@@ -32,19 +31,14 @@ export async function createDocument({
     types: json.type,
   });
 
-  const correlation = json.correlation?.length
-    ? await findDocumentEntitiesById({
-        dataStore,
-        entityIds: json.correlation,
-      })
-    : [];
+  const documentId = json.id || uuid();
 
   const entity: DocumentEntity = {
     networkId: dataStore.networkId,
-    id: json.id,
+    id: documentId,
     type: json.type,
     _typeRel,
-    correlation,
+    correlation: json.correlation || [],
     data: JSON.stringify(json),
   };
 

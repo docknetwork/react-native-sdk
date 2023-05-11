@@ -1,6 +1,6 @@
 import {ContextProps, WalletDocument} from '../../types';
 import {DocumentEntity} from './document.entity';
-import {createQueryBuilder} from 'typeorm';
+import {In} from 'typeorm';
 
 /**
  * Get related documents
@@ -16,14 +16,16 @@ export async function getDocumentCorrelations({
   const repository = dataStore.db.getRepository(DocumentEntity);
 
   const entity = await repository.findOne({
-    relations: {
-      correlation: true,
-    },
     where: {
       id: documentId,
       networkId: dataStore.networkId,
     },
   });
 
-  return entity.correlation;
+  return repository.find({
+    where: {
+      id: In(entity.correlation),
+      networkId: dataStore.networkId,
+    },
+  });
 }

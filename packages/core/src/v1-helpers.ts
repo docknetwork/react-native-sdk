@@ -50,6 +50,9 @@ export async function toV1Wallet(wallet: IWallet): Promise<IWallet> {
     remove(id: string): Promise<void> {
       return wallet.removeDocument(id);
     },
+    add(json: any): Promise<WalletDocument> {
+      return wallet.addDocument(json);
+    },
     resolveCorrelations(id: string): Promise<WalletDocument[]> {
       return wallet.getDocumentCorrelations(id);
     },
