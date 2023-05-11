@@ -24,6 +24,7 @@ export class KeyringService {
     KeyringService.prototype.getKeyringPair,
     KeyringService.prototype.initialize,
     KeyringService.prototype.signData,
+    KeyringService.prototype.decryptKeyPair,
   ];
 
   constructor() {
@@ -45,12 +46,23 @@ export class KeyringService {
     return this.keyring.addFromMnemonic(mnemonic, meta, type);
   }
 
+  decryptKeyPair({jsonData, password}: {keyPair: any, password: string}) {
+    validation.addFromJson({jsonData, password});
+
+    const pair = this.keyring.addFromJson(jsonData);
+
+    pair.unlock(password);
+
+    return pair;
+  }
+
   addFromJson({jsonData, password}: AddFromJsonParams) {
     validation.addFromJson({jsonData, password});
 
     const pair = this.keyring.addFromJson(jsonData);
 
     pair.unlock(password);
+
     return pair.toJson();
   }
 

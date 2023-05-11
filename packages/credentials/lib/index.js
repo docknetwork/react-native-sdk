@@ -115,7 +115,7 @@ export class Credentials {
     });
 
     return documents.map((document: WalletDocument) => ({
-      content: document.value,
+      content: document?.data?.value,
       id: document.id,
     }));
   }

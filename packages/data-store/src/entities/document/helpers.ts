@@ -95,19 +95,12 @@ export async function toDocumentEntity({
     types: document.data.type,
   });
 
-  const correlation = document.data.correlation?.length
-    ? await findDocumentEntitiesById({
-        dataStore,
-        entityIds: document.data.correlation,
-      })
-    : [];
-
   return {
     id: document.id,
     type: document.data.type,
     data: JSON.stringify(document.data),
     _typeRel,
-    correlation,
+    correlation: document.data.correlation || [],
     networkId: document.networkId,
   } as DocumentEntity;
 }
