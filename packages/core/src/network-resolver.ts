@@ -49,6 +49,8 @@ async function credentialResolver({
     return 'mainnet';
   }
 
+  // TODO: create fallback for DID resolution
+
   return null;
 }
 
@@ -56,6 +58,7 @@ async function didResolver({
   document,
   dataStore,
 }: DocumentResolverProps): Promise<ResolverResult> {
+  // TODO: Define DID resolver
   return null;
 }
 
@@ -63,6 +66,7 @@ async function accountResolver({
   document,
   dataStore,
 }: DocumentResolverProps): Promise<ResolverResult> {
+  // TODO: Define account resolver
   return null;
 }
 
