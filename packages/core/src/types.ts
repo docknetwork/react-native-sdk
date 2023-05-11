@@ -34,6 +34,7 @@ export type IWallet = {
   upsertDocument: (json: any) => Promise<WalletDocument>;
   updateDocument: (json: any) => Promise<WalletDocument>;
   getDocumentCorrelations: (documentId: string) => Promise<WalletDocument[]>;
+  getAccountKeyPair: (accountId: string) => Promise<any>;
   /**
    * Remove document by id
    * @param id

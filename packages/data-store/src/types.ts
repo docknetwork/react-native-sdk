@@ -44,9 +44,9 @@ export type DataStoreConfigs = {
   documentNetworkResolver?: DocumentNetworkResolver;
 };
 
+export type AnyJSON = any;
+
 export type WalletDocument = {
   id: string;
-  networkId: string;
-  type: string[];
-  data: any;
-};
+  type: string[] | string;
+} & AnyJSON;
