@@ -1,6 +1,7 @@
 import {ContextProps, WalletDocument} from '../../types';
 import {DocumentEntity} from './document.entity';
 import {In} from 'typeorm';
+import {toWalletDocument} from './helpers';
 
 /**
  * Get related documents
@@ -22,10 +23,12 @@ export async function getDocumentCorrelations({
     },
   });
 
-  return repository.find({
+  const data = await repository.find({
     where: {
       id: In(entity.correlation),
       networkId: dataStore.networkId,
     },
   });
+
+  return data.map(toWalletDocument);
 }
