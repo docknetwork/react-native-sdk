@@ -51,7 +51,7 @@ describe('Wallet Snapshot V1', () => {
     const credentials = await getCredentials();
     expect(credentials.length).toBe(1);
 
-    const credential = credentials[0].content;
+    const credential = credentials[0];
     expect(credential.type).toEqual([
       'VerifiableCredential',
       'BasicCredential',
