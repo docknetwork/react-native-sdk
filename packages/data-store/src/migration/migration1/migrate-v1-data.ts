@@ -1,38 +1,18 @@
 import {getV1LocalStorage} from './v1-data-store';
 import {createDocument} from '../../entities/document';
+import {documentHasType} from '../../helpers';
 
 async function migrateDocuments({v1Storage, dataStore}) {
   const walletJSON = v1Storage.getItem('wallet');
   const wallet = JSON.parse(walletJSON);
-  const documents = Object.keys(wallet).map(key => wallet[key]);
-  const isImported = {};
-
-  async function checkAndImport(documentOrId) {
-    const document =
-      typeof documentOrId === 'string'
-        ? documents.find(doc => doc.id === documentOrId)
-        : documentOrId;
-
-    if (isImported[document.id]) {
-      return;
-    }
-
-    if (document.correlation && Array.isArray(document.correlation)) {
-      for (const correlation of document.correlation) {
-        await checkAndImport(correlation);
-      }
-    }
-
-    await createDocument({
-      dataStore,
-      json: document,
-    });
-
-    isImported[document.id] = true;
-  }
 
   for (const key in wallet) {
-    const document = wallet[key];
+    let document = wallet[key];
+
+    if (documentHasType(document, 'VerifiableCredential') && document.value) {
+      document = document.value;
+    }
+
     await createDocument({
       dataStore,
       json: document,

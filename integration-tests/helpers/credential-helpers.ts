@@ -8,7 +8,7 @@ export async function getCredentials() {
 
 export async function getCredentialById(id) {
   const items = await getCredentials();
-  return items.find(item => item.content.id === id);
+  return items.find(item => item.id === id);
 }
 
 export async function importCredentialJSON(json) {

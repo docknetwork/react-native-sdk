@@ -1,5 +1,4 @@
 import {Wallet} from '@docknetwork/wallet-sdk-wasm/lib/modules/wallet';
-import type {WalletDocument} from '@docknetwork/wallet-sdk-wasm/lib/types';
 import {assert} from '@docknetwork/wallet-sdk-wasm/lib/core/validation';
 import axios from 'axios';
 import {samplePresentationDefinition} from './samples';
@@ -35,15 +34,7 @@ export class Credentials {
     assert(!!credentialContent, 'credentialContent is required');
     this.validateCredential(credentialContent);
 
-    const doc = await this.wallet.add({
-      value: credentialContent,
-      type: 'VerifiableCredential',
-    });
-
-    return {
-      id: doc.id,
-      content: doc.value,
-    };
+    return this.wallet.add(credentialContent);
   }
 
   /**
@@ -114,10 +105,7 @@ export class Credentials {
       type: 'VerifiableCredential',
     });
 
-    return documents.map((document: WalletDocument) => ({
-      content: document?.value,
-      id: document.id,
-    }));
+    return documents;
   }
 
   async getSamplePresentationDefinition() {
