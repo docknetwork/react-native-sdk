@@ -15,41 +15,47 @@ describe('Custom networks', () => {
     },
   ];
 
-  it('should create a wallet with custom networks', async () => {
+  const mockDocuments = {
+    mainnet: {
+      value: 'mainnet doc',
+      type: 'JWT-VC',
+    },
+    testnet: {
+      value: 'testnet doc',
+      type: 'JWT-VC',
+    },
+  };
+
+  beforeEach(async () => {
     wallet = await createWallet({
       databasePath: ':memory:',
       networks,
     });
+    await wallet.addDocument(mockDocuments.mainnet);
   });
 
-  it('should add documents to polygon network', async () => {
-    await wallet.addDocument({
-      value: '<some-jwt-data>',
-      type: 'JWT-VC',
-    });
-  });
+  it('should have documents only on mainnet', async () => {
+    const [doc] = await wallet.getAllDocuments();
+    expect(doc.value).toEqual(mockDocuments.mainnet.value);
 
-  it('should switch to mumbai network and have an empty wallet', async () => {
     wallet.setNetworkId('mumbai');
 
-    let documents = await wallet.getAllDocuments();
+    let mumbaiDocs = await wallet.getAllDocuments();
 
-    expect(documents).toHaveLength(0);
-
-    await wallet.addDocument({
-      value: '<some-jwt-data>',
-      type: 'JWT-VC',
-    });
-
-    documents = await wallet.getAllDocuments();
-
-    expect(documents).toHaveLength(1);
+    expect(mumbaiDocs).toHaveLength(0);
   });
 
-  it('should switch back to polygon network and have a document', async () => {
-    wallet.setNetworkId('polygon');
-    const documents = await wallet.getAllDocuments();
+  it('should add document to mumbai without affecting polygon', async () => {
+    wallet.setNetworkId('mumbai');
 
-    expect(documents).toHaveLength(1);
+    await wallet.addDocument(mockDocuments.testnet);
+    let [doc] = await wallet.getAllDocuments();
+    expect(doc.value).toEqual(mockDocuments.testnet.value);
+
+    wallet.setNetworkId('polygon');
+    const allDocs = await wallet.getAllDocuments();
+    [doc] = allDocs;
+    expect(allDocs).toHaveLength(1);
+    expect(doc.value).toEqual(mockDocuments.mainnet.value);
   });
 });
