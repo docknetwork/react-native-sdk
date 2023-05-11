@@ -43,7 +43,7 @@ describe('Accounts', () => {
     let account = await getWallet().getDocumentById(
       Account2MnemonicDetails.address,
     );
-    expect(account).toBeUndefined();
+    expect(account).toBeNull();
 
     await importAccountFromMnemonic();
     account = await getWallet().getDocumentById(
@@ -55,7 +55,7 @@ describe('Accounts', () => {
 
   it('expect to import account from JSON', async () => {
     let account = await getWallet().getDocumentById(AccountJSON.address);
-    expect(account).toBeUndefined();
+    expect(account).toBeNull();
 
     await importAccountJSON();
     account = await getWallet().getDocumentById(AccountJSON.address);

@@ -7,6 +7,8 @@ import {DataStoreSnapshotV1} from '../data/data-store';
 import {WalletBackupJSON, WalletBackupPasssword} from '../data/wallet-backup';
 import {IWallet} from '@docknetwork/wallet-sdk-core/src/types';
 import {createWallet} from '@docknetwork/wallet-sdk-core/src/wallet';
+import {Wallet} from '@docknetwork/wallet-sdk-wasm/lib/modules/wallet';
+import {setV1LocalStorage} from '@docknetwork/wallet-sdk-data-store/src/migration/migration1/v1-data-store';
 
 let wallet: IWallet;
 
@@ -18,6 +20,8 @@ export async function createNewWallet() {
   wallet = await createWallet({
     databasePath: ':memory:',
   });
+
+  Wallet.getInstance = () => wallet;
 
   await wallet.ensureNetwork();
 
@@ -34,6 +38,8 @@ export async function setNetwork(networkId) {
  */
 export async function createWalletFromSnapshot() {
   global.localStorage.setItem('wallet', JSON.stringify(DataStoreSnapshotV1));
+
+  setV1LocalStorage(global.localStorage as any);
 
   return createNewWallet();
 }

@@ -26,7 +26,7 @@ export async function migration1({
 
   logger.debug('v1 data Migration required');
 
-  await migrateV1Data();
+  await migrateV1Data({dataStore});
 
   return {
     migrated: true,
