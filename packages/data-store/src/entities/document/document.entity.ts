@@ -35,8 +35,6 @@ export class DocumentEntity {
   @Column('simple-array')
   correlation: string[];
 
-  // TODO: add correlations
-
   @Column('blob')
   data: string;
 }
