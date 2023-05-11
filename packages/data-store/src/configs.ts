@@ -2,7 +2,6 @@ import {DataStoreConfigs} from './types';
 import {genericDocumentNetworkResolver} from './document-network-resolver';
 
 export const DEFAULT_CONFIGS: DataStoreConfigs = {
-  defaultNetwork: 'mainnet',
   nonIsolatedNetworks: false,
   databasePath: 'dock-wallet-sdk.db',
   documentNetworkResolver: genericDocumentNetworkResolver,
