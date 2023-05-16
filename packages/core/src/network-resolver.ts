@@ -36,17 +36,18 @@ export const dockDocumentNetworkResolver: DocumentNetworkResolver = async ({
 
 async function credentialResolver({
   document,
+  dataStore,
 }: DocumentResolverProps): Promise<ResolverResult> {
   if (!document.type.includes('VerifiableCredential')) {
     return null;
   }
 
-  if (document.id.indexOf('creds-testnet.dock.io') > -1) {
-    return 'testnet';
-  }
-
-  if (document.id.indexOf('creds.dock.io') > -1) {
-    return 'mainnet';
+  for (const network of dataStore.networks) {
+    for (const hostname of network.credentialHostnames) {
+      if (document.id.indexOf(hostname) > -1) {
+        return network.id;
+      }
+    }
   }
 
   // TODO: create fallback for DID resolution

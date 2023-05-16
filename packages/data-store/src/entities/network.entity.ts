@@ -1,4 +1,5 @@
 import {Entity, Column, PrimaryColumn} from 'typeorm';
+import {ContextProps} from '../types';
 
 @Entity()
 export class NetworkEntity {
