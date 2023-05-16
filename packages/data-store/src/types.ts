@@ -17,14 +17,19 @@ export type DocumentResolverResult = {
 export type Network = {
   name: string;
   id: string;
+  credentialHostnames: string[];
   configs?: any;
 };
 
 export type DataStore = {
   db: DataSource;
   networkId: string;
+  network: Network;
+
+  networks: Network[];
   version?: string;
   resolveDocumentNetwork: DocumentNetworkResolver;
+  setNetwork: (networkId: string) => Promise<void>;
 };
 
 export type ContextProps = {
@@ -32,10 +37,14 @@ export type ContextProps = {
 };
 
 export type DataStoreConfigs = {
+  driver?: any;
   networks?: Network[];
 
+  // Typeorm supported multiple RDBMS types https://typeorm.io/data-source-options#common-data-source-options
+  // We only tested sqlite and react-native sqlite so far
+  dbType: 'sqlite' | 'react-native';
+
   defaultNetwork?: string;
-  nonIsolatedNetworks?: boolean;
 
   dropSchema?: boolean;
 
