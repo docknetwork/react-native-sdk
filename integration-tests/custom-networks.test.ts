@@ -1,15 +1,18 @@
 import {createWallet, IWallet} from '@docknetwork/wallet-sdk-core/src/wallet';
+import {Network} from '@docknetwork/wallet-sdk-data-store/src/types';
 
 describe('Custom networks', () => {
   let wallet: IWallet;
-  const networks = [
+  const networks: Network[] = [
     {
       name: 'polygon',
+      credentialHostnames: ['creds.polygon.com'],
       id: 'polygon',
       configs: '{}',
     },
     {
       name: 'Polygon mumbai',
+      credentialHostnames: ['creds.mumbai.polygon.com'],
       id: 'mumbai',
       configs: '{}',
     },
