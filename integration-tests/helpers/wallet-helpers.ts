@@ -19,6 +19,7 @@ export function getWallet(): IWallet {
 export async function createNewWallet() {
   wallet = await createWallet({
     databasePath: ':memory:',
+    dbType: 'sqlite',
   });
 
   Wallet.getInstance = () => wallet;
