@@ -4,6 +4,21 @@ import {migrate} from './migration';
 import {DEFAULT_CONFIGS} from './configs';
 import {logger} from './logger';
 import {DataSource} from 'typeorm';
+import assert from 'assert';
+
+export async function updateNetwork({
+  dataStore,
+  networkId,
+}: {
+  dataStore: DataStore;
+  networkId: string;
+}): Promise<void> {
+  const network = dataStore.networks.find(item => item.id === networkId);
+
+  assert(!!network, `Invalid network id ${networkId}`);
+  dataStore.network = network;
+  dataStore.networkId = networkId;
+}
 
 export async function createDataStore(
   _options: DataStoreConfigs,
@@ -25,8 +40,13 @@ export async function createDataStore(
   const dataStore: DataStore = {
     db: dataSource,
     networkId: options.defaultNetwork,
+    network: options.networks.find(item => item.id === options.defaultNetwork),
     version: null,
+    networks: options.networks,
     resolveDocumentNetwork: options.documentNetworkResolver,
+    setNetwork: (networkId: string) => {
+      return updateNetwork({dataStore, networkId});
+    },
   };
 
   await migrate({dataStore});
