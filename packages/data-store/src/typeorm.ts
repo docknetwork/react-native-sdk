@@ -9,12 +9,13 @@ import {WalletEntity} from './entities/wallet.entity';
 
 export async function initializeTypeORM(options: DataStoreConfigs) {
   const dataSource = new DataSource({
-    type: 'sqlite',
+    type: options.dbType as any,
     database: options.databasePath,
     entities: [WalletEntity, NetworkEntity, DocumentEntity, DocumentTypeEntity],
     // TODO: will remove this once we have all entities in place
     synchronize: true,
     dropSchema: options.dropSchema,
+    driver: options.driver,
   });
 
   await dataSource
