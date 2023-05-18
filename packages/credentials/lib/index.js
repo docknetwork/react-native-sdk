@@ -77,9 +77,10 @@ export class Credentials {
    */
   isDockCertsURL(url) {
     return (
-      url.startsWith('https://creds.dock.io') ||
-      url.startsWith('https://***REMOVED***') ||
-      url.startsWith('https://creds-testnet.dock.io')
+      url.indexOf('/proof/') === -1 &&
+      (url.startsWith('https://creds.dock.io/') ||
+        url.startsWith('https://***REMOVED***/') ||
+        url.startsWith('https://creds-testnet.dock.io/'))
     );
   }
   /**
