@@ -107,7 +107,7 @@ describe('Credentials module', () => {
       axios.get.mockImplementation(() => {
         throw {response: {status: 400}};
       });
-      const url = 'https://creds.dock.io';
+      const url = 'https://creds.dock.io/credential_id';
       const result = await credentials.isDockCertsURL(url);
       expect(result).toBeTruthy();
     });
