@@ -107,14 +107,23 @@ describe('Credentials module', () => {
       axios.get.mockImplementation(() => {
         throw {response: {status: 400}};
       });
-      const url = 'https://creds.dock.io';
+      const url = 'https://creds.dock.io/credential_id';
       const result = await credentials.isDockCertsURL(url);
       expect(result).toBeTruthy();
     });
+
     it('should check if url is not a valid certs url', async () => {
       jest.spyOn(axios, 'get');
       axios.get.mockImplementation(() => ({}));
       const url = 'https://no-password-required.com';
+      const result = await credentials.isDockCertsURL(url);
+      expect(result).toBeFalsy();
+    });
+
+    it('isDockCertsURL should return false with /proof/ in url', async () => {
+      jest.spyOn(axios, 'get');
+      axios.get.mockImplementation(() => ({}));
+      const url = 'https://creds.dock.io/proof/xyz';
       const result = await credentials.isDockCertsURL(url);
       expect(result).toBeFalsy();
     });
