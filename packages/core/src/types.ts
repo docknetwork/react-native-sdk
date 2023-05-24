@@ -1,6 +1,7 @@
 import {
   DataStore,
   DataStoreConfigs,
+  DocumentResolverResult,
   WalletDocument,
 } from '@docknetwork/wallet-sdk-data-store/src/types';
 import {Accounts} from '@docknetwork/wallet-sdk-wasm/lib/modules/accounts';
@@ -60,6 +61,7 @@ export type IWallet = {
 
   setNetwork: (networkId: string) => Promise<void>;
   getNetworkId: () => string;
+  resolveDocumentNetwork: (document: any) => Promise<DocumentResolverResult>;
   dataStore: DataStore;
 } & IV1Wallet;
 

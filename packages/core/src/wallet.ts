@@ -48,6 +48,12 @@ export async function createWallet(
     getStatus() {
       return status;
     },
+    resolveDocumentNetwork: async (document: any) => {
+      return dataStore.resolveDocumentNetwork({
+        document,
+        dataStore,
+      });
+    },
     setStatus(newStatus: string) {
       status = newStatus;
     },
