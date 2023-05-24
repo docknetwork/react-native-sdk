@@ -170,16 +170,16 @@ export function _useWalletController() {
 
     setStatus(wallet.status);
 
-    // wallet.eventManager.on(WalletEvents.statusUpdated, setStatus);
-    // wallet.eventManager.on(WalletEvents.ready, refetch);
-    // wallet.eventManager.on(WalletEvents.documentAdded, refetch);
-    // wallet.eventManager.on(WalletEvents.documentRemoved, refetch);
-    // wallet.eventManager.on(WalletEvents.documentUpdated, refetch);
-    // wallet.eventManager.on(WalletEvents.walletImported, refetch);
-    // wallet.eventManager.on(WalletEvents.migrated, refetch);
-    // wallet.eventManager.on(WalletEvents.walletDeleted, () => {
-    //   setDocuments([]);
-    // });
+    wallet.eventManager.on(WalletEvents.statusUpdated, setStatus);
+    wallet.eventManager.on(WalletEvents.ready, refetch);
+    wallet.eventManager.on(WalletEvents.documentAdded, refetch);
+    wallet.eventManager.on(WalletEvents.documentRemoved, refetch);
+    wallet.eventManager.on(WalletEvents.documentUpdated, refetch);
+    wallet.eventManager.on(WalletEvents.walletImported, refetch);
+    wallet.eventManager.on(WalletEvents.migrated, refetch);
+    wallet.eventManager.on(WalletEvents.walletDeleted, () => {
+      setDocuments([]);
+    });
   }, [status, wallet, refetch]);
 
   const createWallet = useCallback(async () => {
