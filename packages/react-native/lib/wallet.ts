@@ -1,4 +1,5 @@
 import {createWallet, IWallet} from '@docknetwork/wallet-sdk-core/src/wallet';
+import {dockDocumentNetworkResolver} from '@docknetwork/wallet-sdk-core/src/network-resolver';
 
 let wallet: IWallet;
 
@@ -21,6 +22,7 @@ export async function initializeWallet() {
   wallet = await createWallet({
     databasePath: 'dock-wallet',
     dbType: 'react-native',
+    documentNetworkResolver: dockDocumentNetworkResolver,
   });
 
   return wallet;
