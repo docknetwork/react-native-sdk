@@ -5,6 +5,7 @@ import {DEFAULT_CONFIGS} from './configs';
 import {logger} from './logger';
 import {DataSource} from 'typeorm';
 import assert from 'assert';
+import {getWallet, updateWallet} from './entities/wallet.entity';
 
 export async function updateNetwork({
   dataStore,
@@ -16,8 +17,11 @@ export async function updateNetwork({
   const network = dataStore.networks.find(item => item.id === networkId);
 
   assert(!!network, `Invalid network id ${networkId}`);
+
   dataStore.network = network;
   dataStore.networkId = networkId;
+
+  await updateWallet({dataStore});
 }
 
 export async function createDataStore(
@@ -50,6 +54,11 @@ export async function createDataStore(
   };
 
   await migrate({dataStore});
+
+  const wallet = await getWallet({dataStore});
+  dataStore.networkId = wallet.networkId;
+
+  console.log('current saved wallet on db', wallet);
 
   return dataStore;
 }

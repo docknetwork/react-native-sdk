@@ -30,7 +30,7 @@ export async function createNewWallet() {
 }
 
 export async function setNetwork(networkId) {
-  return Promise.resolve(wallet.setNetworkId(networkId));
+  return Promise.resolve(wallet.setNetwork(networkId));
 }
 
 /**

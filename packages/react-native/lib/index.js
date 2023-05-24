@@ -27,10 +27,14 @@ import {
   useGetCredentialStatus,
   CREDENTIAL_STATUS,
 } from './credentials/credentialHooks';
+import {getOrCreateWallet} from './wallet';
+import {setV1LocalStorage} from '@docknetwork/wallet-sdk-data-store/src/migration/migration1/v1-data-store';
 export type WalletSDKContextProps = {
   wallet: Wallet,
   status: string,
 };
+
+setV1LocalStorage(AsyncStorage);
 
 export const WalletSDKContext = React.createContext({
   wallet: null,
@@ -92,42 +96,46 @@ export function useAccount(address) {
   };
 }
 
-function getStorageDocuments() {
-  return AsyncStorage.getItem('dock-wallet')
-    .then(data => {
-      if (!data) {
-        return [];
-      }
-
-      data = JSON.parse(data);
-
-      return Object.keys(data).map(key => data[key]);
-    })
-    .catch(() => []);
-}
-
 export function useWallet({syncDocs = true} = {}) {
   return useContext(WalletSDKContext);
 }
 
-export function WalletSDKProvider({onError, customUri, children, onReady}) {
+export function _useWalletController() {
   const [wallet, setWallet] = useState();
   const [status, setStatus] = useState('loading');
+  const [testMode, setTestMode] = useState(false);
   const [documents, setDocuments] = useState([]);
-  const webViewRef = useRef();
-  const sandboxWebViewRef = useRef();
-  const baseUrl =
-    Platform.OS === 'ios' ? 'app-html' : 'file:///android_asset/app-html';
+  const [firstFetch, setFirstFetch] = useState();
+  const networkId = useMemo(() => {
+    return wallet?.getNetworkId();
+  }, [wallet]);
+
+  console.log('Current networkId', networkId);
+  console.log('wallet documents', documents);
 
   useEffect(() => {
-    if (documents.length > 0) {
+    setTestMode(networkId === 'testnet');
+  }, [networkId]);
+
+  const toggleTestMode = async () => {
+    setTestMode(!testMode);
+    await wallet.setNetwork(testMode ? 'mainnet' : 'testnet');
+    wallet.getAllDocuments().then(setDocuments);
+  };
+
+  useEffect(() => {
+    if (firstFetch) {
       return;
     }
 
-    getStorageDocuments().then(docs => {
-      setDocuments(currentDocs => (currentDocs.length ? currentDocs : docs));
-    });
-  }, [documents]);
+    if (documents.length > 0 || !wallet) {
+      return;
+    }
+
+    setFirstFetch(true);
+
+    wallet.getAllDocuments().then(setDocuments);
+  }, [documents, wallet, firstFetch]);
 
   const refetch = useCallback(
     async ({fetchBalances} = {}) => {
@@ -162,34 +170,48 @@ export function WalletSDKProvider({onError, customUri, children, onReady}) {
 
     setStatus(wallet.status);
 
-    wallet.eventManager.on(WalletEvents.statusUpdated, setStatus);
-    wallet.eventManager.on(WalletEvents.ready, refetch);
-    wallet.eventManager.on(WalletEvents.documentAdded, refetch);
-    wallet.eventManager.on(WalletEvents.documentRemoved, refetch);
-    wallet.eventManager.on(WalletEvents.documentUpdated, refetch);
-    wallet.eventManager.on(WalletEvents.walletImported, refetch);
-    wallet.eventManager.on(WalletEvents.migrated, refetch);
-    wallet.eventManager.on(WalletEvents.walletDeleted, () => {
-      setDocuments([]);
-    });
-
-    if (wallet && wallet.status === 'ready') {
-      refetch();
-    }
+    // wallet.eventManager.on(WalletEvents.statusUpdated, setStatus);
+    // wallet.eventManager.on(WalletEvents.ready, refetch);
+    // wallet.eventManager.on(WalletEvents.documentAdded, refetch);
+    // wallet.eventManager.on(WalletEvents.documentRemoved, refetch);
+    // wallet.eventManager.on(WalletEvents.documentUpdated, refetch);
+    // wallet.eventManager.on(WalletEvents.walletImported, refetch);
+    // wallet.eventManager.on(WalletEvents.migrated, refetch);
+    // wallet.eventManager.on(WalletEvents.walletDeleted, () => {
+    //   setDocuments([]);
+    // });
   }, [status, wallet, refetch]);
 
-  const handleReady = useCallback(async () => {
-    const newWallet = Wallet.getInstance();
+  const createWallet = useCallback(async () => {
+    const newWallet = await getOrCreateWallet();
     setWallet(newWallet);
-    newWallet.load();
+  }, [setWallet]);
 
-    newWallet.eventManager.on(WalletEvents.ready, () => {
-      setStatus('ready');
-      if (onReady) {
-        onReady();
-      }
-    });
-  }, [setWallet, onReady]);
+  return {
+    wallet,
+    createWallet,
+    toggleTestMode,
+    testMode,
+    documents,
+    status,
+    refetch: () => refetch({fetchBalances: true}),
+  };
+}
+
+export function WalletSDKProvider({onError, customUri, children, onReady}) {
+  const controller = _useWalletController();
+  const webViewRef = useRef();
+
+  const sandboxWebViewRef = useRef();
+  const baseUrl =
+    Platform.OS === 'ios' ? 'app-html' : 'file:///android_asset/app-html';
+
+  const handleReady = useCallback(async () => {
+    await controller.createWallet();
+    if (onReady) {
+      onReady();
+    }
+  }, [onReady, controller.createWallet]);
 
   const eventHandler: WebviewEventHandler = useMemo(
     () =>
@@ -219,7 +241,7 @@ export function WalletSDKProvider({onError, customUri, children, onReady}) {
             }
       }
       onError={err => {
-        setStatus('error');
+        console.error(err);
         if (onError) {
           onError(err);
         }
@@ -242,7 +264,7 @@ export function WalletSDKProvider({onError, customUri, children, onReady}) {
         baseUrl: baseUrl,
       }}
       onError={err => {
-        setStatus('error');
+        console.error(err);
         if (onError) {
           onError(err);
         }
@@ -255,13 +277,7 @@ export function WalletSDKProvider({onError, customUri, children, onReady}) {
 
   return (
     <View flex={1}>
-      <WalletSDKContext.Provider
-        value={{
-          wallet,
-          documents,
-          status,
-          refetch: () => refetch({fetchBalances: true}),
-        }}>
+      <WalletSDKContext.Provider value={controller}>
         {children}
       </WalletSDKContext.Provider>
       <View style={{height: 0}}>

@@ -24,7 +24,7 @@ const validateCredential = credential => {
   );
 };
 export const sortByIssuanceDate = (a, b) =>
-  getCredentialTimestamp(b.content) - getCredentialTimestamp(a.content);
+  getCredentialTimestamp(b) - getCredentialTimestamp(a);
 
 export function getCredentialTimestamp(credential) {
   assert(!!credential, 'credential is required');
@@ -77,19 +77,13 @@ export function useCredentialUtils() {
             doc.type?.includes('VerifiableCredential')
           );
         })
-        .map(document => ({
-          content: document.value,
-          id: document.id,
-        }))
         .sort(sortByIssuanceDate);
     }
     return [];
   }, [documents]);
 
   const doesCredentialExist = useCallback((allCredentials, credentialToAdd) => {
-    return !!allCredentials.find(
-      item => item.content.id === credentialToAdd.id,
-    );
+    return !!allCredentials.find(item => item.id === credentialToAdd.id);
   }, []);
 
   const saveCredential = useCallback(

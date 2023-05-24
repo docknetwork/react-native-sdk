@@ -15,8 +15,16 @@ import {
 } from '@docknetwork/wallet-sdk-data-store/src/entities/document';
 import {CreateWalletProps, IWallet} from './types';
 import {toV1Wallet} from './v1-helpers';
+import {initWalletWasm} from './wallet-wasm';
+import {EventEmitter} from 'events';
+import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/lib/modules/wallet';
 
 export type {IWallet};
+
+function once(emitter: EventEmitter, eventName: string) {
+  return new Promise(resolve => emitter.once(eventName, resolve));
+}
+
 /**
  * Create wallet
  *
@@ -27,11 +35,25 @@ export async function createWallet(
   createWalletProps: CreateWalletProps,
 ): Promise<IWallet> {
   const dataStore = await createDataStore(createWalletProps);
+  let status;
+
+  const eventEmitter = new EventEmitter();
+
+  eventEmitter.once = (eventName: string) =>
+    once(eventEmitter, eventName) as any;
 
   const wallet = {
+    eventManager: eventEmitter,
     dataStore,
-    setNetworkId: (networkId: string) => {
-      dataStore.networkId = networkId;
+    getStatus() {
+      return status;
+    },
+    setStatus(newStatus: string) {
+      status = newStatus;
+    },
+    setNetwork: async (networkId: string) => {
+      await dataStore.setNetwork(networkId);
+      eventEmitter.emit(WalletEvents.networkUpdated, networkId);
     },
     getNetworkId: () => {
       return dataStore.networkId;
@@ -91,5 +113,9 @@ export async function createWallet(
     exportUniversalWalletJSON: (password: string) => {},
   } as IWallet;
 
-  return toV1Wallet(wallet);
+  const v1Wallet = await toV1Wallet(wallet);
+
+  await initWalletWasm(v1Wallet);
+
+  return v1Wallet;
 }
