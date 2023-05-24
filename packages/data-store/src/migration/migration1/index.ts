@@ -49,12 +49,14 @@ export async function isRunningOnV1DataStore({
   const v1LocalStorage = getV1LocalStorage();
 
   if (!v1LocalStorage) {
+    logger.debug('v1 local storage not found');
     return false;
   }
 
   const documents = await getWalletDocuments();
 
   if (documents.length === 0) {
+    logger.debug('no documents found on v1 data store');
     return false;
   }
 
