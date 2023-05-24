@@ -4,10 +4,14 @@ import {
   WalletDocument,
 } from '@docknetwork/wallet-sdk-data-store/src/types';
 import {Accounts} from '@docknetwork/wallet-sdk-wasm/lib/modules/accounts';
+import {EventEmitter} from 'events';
 
 export interface IV1Wallet {
   accounts: Accounts;
 
+  getStatus: () => string;
+  setStatus: (status: string) => void;
+  eventManager: EventEmitter;
   resolveCorrelations: (id: string) => Promise<WalletDocument[]>;
   query: ({
     id,
@@ -54,7 +58,7 @@ export type IWallet = {
    */
   exportUniversalWalletJSON: (password: string) => any;
 
-  setNetworkId: (networkId: string) => void;
+  setNetwork: (networkId: string) => Promise<void>;
   getNetworkId: () => string;
   dataStore: DataStore;
 } & IV1Wallet;

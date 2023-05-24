@@ -13,6 +13,7 @@ import {NetworkManager} from './network-manager';
 import {migrate} from './data-migration';
 import {Logger} from '../core/logger';
 import legacyWalletSchema from '../test/fixtures/legacy-wallet-schema.json';
+import {getWallet} from '@docknetwork/wallet-sdk-react-native/lib/wallet';
 
 /** Wallet events */
 export const WalletEvents = {
@@ -27,6 +28,7 @@ export const WalletEvents = {
   walletImported: 'wallet-imported',
   networkUpdated: 'network-updated',
   networkConnected: 'network-connected',
+  networkError: 'network-error',
 };
 
 /**
@@ -392,7 +394,7 @@ class Wallet {
 
   async importWallet({json, password}) {
     await this.deleteWallet();
-    await walletService.importWallet({json, password});
+    await getWallet().importWallet({json, password});
     this.migrated = await migrate({wallet: this});
     await this.eventManager.emit(WalletEvents.walletImported);
   }
@@ -403,7 +405,7 @@ class Wallet {
     });
   }
   async resolveCorrelations(documentId) {
-    return walletService.resolveCorrelations(documentId);
+    return getWallet().resolveCorrelations(documentId);
   }
   async exportDocuments({documents, password}) {
     return walletService.exportDocuments({
@@ -417,11 +419,13 @@ class Wallet {
    * @returns Wallet
    */
   static getInstance(): Wallet {
-    if (!Wallet.instance) {
-      Wallet.instance = new Wallet();
-    }
+    throw new Error('Wallet module not be used');
 
-    return Wallet.instance;
+    // if (!Wallet.instance) {
+    //   Wallet.instance = new Wallet();
+    // }
+    //
+    // return Wallet.instance;
   }
 }
 

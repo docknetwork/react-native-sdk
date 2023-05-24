@@ -30,7 +30,7 @@ describe('Wallet', () => {
       type: 'VerifiableCredential',
     };
 
-    wallet.setNetworkId('testnet');
+    wallet.setNetwork('testnet');
 
     await wallet.addDocument(mockDocument);
 
@@ -38,7 +38,7 @@ describe('Wallet', () => {
     expect(result.networkId).toEqual('testnet');
     expect(result.id).toEqual(mockDocument.id);
 
-    wallet.setNetworkId('mainnet');
+    wallet.setNetwork('mainnet');
 
     const [result2] = await wallet.getDocumentsByType(mockDocument.type);
     expect(result2).toBeUndefined();
@@ -50,7 +50,7 @@ describe('Wallet', () => {
       type: 'VerifiableCredential',
     };
 
-    wallet.setNetworkId('mainnet');
+    wallet.setNetwork('mainnet');
 
     await wallet.addDocument(mockDocument);
 
@@ -58,7 +58,7 @@ describe('Wallet', () => {
     expect(result.networkId).toEqual('mainnet');
     expect(result.id).toEqual(mockDocument.id);
 
-    wallet.setNetworkId('testnet');
+    wallet.setNetwork('testnet');
 
     await wallet.addDocument(mockDocument);
   });
@@ -69,7 +69,7 @@ describe('Wallet', () => {
       type: 'VerifiableCredential',
     };
 
-    wallet.setNetworkId('mainnet');
+    wallet.setNetwork('mainnet');
 
     await wallet.addDocument(mockDocument);
 
@@ -77,7 +77,7 @@ describe('Wallet', () => {
     expect(result.networkId).toEqual('mainnet');
     expect(result.id).toEqual(mockDocument.id);
 
-    wallet.setNetworkId('testnet');
+    wallet.setNetwork('testnet');
 
     [result] = await wallet.getDocumentsByType(mockDocument.type);
     expect(result).toBeUndefined();
