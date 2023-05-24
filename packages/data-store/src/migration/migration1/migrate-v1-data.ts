@@ -3,7 +3,7 @@ import {createDocument} from '../../entities/document';
 import {documentHasType} from '../../helpers';
 
 async function migrateDocuments({v1Storage, dataStore}) {
-  const walletJSON = v1Storage.getItem('wallet');
+  const walletJSON = await v1Storage.getItem('wallet');
   const wallet = JSON.parse(walletJSON);
 
   for (const key in wallet) {
@@ -13,10 +13,14 @@ async function migrateDocuments({v1Storage, dataStore}) {
       document = document.value;
     }
 
-    await createDocument({
-      dataStore,
-      json: document,
-    });
+    try {
+      await createDocument({
+        dataStore,
+        json: document,
+      });
+    } catch (err) {
+      console.error(err);
+    }
   }
 }
 
@@ -43,5 +47,7 @@ export async function migrateV1Data({dataStore}) {
   await migrateTransactions();
 
   // remove localStorage entries
+  const walletJSON = await v1Storage.getItem('wallet');
+  await v1Storage.setItem('wallet-backup', walletJSON);
   await v1Storage.removeItem('wallet');
 }
