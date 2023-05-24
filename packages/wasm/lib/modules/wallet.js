@@ -419,13 +419,11 @@ class Wallet {
    * @returns Wallet
    */
   static getInstance(): Wallet {
-    throw new Error('Wallet module not be used');
+    if (!Wallet.instance) {
+      Wallet.instance = new Wallet();
+    }
 
-    // if (!Wallet.instance) {
-    //   Wallet.instance = new Wallet();
-    // }
-    //
-    // return Wallet.instance;
+    return Wallet.instance;
   }
 }
 
