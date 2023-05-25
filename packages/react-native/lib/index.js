@@ -171,6 +171,7 @@ export function _useWalletController() {
     setStatus(wallet.status);
 
     wallet.eventManager.on(WalletEvents.statusUpdated, setStatus);
+    wallet.eventManager.on(WalletEvents.networkUpdated, refetch);
     wallet.eventManager.on(WalletEvents.ready, refetch);
     wallet.eventManager.on(WalletEvents.documentAdded, refetch);
     wallet.eventManager.on(WalletEvents.documentRemoved, refetch);
