@@ -110,9 +110,6 @@ export function _useWalletController() {
     return wallet?.getNetworkId();
   }, [wallet]);
 
-  console.log('Current networkId', networkId);
-  console.log('wallet documents', documents);
-
   useEffect(() => {
     setTestMode(networkId === 'testnet');
   }, [networkId]);
