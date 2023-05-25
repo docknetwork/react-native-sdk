@@ -22,6 +22,7 @@ export class KeyringService {
     KeyringService.prototype.addFromMnemonic,
     KeyringService.prototype.addressFromUri,
     KeyringService.prototype.getKeyringPair,
+    KeyringService.prototype.getKeyringPairJSON,
     KeyringService.prototype.initialize,
     KeyringService.prototype.signData,
     KeyringService.prototype.decryptKeyPair,
@@ -77,9 +78,15 @@ export class KeyringService {
 
     const {mnemonic, meta, type, derivePath = ''} = params;
 
-    return this.keyring
-      .createFromUri(`${mnemonic.trim()}${derivePath}`, meta, type)
-      .toJson();
+    return this.keyring.createFromUri(
+      `${mnemonic.trim()}${derivePath}`,
+      meta,
+      type,
+    );
+  }
+
+  getKeyringPairJSON(params: CreateFromUriParams): KeyringPair {
+    return this.getKeyringPair(params).toJson();
   }
 
   addressFromUri(params: CreateFromUriParams) {
