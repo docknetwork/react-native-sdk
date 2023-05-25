@@ -102,7 +102,7 @@ export function toV1WalletService(wallet: IWallet) {
 
       const keyringJson = json
         ? await keyringService.addFromJson({jsonData: json, password})
-        : await keyringService.getKeyringPair({mnemonic, derivePath, type});
+        : await keyringService.getKeyringPairJSON({mnemonic, derivePath, type});
       const correlations: any[] = [];
 
       correlations.push({
