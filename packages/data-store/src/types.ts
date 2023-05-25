@@ -24,6 +24,7 @@ export type Network = {
 export type DataStore = {
   db: DataSource;
   networkId: string;
+  testNetworkId: string;
   network: Network;
 
   networks: Network[];
@@ -45,6 +46,7 @@ export type DataStoreConfigs = {
   dbType?: 'sqlite' | 'react-native';
 
   defaultNetwork?: string;
+  testNetworkId?: string;
 
   dropSchema?: boolean;
 
