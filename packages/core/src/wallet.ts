@@ -83,18 +83,27 @@ export async function createWallet(
       return createDocument({
         dataStore,
         json,
+      }).then(result => {
+        eventEmitter.emit(WalletEvents.documentAdded, result);
+        return result;
       });
     },
     updateDocument: (document: any) => {
       return updateDocument({
         dataStore,
         document,
+      }).then(result => {
+        eventEmitter.emit(WalletEvents.documentUpdated, result);
+        return result;
       });
     },
     removeDocument: (id: string) => {
       return removeDocument({
         dataStore,
         id,
+      }).then(result => {
+        eventEmitter.emit(WalletEvents.documentRemoved, result);
+        return result;
       });
     },
     getDocumentCorrelations: (documentId: string) => {
