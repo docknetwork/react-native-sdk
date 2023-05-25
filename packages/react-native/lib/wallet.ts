@@ -22,6 +22,7 @@ export async function initializeWallet() {
   wallet = await createWallet({
     databasePath: 'dock-wallet',
     dbType: 'react-native',
+    testNetworkId: 'testnet',
     documentNetworkResolver: dockDocumentNetworkResolver,
   });
 
