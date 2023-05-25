@@ -28,6 +28,7 @@ import {
   CREDENTIAL_STATUS,
 } from './credentials/credentialHooks';
 import {getOrCreateWallet} from './wallet';
+import debounce from 'lodash.debounce';
 import {setV1LocalStorage} from '@docknetwork/wallet-sdk-data-store/src/migration/migration1/v1-data-store';
 export type WalletSDKContextProps = {
   wallet: Wallet,
@@ -157,24 +158,22 @@ export function _useWalletController() {
   );
 
   useEffect(() => {
-    if (status !== 'ready') {
-      return;
-    }
-
     if (!wallet) {
       return;
     }
 
+    const _refetch = debounce(refetch, 100);
+
     setStatus(wallet.status);
 
     wallet.eventManager.on(WalletEvents.statusUpdated, setStatus);
-    wallet.eventManager.on(WalletEvents.networkUpdated, refetch);
-    wallet.eventManager.on(WalletEvents.ready, refetch);
-    wallet.eventManager.on(WalletEvents.documentAdded, refetch);
-    wallet.eventManager.on(WalletEvents.documentRemoved, refetch);
-    wallet.eventManager.on(WalletEvents.documentUpdated, refetch);
-    wallet.eventManager.on(WalletEvents.walletImported, refetch);
-    wallet.eventManager.on(WalletEvents.migrated, refetch);
+    wallet.eventManager.on(WalletEvents.networkUpdated, _refetch);
+    wallet.eventManager.on(WalletEvents.ready, _refetch);
+    wallet.eventManager.on(WalletEvents.documentAdded, _refetch);
+    wallet.eventManager.on(WalletEvents.documentRemoved, _refetch);
+    wallet.eventManager.on(WalletEvents.documentUpdated, _refetch);
+    wallet.eventManager.on(WalletEvents.walletImported, _refetch);
+    wallet.eventManager.on(WalletEvents.migrated, _refetch);
     wallet.eventManager.on(WalletEvents.walletDeleted, () => {
       setDocuments([]);
     });
