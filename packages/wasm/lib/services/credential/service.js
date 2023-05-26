@@ -15,7 +15,6 @@ import {verifyCredential} from '@docknetwork/sdk/utils/vc/credentials';
 import {PEX} from '@sphereon/pex';
 import {keyDocToKeypair} from './utils';
 import {getDock} from '../dock/service';
-import {Logger} from '../../core/logger';
 
 const pex: PEX = new PEX();
 
