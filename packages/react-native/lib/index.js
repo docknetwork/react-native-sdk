@@ -104,21 +104,20 @@ export function useWallet({syncDocs = true} = {}) {
 export function _useWalletController() {
   const [wallet, setWallet] = useState();
   const [status, setStatus] = useState('loading');
-  const [testMode, setTestMode] = useState(false);
   const [documents, setDocuments] = useState([]);
   const [firstFetch, setFirstFetch] = useState();
-  const networkId = useMemo(() => {
-    return wallet?.getNetworkId();
-  }, [wallet]);
+  const [networkId, setNetworkId] = useState();
 
-  useEffect(() => {
-    setTestMode(networkId === 'testnet');
-  }, [networkId]);
+  const testMode = useMemo(() => {
+    return networkId === wallet?.dataStore?.testNetworkId;
+  }, [wallet, networkId]);
 
   const toggleTestMode = async () => {
-    setTestMode(!testMode);
-    await wallet.setNetwork(testMode ? 'mainnet' : 'testnet');
-    wallet.getAllDocuments().then(setDocuments);
+    await wallet.setNetwork(
+      testMode
+        ? wallet.dataStore.mainNetworkId
+        : wallet.dataStore.testNetworkId,
+    );
   };
 
   useEffect(() => {
@@ -165,9 +164,13 @@ export function _useWalletController() {
     const _refetch = debounce(refetch, 100);
 
     setStatus(wallet.status);
+    setNetworkId(wallet.getNetworkId());
 
     wallet.eventManager.on(WalletEvents.statusUpdated, setStatus);
-    wallet.eventManager.on(WalletEvents.networkUpdated, _refetch);
+    wallet.eventManager.on(WalletEvents.networkUpdated, () => {
+      _refetch();
+      setNetworkId(wallet.getNetworkId());
+    });
     wallet.eventManager.on(WalletEvents.ready, _refetch);
     wallet.eventManager.on(WalletEvents.documentAdded, _refetch);
     wallet.eventManager.on(WalletEvents.documentRemoved, _refetch);
