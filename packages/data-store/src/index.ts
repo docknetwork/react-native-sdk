@@ -58,6 +58,9 @@ export async function createDataStore(
 
   const wallet = await getWallet({dataStore});
   dataStore.networkId = wallet.networkId;
+  dataStore.network = options.networks.find(
+    item => item.id === wallet.networkId,
+  );
 
   console.log('current saved wallet on db', wallet);
 
