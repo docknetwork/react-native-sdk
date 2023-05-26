@@ -25,6 +25,7 @@ export type DataStore = {
   db: DataSource;
   networkId: string;
   testNetworkId: string;
+  mainNetworkId: string;
   network: Network;
 
   networks: Network[];
@@ -47,6 +48,7 @@ export type DataStoreConfigs = {
 
   defaultNetwork?: string;
   testNetworkId?: string;
+  mainNetworkId?: string;
 
   dropSchema?: boolean;
 
