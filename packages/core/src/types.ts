@@ -13,6 +13,7 @@ export interface IV1Wallet {
   getStatus: () => string;
   setStatus: (status: string) => void;
   eventManager: EventEmitter;
+  waitForEvent: (eventName: string) => Promise<any>;
   resolveCorrelations: (id: string) => Promise<WalletDocument[]>;
   query: ({
     id,
@@ -51,7 +52,7 @@ export type IWallet = {
    *
    * @param json
    */
-  importUniversalWalletJSON: (json: any, password: string) => void;
+  importUniversalWalletJSON: (json: any, password: string) => Promise<void>;
   /**
    * Create a Universal Wallet 2020 JSON representation of the wallet
    * https://w3c-ccg.github.io/universal-wallet-interop-spec/

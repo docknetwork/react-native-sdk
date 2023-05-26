@@ -18,7 +18,8 @@ import {toV1Wallet} from './v1-helpers';
 import {initWalletWasm} from './wallet-wasm';
 import {EventEmitter} from 'events';
 import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/lib/modules/wallet';
-
+import {walletService} from '@docknetwork/wallet-sdk-wasm/lib/services/wallet';
+import {importUniversalWalletDocuments} from '@docknetwork/wallet-sdk-data-store/src/migration/migration1/migrate-v1-data';
 export type {IWallet};
 
 function once(emitter: EventEmitter, eventName: string) {
@@ -39,11 +40,9 @@ export async function createWallet(
 
   const eventEmitter = new EventEmitter();
 
-  eventEmitter.once = (eventName: string) =>
-    once(eventEmitter, eventName) as any;
-
   const wallet = {
     eventManager: eventEmitter,
+    waitForEvent: (eventName: string) => once(eventEmitter, eventName) as any,
     dataStore,
     getStatus() {
       return status;
@@ -124,8 +123,29 @@ export async function createWallet(
 
       return keyPair?.value;
     },
-    importUniversalWalletJSON: (json: any, password: string) => {},
-    exportUniversalWalletJSON: (password: string) => {},
+    importUniversalWalletJSON: async (json: any, password: string) => {
+      const documents = await walletService.getDocumentsFromEncryptedWallet({
+        encryptedJSONWallet: json,
+        password,
+      });
+
+      await importUniversalWalletDocuments({
+        documents,
+        dataStore,
+      });
+
+      return documents;
+    },
+    exportUniversalWalletJSON: async (password: string) => {
+      const result = await walletService.exportDocuments({
+        documents: await getAllDocuments({
+          dataStore,
+        }),
+        password,
+      });
+
+      return result;
+    },
   } as IWallet;
 
   const v1Wallet = await toV1Wallet(wallet);

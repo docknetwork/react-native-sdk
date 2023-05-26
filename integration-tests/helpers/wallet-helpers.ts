@@ -20,6 +20,7 @@ export async function createNewWallet() {
   wallet = await createWallet({
     databasePath: ':memory:',
     dbType: 'sqlite',
+    defaultNetwork: 'testnet',
   });
 
   Wallet.getInstance = () => wallet;
