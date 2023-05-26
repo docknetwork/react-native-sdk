@@ -23,6 +23,7 @@ export async function initializeWallet() {
     databasePath: 'dock-wallet',
     dbType: 'react-native',
     testNetworkId: 'testnet',
+    mainNetworkId: 'mainnet',
     documentNetworkResolver: dockDocumentNetworkResolver,
   });
 
