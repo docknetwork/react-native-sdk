@@ -203,12 +203,14 @@ export function WalletSDKProvider({onError, customUri, children, onReady}) {
   const baseUrl =
     Platform.OS === 'ios' ? 'app-html' : 'file:///android_asset/app-html';
 
+  const {createWallet} = controller;
+
   const handleReady = useCallback(async () => {
-    await controller.createWallet();
+    await createWallet();
     if (onReady) {
       onReady();
     }
-  }, [onReady, controller.createWallet]);
+  }, [onReady, createWallet]);
 
   const eventHandler: WebviewEventHandler = useMemo(
     () =>
