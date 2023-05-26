@@ -46,6 +46,7 @@ export async function createDataStore(
     networkId: options.defaultNetwork,
     network: options.networks.find(item => item.id === options.defaultNetwork),
     testNetworkId: options.testNetworkId,
+    mainNetworkId: options.mainNetworkId,
     version: null,
     networks: options.networks,
     resolveDocumentNetwork: options.documentNetworkResolver,
