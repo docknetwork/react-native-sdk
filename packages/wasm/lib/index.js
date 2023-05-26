@@ -1,6 +1,9 @@
 import {getRpcClient, initRpcClient} from './rpc-client';
 import {getLogger, setLogger} from './logger';
+import {Logger} from './core/logger';
+
 import rpcServer from './rpc-server';
+import {WebviewLoggerTransport} from './core/webview-logger';
 
 initRpcClient(jsonRPCRequest => {
   postMessage({
@@ -33,6 +36,12 @@ setLogger({
     });
   },
 });
+
+Logger.add(
+  new WebviewLoggerTransport({
+    postMessage,
+  }),
+);
 
 global.handleEvent = event => {
   const data = event.data;
