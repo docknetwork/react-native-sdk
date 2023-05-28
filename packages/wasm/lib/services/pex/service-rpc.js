@@ -9,7 +9,7 @@ import {
 export class PEXServiceRPC extends RpcService {
   constructor() {
     super(serviceName);
-    this.sandbox = true;
+    this.sandbox = process.env.NODE_ENV !== 'test';
   }
   async filterCredentials(params: FilterCredentialsParams) {
     validation.filterCredentials(params);
