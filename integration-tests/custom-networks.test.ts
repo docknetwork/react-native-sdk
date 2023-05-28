@@ -29,7 +29,7 @@ describe('Custom networks', () => {
     },
   };
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     wallet = await createWallet({
       databasePath: ':memory:',
       networks,
@@ -60,5 +60,13 @@ describe('Custom networks', () => {
     [doc] = allDocs;
     expect(allDocs).toHaveLength(1);
     expect(doc.value).toEqual(mockDocuments.mainnet.value);
+  });
+
+  afterAll(async () => {
+    return new Promise((res) => {
+      setTimeout(() => {
+        res(wallet.dataStore.db.destroy());
+      }, 400);
+    });
   });
 });
