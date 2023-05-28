@@ -12,9 +12,9 @@ export function getWallet() {
   return wallet;
 }
 
-export async function getOrCreateWallet() {
+export async function getOrCreateWallet(params: DataStoreConfigs = {} as any) {
   if (!wallet) {
-    wallet = await initializeWallet();
+    wallet = await initializeWallet(params);
   }
 
   return wallet;
