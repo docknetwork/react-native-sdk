@@ -1,8 +1,8 @@
 import {setupV1MockDataStore} from '../../test/test-utils';
 import {
   getV1LocalStorage,
-  getWalletDocument,
-} from '../migration/v2/v1-data-store';
+  getWalletDocuments,
+} from '../migration/migration1/v1-data-store';
 import _walletJSON from '../../test/wallet.json';
 
 describe('v2-data-store', () => {
@@ -18,7 +18,7 @@ describe('v2-data-store', () => {
   });
 
   it('should be able to fetch v2 documents', async () => {
-    const documents = await getWalletDocument();
+    const documents = await getWalletDocuments();
     expect(documents.length).toBeGreaterThan(1);
   });
 });
