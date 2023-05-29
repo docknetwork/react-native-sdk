@@ -1,5 +1,5 @@
 import {Entity, Column, PrimaryColumn, ManyToMany} from 'typeorm';
-import {DocumentEntity} from './document.entity';
+import {DocumentEntity} from './document/document.entity';
 
 @Entity()
 export class DocumentTypeEntity {

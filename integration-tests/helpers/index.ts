@@ -1,4 +1,4 @@
-import {mockDockService} from '@docknetwork/wallet-sdk-core/lib/services/test-utils';
+import {mockDockService} from '@docknetwork/wallet-sdk-wasm/lib/services/test-utils';
 import {DataStoreSnapshotV1} from '../data/data-store';
 
 export async function setupEnvironent() {

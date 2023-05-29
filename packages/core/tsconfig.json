@@ -15,6 +15,7 @@
     "useUnknownInCatchVariables": false,
     "experimentalDecorators": true,
     "resolveJsonModule": true,
+    "allowJs": true,
     "allowSyntheticDefaultImports": true
   },
   "ts-node": {
