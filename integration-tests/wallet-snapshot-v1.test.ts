@@ -35,11 +35,9 @@ describe('Wallet Snapshot V1', () => {
 
     const [account] = accounts;
 
-    expect(account.address).toBe(
-      '37NKEP14n9omsAgxJ3sn14XtHo2vs5a34UcpCyybXQJoUQ92',
-    );
+    expect(account.id).toBe('37NKEP14n9omsAgxJ3sn14XtHo2vs5a34UcpCyybXQJoUQ92');
 
-    await assertAccountIsValid(account.address);
+    await assertAccountIsValid(account.id);
   });
 
   it('expect to have loaded DIDs', async () => {
@@ -53,7 +51,7 @@ describe('Wallet Snapshot V1', () => {
     const credentials = await getCredentials();
     expect(credentials.length).toBe(1);
 
-    const credential = credentials[0].content;
+    const credential = credentials[0];
     expect(credential.type).toEqual([
       'VerifiableCredential',
       'BasicCredential',

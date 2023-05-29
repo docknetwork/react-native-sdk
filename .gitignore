@@ -32,3 +32,4 @@ bundle.js
 
 *.management
 *.js.LICENSE.txt
+*.db

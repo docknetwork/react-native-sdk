@@ -3,24 +3,34 @@
  *
  * Ensure that a new wallet can be created and will be functional
  */
-import {Wallet} from '@docknetwork/wallet-sdk-core/lib/modules/wallet';
-import {walletService} from '@docknetwork/wallet-sdk-core/lib/services/wallet';
 import {DataStoreSnapshotV1} from '../data/data-store';
 import {WalletBackupJSON, WalletBackupPasssword} from '../data/wallet-backup';
+import {IWallet} from '@docknetwork/wallet-sdk-core/src/types';
+import {createWallet} from '@docknetwork/wallet-sdk-core/src/wallet';
+import {Wallet} from '@docknetwork/wallet-sdk-wasm/lib/modules/wallet';
+import {setV1LocalStorage} from '@docknetwork/wallet-sdk-data-store/src/migration/migration1/v1-data-store';
 
-let wallet: Wallet;
+let wallet: IWallet;
 
-export function getWallet(): Wallet {
+export function getWallet(): IWallet {
   return wallet;
 }
 
 export async function createNewWallet() {
-  wallet = await Wallet.create();
+  wallet = await createWallet({
+    databasePath: ':memory:',
+    dbType: 'sqlite',
+  });
+
+  Wallet.getInstance = () => wallet;
 
   await wallet.ensureNetwork();
-  await walletService.sync();
 
   return wallet;
+}
+
+export async function setNetwork(networkId) {
+  return Promise.resolve(wallet.setNetworkId(networkId));
 }
 
 /**
@@ -30,26 +40,27 @@ export async function createNewWallet() {
 export async function createWalletFromSnapshot() {
   global.localStorage.setItem('wallet', JSON.stringify(DataStoreSnapshotV1));
 
-  wallet = await Wallet.create();
+  setV1LocalStorage(global.localStorage as any);
 
-  await wallet.ensureNetwork();
-  await walletService.sync();
-
-  return wallet;
+  return createNewWallet();
 }
 
 export async function createWalletFromBackup() {
-  wallet = await Wallet.create({
-    json: WalletBackupJSON,
-    password: WalletBackupPasssword,
-  } as any);
+  wallet = await createNewWallet();
+  await wallet.importUniversalWalletJSON(
+    WalletBackupJSON,
+    WalletBackupPasssword,
+  );
 
   await wallet.ensureNetwork();
-  await walletService.sync();
 
   return wallet;
 }
 
 export function getAllDocuments() {
   return getWallet().query({} as any);
+}
+
+export async function getDocumentsByType(type) {
+  return wallet.getDocumentsByType(type);
 }

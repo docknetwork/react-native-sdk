@@ -1,4 +1,5 @@
 import {Entity, Column, PrimaryColumn} from 'typeorm';
+import {ContextProps} from '../types';
 
 @Entity()
 export class NetworkEntity {
@@ -7,4 +8,7 @@ export class NetworkEntity {
 
   @Column()
   name: string;
+
+  @Column()
+  configs: string;
 }

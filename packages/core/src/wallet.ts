@@ -1,33 +1,95 @@
 import {createDataStore} from '@docknetwork/wallet-sdk-data-store/src';
 import {
+  DataStore,
   DataStoreConfigs,
   WalletDocument,
 } from '@docknetwork/wallet-sdk-data-store/src/types';
-import {getDocumentsByType} from '@docknetwork/wallet-sdk-data-store/src/typeorm/entities/document/get-documens-by-type';
-import {getDocumentById} from '@docknetwork/wallet-sdk-data-store/src/typeorm/entities/document/get-document-by-id';
+import {
+  getDocumentsByType,
+  getDocumentById,
+  createDocument,
+  removeDocument,
+  getDocumentCorrelations,
+  getAllDocuments,
+  updateDocument,
+} from '@docknetwork/wallet-sdk-data-store/src/entities/document';
+import {CreateWalletProps, IWallet} from './types';
+import {toV1Wallet} from './v1-helpers';
 
-interface Wallet {
-  getDocumentById: (id: string) => Promise<WalletDocument>;
-  getDocumentsByType: (type: string) => Promise<WalletDocument[]>;
-}
-
-type CreateWalletProps = DataStoreConfigs & {};
-
+export type {IWallet};
+/**
+ * Create wallet
+ *
+ * @param createWalletProps
+ * @returns {Promise<IWallet>}
+ */
 export async function createWallet(
   createWalletProps: CreateWalletProps,
-): Promise<Wallet> {
+): Promise<IWallet> {
   const dataStore = await createDataStore(createWalletProps);
 
-  return {
+  const wallet = {
+    dataStore,
+    setNetworkId: (networkId: string) => {
+      dataStore.networkId = networkId;
+    },
+    getNetworkId: () => {
+      return dataStore.networkId;
+    },
     getDocumentById: id =>
       getDocumentById({
         dataStore,
         id,
       }),
+    getAllDocuments: () => {
+      return getAllDocuments({
+        dataStore,
+      });
+    },
     getDocumentsByType: type =>
       getDocumentsByType({
         dataStore,
         type,
       }),
-  };
+    addDocument: (json: any) => {
+      return createDocument({
+        dataStore,
+        json,
+      });
+    },
+    updateDocument: (document: any) => {
+      return updateDocument({
+        dataStore,
+        document,
+      });
+    },
+    removeDocument: (id: string) => {
+      return removeDocument({
+        dataStore,
+        id,
+      });
+    },
+    getDocumentCorrelations: (documentId: string) => {
+      return getDocumentCorrelations({
+        dataStore,
+        documentId,
+      });
+    },
+    getAccountKeyPair: async (accountId: string) => {
+      const correlations = await getDocumentCorrelations({
+        dataStore,
+        documentId: accountId,
+      });
+
+      const keyPair = correlations.find(
+        correlation => correlation.type === 'KeyringPair',
+      );
+
+      return keyPair?.value;
+    },
+    importUniversalWalletJSON: (json: any, password: string) => {},
+    exportUniversalWalletJSON: (password: string) => {},
+  } as IWallet;
+
+  return toV1Wallet(wallet);
 }
