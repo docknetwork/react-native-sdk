@@ -1,13 +1,19 @@
 import {
   DataStore,
   DataStoreConfigs,
+  DocumentResolverResult,
   WalletDocument,
 } from '@docknetwork/wallet-sdk-data-store/src/types';
 import {Accounts} from '@docknetwork/wallet-sdk-wasm/lib/modules/accounts';
+import {EventEmitter} from 'events';
 
 export interface IV1Wallet {
   accounts: Accounts;
 
+  getStatus: () => string;
+  setStatus: (status: string) => void;
+  eventManager: EventEmitter;
+  waitForEvent: (eventName: string) => Promise<any>;
   resolveCorrelations: (id: string) => Promise<WalletDocument[]>;
   query: ({
     id,
@@ -46,7 +52,7 @@ export type IWallet = {
    *
    * @param json
    */
-  importUniversalWalletJSON: (json: any, password: string) => void;
+  importUniversalWalletJSON: (json: any, password: string) => Promise<void>;
   /**
    * Create a Universal Wallet 2020 JSON representation of the wallet
    * https://w3c-ccg.github.io/universal-wallet-interop-spec/
@@ -54,8 +60,9 @@ export type IWallet = {
    */
   exportUniversalWalletJSON: (password: string) => any;
 
-  setNetworkId: (networkId: string) => void;
+  setNetwork: (networkId: string) => Promise<void>;
   getNetworkId: () => string;
+  resolveDocumentNetwork: (document: any) => Promise<DocumentResolverResult>;
   dataStore: DataStore;
 } & IV1Wallet;
 

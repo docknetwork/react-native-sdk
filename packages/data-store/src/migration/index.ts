@@ -23,6 +23,8 @@ export async function migrate({dataStore}: ContextProps) {
   // Fetch existing configs from the database
   let existingConfigs = await getWallet({dataStore});
 
+  // Force v1 migration
+  // dataStore.version = 'v1';
   // If no configs exist, create a new one
   if (!existingConfigs) {
     const isV1DataStore = await isRunningOnV1DataStore({dataStore});

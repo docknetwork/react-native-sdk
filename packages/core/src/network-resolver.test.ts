@@ -1,5 +1,8 @@
 import {createWallet, IWallet} from './wallet';
-import {dockDocumentNetworkResolver} from './network-resolver';
+import {
+  credentialResolver,
+  dockDocumentNetworkResolver,
+} from './network-resolver';
 
 describe('Wallet', () => {
   let wallet: IWallet;
@@ -30,7 +33,7 @@ describe('Wallet', () => {
       type: 'VerifiableCredential',
     };
 
-    wallet.setNetworkId('testnet');
+    wallet.setNetwork('testnet');
 
     await wallet.addDocument(mockDocument);
 
@@ -38,7 +41,7 @@ describe('Wallet', () => {
     expect(result.networkId).toEqual('testnet');
     expect(result.id).toEqual(mockDocument.id);
 
-    wallet.setNetworkId('mainnet');
+    wallet.setNetwork('mainnet');
 
     const [result2] = await wallet.getDocumentsByType(mockDocument.type);
     expect(result2).toBeUndefined();
@@ -50,7 +53,7 @@ describe('Wallet', () => {
       type: 'VerifiableCredential',
     };
 
-    wallet.setNetworkId('mainnet');
+    wallet.setNetwork('mainnet');
 
     await wallet.addDocument(mockDocument);
 
@@ -58,7 +61,7 @@ describe('Wallet', () => {
     expect(result.networkId).toEqual('mainnet');
     expect(result.id).toEqual(mockDocument.id);
 
-    wallet.setNetworkId('testnet');
+    wallet.setNetwork('testnet');
 
     await wallet.addDocument(mockDocument);
   });
@@ -69,7 +72,7 @@ describe('Wallet', () => {
       type: 'VerifiableCredential',
     };
 
-    wallet.setNetworkId('mainnet');
+    wallet.setNetwork('mainnet');
 
     await wallet.addDocument(mockDocument);
 
@@ -77,9 +80,23 @@ describe('Wallet', () => {
     expect(result.networkId).toEqual('mainnet');
     expect(result.id).toEqual(mockDocument.id);
 
-    wallet.setNetworkId('testnet');
+    wallet.setNetwork('testnet');
 
     [result] = await wallet.getDocumentsByType(mockDocument.type);
     expect(result).toBeUndefined();
+  });
+
+  describe('credentialResolver', () => {
+    it('expect to resolve credential to testnet', async () => {
+      const result = await credentialResolver({
+        document: {
+          id: 'https://***REMOVED***/d39b15fe997004db702c9faaf98f9fd619cdf40088549648fb288ea679b53e23?_ga=2.46968743.1402343540.1684360698-1482908456.1677577177',
+          type: ['VerifiableCredential'],
+        },
+        dataStore: wallet.dataStore,
+      });
+
+      expect(result).toBe('testnet');
+    });
   });
 });

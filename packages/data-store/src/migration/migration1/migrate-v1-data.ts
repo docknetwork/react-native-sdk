@@ -2,22 +2,30 @@ import {getV1LocalStorage} from './v1-data-store';
 import {createDocument} from '../../entities/document';
 import {documentHasType} from '../../helpers';
 
-async function migrateDocuments({v1Storage, dataStore}) {
-  const walletJSON = v1Storage.getItem('wallet');
-  const wallet = JSON.parse(walletJSON);
-
-  for (const key in wallet) {
-    let document = wallet[key];
-
+export async function importUniversalWalletDocuments({documents, dataStore}) {
+  for (const _document of documents) {
+    let document = _document;
     if (documentHasType(document, 'VerifiableCredential') && document.value) {
       document = document.value;
     }
 
-    await createDocument({
-      dataStore,
-      json: document,
-    });
+    try {
+      await createDocument({
+        dataStore,
+        json: document,
+      });
+    } catch (err) {
+      console.error(err);
+    }
   }
+}
+async function migrateDocuments({v1Storage, dataStore}) {
+  const walletJSON = await v1Storage.getItem('wallet');
+  const wallet = JSON.parse(walletJSON);
+
+  const documents = Object.keys(wallet).map(key => wallet[key]);
+
+  await importUniversalWalletDocuments({documents, dataStore});
 }
 
 function migrateNotificaions() {}
@@ -43,5 +51,7 @@ export async function migrateV1Data({dataStore}) {
   await migrateTransactions();
 
   // remove localStorage entries
+  const walletJSON = await v1Storage.getItem('wallet');
+  await v1Storage.setItem('wallet-backup', walletJSON);
   await v1Storage.removeItem('wallet');
 }
