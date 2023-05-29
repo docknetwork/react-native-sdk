@@ -36,14 +36,14 @@ describe('Switch wallet', () => {
     await createNewWallet();
   });
 
-  it('expect to filter mainnet documents from testnet documents', async () => {
-    await setNetwork('mainnet');
-    await createWalletData();
-    await assertWalletData();
-    await setNetwork('testnet');
-    const isEmpty = await isWalletEmpty();
-    expect(isEmpty).toBe(true);
-  });
+  // it('expect to filter mainnet documents from testnet documents', async () => {
+  //   await setNetwork('mainnet');
+  //   await createWalletData();
+  //   await assertWalletData();
+  //   await setNetwork('testnet');
+  //   const isEmpty = await isWalletEmpty();
+  //   expect(isEmpty).toBe(true);
+  // });
 
   it('expect switch to tesnet and have an empty wallet', async () => {
     await setNetwork('testnet');

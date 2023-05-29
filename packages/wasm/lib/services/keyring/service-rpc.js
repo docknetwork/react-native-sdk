@@ -39,6 +39,11 @@ export class KeyringServiceRpc extends RpcService {
     return this.call('getKeyringPair', params);
   }
 
+  getKeyringPairJSON(params: GetKeyringParams) {
+    validation.getKeyringPair(params);
+    return this.call('getKeyringPairJSON', params);
+  }
+
   addressFromUri(params: AddressFromUriParams) {
     validation.addressFromUri(params);
     return this.call('addressFromUri', params);

@@ -7,22 +7,12 @@ import {keyringService} from '@docknetwork/wallet-sdk-wasm/lib/services/keyring/
 import {v4 as uuid} from 'uuid';
 import {EventEmitter} from 'events';
 
-function once(emitter: EventEmitter, eventName: string) {
-  return new Promise(resolve => emitter.once(eventName, resolve));
-}
-
 export async function toV1Wallet(wallet: IWallet): Promise<IWallet> {
   const accounts = await createAccountProvider({
     wallet,
   });
 
-  const eventEmitter = new EventEmitter();
-
-  eventEmitter.once = (eventName: string) =>
-    once(eventEmitter, eventName) as any;
-
   const v1Wallet = {
-    eventManager: eventEmitter,
     accounts: accounts,
     create(json: any): Promise<WalletDocument> {
       return wallet.addDocument(document);
@@ -112,7 +102,7 @@ export function toV1WalletService(wallet: IWallet) {
 
       const keyringJson = json
         ? await keyringService.addFromJson({jsonData: json, password})
-        : await keyringService.getKeyringPair({mnemonic, derivePath, type});
+        : await keyringService.getKeyringPairJSON({mnemonic, derivePath, type});
       const correlations: any[] = [];
 
       correlations.push({

@@ -8,7 +8,7 @@ import {storageService} from './storage/service';
 import {didService} from './dids/service';
 import {credentialService} from './credential/service';
 import {relayService} from './relay-service/service';
-
+import {pexService} from './pex/service';
 export default [
   keyringService,
   dockService,
@@ -20,4 +20,5 @@ export default [
   didService,
   credentialService,
   relayService,
+  pexService,
 ];
