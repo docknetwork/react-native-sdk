@@ -1,34 +1,48 @@
-import {getDataSource} from '../typeorm';
-import {SDKConfigsEntity} from '../typeorm/entities/sdk-configs.entity';
-import {migrateToV2} from './v2/migrate';
-import {DataStoreConfigs, SDKConfigs} from '../types/types';
+import {isRunningOnV1DataStore, migration1} from './migration1';
+import {ContextProps} from '../types';
 import {logger} from '../logger';
-import {getSDKConfigs} from '../configs';
+import {createWallet, getWallet, updateWallet} from '../entities/wallet.entity';
+import {bootstrapTables} from './bootstrap-tables';
 
 export const CURRENT_DATA_STORE_VERSION = 'v2';
 
+export type MigrationResult = {
+  migrated: boolean;
+  version: string;
+};
+
 const migrations = [
-  migrateToV2,
+  migration1,
   // add new migrations here
 ];
 
-export async function migrate(options: DataStoreConfigs) {
-  let sdkConfigs: SDKConfigs = await getSDKConfigs(options);
+export async function migrate({dataStore}: ContextProps) {
+  // bootstrap v2 data
+  await bootstrapTables(dataStore.db);
+
+  // Fetch existing configs from the database
+  let existingConfigs = await getWallet({dataStore});
+
+  // If no configs exist, create a new one
+  if (!existingConfigs) {
+    const isV1DataStore = await isRunningOnV1DataStore({dataStore});
+    dataStore.version = isV1DataStore ? 'v1' : CURRENT_DATA_STORE_VERSION;
+    await createWallet({
+      dataStore,
+    });
+  }
 
   for (const migrate of migrations) {
-    const results = await migrate({
-      sdkConfigs,
-    });
+    const results = await migrate({dataStore});
 
     if (results.migrated) {
       logger.debug('Migration completed');
-      sdkConfigs = results.sdkConfigs;
+      dataStore.version = results.version;
+      await updateWallet({dataStore});
     } else {
       logger.debug('Migration not required');
     }
   }
 
-  logger.debug(`DataStore version: ${sdkConfigs.version}`);
-
-  await getDataSource().getRepository(SDKConfigsEntity).save(sdkConfigs);
+  logger.debug(`DataStore version: ${dataStore.version}`);
 }

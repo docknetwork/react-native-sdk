@@ -100,7 +100,6 @@ export class Transactions {
     this.accounts = accounts || Accounts.getInstance();
     this.wallet = this.accounts.wallet;
     this.eventManager = this.wallet.eventManager;
-    this.eventManager.registerEvents(TransactionEvents);
   }
 
   /**
@@ -252,10 +251,12 @@ export class Transactions {
 
     await this.wallet.ensureNetwork();
 
+    const keyPair = await this.wallet.getAccountKeyPair(fromAddress);
     const fee = await substrateService.getFeeAmount({
       fromAddress: fromAddress,
       toAddress,
       amount,
+      keyPair,
     });
 
     return BigNumber(fee).dividedBy(DOCK_TOKEN_UNIT).toNumber();
@@ -278,10 +279,12 @@ export class Transactions {
 
     await this.wallet.ensureNetwork();
 
+    const keyPair = this.wallet.getAccountKeyPair(fromAddress);
     const hash = await substrateService.sendTokens({
       toAddress,
       fromAddress,
       amount: amountUnits,
+      keyPair,
     });
 
     const realm = getRealm();

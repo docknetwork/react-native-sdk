@@ -24,7 +24,7 @@ export function getV1LocalStorage(): LocalStorage {
   return _localStorage;
 }
 
-export async function getWalletDocument() {
+export async function getWalletDocuments() {
   const jsonData = await _localStorage.getItem('wallet');
 
   if (!jsonData) {

@@ -12,8 +12,8 @@
     "declaration": true,
     "composite": true,
     "emitDecoratorMetadata": true,
-    "useUnknownInCatchVariables": false,
     "experimentalDecorators": true,
+    "useUnknownInCatchVariables": false,
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true
   },

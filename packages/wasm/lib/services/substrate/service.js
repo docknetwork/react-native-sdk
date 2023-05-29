@@ -3,7 +3,6 @@ import BigNumber from 'bignumber.js';
 import BN from 'bn.js';
 import {DOCK_TOKEN_UNIT, getPlainDockAmount} from '../../core/format-utils';
 import {dockService} from '../dock/service';
-import {walletService} from '../wallet/service';
 import {signAndSend} from './api-utils';
 import {
   GetAccountBalanceParams,
@@ -11,6 +10,7 @@ import {
   TransactionParams,
   validation,
 } from './configs';
+import {keyringService} from '../keyring/service';
 
 export const FEE_ESTIMATION_BUFFER = 1.1;
 
@@ -46,10 +46,13 @@ export class SubstrateService {
   async getFeeAmount(params: TransactionParams) {
     validation.getFeeAmount(params);
 
-    const {toAddress, fromAddress} = params;
+    const {toAddress, keyPair} = params;
     const amount = getPlainDockAmount(params.amount).toNumber();
 
-    const account = await walletService.getAccountKeypair(fromAddress);
+    const account = keyringService.decryptKeyPair({
+      jsonData: keyPair,
+      password: '',
+    });
 
     dockService.dock.setAccount(account);
 
@@ -68,9 +71,12 @@ export class SubstrateService {
   async sendTokens(params: TransactionParams) {
     validation.sendTokens(params);
 
-    let {toAddress, fromAddress} = params;
+    let {toAddress, fromAddress, keyPair} = params;
     let amount = getPlainDockAmount(params.amount).toNumber();
-    const account = await walletService.getAccountKeypair(fromAddress);
+    const account = keyringService.decryptKeyPair({
+      jsonData: keyPair,
+      password: '',
+    });
     const {dock} = dockService;
 
     dock.setAccount(account);

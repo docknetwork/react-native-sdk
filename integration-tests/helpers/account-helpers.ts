@@ -1,16 +1,17 @@
-import {Accounts} from '@docknetwork/wallet-sdk-core/lib/modules/accounts';
+import {Accounts} from '@docknetwork/wallet-sdk-wasm/lib/modules/accounts';
 import {
   Account2MnemonicDetails,
   AccountJSON,
   AccountJSONPassword,
 } from '../data/accounts';
 import {getWallet} from './wallet-helpers';
+import {createAccountProvider} from '@docknetwork/wallet-sdk-core/src/account-provider';
 
 /**
  * Create new accounts
  */
 export async function createAccounts() {
-  await getWallet().accounts.create({
+  const account = await getWallet().accounts.create({
     name: 'Account 1',
   } as any);
 
@@ -41,8 +42,13 @@ export async function importAccountFromMnemonic() {
 }
 
 export async function getAccounts() {
-  await Accounts.getInstance().load();
-  return Accounts.getInstance().getAccounts();
+  const accounts = createAccountProvider({
+    wallet: getWallet(),
+  });
+
+  await accounts.load();
+
+  return accounts.getAccounts();
 }
 
 export async function assertAccountIsValid(address) {
@@ -51,9 +57,11 @@ export async function assertAccountIsValid(address) {
 
   expect(addressDocument).toBeDefined();
 
-  const keyringPair = correlations.find(doc => doc.type === 'KeyringPair');
+  const keyringPair = correlations.find(doc =>
+    doc.type.includes('KeyringPair'),
+  );
   expect(keyringPair).toBeDefined();
 
-  const mnemonic = correlations.find(doc => doc.type === 'Mnemonic');
+  const mnemonic = correlations.find(doc => doc.type.includes('Mnemonic'));
   expect(mnemonic).toBeDefined();
 }
