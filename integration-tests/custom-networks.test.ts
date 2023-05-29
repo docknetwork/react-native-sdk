@@ -29,7 +29,7 @@ describe('Custom networks', () => {
     },
   };
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     wallet = await createWallet({
       databasePath: ':memory:',
       networks,
@@ -41,7 +41,7 @@ describe('Custom networks', () => {
     const [doc] = await wallet.getAllDocuments();
     expect(doc.value).toEqual(mockDocuments.mainnet.value);
 
-    wallet.setNetworkId('mumbai');
+    wallet.setNetwork('mumbai');
 
     let mumbaiDocs = await wallet.getAllDocuments();
 
@@ -49,16 +49,24 @@ describe('Custom networks', () => {
   });
 
   it('should add document to mumbai without affecting polygon', async () => {
-    wallet.setNetworkId('mumbai');
+    wallet.setNetwork('mumbai');
 
     await wallet.addDocument(mockDocuments.testnet);
     let [doc] = await wallet.getAllDocuments();
     expect(doc.value).toEqual(mockDocuments.testnet.value);
 
-    wallet.setNetworkId('polygon');
+    wallet.setNetwork('polygon');
     const allDocs = await wallet.getAllDocuments();
     [doc] = allDocs;
     expect(allDocs).toHaveLength(1);
     expect(doc.value).toEqual(mockDocuments.mainnet.value);
+  });
+
+  afterAll(async () => {
+    return new Promise((res) => {
+      setTimeout(() => {
+        res(wallet.dataStore.db.destroy());
+      }, 400);
+    });
   });
 });
