@@ -34,10 +34,14 @@ export const dockDocumentNetworkResolver: DocumentNetworkResolver = async ({
   };
 };
 
-async function credentialResolver({
+export async function credentialResolver({
   document,
   dataStore,
 }: DocumentResolverProps): Promise<ResolverResult> {
+  if (!document) {
+    return null;
+  }
+
   if (!document.type.includes('VerifiableCredential')) {
     return null;
   }

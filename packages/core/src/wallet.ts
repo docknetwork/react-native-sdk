@@ -15,8 +15,17 @@ import {
 } from '@docknetwork/wallet-sdk-data-store/src/entities/document';
 import {CreateWalletProps, IWallet} from './types';
 import {toV1Wallet} from './v1-helpers';
-
+import {initWalletWasm} from './wallet-wasm';
+import {EventEmitter} from 'events';
+import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/lib/modules/wallet';
+import {walletService} from '@docknetwork/wallet-sdk-wasm/lib/services/wallet';
+import {importUniversalWalletDocuments} from '@docknetwork/wallet-sdk-data-store/src/migration/migration1/migrate-v1-data';
 export type {IWallet};
+
+function once(emitter: EventEmitter, eventName: string) {
+  return new Promise(resolve => emitter.once(eventName, resolve));
+}
+
 /**
  * Create wallet
  *
@@ -27,11 +36,29 @@ export async function createWallet(
   createWalletProps: CreateWalletProps,
 ): Promise<IWallet> {
   const dataStore = await createDataStore(createWalletProps);
+  let status;
+
+  const eventEmitter = new EventEmitter();
 
   const wallet = {
+    eventManager: eventEmitter,
+    waitForEvent: (eventName: string) => once(eventEmitter, eventName) as any,
     dataStore,
-    setNetworkId: (networkId: string) => {
-      dataStore.networkId = networkId;
+    getStatus() {
+      return status;
+    },
+    resolveDocumentNetwork: async (document: any) => {
+      return dataStore.resolveDocumentNetwork({
+        document,
+        dataStore,
+      });
+    },
+    setStatus(newStatus: string) {
+      status = newStatus;
+    },
+    setNetwork: async (networkId: string) => {
+      await dataStore.setNetwork(networkId);
+      eventEmitter.emit(WalletEvents.networkUpdated, networkId);
     },
     getNetworkId: () => {
       return dataStore.networkId;
@@ -55,18 +82,27 @@ export async function createWallet(
       return createDocument({
         dataStore,
         json,
+      }).then(result => {
+        eventEmitter.emit(WalletEvents.documentAdded, result);
+        return result;
       });
     },
     updateDocument: (document: any) => {
       return updateDocument({
         dataStore,
         document,
+      }).then(result => {
+        eventEmitter.emit(WalletEvents.documentUpdated, result);
+        return result;
       });
     },
     removeDocument: (id: string) => {
       return removeDocument({
         dataStore,
         id,
+      }).then(result => {
+        eventEmitter.emit(WalletEvents.documentRemoved, result);
+        return result;
       });
     },
     getDocumentCorrelations: (documentId: string) => {
@@ -87,9 +123,34 @@ export async function createWallet(
 
       return keyPair?.value;
     },
-    importUniversalWalletJSON: (json: any, password: string) => {},
-    exportUniversalWalletJSON: (password: string) => {},
+    importUniversalWalletJSON: async (json: any, password: string) => {
+      const documents = await walletService.getDocumentsFromEncryptedWallet({
+        encryptedJSONWallet: json,
+        password,
+      });
+
+      await importUniversalWalletDocuments({
+        documents,
+        dataStore,
+      });
+
+      return documents;
+    },
+    exportUniversalWalletJSON: async (password: string) => {
+      const result = await walletService.exportDocuments({
+        documents: await getAllDocuments({
+          dataStore,
+        }),
+        password,
+      });
+
+      return result;
+    },
   } as IWallet;
 
-  return toV1Wallet(wallet);
+  const v1Wallet = await toV1Wallet(wallet);
+
+  await initWalletWasm(v1Wallet);
+
+  return v1Wallet;
 }
