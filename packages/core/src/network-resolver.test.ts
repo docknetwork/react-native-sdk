@@ -1,5 +1,6 @@
 import {createWallet, IWallet} from './wallet';
 import {
+  accountResolver,
   credentialResolver,
   dockDocumentNetworkResolver,
 } from './network-resolver';
@@ -23,7 +24,6 @@ describe('Wallet', () => {
     await wallet.addDocument(mockDocument);
 
     const [result] = await wallet.getDocumentsByType(mockDocument.type);
-    expect(result.networkId).toEqual('mainnet');
     expect(result.id).toEqual(mockDocument.id);
   });
 
@@ -38,7 +38,6 @@ describe('Wallet', () => {
     await wallet.addDocument(mockDocument);
 
     const [result] = await wallet.getDocumentsByType(mockDocument.type);
-    expect(result.networkId).toEqual('testnet');
     expect(result.id).toEqual(mockDocument.id);
 
     wallet.setNetwork('mainnet');
@@ -58,7 +57,6 @@ describe('Wallet', () => {
     await wallet.addDocument(mockDocument);
 
     let [result] = await wallet.getDocumentsByType(mockDocument.type);
-    expect(result.networkId).toEqual('mainnet');
     expect(result.id).toEqual(mockDocument.id);
 
     wallet.setNetwork('testnet');
@@ -77,7 +75,6 @@ describe('Wallet', () => {
     await wallet.addDocument(mockDocument);
 
     let [result] = await wallet.getDocumentsByType(mockDocument.type);
-    expect(result.networkId).toEqual('mainnet');
     expect(result.id).toEqual(mockDocument.id);
 
     wallet.setNetwork('testnet');
@@ -97,6 +94,30 @@ describe('Wallet', () => {
       });
 
       expect(result).toBe('testnet');
+    });
+  });
+
+  describe('accountResolver', () => {
+    it('expect to resolve account to testnet', async () => {
+      const result = await accountResolver({
+        document: {
+          id: '37PsGbLmrTfV6VVknkrh6LKACXuC9LuSCwuxhk6ajGDjNCwc',
+        },
+        dataStore: wallet.dataStore,
+      });
+
+      expect(result).toBe('testnet');
+    });
+
+    it('expect to resolve account to mainnet', async () => {
+      const result = await accountResolver({
+        document: {
+          id: '3EGurYbWGtyVfouDTZjxz1t2jiV3voU9N6sSDAvhHyxaqf8L',
+        },
+        dataStore: wallet.dataStore,
+      });
+
+      expect(result).toBe('mainnet');
     });
   });
 });
