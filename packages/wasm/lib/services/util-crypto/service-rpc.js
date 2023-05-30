@@ -40,4 +40,8 @@ export class UtilCryptoServiceRpc extends RpcService {
   isBase64(value: string): Promise<boolean> {
     return this.call('isBase64', value);
   }
+
+  getAddressPrefix(params: any): Promise<number | null> {
+    return this.call('getAddressPrefix', params);
+  }
 }
