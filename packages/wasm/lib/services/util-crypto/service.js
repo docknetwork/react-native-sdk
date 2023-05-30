@@ -20,6 +20,7 @@ export class UtilCryptoService {
     UtilCryptoService.prototype.isAddressValid,
     UtilCryptoService.prototype.deriveValidate,
     UtilCryptoService.prototype.isBase64,
+    UtilCryptoService.prototype.getAddressPrefix,
   ];
 
   constructor() {
@@ -48,6 +49,25 @@ export class UtilCryptoService {
 
   cryptoIsReady(...args) {
     return cryptoIsReady();
+  }
+
+  getAddressPrefix(params) {
+    const {address, startPrefix, endPrefix} = params;
+
+    for (let prefix = startPrefix; prefix <= endPrefix; prefix++) {
+      try {
+        const decoded = decodeAddress(address);
+        const reencoded = encodeAddress(decoded, prefix);
+
+        if (reencoded === address) {
+          return prefix;
+        }
+      } catch (err) {
+        // Ignore invalid prefixes
+      }
+    }
+
+    return null;
   }
 
   isAddressValid(address) {
