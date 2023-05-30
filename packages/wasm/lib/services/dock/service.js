@@ -1,4 +1,10 @@
 import dock from '@docknetwork/sdk';
+import {
+  DockResolver,
+  DIDKeyResolver,
+  MultiResolver,
+  UniversalResolver,
+} from '@docknetwork/sdk/resolver';
 import {EventEmitter} from 'events';
 import {Logger} from '../../core/logger';
 import {once} from '../../modules/event-manager';
@@ -13,6 +19,18 @@ export function getDock() {
 export function setDock(instance) {
   dockInstance = instance;
 }
+
+// Create a resolver in order to lookup DIDs for verifying
+export const universalResolverUrl = 'https://uniresolver.io';
+
+class WalletSDKResolver extends MultiResolver {
+  async resolve(did) {
+    const trimmedDID = did.split('#')[0];
+    const document = await super.resolve(trimmedDID);
+    return document;
+  }
+}
+
 /**
  *
  */
@@ -27,12 +45,14 @@ export class DockService {
     DockService.prototype.ensureDockReady,
     DockService.prototype.init,
     DockService.prototype.isApiConnected,
+    DockService.prototype.getAddress,
   ];
 
   constructor() {
     this.name = 'dock';
     this.dock = dock;
     this.emitter = new EventEmitter();
+    this.resolver = this.createDIDResolver();
   }
 
   /**
@@ -47,6 +67,15 @@ export class DockService {
     return once(this.emitter, DockService.Events.DOCK_READY);
   }
 
+  createDIDResolver() {
+    return new WalletSDKResolver(
+      {
+        dock: new DockResolver(getDock()), // Prebuilt resolver
+        key: new DIDKeyResolver(), // did:key resolution
+      },
+      new UniversalResolver(universalResolverUrl),
+    );
+  }
   /**
    *
    * @param {*} params
@@ -54,6 +83,8 @@ export class DockService {
    */
   async init(params: InitParams) {
     validation.init(params);
+
+    this.address = params.address;
 
     if (!this.connectionInProgress) {
       console.warn('There is an exisiting connection');
@@ -63,6 +94,8 @@ export class DockService {
     Logger.info(`Attempt to initialized substrate at: ${params.address}`);
 
     await this.connectionInProgress;
+
+    this.resolver = this.createDIDResolver();
 
     Logger.debug(`Substrate initialized at: ${params.address}`);
 
@@ -87,6 +120,10 @@ export class DockService {
    */
   async isApiConnected() {
     return this.isDockReady;
+  }
+
+  async getAddress() {
+    return this.address;
   }
 
   _setDockReady(isDockReady) {
