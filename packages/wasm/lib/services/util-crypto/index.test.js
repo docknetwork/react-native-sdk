@@ -104,6 +104,6 @@ describe('UtilCryptoService', () => {
 
         expect(result).toBe(TESTNET_PREFIX);
       });
-    })
+    });
   });
 });

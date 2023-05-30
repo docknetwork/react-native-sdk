@@ -4,28 +4,12 @@ import {getKeypairFromDoc} from '@docknetwork/universal-wallet/methods/keypairs'
 import {getSuiteFromKeyDoc} from '@docknetwork/sdk/utils/vc/helpers';
 import VerifiablePresentation from '@docknetwork/sdk/verifiable-presentation';
 import BbsPlusPresentation from '@docknetwork/sdk/bbs-plus-presentation';
-import {
-  DockResolver,
-  DIDKeyResolver,
-  MultiResolver,
-  UniversalResolver,
-} from '@docknetwork/sdk/resolver';
 import {verifyCredential} from '@docknetwork/sdk/utils/vc/credentials';
 import {PEX} from '@sphereon/pex';
 import {keyDocToKeypair} from './utils';
-import {getDock} from '../dock/service';
+import {dockService, getDock} from '../dock/service';
 
 const pex: PEX = new PEX();
-
-const resolvers = {
-  dock: new DockResolver(getDock()),
-  key: new DIDKeyResolver(),
-};
-
-const resolver = new MultiResolver(
-  resolvers,
-  new UniversalResolver('https://uniresolver.io'),
-);
 
 class CredentialService {
   constructor() {
@@ -81,13 +65,13 @@ class CredentialService {
     }
     vp.setHolder(keyDoc.controller);
     keyDoc.keypair = keyDocToKeypair(keyDoc, getDock());
-    return vp.sign(keyDoc, challenge, domain, resolver);
+    return vp.sign(keyDoc, challenge, domain, dockService.resolver);
   }
   verifyCredential(params) {
     validation.verifyCredential(params);
     const {credential} = params;
     return verifyCredential(credential, {
-      resolver,
+      resolver: dockService.resolver,
       revocationApi: {dock: getDock()},
     });
   }
@@ -120,7 +104,7 @@ class CredentialService {
     const bbsPlusPresentation = new BbsPlusPresentation();
     for (const {credential, attributesToReveal} of credentials) {
       const idx = await bbsPlusPresentation.addCredentialToPresent(credential, {
-        resolver,
+        resolver: dockService.resolver,
       });
       if (Array.isArray(attributesToReveal) && attributesToReveal.length > 0) {
         await bbsPlusPresentation.addAttributeToReveal(idx, attributesToReveal);
@@ -134,7 +118,7 @@ class CredentialService {
     const bbsPlusPresentation = new BbsPlusPresentation();
     for (const {credential, attributesToReveal} of credentials) {
       const idx = await bbsPlusPresentation.addCredentialToPresent(credential, {
-        resolver,
+        resolver: dockService.resolver,
       });
       if (Array.isArray(attributesToReveal) && attributesToReveal.length > 0) {
         await bbsPlusPresentation.addAttributeToReveal(idx, attributesToReveal);
