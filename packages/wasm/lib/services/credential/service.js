@@ -3,7 +3,6 @@ import VerifiableCredential from '@docknetwork/sdk/verifiable-credential';
 import {getKeypairFromDoc} from '@docknetwork/universal-wallet/methods/keypairs';
 import {getSuiteFromKeyDoc} from '@docknetwork/sdk/utils/vc/helpers';
 import VerifiablePresentation from '@docknetwork/sdk/verifiable-presentation';
-import dock from '@docknetwork/sdk';
 import BbsPlusPresentation from '@docknetwork/sdk/bbs-plus-presentation';
 import {
   DockResolver,
@@ -19,9 +18,10 @@ import {getDock} from '../dock/service';
 const pex: PEX = new PEX();
 
 const resolvers = {
-  dock: new DockResolver(dock),
+  dock: new DockResolver(getDock()),
   key: new DIDKeyResolver(),
 };
+
 const resolver = new MultiResolver(
   resolvers,
   new UniversalResolver('https://uniresolver.io'),
@@ -86,7 +86,10 @@ class CredentialService {
   verifyCredential(params) {
     validation.verifyCredential(params);
     const {credential} = params;
-    return verifyCredential(credential, {resolver, revocationApi: {dock}});
+    return verifyCredential(credential, {
+      resolver,
+      revocationApi: {dock: getDock()},
+    });
   }
 
   filterCredentials(params) {
