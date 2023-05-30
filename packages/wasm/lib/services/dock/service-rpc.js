@@ -37,4 +37,8 @@ export class DockServiceRpc extends RpcService {
   isApiConnected(): Promise<any> {
     return this.call('isApiConnected');
   }
+
+  getAddress(): Promise<string> {
+    return this.call('getAddress');
+  }
 }
