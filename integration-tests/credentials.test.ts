@@ -7,8 +7,10 @@ import {
   PolygonIDCredential,
   UniversityDegreeCredential,
   UniversityDegreeCredentialBBS,
+  UniversityDegreeTestnet,
 } from './data/credentials';
 import {cleanup, createNewWallet, setupEnvironent} from './helpers';
+import {credentialService} from '@docknetwork/wallet-sdk-wasm/lib/services/credential/service';
 
 const allCredentials = [
   BasicCredential,
