@@ -29,7 +29,6 @@ export async function handleSubstrateNetworkChange(
   }
 
   await dockService.disconnect();
-
   await setSubstrateNetwork(wallet);
 }
 
