@@ -43,7 +43,7 @@ export async function credentialResolver({
     return null;
   }
 
-  if (!document.type.includes('VerifiableCredential')) {
+  if (!document.type?.includes?('VerifiableCredential')) {
     return null;
   }
 
@@ -72,7 +72,15 @@ export async function accountResolver({
   document,
   dataStore,
 }: DocumentResolverProps): Promise<ResolverResult> {
-  // TODO: Define account resolver
+  if (!document) {
+    return null;
+  }
+
+  const isAddress = Array.isArray(document.type) ? document.type.includes('Address') : document.type === 'Address';
+
+  if (!isAddress) {
+    return null;
+  }
 
   const addressPrefixList = dataStore.networks.map(
     network => network?.configs?.addressPrefix,
