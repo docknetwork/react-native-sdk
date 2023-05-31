@@ -43,7 +43,7 @@ export async function credentialResolver({
     return null;
   }
 
-  if (!document.type?.includes?('VerifiableCredential')) {
+  if (!document.type?.includes('VerifiableCredential')) {
     return null;
   }
 
