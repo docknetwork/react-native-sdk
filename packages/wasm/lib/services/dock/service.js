@@ -84,16 +84,15 @@ export class DockService {
   async init(params: InitParams) {
     validation.init(params);
 
-    this.address = params.address;
-
-    if (!this.connectionInProgress) {
-      console.warn('There is an exisiting connection');
-      this.connectionInProgress = getDock().init(params);
+    if (this.dock?.isConnected) {
+      await this.dock.disconnect();
     }
 
-    Logger.info(`Attempt to initialized substrate at: ${params.address}`);
+    await getDock().init(params);
 
-    await this.connectionInProgress;
+    this.address = params.address;
+
+    Logger.info(`Attempt to initialized substrate at: ${params.address}`);
 
     this.resolver = this.createDIDResolver();
 
@@ -109,7 +108,7 @@ export class DockService {
    * @returns
    */
   async disconnect() {
-    const result = await getDock().disconnect();
+    const result = await this.dock.disconnect();
     this._setDockReady(false);
     return result;
   }
@@ -123,7 +122,7 @@ export class DockService {
   }
 
   async getAddress() {
-    return this.address;
+    return this.dock.address;
   }
 
   _setDockReady(isDockReady) {
