@@ -81,5 +81,29 @@ describe('UtilCryptoService', () => {
         expect(await service.isBase64('wrong value')).toBe(false);
       });
     });
+
+    describe('getAddressPrefix', () => {
+      const MAINNET_PREFIX = 22;
+      const TESTNET_PREFIX = 21;
+      it('expect to match mainnet prefix', () => {
+        const result = service.getAddressPrefix({
+          address: '3EGurYbWGtyVfouDTZjxz1t2jiV3voU9N6sSDAvhHyxaqf8L',
+          startPrefix: TESTNET_PREFIX,
+          endPrefix: MAINNET_PREFIX,
+        });
+
+        expect(result).toBe(MAINNET_PREFIX);
+      });
+
+      it('expect to match testnet prefix', () => {
+        const result = service.getAddressPrefix({
+          address: '37PsGbLmrTfV6VVknkrh6LKACXuC9LuSCwuxhk6ajGDjNCwc',
+          startPrefix: TESTNET_PREFIX,
+          endPrefix: MAINNET_PREFIX,
+        });
+
+        expect(result).toBe(TESTNET_PREFIX);
+      });
+    });
   });
 });

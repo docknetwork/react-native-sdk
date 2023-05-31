@@ -5,6 +5,7 @@ import {
   DocumentResolverResult,
   WalletDocument,
 } from '@docknetwork/wallet-sdk-data-store/src/types';
+import {utilCryptoService} from '@docknetwork/wallet-sdk-wasm/lib/services/util-crypto';
 
 type ResolverResult = string | null;
 
@@ -42,7 +43,7 @@ export async function credentialResolver({
     return null;
   }
 
-  if (!document.type.includes('VerifiableCredential')) {
+  if (!document.type?.includes('VerifiableCredential')) {
     return null;
   }
 
@@ -59,7 +60,7 @@ export async function credentialResolver({
   return null;
 }
 
-async function didResolver({
+export async function didResolver({
   document,
   dataStore,
 }: DocumentResolverProps): Promise<ResolverResult> {
@@ -67,12 +68,35 @@ async function didResolver({
   return null;
 }
 
-async function accountResolver({
+export async function accountResolver({
   document,
   dataStore,
 }: DocumentResolverProps): Promise<ResolverResult> {
-  // TODO: Define account resolver
-  return null;
+  if (!document) {
+    return null;
+  }
+
+  const isAddress = Array.isArray(document.type) ? document.type.includes('Address') : document.type === 'Address';
+
+  if (!isAddress) {
+    return null;
+  }
+
+  const addressPrefixList = dataStore.networks.map(
+    network => network?.configs?.addressPrefix,
+  );
+
+  const addressPrefix = await utilCryptoService.getAddressPrefix({
+    address: document.id,
+    startPrefix: Math.min(...addressPrefixList),
+    endPrefix: Math.max(...addressPrefixList),
+  });
+
+  const network = dataStore.networks.find(
+    item => item.configs?.addressPrefix === addressPrefix,
+  );
+
+  return network?.id;
 }
 
 const resolvers = [credentialResolver, accountResolver, didResolver];
