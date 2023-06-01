@@ -18,7 +18,7 @@ export async function toV1Wallet(wallet: IWallet): Promise<IWallet> {
       return wallet.addDocument(document);
     },
     deleteWallet(): Promise<void> {
-      return Promise.resolve(undefined);
+      return wallet.deleteWallet();
     },
     ensureNetwork(): Promise<void> {
       return Promise.resolve(undefined);
