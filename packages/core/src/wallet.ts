@@ -12,6 +12,7 @@ import {
   getDocumentCorrelations,
   getAllDocuments,
   updateDocument,
+  removeAllDocuments,
 } from '@docknetwork/wallet-sdk-data-store/src/entities/document';
 import {CreateWalletProps, IWallet} from './types';
 import {toV1Wallet} from './v1-helpers';
@@ -52,6 +53,13 @@ export async function createWallet(
         document,
         dataStore,
       });
+    },
+    deleteWallet: async () => {
+      await removeAllDocuments({
+        dataStore,
+      });
+
+      eventEmitter.emit(WalletEvents.walletDeleted);
     },
     setStatus(newStatus: string) {
       status = newStatus;
@@ -137,10 +145,21 @@ export async function createWallet(
       return documents;
     },
     exportUniversalWalletJSON: async (password: string) => {
+      let documents = await getAllDocuments({
+        dataStore,
+        allNetworks: true,
+      });
+
+      documents = documents.map((document: WalletDocument) => {
+        if (!document['@context']) {
+          document['@context'] = 'https://w3id.org/wallet/v1';
+        }
+
+        return document;
+      });
+
       const result = await walletService.exportDocuments({
-        documents: await getAllDocuments({
-          dataStore,
-        }),
+        documents,
         password,
       });
 
