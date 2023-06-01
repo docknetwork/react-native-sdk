@@ -32,10 +32,19 @@ export async function createDocument({
   });
 
   const documentId = json.id || uuid();
-  const {networkId} = await dataStore.resolveDocumentNetwork({
-    document: json,
-    dataStore,
-  });
+  let networkId;
+
+  if (json._networkId) {
+    networkId = json._networkId;
+    delete json._networkId;
+  } else {
+    const resolution = await dataStore.resolveDocumentNetwork({
+      document: json,
+      dataStore,
+    });
+
+    networkId = resolution.networkId;
+  }
 
   const entity: DocumentEntity = {
     networkId,
