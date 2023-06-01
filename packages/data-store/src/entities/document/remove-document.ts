@@ -16,3 +16,10 @@ export async function removeDocument({
     networkId: dataStore.networkId,
   });
 }
+
+export async function removeAllDocuments({
+  dataStore,
+}: ContextProps): Promise<void> {
+  const repository = dataStore.db.getRepository(DocumentEntity);
+  await repository.delete({});
+}
