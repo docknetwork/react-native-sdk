@@ -157,11 +157,20 @@ export class WalletService {
    * @returns
    */
   async exportAccount(params: ExportAccountParams) {
-    this._assertWallet();
     validation.exportAccount(params);
 
-    const {address, password} = params;
-    const pair = await this.getAccountKeypair(address);
+    const {address, password, keyPairDocument} = params;
+
+    let pair;
+
+    if (keyPairDocument) {
+      pair = keyringService.decryptKeyPair({
+        jsonData: keyPairDocument,
+        password: '',
+      });
+    } else {
+      pair = await this.getAccountKeypair(address);
+    }
 
     return pair.toJson(password);
   }
