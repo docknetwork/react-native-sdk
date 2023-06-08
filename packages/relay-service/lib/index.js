@@ -15,6 +15,7 @@ import {
   toBase64,
 } from './payloads';
 import jwtDecode from 'jwt-decode';
+import {dockService} from '@docknetwork/wallet-sdk-wasm/lib/services/dock/service';
 
 let serviceURL = process.env.RELAY_SERVICE_URL || 'https://relay.dock.io';
 
@@ -61,6 +62,8 @@ const getMessages = async ({keyPairDocs, limit = 20}) => {
   assert(!!keyPairDocs, 'keyPairDoc is required');
   assert(Array.isArray(keyPairDocs), 'keyPairDocs must be an array');
   assert(!!keyPairDocs.length, 'keyPairDocs must not be empty');
+
+  await dockService.waitDockReady();
 
   const {payload, dids} = await generateSignedPayloadFromList(keyPairDocs, {
     limit,
@@ -198,6 +201,12 @@ export async function resolveDidcommMessage({keyPairDocs, message}) {
       return null;
     }
   }
+
+  try {
+    // Parse JSON strings
+    jwe = JSON.parse(jwe);
+  } catch (_err) {}
+
 
   if (typeof jwe === 'string') {
     jwe = await resolveJweString(jwe);
