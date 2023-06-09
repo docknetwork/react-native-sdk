@@ -80,7 +80,7 @@ export class DockService {
     this._setDockReady(false);
     return result;
   }
-  
+
   async waitDockReady() {
     return new Promise(resolve => {
       if (this.isDockReady) {
