@@ -207,7 +207,6 @@ export async function resolveDidcommMessage({keyPairDocs, message}) {
     jwe = JSON.parse(jwe);
   } catch (_err) {}
 
-
   if (typeof jwe === 'string') {
     jwe = await resolveJweString(jwe);
   }
