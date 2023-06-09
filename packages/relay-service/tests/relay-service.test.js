@@ -4,6 +4,7 @@ import {generateSignedPayload, toBase64} from '../lib/payloads';
 import {ALICE_KEY_PAIR_DOC, BOB_KEY_PAIR_DOC} from './mock-data';
 import {didcommCreateEncrypted} from '../lib/didcomm';
 import {getDerivedAgreementKey} from '../lib/didcomm';
+import {dockService} from '@docknetwork/wallet-sdk-wasm/lib/services/dock/service';
 
 describe('Relay service', () => {
   beforeEach(() => {
@@ -73,6 +74,7 @@ describe('Relay service', () => {
           },
         ],
       });
+      jest.spyOn(dockService, 'waitDockReady').mockReturnValueOnce(null);
 
       const result = await RelayService.getMessages({
         keyPairDocs: [BOB_KEY_PAIR_DOC],
