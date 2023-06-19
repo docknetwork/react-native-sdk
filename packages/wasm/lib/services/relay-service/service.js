@@ -25,6 +25,10 @@ export function waitFor(condition, timeout) {
   });
 }
 
+function ensureDockNetwork() {
+  return waitFor(() => dockService.isApiConnected(), 8000);
+}
+
 /**
  * RelayService
  */
@@ -40,20 +44,26 @@ export class RelayService {
     this.name = serviceName;
   }
 
-  sendMessage(params: SendMessageParams) {
+  async sendMessage(params: SendMessageParams) {
     validation.sendMessage(params);
+
+    await ensureDockNetwork();
+
     return relayServiceClient.sendMessage(params);
   }
 
-  resolveDidcommMessage(params: ResolveDidcommMessageParams) {
+  async resolveDidcommMessage(params: ResolveDidcommMessageParams) {
     validation.resolveDidcommMessage(params);
+
+    await ensureDockNetwork();
+
     return relayServiceClient.resolveDidcommMessage(params);
   }
 
   async getMessages(params: GetMessagesParams) {
     validation.getMessages(params);
 
-    await waitFor(() => dockService.isApiConnected(), 8000);
+    await ensureDockNetwork();
 
     return relayServiceClient.getMessages(params);
   }
