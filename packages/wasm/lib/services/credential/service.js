@@ -4,7 +4,7 @@ import {getKeypairFromDoc} from '@docknetwork/universal-wallet/methods/keypairs'
 import {getSuiteFromKeyDoc} from '@docknetwork/sdk/utils/vc/helpers';
 import VerifiablePresentation from '@docknetwork/sdk/verifiable-presentation';
 import dock from '@docknetwork/sdk';
-import BbsPlusPresentation from '@docknetwork/sdk/bbs-plus-presentation';
+import BbsPlusPresentation from '@docknetwork/sdk/presentation';
 import {
   DockResolver,
   DIDKeyResolver,
