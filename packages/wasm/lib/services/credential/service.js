@@ -49,7 +49,7 @@ class CredentialService {
     const kp = getKeypairFromDoc(keyDoc);
 
     kp.signer = kp.signer();
-    const suite = getSuiteFromKeyDoc(kp);
+    const suite = await getSuiteFromKeyDoc(kp);
     verifiableCredential.setIssuer(keyDoc.controller);
 
     await verifiableCredential.sign(suite);
