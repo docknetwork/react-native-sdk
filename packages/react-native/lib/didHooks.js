@@ -1,5 +1,6 @@
 import {useCallback, useMemo} from 'react';
 import {didServiceRPC} from '@docknetwork/wallet-sdk-wasm/lib/services/dids';
+import {walletService} from '@docknetwork/wallet-sdk-wasm/lib/services/wallet';
 
 import {useWallet} from './index';
 export function useDIDUtils() {
@@ -208,8 +209,8 @@ export function useDIDManagement() {
         const correlationDocuments = allCorrelationDocuments.filter(doc => {
           return !!(doc && doc.type && doc.id && doc['@context']);
         });
-        if (correlationDocuments.length > 1) {
-          return wallet.exportDocuments({
+        if (correlationDocuments.length >= 1) {
+          return walletService.exportDocuments({
             documents: correlationDocuments,
             password,
           });
