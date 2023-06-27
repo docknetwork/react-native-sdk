@@ -15,7 +15,6 @@ import {
   FEE_ESTIMATION_BUFFER,
 } from './service';
 import {SubstrateServiceRpc} from './service-rpc';
-import {keyringService} from "../keyring/service";
 
 describe('ExampleService', () => {
   it('ServiceRpc', () => {
