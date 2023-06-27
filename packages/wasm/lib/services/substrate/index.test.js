@@ -15,6 +15,7 @@ import {
   FEE_ESTIMATION_BUFFER,
 } from './service';
 import {SubstrateServiceRpc} from './service-rpc';
+import {keyringService} from "../keyring/service";
 
 describe('ExampleService', () => {
   it('ServiceRpc', () => {
@@ -23,9 +24,11 @@ describe('ExampleService', () => {
 
   describe('service', () => {
     let unmockDockService;
+    let testKeypairJSON;
 
     beforeAll(async () => {
       unmockDockService = await mockDockService();
+      testKeypairJSON = TestFixtures.account1.getKeyring().toJson('');
       await setupTestWallet();
     });
 
@@ -58,6 +61,7 @@ describe('ExampleService', () => {
           toAddress: TestFixtures.account2.address,
           fromAddress: TestFixtures.account1.address,
           amount: 1,
+          keyPair: testKeypairJSON,
         });
         expect(fee).toBe(TEST_FEE_AMOUNT * 1.1);
       });
@@ -81,6 +85,7 @@ describe('ExampleService', () => {
           amount: 1,
           fromAddress: TestFixtures.account1.address,
           toAddress: TestFixtures.account2.address,
+          keyPair: testKeypairJSON,
         });
 
         console.log('tx hash', hash);
