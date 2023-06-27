@@ -3,8 +3,7 @@ module.exports = {
   testTimeout: 30000,
   maxConcurrency: 1,
   testMatch: [
-    '<rootDir>/**/*.test.js',
-    '<rootDir>/packages/**/!(*.e2e).test.js',
+    '<rootDir>/**/!(*.e2e).test.js',
   ],
   coverageThreshold: {
     global: {
