@@ -50,7 +50,6 @@ describe('WalletService', () => {
     });
 
     describe('getAccountKeypair', () => {
-
       it('expect to validate params', async () => {
         const error = await getPromiseError(() =>
           service.getDocumentById(null),
