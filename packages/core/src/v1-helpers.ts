@@ -4,6 +4,7 @@ import {createAccountProvider} from './account-provider';
 import {WalletDocument} from '@docknetwork/wallet-sdk-data-store/src/types';
 import * as walletServiceConfigs from '@docknetwork/wallet-sdk-wasm/lib/services/wallet/configs';
 import {keyringService} from '@docknetwork/wallet-sdk-wasm/lib/services/keyring/index';
+import {walletService} from '@docknetwork/wallet-sdk-wasm/lib/services/wallet';
 import {v4 as uuid} from 'uuid';
 import {EventEmitter} from 'events';
 
@@ -19,6 +20,9 @@ export async function toV1Wallet(wallet: IWallet): Promise<IWallet> {
     },
     deleteWallet(): Promise<void> {
       return wallet.deleteWallet();
+    },
+    exportDocuments: (params: {documents: any}) => {
+      return walletService.exportDocuments(params);
     },
     ensureNetwork(): Promise<void> {
       return Promise.resolve(undefined);
