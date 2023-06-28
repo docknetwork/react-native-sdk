@@ -39,6 +39,9 @@ const mockDIDResolver = new WalletSDKResolver(
   new UniversalResolver(universalResolverUrl),
 );
 
+dockService.createDIDResolver = () => mockDIDResolver;
+dockService.resolver = mockDIDResolver;
+
 describe('DIDComm', () => {
   it('expect to decrypt didcomm message', async () => {
     dockService.resolver = mockDIDResolver;
