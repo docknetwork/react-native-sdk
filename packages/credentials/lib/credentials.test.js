@@ -21,30 +21,18 @@ describe('Credentials module', () => {
 
     expect(wallet.query).toBeCalled();
     expect(docs).toHaveLength(result.length);
-    expect(docs).toStrictEqual([
-      {
-        content: 1,
-        id: 1,
-      },
-    ]);
+    expect(docs).toStrictEqual(result);
   });
 
   it('expect to add credential to the wallet', async () => {
-    const walletDocResult = {
-      value: testCredential,
-      id: 1,
-    };
     const wallet = {
-      add: jest.fn().mockReturnValue(walletDocResult),
+      add: jest.fn().mockReturnValue(testCredential),
     };
     const credentials = new Credentials({wallet});
 
     await credentials.add(testCredential);
 
-    expect(wallet.add).toBeCalledWith({
-      type: 'VerifiableCredential',
-      value: testCredential,
-    });
+    expect(wallet.add).toBeCalledWith(testCredential);
   });
 
   it('expect to remove credential from the wallet', async () => {
@@ -65,10 +53,7 @@ describe('Credentials module', () => {
 
   describe('add from url', () => {
     const wallet = {
-      add: jest.fn().mockReturnValue({
-        id: 1,
-        value: testCredential,
-      }),
+      add: jest.fn().mockReturnValue(testCredential),
     };
     const credentials = new Credentials({wallet});
 
@@ -92,8 +77,7 @@ describe('Credentials module', () => {
 
       const credential = await credentials.addFromUrl(url);
 
-      expect(credential.id).toBeDefined();
-      expect(credential.content).toStrictEqual(testCredential);
+      expect(credential).toStrictEqual(testCredential);
     });
 
     it('Expect to handle invalid url', async () => {
