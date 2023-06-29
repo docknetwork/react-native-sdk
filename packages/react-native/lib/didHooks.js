@@ -203,11 +203,10 @@ export function useDIDManagement() {
     async ({id, password}) => {
       const existingDoc = await wallet.getDocumentById(id);
       if (existingDoc) {
-        const allCorrelationDocuments = (await wallet.resolveCorrelations(id)).filter(doc => doc && doc?.id !== existingDoc.id);
-        const documentsToExport = [
-          existingDoc,
-          ...allCorrelationDocuments,
-        ];
+        const allCorrelationDocuments = (
+          await wallet.resolveCorrelations(id)
+        ).filter(doc => doc && doc?.id !== existingDoc.id);
+        const documentsToExport = [existingDoc, ...allCorrelationDocuments];
 
         if (allCorrelationDocuments.length >= 1) {
           return wallet.exportDocuments({

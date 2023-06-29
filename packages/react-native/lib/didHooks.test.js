@@ -502,7 +502,7 @@ describe('DID Hooks', () => {
   });
   test('Export DID with invalid doc id', async () => {
     const {result} = renderHook(() => useDIDManagement());
-    const {result: walletResult} = renderHook(() => useWallet());
+    renderHook(() => useWallet());
     await expect(
       result.current.exportDID({
         id: 'x',
