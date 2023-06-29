@@ -172,6 +172,7 @@ jest.mock('./index.js', () => {
       '@context': ['https://w3id.org/wallet/v1'],
       id: 'urn:uuid:e8fc7810-9524-11ea-bb37-0242ac130002n',
       type: 'Ed25519VerificationKey2018',
+      correlation: [],
     },
     {
       '@context': ['https://w3id.org/wallet/v1'],
@@ -501,8 +502,7 @@ describe('DID Hooks', () => {
   });
   test('Export DID with invalid doc id', async () => {
     const {result} = renderHook(() => useDIDManagement());
-    // const {result: walletResult} = renderHook(() => useWallet());
-
+    const {result: walletResult} = renderHook(() => useWallet());
     await expect(
       result.current.exportDID({
         id: 'x',
@@ -512,7 +512,7 @@ describe('DID Hooks', () => {
 
     await expect(
       result.current.exportDID({
-        id: 'e8fc7810-9524-11ea-bb37-0242ac130002',
+        id: 'urn:uuid:e8fc7810-9524-11ea-bb37-0242ac130002n',
         password: 'test',
       }),
     ).rejects.toThrowError('DID KeyPair not found');
