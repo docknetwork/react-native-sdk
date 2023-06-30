@@ -98,14 +98,18 @@ describe('DID Service', () => {
   });
 
   it('expect to register did dock', async () => {
-    const result = await service.registerDidDock(TestFixtures.account1.address);
+    const result = await service.registerDidDock(
+      TestFixtures.account1.getKeyring().toJson(''),
+    );
     expect(result.dockDID).toBeDefined();
     expect(result.keyPairWalletId).toBeDefined();
   });
 
   it('expect to fail to register did dock', async () => {
     const error = await getPromiseError(() =>
-      service.registerDidDock(TestFixtures.noBalanceAccount.address),
+      service.registerDidDock(
+        TestFixtures.noBalanceAccount.getKeyring().toJson(''),
+      ),
     );
     expect(error.message).toBe(
       '1010: Invalid Transaction: Inability to pay some fees , e.g. account balance too low',
