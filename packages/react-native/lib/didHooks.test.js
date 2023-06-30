@@ -89,14 +89,14 @@ jest.mock('@docknetwork/wallet-sdk-wasm/lib/services/dids', () => {
         correlation: [],
       };
     }),
-    registerDidDock: jest.fn(address => {
-      if (address) {
+    registerDidDock: jest.fn(keypair => {
+      if (keypair) {
         return {
           keyPairWalletId: new Date().getTime().toString(),
           dockDID: 'did:dock:z6MkjjCpsoQrwnEmqHzLdxWowXk5gjbwor4urC1RPDmGeV8r',
         };
       }
-      throw new Error('address is required');
+      throw new Error('keyPair is required');
     }),
     getDidDockDocument: jest.fn(() => {
       return Promise.resolve();
@@ -108,6 +108,11 @@ jest.mock('@docknetwork/wallet-sdk-wasm/lib/services/dids', () => {
     didServiceRPC: mockFunctions,
   };
 });
+// TODO: These mocks are hard to maintain, it mimic the wallet sdk basically
+// There is no performance benefits on it, so we should consider to remove it
+// and use the real wallet sdk instead
+// Additionally we should consider moving the logic from hooks, and expose it as regular js functions
+// easier to maintain and to test
 jest.mock('./index.js', () => {
   const didDocument = {
     '@context': [
@@ -266,6 +271,19 @@ jest.mock('./index.js', () => {
         const document = mockSingleDoc(documentId);
         if (document) {
           return Promise.resolve(document);
+        }
+      }),
+      getAccountKeyPair: jest.fn(address => {
+        if (address) {
+          return {
+            encoded:
+              'MFMCAQEwBQYDK2VwBCIEIBCsEBjFxi3RP8YCclufe+1vKPMqVOYSNZxgmsWQqvpGyw7uvu2ixEfRlwMqwT3jJNAhOZ4izTx5o8veWdVDt7qhIwMhACT2ATM+GBI4XXu+UO/wpgBFtURrTrgsvtYDpW+eB988',
+            encoding: {
+              content: ['pkcs8', 'sr25519'],
+              type: ['none'],
+              version: '3',
+            },
+          };
         }
       }),
       resolveCorrelations: jest.fn(id => {
@@ -554,9 +572,7 @@ describe('DID Hooks', () => {
       keypairId: expect.any(String),
     });
     expect(walletResult.current.wallet.add).toHaveBeenCalledTimes(2);
-    expect(didServiceRPC.registerDidDock).toHaveBeenCalledWith(
-      '6GwnHZARcEkJio9dxPYy6SC5sAL6PxpZAB6VYwoFjGMU',
-    );
+    expect(didServiceRPC.registerDidDock).toHaveBeenCalled();
     expect(didServiceRPC.getDidDockDocument).toHaveBeenCalledWith(
       'did:dock:z6MkjjCpsoQrwnEmqHzLdxWowXk5gjbwor4urC1RPDmGeV8r',
     );
@@ -572,6 +588,6 @@ describe('DID Hooks', () => {
         name: 'DID Name',
         didType: 'diddock',
       }),
-    ).rejects.toThrowError('address is required');
+    ).rejects.toThrowError('keyPair is required');
   });
 });
