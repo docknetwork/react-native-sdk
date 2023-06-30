@@ -2,6 +2,7 @@ import {useCallback, useMemo} from 'react';
 import {didServiceRPC} from '@docknetwork/wallet-sdk-wasm/lib/services/dids';
 
 import {useWallet} from './index';
+
 export function useDIDUtils() {
   const createDIDKeypairDocument = useCallback(async keypairParams => {
     const {type, derivePath} = keypairParams;
@@ -86,8 +87,9 @@ export function useDIDManagement() {
 
   const didMethodDock = useCallback(
     async ({address, name}) => {
+      const keyPair = wallet.getAccountKeyPair(address);
       const {dockDID, keyPairWalletId} = await didServiceRPC.registerDidDock(
-        address,
+        keyPair,
       );
 
       const keydoc = await createDIDDockKeyDoc({
