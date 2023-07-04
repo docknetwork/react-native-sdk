@@ -4,7 +4,7 @@ import {validation} from './config';
 import * as credentialsUtils from '@docknetwork/sdk/utils/vc/credentials';
 import {CredentialServiceRPC} from './service-rpc';
 import {getTestWallet} from '../../test/setup-test-state';
-import BbsPlusPresentation from '@docknetwork/sdk/bbs-plus-presentation';
+import BbsPlusPresentation from '@docknetwork/sdk/presentation';
 
 describe('DID Service', () => {
   beforeAll(async () => {
