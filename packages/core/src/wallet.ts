@@ -142,6 +142,12 @@ export async function createWallet(
 
       return keyPair?.value;
     },
+    getDocumentsFromEncryptedWallet: async (json: any, password: string) => {
+      return walletService.getDocumentsFromEncryptedWallet({
+        encryptedJSONWallet: json,
+        password,
+      });
+    },
     importUniversalWalletJSON: async (json: any, password: string) => {
       const documents = await walletService.getDocumentsFromEncryptedWallet({
         encryptedJSONWallet: json,
