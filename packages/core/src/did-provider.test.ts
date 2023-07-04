@@ -75,7 +75,7 @@ describe('DID Provider', () => {
           encryptedJSONWallet: didBackupFile,
           password,
         }),
-      ).rejects.toThrowError('DID already exist in wallet');
+      ).rejects.toThrowError('DID already exists in wallet');
     });
   });
 });
