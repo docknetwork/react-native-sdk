@@ -38,7 +38,7 @@ export async function importDID({
         existingDocs.length > 0 &&
         existingDocs[0].type === 'DIDResolutionResponse'
       ) {
-        throw new Error('DID already exist in wallet');
+        throw new Error('DID already exists in wallet');
       }
     }
     return docs;
