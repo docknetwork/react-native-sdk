@@ -2,7 +2,9 @@ module.exports = {
   testEnvironment: 'node',
   testTimeout: 30000,
   maxConcurrency: 1,
-  testMatch: ['<rootDir>/integration-tests/*.test.ts'],
+  testMatch: [
+    '<rootDir>/**/!(*.e2e).test.js',
+  ],
   coverageThreshold: {
     global: {
       branches: 10,

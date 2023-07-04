@@ -27,6 +27,17 @@ function once(emitter: EventEmitter, eventName: string) {
   return new Promise(resolve => emitter.once(eventName, resolve));
 }
 
+export function ensureDocumentContext(document) {
+  if (document['@context']) {
+    return document;
+  }
+
+  return {
+    ...document,
+    '@context': ['https://w3id.org/wallet/v1'],
+  };
+}
+
 /**
  * Create wallet
  *
@@ -131,6 +142,12 @@ export async function createWallet(
 
       return keyPair?.value;
     },
+    getDocumentsFromEncryptedWallet: async (json: any, password: string) => {
+      return walletService.getDocumentsFromEncryptedWallet({
+        encryptedJSONWallet: json,
+        password,
+      });
+    },
     importUniversalWalletJSON: async (json: any, password: string) => {
       const documents = await walletService.getDocumentsFromEncryptedWallet({
         encryptedJSONWallet: json,
@@ -144,21 +161,20 @@ export async function createWallet(
 
       return documents;
     },
+    exportDocuments: async (params: {documents: any; password: string}) => {
+      const documents = params.documents.map(ensureDocumentContext);
+      return walletService.exportDocuments({
+        documents,
+        password: params.password,
+      });
+    },
     exportUniversalWalletJSON: async (password: string) => {
       let documents = await getAllDocuments({
         dataStore,
         allNetworks: true,
       });
 
-      documents = documents.map((document: WalletDocument) => {
-        if (!document['@context']) {
-          document['@context'] = 'https://w3id.org/wallet/v1';
-        }
-
-        return document;
-      });
-
-      const result = await walletService.exportDocuments({
+      const result = await wallet.exportDocuments({
         documents,
         password,
       });

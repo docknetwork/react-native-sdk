@@ -13,7 +13,6 @@ import {NetworkManager} from './network-manager';
 import {migrate} from './data-migration';
 import {Logger} from '../core/logger';
 import legacyWalletSchema from '../test/fixtures/legacy-wallet-schema.json';
-import {getWallet} from '@docknetwork/wallet-sdk-react-native/lib/wallet';
 
 /** Wallet events */
 export const WalletEvents = {
@@ -394,7 +393,7 @@ class Wallet {
 
   async importWallet({json, password}) {
     await this.deleteWallet();
-    await getWallet().importWallet({json, password});
+    await walletService.importWallet({json, password});
     this.migrated = await migrate({wallet: this});
     await this.eventManager.emit(WalletEvents.walletImported);
   }
@@ -405,7 +404,7 @@ class Wallet {
     });
   }
   async resolveCorrelations(documentId) {
-    return getWallet().resolveCorrelations(documentId);
+    return walletService.resolveCorrelations(documentId);
   }
   async exportDocuments({documents, password}) {
     return walletService.exportDocuments({
