@@ -1,4 +1,4 @@
-import {createWallet, IWallet} from './wallet';
+import {createWallet, ensureDocumentContext, IWallet} from './wallet';
 
 describe('Wallet', () => {
   let wallet: IWallet;
@@ -12,6 +12,23 @@ describe('Wallet', () => {
   it('expect to create a wallet', async () => {
     expect(wallet).toBeDefined();
     expect(wallet.dataStore).toBeDefined();
+  });
+
+  it('expect to add missing @context on documents', () => {
+    const documents = [
+      {
+        id: 1,
+      },
+      {
+        id: 2,
+        '@context': 'test',
+      },
+    ];
+
+    const result = documents.map(ensureDocumentContext);
+
+    expect(result[0]['@context']).toStrictEqual(['https://w3id.org/wallet/v1']);
+    expect(result[1]['@context']).toEqual('test');
   });
 
   describe('document CRUD', () => {
