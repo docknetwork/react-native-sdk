@@ -1,7 +1,10 @@
 import {useCallback, useMemo} from 'react';
 import {didServiceRPC} from '@docknetwork/wallet-sdk-wasm/lib/services/dids';
-
+import {createDIDProvider} from '@docknetwork/wallet-sdk-core/src/did-provider';
 import {useWallet} from './index';
+
+// TODO: there is no point in using hooks here
+// we could just use a regular function and createDIDKeypairDocument looks redundant
 export function useDIDUtils() {
   const createDIDKeypairDocument = useCallback(async keypairParams => {
     const {type, derivePath} = keypairParams;
@@ -57,6 +60,11 @@ export function useDIDUtils() {
 
 export function useDIDManagement() {
   const {wallet, documents} = useWallet({syncDocs: true});
+  const didProvider = useMemo(() => {
+    return createDIDProvider({
+      wallet,
+    });
+  }, [wallet]);
   const {createDIDKeypairDocument, createDIDKeyDocument, createDIDDockKeyDoc} =
     useDIDUtils();
 
@@ -86,8 +94,9 @@ export function useDIDManagement() {
 
   const didMethodDock = useCallback(
     async ({address, name}) => {
+      const keyPair = wallet.getAccountKeyPair(address);
       const {dockDID, keyPairWalletId} = await didServiceRPC.registerDidDock(
-        address,
+        keyPair,
       );
 
       const keydoc = await createDIDDockKeyDoc({
@@ -155,62 +164,18 @@ export function useDIDManagement() {
     [wallet],
   );
 
-  const importDID = useCallback(
-    async ({encryptedJSONWallet, password}) => {
-      try {
-        const rawDocs = await wallet.getDocumentsFromEncryptedWallet({
-          encryptedJSONWallet,
-          password,
-        });
-        const docs = rawDocs.map(rawDoc => {
-          if (Array.isArray(rawDoc.type) && rawDoc.type.length > 0) {
-            return {
-              ...rawDoc,
-              type: rawDoc.type[0],
-            };
-          }
-          return rawDoc;
-        });
-
-        for (const doc of docs) {
-          const existingDocs = await wallet.query({
-            id: doc.id,
-          });
-
-          if (existingDocs.length === 0) {
-            await wallet.add(doc);
-          } else if (
-            existingDocs.length > 0 &&
-            existingDocs[0].type === 'DIDResolutionResponse'
-          ) {
-            throw new Error('DID already exist in wallet');
-          }
-        }
-        return docs;
-      } catch (e) {
-        switch (e.message) {
-          case 'No matching recipient found for key agreement key.':
-            throw new Error('Incorrect password');
-          default:
-            throw e;
-        }
-      }
-    },
-    [wallet],
-  );
-
   const exportDID = useCallback(
     async ({id, password}) => {
       const existingDoc = await wallet.getDocumentById(id);
       if (existingDoc) {
-        const allCorrelationDocuments = await wallet.resolveCorrelations(id);
+        const allCorrelationDocuments = (
+          await wallet.resolveCorrelations(id)
+        ).filter(doc => doc && doc?.id !== existingDoc.id);
+        const documentsToExport = [existingDoc, ...allCorrelationDocuments];
 
-        const correlationDocuments = allCorrelationDocuments.filter(doc => {
-          return !!(doc && doc.type && doc.id && doc['@context']);
-        });
-        if (correlationDocuments.length > 1) {
+        if (allCorrelationDocuments.length >= 1) {
           return wallet.exportDocuments({
-            documents: correlationDocuments,
+            documents: documentsToExport,
             password,
           });
         }
@@ -222,14 +187,15 @@ export function useDIDManagement() {
     [wallet],
   );
 
-  return useMemo(() => {
-    return {
-      createDID,
-      editDID,
-      deleteDID,
-      didList,
-      importDID,
-      exportDID,
-    };
-  }, [createDID, editDID, deleteDID, didList, importDID, exportDID]);
+  return {
+    // I've moved this method to the did-provider.ts file
+    // Can be used as an example on how to remove code from hooks
+    importDID: didProvider.importDID,
+    didProvider,
+    createDID,
+    editDID,
+    deleteDID,
+    didList,
+    exportDID,
+  };
 }
