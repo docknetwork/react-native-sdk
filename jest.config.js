@@ -1,8 +1,5 @@
 module.exports = {
   testEnvironment: 'node',
-  testEnvironmentOptions: {
-    memoryLimit: 512 * 1024 * 1024,
-  },
   testTimeout: 30000,
   maxConcurrency: 2,
   testMatch: ['<rootDir>/**/!(*.e2e).test.[jt]s'],
