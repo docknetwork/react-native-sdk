@@ -75,7 +75,6 @@
     "webpack": "^5.67.0"
   }, 
   "scripts": {
-    "start": "node ./scripts/start",
     "build": "node  ./packages/react-native/bundler/build.js",
     "build-and-copy": "node  ./packages/react-native/bundler/build-and-copy.js",
     "build-packages": "yarn workspace @docknetwork/wallet-sdk-dids build",
@@ -88,7 +87,6 @@
     "format": "prettier './src/**/*.{js,json}' --write",
     "exec": "BABEL_ENV=development; babel-node",
     "docs": "documentation build packages/core/lib/** -f html -o docs",
-    "link-packages": "sh ./scripts/link-packages.sh",
     "postinstall": "sh ./scripts/fix-deps.sh && node ./fixdeps && yarn build-packages"
   },
   "eslintConfig": {
