@@ -44,13 +44,12 @@ describe('Wallet', () => {
     it('expect to get a document by id', async () => {
       const result = await wallet.getDocumentById(mockDocument.id);
       expect(result.id).toEqual(mockDocument.id);
-      expect(result.data).toStrictEqual(mockDocument);
+      expect(result).toStrictEqual(mockDocument);
     });
 
     it('expect to get document by type', async () => {
       const result = await wallet.getDocumentsByType(mockDocument.type);
-      expect(result[0].id).toEqual(mockDocument.id);
-      expect(result[0].data).toStrictEqual(mockDocument);
+      expect(result[0]).toStrictEqual(mockDocument);
     });
 
     it('expect to remove a document', async () => {

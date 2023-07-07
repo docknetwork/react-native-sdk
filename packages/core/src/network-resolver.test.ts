@@ -3,6 +3,7 @@ import {
   accountResolver,
   credentialResolver,
   dockDocumentNetworkResolver,
+  resolveApiNetwork,
 } from './network-resolver';
 
 describe('Wallet', () => {
@@ -13,6 +14,22 @@ describe('Wallet', () => {
       databasePath: ':memory:',
       documentNetworkResolver: dockDocumentNetworkResolver,
     });
+  });
+
+  it('resolveApiNetwork', () => {
+    expect(
+      resolveApiNetwork({
+        url: 'https://creds-staging.dock.io/proof/0bb39274-4ef1-4e7f-ab8d-d91d8926d9af',
+        dataStore: wallet.dataStore,
+      }),
+    ).toBe('testnet');
+
+    expect(
+      resolveApiNetwork({
+        url: 'https://creds.dock.io/proof/0bb39274-4ef1-4e7f-ab8d-d91d8926d9af',
+        dataStore: wallet.dataStore,
+      }),
+    ).toBe('mainnet');
   });
 
   it('expect to add document to mainnet', async () => {
@@ -102,6 +119,7 @@ describe('Wallet', () => {
       const result = await accountResolver({
         document: {
           id: '37PsGbLmrTfV6VVknkrh6LKACXuC9LuSCwuxhk6ajGDjNCwc',
+          type: 'Address',
         },
         dataStore: wallet.dataStore,
       });
@@ -113,6 +131,7 @@ describe('Wallet', () => {
       const result = await accountResolver({
         document: {
           id: '3EGurYbWGtyVfouDTZjxz1t2jiV3voU9N6sSDAvhHyxaqf8L',
+          type: 'Address',
         },
         dataStore: wallet.dataStore,
       });
