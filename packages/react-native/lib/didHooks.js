@@ -15,12 +15,16 @@ export function useDIDUtils() {
     });
   }, []);
 
-  const createDIDDockKeyDoc = useCallback(({keypairId, controller}) => {
-    return didServiceRPC.generateDIDDockKeyDoc({
-      keypairId,
-      controller,
-    });
-  }, []);
+  const createDIDDockKeyDoc = useCallback(
+    ({keypairId, controller, keyPairJSON}) => {
+      return didServiceRPC.generateDIDDockKeyDoc({
+        keypairId,
+        keyPairJSON,
+        controller,
+      });
+    },
+    [],
+  );
 
   const createDIDKeyDocument = useCallback(
     async (keypairDoc, didDocParams = {}) => {
@@ -94,13 +98,14 @@ export function useDIDManagement() {
 
   const didMethodDock = useCallback(
     async ({address, name}) => {
-      const keyPair = wallet.getAccountKeyPair(address);
+      const keyPair = await wallet.getAccountKeyPair(address);
       const {dockDID, keyPairWalletId} = await didServiceRPC.registerDidDock(
         keyPair,
       );
 
       const keydoc = await createDIDDockKeyDoc({
         keypairId: keyPairWalletId,
+        keyPairJSON: keyPair,
         controller: dockDID,
       });
       const didDocument = await didServiceRPC.getDidDockDocument(dockDID);
