@@ -15,13 +15,6 @@ export function useDIDUtils() {
     });
   }, []);
 
-  const createDIDDockKeyDoc = useCallback(({keypairId, controller}) => {
-    return didServiceRPC.generateDIDDockKeyDoc({
-      keypairId,
-      controller,
-    });
-  }, []);
-
   const createDIDKeyDocument = useCallback(
     async (keypairDoc, didDocParams = {}) => {
       const keypairDocCorrelations = Array.isArray(keypairDoc.correlation)
@@ -53,9 +46,8 @@ export function useDIDUtils() {
     return {
       createDIDKeypairDocument,
       createDIDKeyDocument,
-      createDIDDockKeyDoc,
     };
-  }, [createDIDKeypairDocument, createDIDKeyDocument, createDIDDockKeyDoc]);
+  }, [createDIDKeypairDocument, createDIDKeyDocument]);
 }
 
 export function useDIDManagement() {
@@ -65,8 +57,7 @@ export function useDIDManagement() {
       wallet,
     });
   }, [wallet]);
-  const {createDIDKeypairDocument, createDIDKeyDocument, createDIDDockKeyDoc} =
-    useDIDUtils();
+  const {createDIDKeypairDocument, createDIDKeyDocument} = useDIDUtils();
 
   const didList = useMemo(() => {
     if (Array.isArray(documents)) {
@@ -92,45 +83,22 @@ export function useDIDManagement() {
     [createDIDKeyDocument, createDIDKeypairDocument, wallet],
   );
 
-  const didMethodDock = useCallback(
-    async ({address, name}) => {
-      const keyPair = wallet.getAccountKeyPair(address);
-      const {dockDID, keyPairWalletId} = await didServiceRPC.registerDidDock(
-        keyPair,
-      );
-
-      const keydoc = await createDIDDockKeyDoc({
-        keypairId: keyPairWalletId,
-        controller: dockDID,
-      });
-      const didDocument = await didServiceRPC.getDidDockDocument(dockDID);
-
-      const dockDIDResolution = {
-        id: dockDID,
-        type: 'DIDResolutionResponse',
-        name,
-        didDocument,
-        correlation: [keydoc.id, keyPairWalletId],
-      };
-      await wallet.add(keydoc);
-      await wallet.add(dockDIDResolution);
-    },
-    [createDIDDockKeyDoc, wallet],
-  );
-
   const createDID = useCallback(
     async didParams => {
       const {derivePath, type = 'ed25519', name, didType, address} = didParams;
       switch (didType) {
         case 'diddock':
-          return didMethodDock({address, name, derivePath, type});
+          return didProvider.createDIDock({address, name});
         case 'didkey':
+          // TODO: use the same approach as we have for DIDDock
+          // move didMethodKey to didProvider, and stop using react hooks for it
+          // so that it can be used with non-react apps later on (e.g: flutter, nodejs)
           return didMethodKey({derivePath, name, type});
         default:
           throw Error('Invalid DID type');
       }
     },
-    [didMethodDock, didMethodKey],
+    [didProvider, didMethodKey],
   );
   const editDID = useCallback(
     async didParams => {
