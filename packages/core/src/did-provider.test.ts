@@ -1,6 +1,6 @@
 import {IWallet} from './types';
 import {createWallet} from './wallet';
-import {createDIDProvider, IDIDProvider} from './did-provider';
+import {createDIDock, createDIDProvider, IDIDProvider} from './did-provider';
 import {createAccountProvider} from './account-provider';
 import {didServiceRPC} from '@docknetwork/wallet-sdk-wasm/lib/services/dids';
 
@@ -89,8 +89,6 @@ describe('DID Provider', () => {
   });
 
   describe('create DID Dock', () => {
-    // create account
-
     it('expect to create a DID Dock', async () => {
       const account = await accountProvider.create({
         name: 'test',
@@ -123,6 +121,29 @@ describe('DID Provider', () => {
 
       expect(keyDocuments.length).toBe(1);
       expect(didDocument.length).toBe(1);
+    });
+    it('expect to assert parameters', async () => {
+      await expect(
+        didProvider.createDIDock({
+          address: null,
+          name: 'Test DID',
+        }),
+      ).rejects.toThrowError('address is required');
+
+      await expect(
+        didProvider.createDIDock({
+          address: 'some-address',
+          name: '',
+        }),
+      ).rejects.toThrowError('name is required');
+
+      await expect(
+        createDIDock({
+          address: 'some-address',
+          name: 'Some name',
+          wallet: null,
+        }),
+      ).rejects.toThrowError('wallet is required');
     });
   });
 });
