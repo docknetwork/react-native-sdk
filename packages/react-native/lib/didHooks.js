@@ -57,8 +57,7 @@ export function useDIDManagement() {
       wallet,
     });
   }, [wallet]);
-  const {createDIDKeypairDocument, createDIDKeyDocument} =
-    useDIDUtils();
+  const {createDIDKeypairDocument, createDIDKeyDocument} = useDIDUtils();
 
   const didList = useMemo(() => {
     if (Array.isArray(documents)) {
