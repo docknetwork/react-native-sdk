@@ -466,6 +466,6 @@ describe('DID Hooks', () => {
         name: 'DID Name',
         didType: 'diddock',
       }),
-    ).rejects.toThrowError('keyPair is required');
+    ).rejects.toThrowError('address is required');
   });
 });

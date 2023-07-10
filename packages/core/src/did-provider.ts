@@ -55,9 +55,9 @@ export async function importDID({
 }
 
 export async function createDIDock({wallet, address, name}) {
-  assert(!!wallet, 'Wallet is required');
-  assert(!!address, 'Address is required');
-  assert(!!name, 'Name is required');
+  assert(!!wallet, 'wallet is required');
+  assert(!!address, 'address is required');
+  assert(!!name, 'name is required');
 
   const keyPair = await wallet.getAccountKeyPair(address);
   const {dockDID, keyPairWalletId} = await didServiceRPC.registerDidDock(
