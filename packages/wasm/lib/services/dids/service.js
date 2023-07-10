@@ -61,8 +61,12 @@ class DIDService {
   }
   async generateDIDDockKeyDoc(params) {
     validation.generateDIDDockKeyDoc(params);
-    const {keypairId, controller} = params;
-    const keyPairJSON = await walletService.getDocumentById(keypairId);
+    let {keypairId, keyPairJSON, controller} = params;
+
+    if (!keyPairJSON) {
+      keyPairJSON = await walletService.getDocumentById(keypairId);
+    }
+
     assert(!!keyPairJSON, 'KeyringPair not found');
     const keyPair = keyringService.keyring.addFromJson(keyPairJSON.value);
     keyPair.unlock('');
