@@ -1,9 +1,13 @@
 import {IWallet} from './types';
 import {createWallet} from './wallet';
 import {createDIDProvider, IDIDProvider} from './did-provider';
+import {createAccountProvider} from './account-provider';
+import {didServiceRPC} from '@docknetwork/wallet-sdk-wasm/lib/services/dids';
+
 describe('DID Provider', () => {
   let wallet: IWallet;
   let didProvider: IDIDProvider;
+  let accountProvider;
   const didBackupFile = {
     '@context': [
       'https://www.w3.org/2018/credentials/v1',
@@ -47,6 +51,7 @@ describe('DID Provider', () => {
     wallet = await createWallet({
       databasePath: ':memory:',
     });
+    accountProvider = createAccountProvider({wallet});
     didProvider = createDIDProvider({wallet});
   });
 
@@ -58,8 +63,12 @@ describe('DID Provider', () => {
       });
 
       const documents = await wallet.getAllDocuments();
-      const keyDocument = documents.find(item => item.type === 'Ed25519VerificationKey2018');
-      const didResolution = documents.find(item => item.type === 'DIDResolutionResponse');
+      const keyDocument = documents.find(
+        item => item.type === 'Ed25519VerificationKey2018',
+      );
+      const didResolution = documents.find(
+        item => item.type === 'DIDResolutionResponse',
+      );
       expect(documents.length).toBe(2);
       expect(didResolution).toBeDefined();
       expect(keyDocument).toBeDefined();
@@ -76,6 +85,44 @@ describe('DID Provider', () => {
           password,
         }),
       ).rejects.toThrowError('DID already exists in wallet');
+    });
+  });
+
+  describe('create DID Dock', () => {
+    // create account
+
+    it('expect to create a DID Dock', async () => {
+      const account = await accountProvider.create({
+        name: 'test',
+      });
+
+      jest.spyOn(didServiceRPC, 'registerDidDock').mockResolvedValueOnce({
+        dockDID: 'did:dock:abcde',
+        keyPairWalletId: account.address,
+      });
+
+      jest.spyOn(didServiceRPC, 'generateDIDDockKeyDoc').mockResolvedValueOnce({
+        id: 'did:dock:abcde#key-1',
+        type: 'KeyDocument',
+      });
+
+      jest.spyOn(didServiceRPC, 'getDidDockDocument').mockResolvedValueOnce({
+        id: 'did:dock:abcde#key-2',
+        type: 'DidDocument',
+      });
+
+      await didProvider.createDIDock({
+        address: account.address,
+        name: 'Test DID',
+      });
+
+      const keyDocuments = await wallet.getDocumentsByType('KeyDocument');
+      const didDocument = await wallet.getDocumentsByType(
+        'DIDResolutionResponse',
+      );
+
+      expect(keyDocuments.length).toBe(1);
+      expect(didDocument.length).toBe(1);
     });
   });
 });
