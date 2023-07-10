@@ -1,4 +1,6 @@
 import {IWallet} from './types';
+import {didServiceRPC} from '@docknetwork/wallet-sdk-wasm/lib/services/dids';
+import assert from "assert";
 
 export async function importDID({
   wallet,
@@ -52,17 +54,51 @@ export async function importDID({
   }
 }
 
+export async function createDIDock({wallet, address, name}) {
+  assert(!!wallet, 'wallet is required');
+  assert(!!address, 'address is required');
+  assert(!!name, 'name is required');
+
+  const keyPair = await wallet.getAccountKeyPair(address);
+  const {dockDID, keyPairWalletId} = await didServiceRPC.registerDidDock(
+    keyPair,
+  );
+
+  const keydoc = await didServiceRPC.generateDIDDockKeyDoc({
+    keypairId: keyPairWalletId,
+    keyPairJSON: keyPair,
+    controller: dockDID,
+  });
+
+  const didDocument = await didServiceRPC.getDidDockDocument(dockDID);
+
+  const dockDIDResolution = {
+    id: dockDID,
+    type: 'DIDResolutionResponse',
+    name,
+    didDocument,
+    correlation: [keydoc.id, keyPairWalletId],
+  };
+
+  await wallet.add(keydoc);
+  await wallet.add(dockDIDResolution);
+}
+
 export interface IDIDProvider {
   importDID(params: {
     encryptedJSONWallet: any;
     password: string;
   }): Promise<void>;
+  createDIDock(params: {address: string; name: string}): Promise<void>;
 }
 
 export function createDIDProvider({wallet}): IDIDProvider {
   return {
     async importDID({encryptedJSONWallet, password}) {
       return importDID({wallet, encryptedJSONWallet, password});
+    },
+    async createDIDock({address, name}) {
+      return createDIDock({wallet, address, name});
     },
   };
 }

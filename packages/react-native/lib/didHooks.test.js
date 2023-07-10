@@ -446,6 +446,7 @@ describe('DID Hooks', () => {
     });
     expect(didServiceRPC.generateDIDDockKeyDoc).toHaveBeenCalledWith({
       controller: 'did:dock:z6MkjjCpsoQrwnEmqHzLdxWowXk5gjbwor4urC1RPDmGeV8r',
+      keyPairJSON: expect.anything(),
       keypairId: expect.any(String),
     });
     expect(walletResult.current.wallet.add).toHaveBeenCalledTimes(2);
@@ -465,6 +466,6 @@ describe('DID Hooks', () => {
         name: 'DID Name',
         didType: 'diddock',
       }),
-    ).rejects.toThrowError('keyPair is required');
+    ).rejects.toThrowError('address is required');
   });
 });
