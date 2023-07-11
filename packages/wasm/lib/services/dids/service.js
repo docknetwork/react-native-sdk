@@ -61,23 +61,24 @@ class DIDService {
   }
   async generateDIDDockKeyDoc(params) {
     validation.generateDIDDockKeyDoc(params);
-    const {keypairId, controller} = params;
-    const keyPairJSON = await walletService.getDocumentById(keypairId);
+    let {keypairId, keyPairJSON, controller} = params;
+
+    if (!keyPairJSON) {
+      keyPairJSON = await walletService.getDocumentById(keypairId);
+    }
+
     assert(!!keyPairJSON, 'KeyringPair not found');
     const keyPair = keyringService.keyring.addFromJson(keyPairJSON.value);
     keyPair.unlock('');
     return polkadotToKeydoc(keyPair, controller);
   }
 
-  async registerDidDock(address) {
-    assert(!!address, 'address is required');
+  async registerDidDock(keyPairJSON) {
+    assert(!!keyPairJSON, 'keyPair is required');
     const dockDID = createNewDockDID();
     const dock = getDock();
-    const correlations = await walletService.resolveCorrelations(address);
-    const keyPairJSON = correlations.find(item => item.type === 'KeyringPair');
-    assert(!!keyPairJSON, `KeyringPair not found for address ${address}`);
+    const keyPair = keyringService.keyring.addFromJson(keyPairJSON);
 
-    const keyPair = keyringService.keyring.addFromJson(keyPairJSON.value);
     keyPair.unlock('');
 
     dock.setAccount(keyPair);
@@ -94,7 +95,7 @@ class DIDService {
 
     return {
       dockDID,
-      keyPairWalletId: keyPairJSON.id,
+      keyPairWalletId: keyPairJSON.address,
     };
   }
 }
