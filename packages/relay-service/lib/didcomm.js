@@ -67,7 +67,7 @@ export async function defaultVerificationKeyResolver(keyId) {
   return await Ed25519VerificationKey2020.from({...keyDoc, keyPair: keyDoc});
 }
 
-export async function didcommCreateSignedJWT(payload, privateKeyDoc) {
+export async function didcommCreateSignedJWT(payload, privateKeyDoc, generateJWK = false) {
   const privateKey = await Ed25519VerificationKey2020.from({
     ...privateKeyDoc,
     keyPair: privateKeyDoc,
@@ -78,8 +78,10 @@ export async function didcommCreateSignedJWT(payload, privateKeyDoc) {
     alg: 'EdDSA',
     kid: privateKeyDoc.id,
   };
+  const sub_jwk = generateJWK ? privateKey.toJwk() : undefined;
+  const newPayload = {...payload, ...(sub_jwk ? { sub_jwk } : {})};
   const headerBase64URL = base64url(JSON.stringify(header));
-  const payloadBase64URL = base64url(JSON.stringify(payload));
+  const payloadBase64URL = base64url(JSON.stringify(newPayload));
   const headerAndPayloadBase64URL = `${headerBase64URL}.${payloadBase64URL}`;
   const signPayload = Buffer.from(headerAndPayloadBase64URL);
   const signature = await sign({data: signPayload});
