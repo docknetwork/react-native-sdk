@@ -53,6 +53,11 @@ export type IWallet = {
    * @param json
    */
   importUniversalWalletJSON: (json: any, password: string) => Promise<void>;
+  getDocumentsFromEncryptedWallet: (
+    json: any,
+    password: string,
+  ) => Promise<any>;
+  exportDocuments: (params: {documents: any; password: string}) => Promise<any>;
   /**
    * Create a Universal Wallet 2020 JSON representation of the wallet
    * https://w3c-ccg.github.io/universal-wallet-interop-spec/

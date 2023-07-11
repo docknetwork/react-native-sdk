@@ -193,7 +193,7 @@ export class WalletService {
     } = params;
 
     const keyringPair = json
-      ? keyringService.addFromJson({jsonData: json, password})
+      ? keyringService.decryptKeyPair({jsonData: json, password})
       : keyringService.getKeyringPair({mnemonic, derivePath, type});
     const keyringJson = keyringPair.toJson();
     const correlationDocs: WalletDocument[] = [];
@@ -268,7 +268,7 @@ export class WalletService {
       `Keypair document not found for account: ${accountId}`,
     );
 
-    const pair = keyringService.addFromJson({
+    const pair = keyringService.decryptKeyPair({
       jsonData: keyPairDocument.value,
       password: '',
     });

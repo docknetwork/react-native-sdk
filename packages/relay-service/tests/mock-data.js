@@ -9,6 +9,36 @@ export const ALICE_KEY_PAIR_DOC = {
   privateKeyMultibase:
     'z18CdvQzxTetKhpisG3ZiFrurTHDXPuCP9zMSokyJ9Ex8JRmAGDksx96uWSV8Jo8pDG3cw3GbBhPndCs4aZz43ib',
   '@context': ['https://w3id.org/wallet/v1'],
+  didResolution: {
+    '@context': ['https://www.w3.org/ns/did/v1'],
+    id: 'did:dock:5GyESjfvJnQoukNrFuXvkAtsJUs1y5Zee39Sr7eGcAcMmWnB',
+    controller: ['did:dock:5GyESjfvJnQoukNrFuXvkAtsJUs1y5Zee39Sr7eGcAcMmWnB'],
+    publicKey: [
+      {
+        id: 'did:dock:5GyESjfvJnQoukNrFuXvkAtsJUs1y5Zee39Sr7eGcAcMmWnB#keys-1',
+        type: 'Ed25519VerificationKey2018',
+        controller: 'did:dock:5GyESjfvJnQoukNrFuXvkAtsJUs1y5Zee39Sr7eGcAcMmWnB',
+        publicKeyBase58: '7JkQbHvaAvGtng6yvBe98WVw3N9dWzXQ4qfqXenoJbyV',
+      },
+      {
+        id: 'did:dock:5GyESjfvJnQoukNrFuXvkAtsJUs1y5Zee39Sr7eGcAcMmWnB#keys-2',
+        type: 'Bls12381G2VerificationKeyDock2022',
+        controller: 'did:dock:5GyESjfvJnQoukNrFuXvkAtsJUs1y5Zee39Sr7eGcAcMmWnB',
+        publicKeyBase58:
+          'R1sacExW4V7fDmWKkyy4tdD3Xm4K2qxL4MZiD4Sz2QL3cAtozDBZY8UX1kw8bCe1sEwUDtcwvU8ArcjxiezmFoDKSkQhYgLcXJYfFFEVMicoteAykFZVikV7ZbyP2YKGKuf',
+      },
+    ],
+    authentication: [
+      'did:dock:5GyESjfvJnQoukNrFuXvkAtsJUs1y5Zee39Sr7eGcAcMmWnB#keys-1',
+    ],
+    assertionMethod: [
+      'did:dock:5GyESjfvJnQoukNrFuXvkAtsJUs1y5Zee39Sr7eGcAcMmWnB#keys-1',
+      'did:dock:5GyESjfvJnQoukNrFuXvkAtsJUs1y5Zee39Sr7eGcAcMmWnB#keys-2',
+    ],
+    capabilityInvocation: [
+      'did:dock:5GyESjfvJnQoukNrFuXvkAtsJUs1y5Zee39Sr7eGcAcMmWnB#keys-1',
+    ],
+  },
 };
 
 export const BOB_KEY_PAIR_DOC = {
@@ -21,6 +51,38 @@ export const BOB_KEY_PAIR_DOC = {
   publicKeyMultibase: 'z3urLbVGF6ouYwgotxFy6637VcLqugU2s9i2XVY2yGU4v',
   privateKeyMultibase:
     'z3rF4Jhp7vF6tavGZCSgkdMM3ANLB7YpmzfRcB5FTs1Q7EgN6u5cCwzCaHCDYcestRSEHzjF82TvJUaj3mdqcbGnS',
+  didResolution: {
+    '@context': 'https://www.w3.org/ns/did/v1',
+    id: 'did:key:z6MkhN7PBjWgSMQ24Bebdpvvw8fVRv7m6MHDqiwTKozzBgrJ',
+    verificationMethod: [
+      {
+        id: 'did:key:z6MkhN7PBjWgSMQ24Bebdpvvw8fVRv7m6MHDqiwTKozzBgrJ#z6MkhN7PBjWgSMQ24Bebdpvvw8fVRv7m6MHDqiwTKozzBgrJ',
+        type: 'Ed25519VerificationKey2018',
+        controller: 'did:key:z6MkhN7PBjWgSMQ24Bebdpvvw8fVRv7m6MHDqiwTKozzBgrJ',
+        publicKeyBase58: '3urLbVGF6ouYwgotxFy6637VcLqugU2s9i2XVY2yGU4v',
+      },
+    ],
+    authentication: [
+      'did:key:z6MkhN7PBjWgSMQ24Bebdpvvw8fVRv7m6MHDqiwTKozzBgrJ#z6MkhN7PBjWgSMQ24Bebdpvvw8fVRv7m6MHDqiwTKozzBgrJ',
+    ],
+    assertionMethod: [
+      'did:key:z6MkhN7PBjWgSMQ24Bebdpvvw8fVRv7m6MHDqiwTKozzBgrJ#z6MkhN7PBjWgSMQ24Bebdpvvw8fVRv7m6MHDqiwTKozzBgrJ',
+    ],
+    capabilityDelegation: [
+      'did:key:z6MkhN7PBjWgSMQ24Bebdpvvw8fVRv7m6MHDqiwTKozzBgrJ#z6MkhN7PBjWgSMQ24Bebdpvvw8fVRv7m6MHDqiwTKozzBgrJ',
+    ],
+    capabilityInvocation: [
+      'did:key:z6MkhN7PBjWgSMQ24Bebdpvvw8fVRv7m6MHDqiwTKozzBgrJ#z6MkhN7PBjWgSMQ24Bebdpvvw8fVRv7m6MHDqiwTKozzBgrJ',
+    ],
+    keyAgreement: [
+      {
+        id: 'did:key:z6MkhN7PBjWgSMQ24Bebdpvvw8fVRv7m6MHDqiwTKozzBgrJ#z6LSoj9zjZhAp7MPQcRwC2ynuBXuy9bEgVK5h3sTZ9sMg1Gm',
+        type: 'X25519KeyAgreementKey2019',
+        controller: 'did:key:z6MkhN7PBjWgSMQ24Bebdpvvw8fVRv7m6MHDqiwTKozzBgrJ',
+        publicKeyBase58: 'D3yqDFtJiedeKE4AfPTqabKS8147yt8vp59n4hDpxdW1',
+      },
+    ],
+  },
 };
 
 export const PresentationSubmission = {

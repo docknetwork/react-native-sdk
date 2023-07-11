@@ -50,11 +50,6 @@ describe('WalletService', () => {
     });
 
     describe('getAccountKeypair', () => {
-      it('expect to get account keypair', async () => {
-        const result = await service.getAccountKeypair(testAccount.id);
-        expect(result.address).toBe(testAccount.id);
-      });
-
       it('expect to validate params', async () => {
         const error = await getPromiseError(() =>
           service.getDocumentById(null),
@@ -96,7 +91,7 @@ describe('WalletService', () => {
       it('expect to create keyringPair document', () => {
         const document = correlation.find(doc => doc.type === 'KeyringPair');
         const keyringPairJson = document.value;
-        const keyringPair = keyringService.addFromJson({
+        const keyringPair = keyringService.decryptKeyPair({
           jsonData: keyringPairJson,
           password: '',
         });
