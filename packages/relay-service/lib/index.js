@@ -238,7 +238,7 @@ export async function resolveDidcommMessage({keyPairDocs, message}) {
 
 async function signJwt({keyPairDocs, message}) {
   return await didcommCreateSignedJWT(message, keyPairDocs, true);
-};
+}
 
 const setServiceURL = ({url}) => {
   assert(!!url, 'url is required');
