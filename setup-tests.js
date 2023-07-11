@@ -35,7 +35,7 @@ require('./packages/wasm/lib/setup-tests');
 
 jest.mock('@react-native-async-storage/async-storage', () => 'AsyncStorage');
 
-jest.mock('@docknetwork/sdk/bbs-plus-presentation', () => {
+jest.mock('@docknetwork/sdk/presentation', () => {
   const mockAddCredentialToPresent = jest.fn(() => 0);
   const mockAddAttributeToReveal = jest.fn();
   const mockCreatePresentation = jest.fn();
