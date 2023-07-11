@@ -52,7 +52,8 @@ export async function generateSignedPayload(keyPairDoc, subject) {
 
   const keyPair = getKeypairFromDoc(keyPairDoc);
   keyPair.signer = keyPair.signer();
-  const suite = getSuiteFromKeyDoc(keyPair);
+  const suite = await getSuiteFromKeyDoc(keyPair);
+
   await cred.sign(suite);
 
   return {
