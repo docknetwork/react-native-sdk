@@ -26,6 +26,10 @@ export const validation = {
     assert(!!keyPairDocs, 'keyPairDoc is required');
     assert(!!token, 'token is required');
   },
+  signJwt({message, keyPairDocs}: ResolveDidcommMessageParams) {
+    assert(!!keyPairDocs, 'keyPairDoc is required');
+    assert(!!message, 'message is required');
+  },
 };
 
 export const serviceName = 'relayService';
@@ -42,6 +46,11 @@ export type SendMessageParams = {
 };
 
 export type ResolveDidcommMessageParams = {
+  message: any,
+  keyPairDocs: any[],
+};
+
+export type SignJwtParams = {
   message: any,
   keyPairDocs: any[],
 };
