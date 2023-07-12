@@ -5,6 +5,7 @@ import {Logger} from '@docknetwork/wallet-sdk-wasm/lib/core/logger';
 import {
   didcommCreateEncrypted,
   didcommDecrypt,
+  didcommCreateSignedJWT,
   DIDCOMM_TYPE_ISSUE_DIRECT,
   getDerivedAgreementKey,
 } from './didcomm';
@@ -235,6 +236,10 @@ export async function resolveDidcommMessage({keyPairDocs, message}) {
   return result;
 }
 
+async function signJwt({keyPairDocs, message}) {
+  return await didcommCreateSignedJWT(message, keyPairDocs, true);
+}
+
 const setServiceURL = ({url}) => {
   assert(!!url, 'url is required');
 
@@ -248,4 +253,5 @@ export const RelayService = {
   registerDIDPushNotification,
   setServiceURL,
   serviceURL,
+  signJwt,
 };
