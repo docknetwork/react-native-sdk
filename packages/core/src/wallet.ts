@@ -87,6 +87,7 @@ export async function createWallet(
         dataStore,
         id,
       }),
+
     getAllDocuments: () => {
       return getAllDocuments({
         dataStore,
