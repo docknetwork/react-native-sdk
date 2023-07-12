@@ -99,7 +99,7 @@ describe('DID Provider', () => {
         keyPairWalletId: account.address,
       });
 
-      jest.spyOn(didServiceRPC, 'generateDIDDockKeyDoc').mockResolvedValueOnce({
+      jest.spyOn(didServiceRPC, 'generateKeyDoc').mockResolvedValueOnce({
         id: 'did:dock:abcde#key-1',
         type: 'KeyDocument',
       });

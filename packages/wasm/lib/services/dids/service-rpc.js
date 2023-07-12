@@ -24,7 +24,4 @@ export class DIDServiceRPC extends RpcService {
   getDidDockDocument(did) {
     return this.call('getDidDockDocument', did);
   }
-  generateDIDDockKeyDoc(params) {
-    return this.call('generateDIDDockKeyDoc', params);
-  }
 }

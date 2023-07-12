@@ -64,8 +64,7 @@ export async function createDIDock({wallet, address, name}) {
     keyPair,
   );
 
-  const keydoc = await didServiceRPC.generateDIDDockKeyDoc({
-    keypairId: keyPairWalletId,
+  const keydoc = await didServiceRPC.generateKeyDoc({
     keyPairJSON: keyPair,
     controller: dockDID,
   });
