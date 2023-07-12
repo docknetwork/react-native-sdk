@@ -1,10 +1,8 @@
 module.exports = {
   testEnvironment: 'node',
   testTimeout: 30000,
-  maxConcurrency: 1,
-  testMatch: [
-    '<rootDir>/**/!(*.e2e).test.js',
-  ],
+  maxConcurrency: 2,
+  testMatch: ['<rootDir>/**/!(*.e2e).test.[jt]s'],
   coverageThreshold: {
     global: {
       branches: 10,

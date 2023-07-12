@@ -35,6 +35,31 @@ export const dockDocumentNetworkResolver: DocumentNetworkResolver = async ({
   };
 };
 
+/**
+ *
+ * Given an Api URL, resolve the network ID
+ * For now it will be applied for creds and certs
+ * It can be extended to resolve other external URLs
+ *
+ */
+export function resolveApiNetwork({
+  url,
+  dataStore,
+}: {
+  url: string;
+  dataStore: DataStore;
+}) {
+  for (const network of dataStore.networks) {
+    for (const hostname of network.credentialHostnames) {
+      if (url.indexOf(hostname) > -1) {
+        return network.id;
+      }
+    }
+  }
+
+  return null;
+}
+
 export async function credentialResolver({
   document,
   dataStore,
@@ -47,17 +72,12 @@ export async function credentialResolver({
     return null;
   }
 
-  for (const network of dataStore.networks) {
-    for (const hostname of network.credentialHostnames) {
-      if (document.id.indexOf(hostname) > -1) {
-        return network.id;
-      }
-    }
-  }
+  // TODO: create fallback with DID resolution
 
-  // TODO: create fallback for DID resolution
-
-  return null;
+  return resolveApiNetwork({
+    url: document.id,
+    dataStore,
+  });
 }
 
 export async function didResolver({
