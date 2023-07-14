@@ -32,4 +32,9 @@ export class RelayServiceRpc extends RpcService {
     validation.resolveDidcommMessage(params);
     return this.call('resolveDidcommMessage', params);
   }
+
+  signJwt(params: ResolveDidcommMessageParams) {
+    validation.signJwt(params);
+    return this.call('signJwt', params);
+  }
 }

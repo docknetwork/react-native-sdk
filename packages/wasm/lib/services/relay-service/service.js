@@ -18,6 +18,7 @@ export class RelayService {
     RelayService.prototype.sendMessage,
     RelayService.prototype.registerDIDPushNotification,
     RelayService.prototype.resolveDidcommMessage,
+    RelayService.prototype.signJwt,
   ];
 
   constructor() {
@@ -32,6 +33,11 @@ export class RelayService {
   resolveDidcommMessage(params: ResolveDidcommMessageParams) {
     validation.resolveDidcommMessage(params);
     return relayServiceClient.resolveDidcommMessage(params);
+  }
+
+  signJwt(params: ResolveDidcommMessageParams) {
+    validation.signJwt(params);
+    return relayServiceClient.signJwt(params);
   }
 
   getMessages(params: GetMessagesParams) {
