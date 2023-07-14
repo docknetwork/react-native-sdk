@@ -5,7 +5,7 @@ import {
   MultiResolver,
   UniversalResolver,
 } from '@docknetwork/sdk/resolver';
-import {initializeWasm} from '@docknetwork/crypto-wasm-ts'
+import {initializeWasm} from '@docknetwork/crypto-wasm-ts';
 import {EventEmitter} from 'events';
 import {Logger} from '../../core/logger';
 import {once} from '../../modules/event-manager';
