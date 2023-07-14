@@ -97,7 +97,9 @@ export class DockService {
 
     this.resolver = this.createDIDResolver();
 
-    await initializeWasm();
+    if (process.env.NODE_ENV !== 'test') {
+      await initializeWasm();
+    }
 
     Logger.debug(`Substrate initialized at: ${params.address}`);
 
