@@ -5,6 +5,7 @@ import {validation} from './config';
 import {DIDKeyManager} from '@docknetwork/wallet-sdk-dids/src';
 import {TestFixtures} from '../../fixtures';
 import {getTestWallet} from '../../test/setup-test-state';
+import {getDock} from '../dock/service';
 
 describe('DID Service', () => {
   beforeAll(async () => {
@@ -117,33 +118,46 @@ describe('DID Service', () => {
   });
 
   it('expect to get did document', async () => {
-    const document = {
-      '@context': ['https://www.w3.org/ns/did/v1'],
-      assertionMethod: [
-        'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi#keys-1',
-      ],
-      authentication: [
-        'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi#keys-1',
-      ],
-      capabilityInvocation: [
-        'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi#keys-1',
-      ],
-      controller: ['did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi'],
-      id: 'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi',
-      publicKey: [
-        {
-          controller:
-            'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi',
-          id: 'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi#keys-1',
-          publicKeyBase58: '8UDojkFBh5RopLKZredz8uVZV5U579voUwQFyYDmgBM3',
-          type: 'Sr25519VerificationKey2020',
-        },
-      ],
-    };
+    const document = 'document';
+    jest.spyOn(getDock().did, 'getDocument').mockResolvedValue(document);
+
     const result = await service.getDidDockDocument(
       'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi',
     );
 
     expect(result).toStrictEqual(document);
+  });
+
+  it('expect to generateKeyDoc without keyPair', async () => {
+    const controller =
+      'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQ';
+    const keyDoc = await service.generateKeyDoc({
+      controller,
+    });
+
+    expect(keyDoc.controller).toEqual(controller);
+    expect(keyDoc.privateKeyMultibase).toBeDefined();
+  });
+
+  it('expect to generateKeyDoc with keyPair', async () => {
+    const controller =
+      'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQ';
+    const keyPairJSON = {
+      encoded:
+        'MFMCAQEwBQYDK2VwBCIEIJDIpsaUjZCkVkPmBPqKD0dgu59F8ks4yepJKNFQkz+A/fYvnshD7g1RpaSXuGcLytu6fN/P/PGt2ahhH2Bkh0GhIwMhAP32L57IQ+4NUaWkl7hnC8rbunzfz/zxrdmoYR9gZIdB',
+      encoding: {content: ['pkcs8', 'ed25519'], type: ['none'], version: '3'},
+      address: '3CGqgBTzZEPyhVTjpWdX5z2uDQ6hxEUALcZ6HthscNnVrKy7',
+      meta: {},
+    };
+
+    const keyDoc = await service.generateKeyDoc({
+      controller,
+      keyPairJSON,
+    });
+
+    expect(keyDoc.controller).toEqual(controller);
+    expect(keyDoc.privateKeyMultibase).toEqual(
+      'z3ttk77Si8AUHHGAGLWue3qZacSgZDtRRCbd75Bmujx2qstznWv4ZRWtCjEKcJAUUufQpSsurEAJ47mYYKPwQnA2C',
+    );
   });
 });
