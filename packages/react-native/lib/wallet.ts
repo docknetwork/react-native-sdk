@@ -12,15 +12,19 @@ export function getWallet() {
   return wallet;
 }
 
+export function setWallet(_wallet: IWallet) {
+  wallet = _wallet;
+}
+
 export async function getOrCreateWallet(params: DataStoreConfigs = {} as any) {
   if (!wallet) {
-    wallet = await initializeWallet(params);
+    await initializeWallet(params);
   }
 
   return wallet;
 }
 export async function initializeWallet(params: DataStoreConfigs = {} as any) {
-  wallet = await createWallet({
+  const _wallet = await createWallet({
     databasePath: 'dock-wallet',
     dbType: 'react-native',
     testNetworkId: 'testnet',
@@ -29,5 +33,7 @@ export async function initializeWallet(params: DataStoreConfigs = {} as any) {
     ...params,
   });
 
-  return wallet;
+  setWallet(_wallet);
+
+  return _wallet;
 }
