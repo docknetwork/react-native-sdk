@@ -5,6 +5,7 @@ import {
   MultiResolver,
   UniversalResolver,
 } from '@docknetwork/sdk/resolver';
+import {initializeWasm} from '@docknetwork/crypto-wasm-ts'
 import {EventEmitter} from 'events';
 import {Logger} from '../../core/logger';
 import {once} from '../../modules/event-manager';
@@ -95,6 +96,8 @@ export class DockService {
     Logger.info(`Attempt to initialized substrate at: ${params.address}`);
 
     this.resolver = this.createDIDResolver();
+
+    await initializeWasm();
 
     Logger.debug(`Substrate initialized at: ${params.address}`);
 

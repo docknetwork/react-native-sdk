@@ -1,6 +1,6 @@
 import assert from 'assert';
 
-export const serviceName = 'credentials';
+export const serviceName = 'pex';
 export const validation = {
   filterCredentials: (params: FilterCredentialsParams) => {
     assert(params.credentials, 'credentials is required');
