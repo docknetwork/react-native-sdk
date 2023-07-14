@@ -7,7 +7,6 @@ import {
 } from './config';
 import {keyringService} from '../keyring/service';
 import {utilCryptoService} from '../util-crypto/service';
-import {walletService} from '../wallet/service';
 import assert from 'assert';
 import {createNewDockDID} from '@docknetwork/sdk/utils/did';
 import {getDock} from '../dock/service';
@@ -26,7 +25,6 @@ class DIDService {
     DIDService.prototype.generateKeyDoc,
     DIDService.prototype.registerDidDock,
     DIDService.prototype.getDidDockDocument,
-    DIDService.prototype.generateDIDDockKeyDoc,
   ];
   keypairToDIDKeyDocument(params: KeypairToDIDKeyDocumentParams) {
     validation.keypairToDIDKeyDocument(params);
@@ -39,16 +37,23 @@ class DIDService {
     const {didDocument, didDocumentCustomProp = {}} = params;
     return DIDKeyManager.getDIDResolution(didDocument, didDocumentCustomProp);
   }
+
   async generateKeyDoc(params) {
     validation.generateKeyDoc(params);
-    const {derivePath = '', type = 'ed25519'} = params;
-    const mnemonic = await utilCryptoService.mnemonicGenerate(12);
+    const {derivePath = '', type = 'ed25519', keyPairJSON} = params;
+    let keyring;
 
-    const keyring = keyringService.getKeyringPair({
-      mnemonic,
-      derivePath,
-      type,
-    });
+    if (keyPairJSON) {
+      keyring = keyringService.keyring.addFromJson(keyPairJSON);
+      keyring.unlock('');
+    } else {
+      const mnemonic = await utilCryptoService.mnemonicGenerate(12);
+      keyring = keyringService.getKeyringPair({
+        mnemonic,
+        derivePath,
+        type,
+      });
+    }
 
     return polkadotToKeydoc(keyring, params.controller);
   }
@@ -58,19 +63,6 @@ class DIDService {
     const dock = getDock();
     const result = await dock.did.getDocument(did);
     return result;
-  }
-  async generateDIDDockKeyDoc(params) {
-    validation.generateDIDDockKeyDoc(params);
-    let {keypairId, keyPairJSON, controller} = params;
-
-    if (!keyPairJSON) {
-      keyPairJSON = await walletService.getDocumentById(keypairId);
-    }
-
-    assert(!!keyPairJSON, 'KeyringPair not found');
-    const keyPair = keyringService.keyring.addFromJson(keyPairJSON.value);
-    keyPair.unlock('');
-    return polkadotToKeydoc(keyPair, controller);
   }
 
   async registerDidDock(keyPairJSON) {
