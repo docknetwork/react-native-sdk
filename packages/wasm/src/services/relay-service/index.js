@@ -1,3 +1,2 @@
-import {RelayServiceRpc} from './service-rpc';
+export {relayService} from './service';
 
-export const relayService = new RelayServiceRpc();

@@ -12,8 +12,9 @@ export class PEXServiceRPC extends RpcService {
     this.sandbox = process.env.NODE_ENV !== 'test';
   }
   async filterCredentials(params: FilterCredentialsParams) {
-    validation.filterCredentials(params);
-    return this.call('filterCredentials', params);
+    // validation.filterCredentials(params);
+    // return this.call('filterCredentials', params);
+    alert('filter credential......');
   }
   async evaluatePresentation(params: EvaluatePresentationParams) {
     validation.evaluatePresentation(params);
