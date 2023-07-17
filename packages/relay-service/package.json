@@ -2,7 +2,8 @@
     "name": "@docknetwork/wallet-sdk-relay-service",
     "version": "0.0.1",
     "dependencies": {
-        "uuid": "^9.0.0"
+        "uuid": "^9.0.0",
+        "@docknetwork/minimal-cipher": "^5.2.1",
     },
     "devDependencies": {
 

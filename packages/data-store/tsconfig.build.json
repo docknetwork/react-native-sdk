@@ -17,7 +17,7 @@
     "useUnknownInCatchVariables": false,
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
-    "outDir": "dist",
+    "outDir": "lib",
     "rootDir": "./src"
   },
   "include": ["./src/**/*.ts*"],
