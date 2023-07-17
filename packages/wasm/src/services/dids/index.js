@@ -1,3 +1,3 @@
-import {DIDServiceRPC} from './service-rpc';
+import {didService} from './service';
 
-export const didServiceRPC = new DIDServiceRPC();
+export const didServiceRPC = didService;
