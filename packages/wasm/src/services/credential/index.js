@@ -1,3 +1,3 @@
-import {CredentialServiceRPC} from './service-rpc';
+import {credentialService} from './service';
 
-export const credentialServiceRPC = new CredentialServiceRPC();
+export const credentialServiceRPC = credentialService;

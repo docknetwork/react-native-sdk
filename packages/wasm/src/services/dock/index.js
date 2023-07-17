@@ -1,3 +1,2 @@
-import {DockServiceRpc} from './service-rpc';
+export {dockService} from './service';
 
-export const dockService = new DockServiceRpc();
