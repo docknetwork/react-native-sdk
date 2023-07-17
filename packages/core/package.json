@@ -1,6 +1,6 @@
 {
   "name": "@docknetwork/wallet-sdk-core",
-  "version": "0.3.2",
+  "version": "0.3.7",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -17,8 +17,8 @@
     "sqlite3": "^5.0.2"
   },
   "dependencies": {
-    "@docknetwork/wallet-sdk-wasm": "0.3.0",
-    "@docknetwork/wallet-sdk-data-store": "0.3.0"
+    "@docknetwork/wallet-sdk-wasm": "0.3.7",
+    "@docknetwork/wallet-sdk-data-store": "0.3.7"
   },
   "devDependencies": {
     "jest": "29.1.0",
