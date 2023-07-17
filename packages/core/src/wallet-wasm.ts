@@ -3,7 +3,7 @@ import {utilCryptoService} from '@docknetwork/wallet-sdk-wasm/lib/services/util-
 import {dockService} from '@docknetwork/wallet-sdk-wasm/lib/services/dock';
 
 import {IWallet} from './types';
-import {Network} from '@docknetwork/wallet-sdk-data-store/src/types';
+import {Network} from '@docknetwork/wallet-sdk-data-store/lib/types';
 import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/lib/modules/wallet';
 
 function isSubstrateNetwork(network: Network) {
