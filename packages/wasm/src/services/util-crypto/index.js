@@ -1,3 +1,2 @@
-import {UtilCryptoServiceRpc} from './service-rpc';
+export {utilCryptoService} from './service';
 
-export const utilCryptoService = new UtilCryptoServiceRpc();

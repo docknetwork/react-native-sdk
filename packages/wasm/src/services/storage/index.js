@@ -1,3 +1,2 @@
-import {StorageServiceRpc} from './service-rpc';
+export {storageService} from './service';
 
-export const storageService = new StorageServiceRpc();

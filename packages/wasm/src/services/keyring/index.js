@@ -1,3 +1,2 @@
-import {KeyringServiceRpc} from './service-rpc';
+export {keyringService} from './service';
 
-export const keyringService = new KeyringServiceRpc();

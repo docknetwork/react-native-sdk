@@ -1,3 +1,1 @@
-import {PEXServiceRPC} from './service-rpc';
-
-export const pexServiceRPC = new PEXServiceRPC();
+export {pexService} from './service';
