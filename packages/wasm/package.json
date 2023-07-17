@@ -6,6 +6,10 @@
         "type": "git",
         "url": "https://github.com/docknetwork/react-native-sdk"
     },
+    "scripts": {
+        "prepublishOnly": "npm run build",
+        "build": "rm -rf lib && NODE_ENV=production babel src/ --out-dir lib --copy-files"
+    },
     "peerDependencies": {
         "realm": "^10.10.1"
     },
