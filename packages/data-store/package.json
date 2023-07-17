@@ -2,8 +2,8 @@
   "name": "@docknetwork/wallet-sdk-data-store",
   "version": "0.3.0",
   "license": "MIT",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/docknetwork/react-native-sdk"
