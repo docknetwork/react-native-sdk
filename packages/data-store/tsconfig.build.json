@@ -1,10 +1,11 @@
 {
+  "extends": "./tsconfig",
   "compilerOptions": {
     "strict": false,
     "preserveConstEnums": true,
     "sourceMap": true,
-    "target": "esnext",
-    "module": "esnext",
+    "target": "ES5",
+    "module": "CommonJS",
     "moduleResolution": "Node",
     "esModuleInterop": true,
     "downlevelIteration": true,
@@ -15,18 +16,10 @@
     "experimentalDecorators": true,
     "useUnknownInCatchVariables": false,
     "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "outDir": "dist",
+    "rootDir": "./src"
   },
-  "ts-node": {
-    "compilerOptions": {
-      "module": "CommonJS"
-    }
-  },
-  "exclude": [
-    "**/__tests__/**/*",
-    "**/dist/**/*"
-  ],
-  "include": [
-    "src/**/*"
-  ]
+  "include": ["./src/**/*.ts*"],
+  "exclude": ["src/**/*.spec.ts*", "src/**/*.test.ts*"]
 }
