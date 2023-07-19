@@ -5,7 +5,7 @@ import {
   ManyToMany,
   PrimaryColumn,
   Relation,
-} from 'typeorm';
+} from '../../typeorm';
 import {DocumentTypeEntity} from '../document-type.entity';
 
 @Entity()

@@ -1,4 +1,4 @@
-import {Entity, Column, PrimaryGeneratedColumn, PrimaryColumn} from 'typeorm';
+import {Entity, Column, PrimaryGeneratedColumn, PrimaryColumn} from '../typeorm';
 import {ContextProps} from '../types';
 
 @Entity()

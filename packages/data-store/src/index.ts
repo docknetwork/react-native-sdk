@@ -1,9 +1,9 @@
-import {initializeTypeORM} from './typeorm';
+import {initializeTypeORM} from './helpers';
 import {DataStore, DataStoreConfigs} from './types';
 import {migrate} from './migration';
 import {DEFAULT_CONFIGS} from './configs';
 import {logger} from './logger';
-import {DataSource} from 'typeorm';
+import {DataSource} from './typeorm';
 import assert from 'assert';
 import {getWallet, updateWallet} from './entities/wallet.entity';
 

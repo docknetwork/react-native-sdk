@@ -1,6 +1,6 @@
 {
   "name": "@docknetwork/wallet-sdk-data-store",
-  "version": "0.3.7",
+  "version": "0.3.9",
   "license": "MIT",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
