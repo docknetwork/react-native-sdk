@@ -93,7 +93,7 @@ export class UtilCryptoService {
     assert(path.length, 'invalid derive path');
 
     // show a warning in case the password contains an unintended / character
-    if (password?.includes('/')) {
+    if (password.includes('/')) {
       result = {warning: 'slash password detected'};
     }
 
