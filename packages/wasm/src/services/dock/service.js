@@ -24,12 +24,17 @@ export function setDock(instance) {
 // Create a resolver in order to lookup DIDs for verifying
 export const universalResolverUrl = 'https://uniresolver.io';
 
-class WalletSDKResolver extends MultiResolver {
-  async resolve(did) {
-    const trimmedDID = did.split('#')[0];
-    const document = await super.resolve(trimmedDID);
-    return document;
-  }
+function createWalletSDKResolver(...args) {
+  const multiResolver = new MultiResolver(...args);
+
+  return {
+    ...multiResolver,
+    async resolve(did) {
+      const trimmedDID = did.split('#')[0];
+      const document = await multiResolver.resolve(trimmedDID);
+      return document;
+    },
+  };
 }
 
 /**
@@ -69,7 +74,7 @@ export class DockService {
   }
 
   createDIDResolver() {
-    return new WalletSDKResolver(
+    return createWalletSDKResolver(
       {
         dock: new DockResolver(getDock()), // Prebuilt resolver
         key: new DIDKeyResolver(), // did:key resolution
@@ -85,7 +90,7 @@ export class DockService {
   async init(params: InitParams) {
     validation.init(params);
 
-    if (this.dock?.isConnected) {
+    if (this.dock.isConnected) {
       await this.dock.disconnect();
     }
 

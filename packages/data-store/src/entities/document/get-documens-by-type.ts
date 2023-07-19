@@ -1,6 +1,6 @@
 import {ContextProps, WalletDocument} from '../../types';
 import {DocumentEntity} from './document.entity';
-import {createQueryBuilder} from 'typeorm';
+import {createQueryBuilder} from '../../typeorm';
 import {toWalletDocument} from './helpers';
 
 /**

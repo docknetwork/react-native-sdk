@@ -1,4 +1,4 @@
-import {DataSource} from 'typeorm';
+import {DataSource} from './typeorm';
 import {WalletEntity} from './entities/wallet.entity';
 
 export type DocumentResolverProps = {
@@ -44,7 +44,7 @@ export type DataStoreConfigs = {
 
   // Typeorm supported multiple RDBMS types https://typeorm.io/data-source-options#common-data-source-options
   // We only tested sqlite and react-native sqlite so far
-  dbType?: 'sqlite' | 'react-native';
+  dbType?: 'sqlite' | 'react-native' | 'sqljs';
 
   defaultNetwork?: string;
   testNetworkId?: string;
@@ -55,6 +55,8 @@ export type DataStoreConfigs = {
   databasePath: string;
 
   documentNetworkResolver?: DocumentNetworkResolver;
+  sqlJsConfig?: any;
+  typeORMConfigs?: any;
 };
 
 export type AnyJSON = any;
