@@ -12,5 +12,5 @@ bundle.js
 out
 public
 build
-/packages/dids/lib/*.js
+/packages/**/lib/**/*.js
 
