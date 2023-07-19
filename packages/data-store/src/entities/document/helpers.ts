@@ -3,7 +3,7 @@ import {DocumentTypeEntity} from '../document-type.entity';
 import assert from 'assert';
 import {logger} from '../../logger';
 import {DocumentEntity} from './document.entity';
-import {In} from 'typeorm';
+import {In} from '../../typeorm';
 
 /**
  * Get document by id

@@ -1555,6 +1555,33 @@
     babel-polyfill "^6.26.0"
     base58-universal "1.0.0"
 
+"@docknetwork/wallet-sdk-core@^0.2.4":
+  version "0.2.6"
+  resolved "https://registry.yarnpkg.com/@docknetwork/wallet-sdk-core/-/wallet-sdk-core-0.2.6.tgz#98b7555d1b86bb6e4db8048aafa323391eb32ffd"
+  integrity sha512-xGDVkoahXOgg7Iu/6ADz9zN1BtQtI3ZoIXkjD7bWQpEv0jAyIxAkazfxh1UHQ3u2DCmI0i645eKj1wfG+tyM0A==
+  dependencies:
+    "@polkadot/keyring" "^7.2.1"
+    "@polkadot/types-known" "5.6.1"
+    "@polkadot/ui-shared" "^0.87.5"
+    "@polkadot/util-crypto" "^7.2.1"
+    "@polkadot/wasm-crypto" "^4.5.1"
+    axios "^0.25.0"
+    axios-retry "^3.2.5"
+    babel-node "^0.0.1-security"
+    bignumber.js "^9.0.1"
+    cwait "1.1.2"
+    json-rpc-2.0 "^0.2.16"
+    react-native-keychain "^8.0.0"
+    uuid "^8.3.2"
+    winston "^3.3.3"
+
+"@docknetwork/wallet-sdk-data-store@0.3.8":
+  version "0.3.8"
+  resolved "https://registry.yarnpkg.com/@docknetwork/wallet-sdk-data-store/-/wallet-sdk-data-store-0.3.8.tgz#76678a8a96463d4331eaaf436b807da195a90cba"
+  integrity sha512-n7TiUJVfxY8h02KepHQGpi1h12lVJLtT0gKduOk6hWie9D7TDIFwTgbUDoB0Rqyjqb1d+mU6UT0qnIysNt+gAg==
+  dependencies:
+    uuid "^8.3.2"
+
 "@eslint/eslintrc@^0.4.3":
   version "0.4.3"
   resolved "https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-0.4.3.tgz#9e42981ef035beb3dd49add17acb96e8ff6f394c"
@@ -2608,6 +2635,13 @@
   version "0.1.5"
   resolved "https://registry.yarnpkg.com/@realm.io/common/-/common-0.1.5.tgz#4285c8142d5024a0876318cdfd28f23ea98ebf4f"
   integrity sha512-Y+UnICLvsPFpe2WOXWIdJUaV3G2qDocN8al/Yz13mYMkjODXHL4VhyfEKR2hvcAubv+7isdegEyYNdo3zQzbFA==
+
+"@rollup/plugin-alias@^4.0.2":
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/@rollup/plugin-alias/-/plugin-alias-4.0.4.tgz#67734ec44a7747916aa52a3b1a0e8d459dbf3ae2"
+  integrity sha512-0CaAY238SMtYAWEXXptWSR8iz8NYZnH7zNBKuJ14xFJSGwLtPgjvXYsoApAHfzYXXH1ejxpVw7WlHss3zhh9SQ==
+  dependencies:
+    slash "^4.0.0"
 
 "@rollup/plugin-babel@^5.3.0":
   version "5.3.1"
@@ -14247,6 +14281,11 @@ slash@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/slash/-/slash-3.0.0.tgz#6539be870c165adbd5240220dbe361f1bc4d4634"
   integrity sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==
+
+slash@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/slash/-/slash-4.0.0.tgz#2422372176c4c6c5addb5e2ada885af984b396a7"
+  integrity sha512-3dOsAHXXUkQTpOYcoAxLIorMTp4gIQr5IW3iVb7A7lFIp0VHhnynm9izx6TssdrIcVIESAlVjtnO2K8bg+Coew==
 
 slice-ansi@^4.0.0:
   version "4.0.0"

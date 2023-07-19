@@ -1,6 +1,6 @@
 import {ContextProps, WalletDocument} from '../../types';
 import {DocumentEntity} from './document.entity';
-import {In} from 'typeorm';
+import {In} from '../../typeorm';
 import {toWalletDocument} from './helpers';
 
 /**
