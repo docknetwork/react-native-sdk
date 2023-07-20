@@ -49,3 +49,5 @@ jest.mock('@docknetwork/sdk/presentation', () => {
     };
   });
 });
+
+global.localStorage.setItem('networkId', 'testnet');
