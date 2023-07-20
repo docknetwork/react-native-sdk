@@ -63,7 +63,8 @@
     "webpack": "^5.67.0"
   },
   "scripts": {
-    "build": "node  ./packages/react-native/bundler/build.js",
+    "build": "sh ./scripts/build.sh",
+    "build:rn:webview": "node  ./packages/react-native/bundler/build.js",
     "build-and-copy": "node  ./packages/react-native/bundler/build-and-copy.js",
     "build-packages": "yarn workspace @docknetwork/wallet-sdk-dids build",
     "test": "export NODE_OPTIONS=\"--max_old_space_size=2096\";node --expose-gc ./node_modules/jest/bin/jest.js --logHeapUsage --forceExit",
