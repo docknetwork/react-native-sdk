@@ -5,7 +5,8 @@
         "react-native": "*"
     },
     "scripts": {
-        "test": "jest"
+        "test": "jest",
+        "build": "echo 'add build script when required'"
     },
     "dependencies": {
         "@polkadot/keyring": "^7.2.1",
