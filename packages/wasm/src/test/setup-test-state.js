@@ -4,9 +4,11 @@ import {Wallet} from '../modules/wallet';
 import {dockService} from '../services/dock';
 import {mockDockService} from '../services/test-utils';
 import promiseMemoize from 'promise-memoize';
+import {setStorage} from '../core/storage';
 
 export const getTestWallet: Wallet = promiseMemoize(async () => {
-  console.log('Start connection');
+  setStorage(global.localStorage);
+
   await mockDockService();
   const wallet = Wallet.getInstance();
 
