@@ -11,9 +11,6 @@
         "build:babel": "rm -rf lib && NODE_ENV=production babel src/ --out-dir lib --copy-files",
         "build": "rm -rf lib && rollup -c"
     },
-    "peerDependencies": {
-        "realm": "^10.10.1"
-    },
     "resolutions": {
         "@polkadot/wasm-crypto": "6.3.1",
         "@polkadot/rpc-core": "9.7.1",
