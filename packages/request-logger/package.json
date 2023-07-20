@@ -1,6 +1,9 @@
 {
     "name": "@docknetwork/wallet-sdk-request-logger",
     "version": "0.0.1",
+    "scripts": {
+        "build": "echo 'add build script when required'"
+    },
     "dependencies": {
         "uuid": "^9.0.0"
     },

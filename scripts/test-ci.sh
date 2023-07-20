@@ -6,6 +6,7 @@ directories=$(find ./packages/ -maxdepth 1 -type d)
 
 # Iterate over each directory and run the test command
 for dir in $directories; do
+  yarn build --cwd $dir
   yarn test --testMatch "<rootDir>/$dir/**/!(*.e2e).test.[jt]s"
 done
 
