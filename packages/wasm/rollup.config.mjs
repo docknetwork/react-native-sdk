@@ -13,7 +13,7 @@ export default async function() {
       terser(),
       commonjs(),
     ],
-    input: ['src/**/*.js'],
+    input: ['src/**/*.js', '!src/**/*.test.js'],
     output: [
       {
         dir: 'lib',
