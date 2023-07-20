@@ -1,6 +1,6 @@
 import assert from 'assert';
 import {v4 as uuid} from 'uuid';
-import {clearCacheData, getRealm, initRealm} from '../core/realm';
+import {clearCacheData, getRealm} from '../core/realm';
 import {getStorage} from '../core/storage';
 import {dockService} from '../services/dock';
 import {keyringService} from '../services/keyring';
@@ -130,7 +130,6 @@ class Wallet {
     await shouldMockStorage(this.walletId);
 
     try {
-      // await initRealm();
       await utilCryptoService.cryptoWaitReady();
       await keyringService.initialize({
         ss58Format: this.networkManager.getNetworkInfo().addressPrefix,
