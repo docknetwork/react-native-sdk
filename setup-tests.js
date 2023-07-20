@@ -31,7 +31,7 @@ global.navigator = {
   appVersion: [],
 };
 
-require('./packages/wasm/lib/setup-tests');
+require('@docknetwork/wallet-sdk-wasm/lib/setup-tests');
 
 jest.mock('@react-native-async-storage/async-storage', () => 'AsyncStorage');
 
@@ -49,4 +49,3 @@ jest.mock('@docknetwork/sdk/presentation', () => {
     };
   });
 });
-getStorage().setItem('networkId', 'testnet');

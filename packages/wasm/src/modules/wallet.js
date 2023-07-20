@@ -130,7 +130,7 @@ class Wallet {
     await shouldMockStorage(this.walletId);
 
     try {
-      await initRealm();
+      // await initRealm();
       await utilCryptoService.cryptoWaitReady();
       await keyringService.initialize({
         ss58Format: this.networkManager.getNetworkInfo().addressPrefix,
