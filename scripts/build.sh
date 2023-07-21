@@ -1,13 +1,9 @@
 #!/bin/bash
-# This script is used by the CI to run the build in each package
 
-# Get the list of directories at the first level inside ./packages/
-directories=$(find ./packages/* -maxdepth 0 -type d)
+yarn workspace @docknetwork/wallet-sdk-data-store build
+yarn workspace @docknetwork/wallet-sdk-wasm build
+yarn workspace @docknetwork/wallet-sdk-core build
+yarn workspace @docknetwork/wallet-sdk-dids build
 
-# Iterate over each directory and run the build command
-for dir in $directories; do
- cd "$dir" || exit
-   yarn build
- cd - || exit
-done
+
 
