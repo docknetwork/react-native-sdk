@@ -76,7 +76,7 @@
     "format": "prettier './src/**/*.{js,json}' --write",
     "exec": "BABEL_ENV=development; babel-node",
     "docs": "documentation build packages/core/lib/** -f html -o docs",
-    "postinstall": "sh ./scripts/fix-deps.sh && node ./fixdeps && yarn build-packages"
+    "postinstall": "sh ./scripts/fix-deps.sh && node ./fixdeps && yarn build"
   },
   "eslintConfig": {
     "extends": [
