@@ -1,6 +1,6 @@
 {
     "name": "@docknetwork/wallet-sdk-transactions",
-    "version": "0.2.5",
+    "version": "0.4.0",
     "scripts": {
         "build": "echo 'add build script when required'"
     },
