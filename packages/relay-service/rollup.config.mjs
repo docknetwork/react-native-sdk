@@ -16,13 +16,13 @@ export default async function () {
       output: [
         {
           dir: 'lib',
-          format: 'esm',
+          format: 'cjs',
           entryFileNames: '[name].js',
         },
         {
           dir: 'lib',
-          format: 'cjs',
-          entryFileNames: '[name].cjs',
+          format: 'esm',
+          entryFileNames: '[name].mjs',
         },
       ],
     },
