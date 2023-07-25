@@ -1501,10 +1501,10 @@
   resolved "https://registry.yarnpkg.com/@docknetwork/node-types/-/node-types-0.16.0.tgz#23570042c823a6320654ee2c5b8c0da5d7c43d21"
   integrity sha512-VUZB8guX9161hDIEVn/UKJEUlXjIDE6vH5flx6uDHVc0QOhBy1bq6AGLayG4ZH19dCN39ta2sKGIFq9wLO4H2A==
 
-"@docknetwork/sdk@5.0.0", "@docknetwork/sdk@5.0.2":
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/sdk/-/sdk-5.0.0.tgz#b941b5eb9d37cff8c6f194796af7413c4a5a0ca6"
-  integrity sha512-M8fts6y1rBF+PjeWnbqqljiFnzzIB2frHJ9BzIN9FkoBOMTuhMEI4bfB/4P+V1lgFKRw2WRWiU+J/XnDAY3fyw==
+"@docknetwork/sdk@5.0.2":
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/@docknetwork/sdk/-/sdk-5.0.2.tgz#1ed64e5c57460c13ca81a579b07c35c61096a340"
+  integrity sha512-QQsrSq1R9En48aDZGKKYrETkFFyPHiifkHqLEizyJoUwsFjFRqQqqCCDju226vopOnyYTzK912szg9VxlMigxw==
   dependencies:
     "@docknetwork/crypto-wasm-ts" "^0.33.3"
     "@docknetwork/node-types" "^0.16.0"
