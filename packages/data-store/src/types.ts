@@ -43,7 +43,7 @@ export type DataStoreConfigs = {
   networks?: Network[];
 
   // Typeorm supported multiple RDBMS types https://typeorm.io/data-source-options#common-data-source-options
-  // We only tested sqlite and react-native sqlite so far
+  // We've tested sqlite, react-native, and sqljs
   dbType?: 'sqlite' | 'react-native' | 'sqljs';
 
   defaultNetwork?: string;
