@@ -13,7 +13,7 @@ const schema = [TokenPrice, Account, RequestLog];
  *
  */
 export function setRealmInstance(_Realm) {
-  _Realm = Realm;
+  Realm = _Realm;
 }
 
 export function addSchema(item) {
@@ -29,18 +29,26 @@ export async function initRealm() {
     return realm;
   }
 
+  if (!Realm) {
+    return null;
+  }
+
   const inMemory = process.env.NODE_ENV === 'test';
 
-  realm = await Realm.open({
-    path: 'dock',
-    schema,
-    schemaVersion: 3,
-    deleteRealmIfMigrationNeeded: true,
-    inMemory,
-    // migration: () => {
-    //   // No migration required so far
-    // },
-  });
+  try {
+    realm = await Realm.open({
+      path: 'dock',
+      schema,
+      schemaVersion: 3,
+      deleteRealmIfMigrationNeeded: true,
+      inMemory,
+      // migration: () => {
+      //   // No migration required so far
+      // },
+    });
+  } catch (err) {
+    console.error(err);
+  }
 
   return realm;
 }
