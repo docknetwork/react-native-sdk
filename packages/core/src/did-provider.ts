@@ -1,5 +1,5 @@
 import {IWallet} from './types';
-import {didServiceRPC} from '@docknetwork/wallet-sdk-wasm/lib/services/dids';
+import {didServiceRPC} from '@docknetwork/wallet-sdk-wasm/lib/services/dids/index';
 import assert from "assert";
 
 export async function importDID({
