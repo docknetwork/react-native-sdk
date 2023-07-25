@@ -1555,10 +1555,10 @@
     babel-polyfill "^6.26.0"
     base58-universal "1.0.0"
 
-"@docknetwork/wallet-sdk-data-store@0.3.8":
-  version "0.3.8"
-  resolved "https://registry.yarnpkg.com/@docknetwork/wallet-sdk-data-store/-/wallet-sdk-data-store-0.3.8.tgz#76678a8a96463d4331eaaf436b807da195a90cba"
-  integrity sha512-n7TiUJVfxY8h02KepHQGpi1h12lVJLtT0gKduOk6hWie9D7TDIFwTgbUDoB0Rqyjqb1d+mU6UT0qnIysNt+gAg==
+"@docknetwork/wallet-sdk-data-store@^0.3.8":
+  version "0.3.9"
+  resolved "https://registry.yarnpkg.com/@docknetwork/wallet-sdk-data-store/-/wallet-sdk-data-store-0.3.9.tgz#3b0cdb031be7b064bfa4de2efaeb45f6a83f451d"
+  integrity sha512-/Uh8t8UHH42teViIPEHdyHs14HIfDqZdoU8Ht5Cs5jGNnrUQyK67WKdm8mWhzU+URPoZAIsfer/G2PWhTT654Q==
   dependencies:
     uuid "^8.3.2"
 
@@ -1569,34 +1569,6 @@
   dependencies:
     "@digitalbazaar/did-method-key" "^2.0.0"
     uuid "^8.3.2"
-
-"@docknetwork/wallet-sdk-wasm@^0.3.8":
-  version "0.3.8"
-  resolved "https://registry.yarnpkg.com/@docknetwork/wallet-sdk-wasm/-/wallet-sdk-wasm-0.3.8.tgz#7c691f30f8d52fc8f60e940a137d02ddba381846"
-  integrity sha512-CRvqDNFpg5fMvXLCZ+iiE1igcRurPjSmkU5TTpDadwXqrIcdvrSQidVKj98KzTTGEN58P2pCTi/HVvHhXTatmQ==
-  dependencies:
-    "@docknetwork/sdk" "5.0.0"
-    "@docknetwork/universal-wallet" "^2.0.1"
-    "@polkadot/api" "9.7.1"
-    "@polkadot/keyring" "10.1.11"
-    "@polkadot/rpc-core" "9.7.1"
-    "@polkadot/rpc-provider" "9.7.1"
-    "@polkadot/types" "9.7.1"
-    "@polkadot/types-known" "9.7.1"
-    "@polkadot/ui-shared" "^0.87.5"
-    "@polkadot/util" "10.1.11"
-    "@polkadot/util-crypto" "10.1.11"
-    "@polkadot/wasm-crypto" "6.3.1"
-    "@sphereon/pex" "^1.1.4"
-    axios "^0.25.0"
-    axios-retry "^3.2.5"
-    babel-node "^0.0.1-security"
-    bignumber.js "^9.0.1"
-    cwait "1.1.2"
-    json-rpc-2.0 "^0.2.16"
-    react-native-keychain "^8.0.0"
-    uuid "^8.3.2"
-    winston "^3.3.3"
 
 "@eslint/eslintrc@^0.4.3":
   version "0.4.3"
