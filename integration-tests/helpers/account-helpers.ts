@@ -5,7 +5,7 @@ import {
   AccountJSONPassword,
 } from '../data/accounts';
 import {getWallet} from './wallet-helpers';
-import {createAccountProvider} from '@docknetwork/wallet-sdk-core/src/account-provider';
+import {createAccountProvider} from '@docknetwork/wallet-sdk-core/lib/account-provider';
 
 /**
  * Create new accounts

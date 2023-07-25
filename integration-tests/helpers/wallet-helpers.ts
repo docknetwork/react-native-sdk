@@ -5,8 +5,8 @@
  */
 import {DataStoreSnapshotV1} from '../data/data-store';
 import {WalletBackupJSON, WalletBackupPasssword} from '../data/wallet-backup';
-import {IWallet} from '@docknetwork/wallet-sdk-core/src/types';
-import {createWallet} from '@docknetwork/wallet-sdk-core/src/wallet';
+import {IWallet} from '@docknetwork/wallet-sdk-core/lib/types';
+import {createWallet} from '@docknetwork/wallet-sdk-core/lib/wallet';
 import {Wallet} from '@docknetwork/wallet-sdk-wasm/lib/modules/wallet';
 import {setV1LocalStorage} from '@docknetwork/wallet-sdk-data-store/lib/migration/migration1/v1-data-store';
 
