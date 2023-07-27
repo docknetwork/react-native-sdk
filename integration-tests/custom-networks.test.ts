@@ -1,5 +1,5 @@
 import {createWallet, IWallet} from '@docknetwork/wallet-sdk-core/src/wallet';
-import {Network} from '@docknetwork/wallet-sdk-data-store/src/types';
+import {Network} from '@docknetwork/wallet-sdk-data-store/lib/types';
 
 describe('Custom networks', () => {
   let wallet: IWallet;

@@ -1,0 +1,1 @@
+export {storageService} from './service';

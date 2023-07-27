@@ -1,6 +1,6 @@
 import {createWallet, IWallet} from '@docknetwork/wallet-sdk-core/src/wallet';
 import {dockDocumentNetworkResolver} from '@docknetwork/wallet-sdk-core/src/network-resolver';
-import {DataStoreConfigs} from '@docknetwork/wallet-sdk-data-store/src/types';
+import {DataStoreConfigs} from '@docknetwork/wallet-sdk-data-store/lib/types';
 
 let wallet: IWallet;
 
