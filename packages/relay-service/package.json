@@ -1,10 +1,20 @@
 {
     "name": "@docknetwork/wallet-sdk-relay-service",
-    "version": "0.0.1",
+    "version": "0.4.1",
+    "scripts": {
+        "build": "rm -rf lib && rollup -c"
+    },
     "dependencies": {
-        "uuid": "^9.0.0"
+        "uuid": "^9.0.0",
+        "@docknetwork/minimal-cipher": "^5.2.1",
+        "@docknetwork/sdk": "5.0.2",
+        "@docknetwork/wallet-sdk-wasm": "0.4.3"
     },
     "devDependencies": {
-
-    }
+        "@docknetwork/sdk": "5.0.2",
+        "jest": "29.1.0",
+        "ts-jest": "29.1.0",
+        "ts-node": "^10.9.1",
+        "typescript": "^5.0.4"
+      }
 }

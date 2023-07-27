@@ -1,0 +1,1 @@
+export {polkadotService} from './service';

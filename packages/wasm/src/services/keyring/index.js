@@ -1,0 +1,1 @@
+export {keyringService} from './service';
