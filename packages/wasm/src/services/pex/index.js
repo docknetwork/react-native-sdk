@@ -1,0 +1,1 @@
+export {pexService} from './service';

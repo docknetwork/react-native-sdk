@@ -4,7 +4,7 @@ import {
   DocumentResolverProps,
   DocumentResolverResult,
   WalletDocument,
-} from '@docknetwork/wallet-sdk-data-store/src/types';
+} from '@docknetwork/wallet-sdk-data-store/lib/types';
 import {utilCryptoService} from '@docknetwork/wallet-sdk-wasm/lib/services/util-crypto';
 
 type ResolverResult = string | null;

@@ -1,0 +1,1 @@
+export {relayService} from './service';
