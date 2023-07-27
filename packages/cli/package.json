@@ -1,0 +1,23 @@
+{
+    "version": "0.0.1",
+    "name": "@docknetwork/wallet-sdk-cli",
+    "scripts": {
+        "start": "ts-node src/index.ts"
+    },
+    "dependencies": {
+        "@docknetwork/wallet-sdk-core": "^0.4.3",
+        "@docknetwork/wallet-sdk-data-store": "^0.4.0",
+        "commander": "11.0.0",
+        "typeorm": "^0.3.15",
+        "sqlite3": "^5.0.2",
+        "reflect-metadata": "^0.1.13",
+        "clipboardy": "2.3.0",
+        "inquirer": "8.0.0",
+        "typescript": "^5.0.4"
+      },
+    "devDependencies": {
+        "jest": "29.6.1",
+        "ts-jest": "29.1.0",
+        "ts-node": "^10.9.1"
+    }
+}
