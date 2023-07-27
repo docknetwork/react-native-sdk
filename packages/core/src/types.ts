@@ -3,7 +3,7 @@ import {
   DataStoreConfigs,
   DocumentResolverResult,
   WalletDocument,
-} from '@docknetwork/wallet-sdk-data-store/src/types';
+} from '@docknetwork/wallet-sdk-data-store/lib/types';
 import {Accounts} from '@docknetwork/wallet-sdk-wasm/lib/modules/accounts';
 import {EventEmitter} from 'events';
 

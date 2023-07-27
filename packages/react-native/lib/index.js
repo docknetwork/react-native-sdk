@@ -29,7 +29,7 @@ import {
 } from './credentials/credentialHooks';
 import {getOrCreateWallet} from './wallet';
 import debounce from 'lodash.debounce';
-import {setV1LocalStorage} from '@docknetwork/wallet-sdk-data-store/src/migration/migration1/v1-data-store';
+import {setV1LocalStorage} from '@docknetwork/wallet-sdk-data-store/lib/migration/migration1/v1-data-store';
 export type WalletSDKContextProps = {
   wallet: Wallet,
   status: string,
