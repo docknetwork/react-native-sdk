@@ -1,7 +1,7 @@
 import {ContextProps, WalletDocument} from '../../types';
 import {v4 as uuid} from 'uuid';
 import {DocumentEntity} from './document.entity';
-import {findDocumentEntitiesById, getOrCreateDocumentTypes} from './helpers';
+import {getOrCreateDocumentTypes, saveOptions} from './helpers';
 import {getDocumentById} from './get-document-by-id';
 
 /**
@@ -57,5 +57,5 @@ export async function createDocument({
 
   const repository = dataStore.db.getRepository(DocumentEntity);
 
-  return repository.save(entity);
+  return repository.save(entity, saveOptions);
 }
