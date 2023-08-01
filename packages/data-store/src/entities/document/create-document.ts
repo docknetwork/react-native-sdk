@@ -1,7 +1,11 @@
 import {ContextProps, WalletDocument} from '../../types';
 import {v4 as uuid} from 'uuid';
 import {DocumentEntity} from './document.entity';
-import {findDocumentEntitiesById, getOrCreateDocumentTypes} from './helpers';
+import {
+  findDocumentEntitiesById,
+  getOrCreateDocumentTypes,
+  saveOptions,
+} from './helpers';
 import {getDocumentById} from './get-document-by-id';
 
 /**
@@ -57,9 +61,5 @@ export async function createDocument({
 
   const repository = dataStore.db.getRepository(DocumentEntity);
 
-  return repository.save(entity, {
-    // Android is having issues when running multiple document saves in a short period of time
-    // We will disable transactions for now until we find a better solution
-    transaction: false,
-  });
+  return repository.save(entity, saveOptions);
 }
