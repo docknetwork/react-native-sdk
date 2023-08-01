@@ -1,5 +1,5 @@
 import {ContextProps, WalletDocument} from '../../types';
-import {getSaveOptions, saveOptions, toDocumentEntity} from './helpers';
+import {saveOptions, toDocumentEntity} from './helpers';
 import {DocumentEntity} from './document.entity';
 
 /**
