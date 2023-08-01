@@ -1,5 +1,5 @@
 import {ContextProps, WalletDocument} from '../../types';
-import {toDocumentEntity} from './helpers';
+import {getSaveOptions, saveOptions, toDocumentEntity} from './helpers';
 import {DocumentEntity} from './document.entity';
 
 /**
@@ -16,7 +16,7 @@ export async function updateDocument({
     dataStore,
     document,
   });
-  await repository.save(entity);
+  await repository.save(entity, saveOptions);
 
   return document;
 }
