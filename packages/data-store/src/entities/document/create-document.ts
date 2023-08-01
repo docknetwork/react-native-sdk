@@ -57,5 +57,9 @@ export async function createDocument({
 
   const repository = dataStore.db.getRepository(DocumentEntity);
 
-  return repository.save(entity);
+  return repository.save(entity, {
+    // Android is having issues when running multiple document saves in a short period of time
+    // We will disable transactions for now until we find a better solution
+    transaction: false,
+  });
 }
