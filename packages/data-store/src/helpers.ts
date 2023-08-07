@@ -20,7 +20,7 @@ export async function initializeTypeORM(options: DataStoreConfigs) {
     type: (options.dbType as any) || 'sqlite',
     database: options.databasePath,
     entities: [WalletEntity, NetworkEntity, DocumentEntity, DocumentTypeEntity],
-    synchronize: false,
+    synchronize: process.env.NODE_ENV === 'test',
     dropSchema: options.dropSchema,
     driver: options.driver,
     sqlJsConfig: options.sqlJsConfig,
