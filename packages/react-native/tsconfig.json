@@ -20,7 +20,13 @@
     "jsx": "react-native",
     "moduleResolution": "node"
   },
+  "ts-node": {
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
+  },
   "exclude": [
-
+    "**/__tests__/**/*",
+    "**/build/**/*"
   ]
 }
