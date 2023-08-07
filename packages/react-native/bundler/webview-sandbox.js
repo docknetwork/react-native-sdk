@@ -1,3 +1,2 @@
-import 'core-js/actual';
-import 'regenerator-runtime/runtime';
+import './polyfill';
 import '@docknetwork/wallet-sdk-wasm/src/sandbox';
