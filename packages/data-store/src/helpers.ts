@@ -15,14 +15,12 @@ export function documentHasType(document: any, type: string) {
   return document.type === type;
 }
 
-
 export async function initializeTypeORM(options: DataStoreConfigs) {
   const dataSource = new DataSource({
     type: (options.dbType as any) || 'sqlite',
     database: options.databasePath,
     entities: [WalletEntity, NetworkEntity, DocumentEntity, DocumentTypeEntity],
-    // TODO: will remove this once we have all entities in place
-    synchronize: true,
+    synchronize: process.env.NODE_ENV === 'test',
     dropSchema: options.dropSchema,
     driver: options.driver,
     sqlJsConfig: options.sqlJsConfig,
