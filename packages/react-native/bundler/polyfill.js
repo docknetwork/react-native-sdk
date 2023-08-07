@@ -1,3 +1,6 @@
 import 'core-js/actual';
 import 'regenerator-runtime/runtime';
-import '@docknetwork/wallet-sdk-wasm/src/sandbox';
+
+if (!window.BigInt) {
+  window.BigInt = Number;
+}
