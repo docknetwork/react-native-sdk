@@ -8,6 +8,7 @@
         "test": "jest",
         "build": "echo 'add build script when required'"
     },
+    "browserslist": "> 0.01%",
     "dependencies": {
         "@polkadot/keyring": "^7.2.1",
         "@polkadot/types-known": "5.6.1",
@@ -15,7 +16,7 @@
         "@polkadot/util-crypto": "^7.2.1",
         "@polkadot/wasm-crypto": "^4.5.1",
         "webpack": "^5.67.0",
-        "webpack-dev-server": "3.11.1",
+        "webpack-dev-server": "4.15.1",
         "react-native-webview": "^11.4.3",
         "@docknetwork/wallet-sdk-core": "^0.4.0",
         "@docknetwork/wallet-sdk-wasm": "^0.4.0",

@@ -201,7 +201,6 @@ export function _useWalletController() {
 export function WalletSDKProvider({onError, customUri, children, onReady}) {
   const controller = _useWalletController();
   const webViewRef = useRef();
-
   const sandboxWebViewRef = useRef();
   const baseUrl =
     Platform.OS === 'ios' ? 'app-html' : 'file:///android_asset/app-html';
