@@ -1,4 +1,4 @@
-import {polkadotIcon} from '@polkadot/ui-shared';
+import {polkadotIcon} from '@polkadot/ui-shared/cjs/icons/index';
 import {GetAddressSvgParams, validation} from './configs';
 
 export class PolkadotService {
