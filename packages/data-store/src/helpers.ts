@@ -6,6 +6,7 @@ import {NetworkEntity} from './entities/network.entity';
 import {DocumentEntity} from './entities/document/document.entity';
 import {DocumentTypeEntity} from './entities/document-type.entity';
 import {WalletEntity} from './entities/wallet.entity';
+import typeOrmMigrations from './migrations';
 
 export function documentHasType(document: any, type: string) {
   if (Array.isArray(document.type)) {
@@ -15,7 +16,7 @@ export function documentHasType(document: any, type: string) {
   return document.type === type;
 }
 
-export async function initializeTypeORM(options: DataStoreConfigs) {
+export function getDataSource(options: DataStoreConfigs) {
   const dataSource = new DataSource({
     type: (options.dbType as any) || 'sqlite',
     database: options.databasePath,
@@ -24,8 +25,16 @@ export async function initializeTypeORM(options: DataStoreConfigs) {
     dropSchema: options.dropSchema,
     driver: options.driver,
     sqlJsConfig: options.sqlJsConfig,
+    migrationsRun: process.env.NODE_ENV === 'test',
+    migrations: typeOrmMigrations,
     ...(options.typeORMConfigs || {}),
   });
+
+  return dataSource;
+}
+
+export async function initializeTypeORM(options: DataStoreConfigs) {
+  const dataSource = getDataSource(options);
 
   await dataSource
     .initialize()
