@@ -2,7 +2,7 @@ import {IWallet} from './types';
 import {createWallet} from './wallet';
 import {createDIDock, createDIDProvider, IDIDProvider} from './did-provider';
 import {createAccountProvider} from './account-provider';
-import {didServiceRPC} from '@docknetwork/wallet-sdk-wasm/lib/services/dids';
+import {didServiceRPC} from '@docknetwork/wallet-sdk-wasm/src/services/dids';
 
 describe('DID Provider', () => {
   let wallet: IWallet;

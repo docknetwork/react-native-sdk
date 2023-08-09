@@ -11,10 +11,10 @@ import {
   UniversityDegreeTestnet,
 } from './data/credentials';
 import {cleanup, createNewWallet, getWallet, setupEnvironent} from './helpers';
-import {credentialService} from '@docknetwork/wallet-sdk-wasm/lib/services/credential/service';
+import {credentialService} from '@docknetwork/wallet-sdk-wasm/src/services/credential/service';
 import {IWallet} from '@docknetwork/wallet-sdk-core/src/types';
-import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/lib/modules/wallet';
-import {API_MOCK_DISABLED} from "@docknetwork/wallet-sdk-wasm/lib/services/test-utils";
+import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
+import {API_MOCK_DISABLED} from "@docknetwork/wallet-sdk-wasm/src/services/test-utils";
 
 const allCredentials = [
   BasicCredential,
