@@ -3,8 +3,8 @@ import {
   DataStoreConfigs,
   DocumentResolverResult,
   WalletDocument,
-} from '@docknetwork/wallet-sdk-data-store/lib/types';
-import {Accounts} from '@docknetwork/wallet-sdk-wasm/lib/modules/accounts';
+} from '@docknetwork/wallet-sdk-data-store/src/types';
+import {Accounts} from '@docknetwork/wallet-sdk-wasm/src/modules/accounts';
 import {EventEmitter} from 'events';
 
 export interface IV1Wallet {
