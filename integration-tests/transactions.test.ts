@@ -1,5 +1,5 @@
-import {Accounts} from '@docknetwork/wallet-sdk-wasm/lib/modules/accounts';
-import {DOCK_TOKEN_UNIT} from '@docknetwork/wallet-sdk-wasm/lib/core/format-utils';
+import {Accounts} from '@docknetwork/wallet-sdk-wasm/src/modules/accounts';
+import {DOCK_TOKEN_UNIT} from '@docknetwork/wallet-sdk-wasm/src/core/format-utils';
 import {Transactions} from '@docknetwork/wallet-sdk-transactions/lib/transactions';
 
 import {

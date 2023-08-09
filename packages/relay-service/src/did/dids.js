@@ -1,5 +1,5 @@
 import {hexDIDToQualified} from '@docknetwork/sdk/utils/did';
-import {dockService} from '@docknetwork/wallet-sdk-wasm/lib/services/dock/service';
+import {dockService} from '@docknetwork/wallet-sdk-wasm/src/services/dock/service';
 
 export async function resolveDID(did, disableCache = false) {
   // Check if string has no qualifier, if so assume its hex format

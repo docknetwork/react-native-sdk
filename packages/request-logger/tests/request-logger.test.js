@@ -1,6 +1,6 @@
 import {RequestLogger} from '../lib/request-logger';
-import {getRealm} from '@docknetwork/wallet-sdk-wasm/lib/core/realm';
-jest.mock('@docknetwork/wallet-sdk-wasm/lib/core/realm', () => {
+import {getRealm} from '@docknetwork/wallet-sdk-wasm/src/core/realm';
+jest.mock('@docknetwork/wallet-sdk-wasm/src/core/realm', () => {
   const realmFunctions = {
     write: jest.fn(callback => {
       callback();
