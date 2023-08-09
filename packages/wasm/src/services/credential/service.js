@@ -17,7 +17,7 @@ export function isBBSPlusCredential(credential) {
       credential.proof.type.includes('BBS+SignatureDock')) ||
     (Array.isArray(credential['@context']) &&
       credential['@context'].find(
-        context => context['bs'] && context['bs'].indexOf('bbs') > -1,
+        context => context.bs && context.bs.indexOf('bbs') > -1,
       ))
   );
 }
