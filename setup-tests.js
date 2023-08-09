@@ -1,8 +1,8 @@
 import '@testing-library/jest-dom';
 import {JSDOM} from 'jsdom';
 
-import {NetworkManager} from './packages/wasm/lib/modules/network-manager';
-import {getStorage} from './packages/wasm/lib/core/storage';
+import {NetworkManager} from './packages/wasm/src/modules/network-manager';
+import {getStorage} from './packages/wasm/src/core/storage';
 import './packages/transactions/lib/schema';
 import Realm from 'realm';
 import {
