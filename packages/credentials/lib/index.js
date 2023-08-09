@@ -1,5 +1,5 @@
-import {Wallet} from '@docknetwork/wallet-sdk-wasm/lib/modules/wallet';
-import {assert} from '@docknetwork/wallet-sdk-wasm/lib/core/validation';
+import {Wallet} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
+import {assert} from '@docknetwork/wallet-sdk-wasm/src/core/validation';
 import axios from 'axios';
 import {samplePresentationDefinition} from './samples';
 

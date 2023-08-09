@@ -1,5 +1,5 @@
 import {useCallback, useMemo} from 'react';
-import {didServiceRPC} from '@docknetwork/wallet-sdk-wasm/lib/services/dids';
+import {didServiceRPC} from '@docknetwork/wallet-sdk-wasm/src/services/dids';
 import {createDIDProvider} from '@docknetwork/wallet-sdk-core/src/did-provider';
 import {useWallet} from './index';
 

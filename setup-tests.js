@@ -8,8 +8,8 @@ import Realm from 'realm';
 import {
   initRealm,
   setRealmInstance,
-} from '@docknetwork/wallet-sdk-wasm/lib/core/realm';
-import {mockDockService} from '@docknetwork/wallet-sdk-wasm/lib/services/test-utils';
+} from '@docknetwork/wallet-sdk-wasm/src/core/realm';
+import {mockDockService} from '@docknetwork/wallet-sdk-wasm/src/services/test-utils';
 
 setRealmInstance(Realm);
 initRealm();
@@ -36,7 +36,7 @@ global.navigator = {
   appVersion: [],
 };
 
-require('@docknetwork/wallet-sdk-wasm/lib/setup-tests');
+require('@docknetwork/wallet-sdk-wasm/src/setup-tests');
 
 jest.mock('@react-native-async-storage/async-storage', () => 'AsyncStorage');
 
