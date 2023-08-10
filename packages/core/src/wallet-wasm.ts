@@ -1,10 +1,10 @@
-import {keyringService} from '@docknetwork/wallet-sdk-wasm/lib/services/keyring';
-import {utilCryptoService} from '@docknetwork/wallet-sdk-wasm/lib/services/util-crypto';
-import {dockService} from '@docknetwork/wallet-sdk-wasm/lib/services/dock';
+import {keyringService} from '@docknetwork/wallet-sdk-wasm/src/services/keyring';
+import {utilCryptoService} from '@docknetwork/wallet-sdk-wasm/src/services/util-crypto';
+import {dockService} from '@docknetwork/wallet-sdk-wasm/src/services/dock';
 
 import {IWallet} from './types';
-import {Network} from '@docknetwork/wallet-sdk-data-store/lib/types';
-import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/lib/modules/wallet';
+import {Network} from '@docknetwork/wallet-sdk-data-store/src/types';
+import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
 
 function isSubstrateNetwork(network: Network) {
   return !!network.configs.substrateUrl;

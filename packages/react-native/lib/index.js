@@ -1,8 +1,8 @@
-import {setStorage} from '@docknetwork/wallet-sdk-wasm/lib/core/storage';
+import {setStorage} from '@docknetwork/wallet-sdk-wasm/src/core/storage';
 import {
   Wallet,
   WalletEvents,
-} from '@docknetwork/wallet-sdk-wasm/lib/modules/wallet';
+} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
 import React, {
   useCallback,
   useContext,
@@ -15,8 +15,8 @@ import {Platform, View} from 'react-native';
 import WebView from 'react-native-webview';
 import {WebviewEventHandler} from './message-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {AccountDetails} from '@docknetwork/wallet-sdk-wasm/lib/modules/account';
-import {DocumentType} from '@docknetwork/wallet-sdk-wasm/lib/types';
+import {AccountDetails} from '@docknetwork/wallet-sdk-wasm/src/modules/account';
+import {DocumentType} from '@docknetwork/wallet-sdk-wasm/src/types';
 import './rn-rpc-server';
 import {useDIDManagement, useDIDUtils} from './didHooks';
 import {usePresentation} from './credentialPresentHooks';
@@ -29,7 +29,7 @@ import {
 } from './credentials/credentialHooks';
 import {getOrCreateWallet} from './wallet';
 import debounce from 'lodash.debounce';
-import {setV1LocalStorage} from '@docknetwork/wallet-sdk-data-store/lib/migration/migration1/v1-data-store';
+import {setV1LocalStorage} from '@docknetwork/wallet-sdk-data-store/src/migration/migration1/v1-data-store';
 export type WalletSDKContextProps = {
   wallet: Wallet,
   status: string,

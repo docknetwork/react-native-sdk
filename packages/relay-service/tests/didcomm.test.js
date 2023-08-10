@@ -6,7 +6,7 @@ import {
   getDerivedAgreementKey,
 } from '../lib/didcomm';
 import {ALICE_KEY_PAIR_DOC, BOB_KEY_PAIR_DOC} from './mock-data';
-import {dockService} from '@docknetwork/wallet-sdk-wasm/lib/services/dock/service';
+import {dockService} from '@docknetwork/wallet-sdk-wasm/src/services/dock/service';
 import {
   DockResolver,
   DIDKeyResolver,

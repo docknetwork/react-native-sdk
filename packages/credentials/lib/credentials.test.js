@@ -1,7 +1,7 @@
 import {Credentials} from './index';
-import {Wallet} from '@docknetwork/wallet-sdk-wasm/lib/modules/wallet';
+import {Wallet} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
 import testCredential from '../fixtures/test-credential.json';
-import {getPromiseError} from '@docknetwork/wallet-sdk-wasm/lib/services/test-utils';
+import {getPromiseError} from '@docknetwork/wallet-sdk-wasm/src/services/test-utils';
 import axios from 'axios';
 
 describe('Credentials module', () => {
