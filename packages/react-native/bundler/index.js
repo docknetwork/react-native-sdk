@@ -4,7 +4,6 @@ const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 const getWebpackConfig = ({entry, path, filename}) => ({
   mode: 'development',
-  devtool: false,
   entry,
   output: {
     path,
@@ -47,15 +46,12 @@ const getWebpackConfig = ({entry, path, filename}) => ({
     rules: [
       {
         test: /\.(m|c)?js$/,
-        exclude: [
-          /\/node_modules\/(?!@polkadot|@docknetwork|@digitalbazaar|safe-buffer|readable-stream|@noble|lzutf8|@transmute|@bitauth)/,
-        ],
+        exclude: [/\/node_modules\/(?!@polkadot|@docknetwork|@digitalbazaar)/],
         use: {
           loader: require.resolve('babel-loader'),
           options: {
             presets: ['@babel/preset-env'],
             plugins: [
-              require.resolve('../transform-bigint-to-number.js'),
               '@babel/plugin-transform-async-to-generator',
               '@babel/plugin-syntax-bigint',
               '@babel/plugin-transform-modules-commonjs',
