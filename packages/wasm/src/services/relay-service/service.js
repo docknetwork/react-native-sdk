@@ -7,7 +7,7 @@ import {
   validation,
 } from './configs';
 
-import {RelayService as relayServiceClient} from '@docknetwork/wallet-sdk-relay-service/lib';
+import {RelayService as relayServiceClient} from '@docknetwork/wallet-sdk-relay-service/src';
 
 /**
  * RelayService

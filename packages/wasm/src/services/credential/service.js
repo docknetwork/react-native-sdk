@@ -11,6 +11,17 @@ import {dockService, getDock} from '../dock/service';
 
 const pex: PEX = new PEX();
 
+export function isBBSPlusCredential(credential) {
+  return (
+    (typeof credential?.proof?.type === 'string' &&
+      credential.proof.type.includes('BBS+SignatureDock')) ||
+    (Array.isArray(credential['@context']) &&
+      credential['@context'].find(
+        context => context.bs && context.bs.indexOf('bbs') > -1,
+      ))
+  );
+}
+
 class CredentialService {
   constructor() {
     this.name = serviceName;
@@ -60,10 +71,16 @@ class CredentialService {
     validation.createPresentation(params);
     const {credentials, keyDoc, challenge, id, domain} = params;
     const vp = new VerifiablePresentation(id);
+    let isBBS;
     for (const signedVC of credentials) {
       vp.addCredential(signedVC);
+      isBBS = isBBS || isBBSPlusCredential(signedVC);
     }
-    vp.setHolder(keyDoc.controller);
+
+    if (!isBBS) {
+      vp.setHolder(keyDoc.controller);
+    }
+
     keyDoc.keypair = keyDocToKeypair(keyDoc, getDock());
     return vp.sign(keyDoc, challenge, domain, dockService.resolver);
   }

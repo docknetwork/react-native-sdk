@@ -1,5 +1,5 @@
 import {useCallback, useMemo} from 'react';
-import {credentialServiceRPC} from '@docknetwork/wallet-sdk-wasm/lib/services/credential';
+import {credentialServiceRPC} from '@docknetwork/wallet-sdk-wasm/src/services/credential';
 
 export function usePresentation() {
   const presentCredentials = useCallback(

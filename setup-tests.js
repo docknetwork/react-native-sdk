@@ -1,15 +1,15 @@
 import '@testing-library/jest-dom';
 import {JSDOM} from 'jsdom';
 
-import {NetworkManager} from './packages/wasm/lib/modules/network-manager';
-import {getStorage} from './packages/wasm/lib/core/storage';
+import {NetworkManager} from './packages/wasm/src/modules/network-manager';
+import {getStorage} from './packages/wasm/src/core/storage';
 import './packages/transactions/lib/schema';
 import Realm from 'realm';
 import {
   initRealm,
   setRealmInstance,
-} from '@docknetwork/wallet-sdk-wasm/lib/core/realm';
-import {mockDockService} from '@docknetwork/wallet-sdk-wasm/lib/services/test-utils';
+} from '@docknetwork/wallet-sdk-wasm/src/core/realm';
+import {mockDockService} from '@docknetwork/wallet-sdk-wasm/src/services/test-utils';
 
 setRealmInstance(Realm);
 initRealm();
@@ -36,7 +36,7 @@ global.navigator = {
   appVersion: [],
 };
 
-require('@docknetwork/wallet-sdk-wasm/lib/setup-tests');
+require('@docknetwork/wallet-sdk-wasm/src/setup-tests');
 
 jest.mock('@react-native-async-storage/async-storage', () => 'AsyncStorage');
 

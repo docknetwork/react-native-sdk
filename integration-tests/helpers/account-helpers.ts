@@ -1,4 +1,4 @@
-import {Accounts} from '@docknetwork/wallet-sdk-wasm/lib/modules/accounts';
+import {Accounts} from '@docknetwork/wallet-sdk-wasm/src/modules/accounts';
 import {
   Account2MnemonicDetails,
   AccountJSON,

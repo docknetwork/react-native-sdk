@@ -1,7 +1,7 @@
 import {isBase64} from '@polkadot/util-crypto';
 import assert from 'assert';
 import axios from 'axios';
-import {Logger} from '@docknetwork/wallet-sdk-wasm/lib/core/logger';
+import {Logger} from '@docknetwork/wallet-sdk-wasm/src/core/logger';
 import {
   didcommCreateEncrypted,
   didcommDecrypt,
@@ -16,7 +16,7 @@ import {
   toBase64,
 } from './payloads';
 import jwtDecode from 'jwt-decode';
-import {dockService} from '@docknetwork/wallet-sdk-wasm/lib/services/dock/service';
+import {dockService} from '@docknetwork/wallet-sdk-wasm/src/services/dock/service';
 
 let serviceURL = process.env.RELAY_SERVICE_URL || 'https://relay.dock.io';
 

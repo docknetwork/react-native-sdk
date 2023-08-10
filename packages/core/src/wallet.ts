@@ -1,9 +1,9 @@
-import {createDataStore} from '@docknetwork/wallet-sdk-data-store/lib';
+import {createDataStore} from '@docknetwork/wallet-sdk-data-store/src';
 import {
   DataStore,
   DataStoreConfigs,
   WalletDocument,
-} from '@docknetwork/wallet-sdk-data-store/lib/types';
+} from '@docknetwork/wallet-sdk-data-store/src/types';
 import {
   getDocumentsByType,
   getDocumentById,
@@ -13,14 +13,14 @@ import {
   getAllDocuments,
   updateDocument,
   removeAllDocuments,
-} from '@docknetwork/wallet-sdk-data-store/lib/entities/document';
+} from '@docknetwork/wallet-sdk-data-store/src/entities/document';
 import {CreateWalletProps, IWallet} from './types';
 import {toV1Wallet} from './v1-helpers';
 import {initWalletWasm} from './wallet-wasm';
 import {EventEmitter} from 'events';
-import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/lib/modules/wallet';
-import {walletService} from '@docknetwork/wallet-sdk-wasm/lib/services/wallet';
-import {importUniversalWalletDocuments} from '@docknetwork/wallet-sdk-data-store/lib/migration/migration1/migrate-v1-data';
+import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
+import {walletService} from '@docknetwork/wallet-sdk-wasm/src/services/wallet';
+import {importUniversalWalletDocuments} from '@docknetwork/wallet-sdk-data-store/src/migration/migration1/migrate-v1-data';
 export type {IWallet};
 
 function once(emitter: EventEmitter, eventName: string) {

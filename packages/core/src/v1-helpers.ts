@@ -1,10 +1,10 @@
 // TODO: [wallet-sdk] Cleanup wallet-sdk unnused wasm services https://dock-team.atlassian.net/browse/DCKA-1658
 import {IV1Wallet, IWallet} from './types';
 import {createAccountProvider} from './account-provider';
-import {WalletDocument} from '@docknetwork/wallet-sdk-data-store/lib/types';
-import * as walletServiceConfigs from '@docknetwork/wallet-sdk-wasm/lib/services/wallet/configs';
-import {keyringService} from '@docknetwork/wallet-sdk-wasm/lib/services/keyring/index';
-import {walletService} from '@docknetwork/wallet-sdk-wasm/lib/services/wallet';
+import {WalletDocument} from '@docknetwork/wallet-sdk-data-store/src/types';
+import * as walletServiceConfigs from '@docknetwork/wallet-sdk-wasm/src/services/wallet/configs';
+import {keyringService} from '@docknetwork/wallet-sdk-wasm/src/services/keyring/index';
+import {walletService} from '@docknetwork/wallet-sdk-wasm/src/services/wallet';
 import {v4 as uuid} from 'uuid';
 import {EventEmitter} from 'events';
 
