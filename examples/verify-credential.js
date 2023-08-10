@@ -1,12 +1,12 @@
 const {createWallet} = require('@docknetwork/wallet-sdk-core/lib/wallet');
 const {
   credentialServiceRPC,
-} = require('@docknetwork/wallet-sdk-wasm/lib/services/credential');
+} = require('@docknetwork/wallet-sdk-wasm/src/services/credential');
 const {
   didServiceRPC,
-} = require('@docknetwork/wallet-sdk-wasm/lib/services/dids');
+} = require('@docknetwork/wallet-sdk-wasm/src/services/dids');
 
-const {dockService} = require('@docknetwork/wallet-sdk-wasm/lib/services/dock');
+const {dockService} = require('@docknetwork/wallet-sdk-wasm/src/services/dock');
 
 const exampleCredential = require('./example-credential.json');
 const presentationDefinition = require('./presentation-definition.json');

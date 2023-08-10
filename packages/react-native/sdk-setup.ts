@@ -1,9 +1,9 @@
 import {
   getRpcClient,
   initRpcClient,
-} from '@docknetwork/wallet-sdk-wasm/lib/rpc-client';
-import rpcServer from '@docknetwork/wallet-sdk-wasm/lib/rpc-server';
-import {setStorage} from '@docknetwork/wallet-sdk-wasm/lib/core/storage';
+} from '@docknetwork/wallet-sdk-wasm/src/rpc-client';
+import rpcServer from '@docknetwork/wallet-sdk-wasm/src/rpc-server';
+import {setStorage} from '@docknetwork/wallet-sdk-wasm/src/core/storage';
 
 setStorage(global.localStorage);
 

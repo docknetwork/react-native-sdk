@@ -1,4 +1,4 @@
-import {getRpcClient} from '@docknetwork/wallet-sdk-wasm/lib/rpc-client';
+import {getRpcClient} from '@docknetwork/wallet-sdk-wasm/src/rpc-client';
 import {WebviewEventHandler} from './message-handler';
 import rnRpcServer from './rn-rpc-server';
 
