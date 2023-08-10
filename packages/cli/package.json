@@ -2,7 +2,7 @@
     "version": "0.0.1",
     "name": "@docknetwork/wallet-sdk-cli",
     "scripts": {
-        "start": "ts-node src/index.ts"
+        "cli": "ts-node src/index.ts"
     },
     "dependencies": {
         "@docknetwork/wallet-sdk-core": "^0.4.3",
