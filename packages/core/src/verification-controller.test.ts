@@ -1,11 +1,13 @@
 import {IWallet} from './types';
-import {createVerificationProvider} from './verification-provider';
+import {createVerificationController} from './verification-controller';
 import {createWallet} from './wallet';
 import customerCredentialJSON from './fixtures/customer-credential.json';
+import {createDIDProvider, IDIDProvider} from './did-provider';
 
 describe('Verification provider', () => {
-  let verificationProvider;
   let wallet: IWallet;
+  let didProvider: IDIDProvider;
+
   const verificationTemplateJSON = {
     qr: 'https://creds-testnet.dock.io/proof/6de279ba-caf3-4979-a067-553284b40767',
     id: '6de279ba-caf3-4979-a067-553284b40767',
@@ -41,42 +43,46 @@ describe('Verification provider', () => {
       databasePath: ':memory:',
     });
 
-    await wallet.addDocument(customerCredentialJSON);
-
-    verificationProvider = createVerificationProvider({
+    didProvider = createDIDProvider({
       wallet,
     });
+
+    await didProvider.ensureDID();
+
+    await wallet.addDocument(customerCredentialJSON);
   });
 
-  it('expect to create verification controller and fetch template JSON', async () => {
-    const controller = await verificationProvider.start({
+  it('expect to create verification controller', async () => {
+    const controller = createVerificationController({
+      wallet,
+    });
+
+    await controller.start({
       template:
         'https://creds-testnet.dock.io/proof/6de279ba-caf3-4979-a067-553284b40767',
     });
 
+    const currentDID = await didProvider.getAll();
+
+    expect(controller.getSelectedDID()).toBe(currentDID[0].id);
+    expect(controller.getSelectedAttributes()).toBe([]);
     expect(controller.getTemplateJSON()).toEqual(verificationTemplateJSON);
-  });
-
-  it('expect to load credentials for a given template', async () => {
-    const controller = await verificationProvider.start({
-      template:
-        'https://creds-testnet.dock.io/proof/6de279ba-caf3-4979-a067-553284b40767',
-    });
-
-    await controller.loadCredentials();
-
     expect(controller.getFilteredCredentials()).toEqual([
       customerCredentialJSON,
     ]);
   });
 
-  it('expect to load credentials and generate presentation for a selected credential', async () => {
-    const controller = await verificationProvider.start({
+  it('expect to generate presentation for a selected credential', async () => {
+    const controller = createVerificationController({
+      wallet,
+      didProvider,
+    });
+
+    await controller.start({
       template:
         'https://creds-testnet.dock.io/proof/6de279ba-caf3-4979-a067-553284b40767',
     });
 
-    await controller.loadCredentials();
     const credentials = controller.getFilteredCredentials();
 
     // select the first credential in the filtered list

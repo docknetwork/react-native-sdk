@@ -9,8 +9,9 @@ import {IWallet} from './types';
 import {EventEmitter} from 'events';
 import axios from 'axios';
 import assert from 'assert';
+import {createDIDProvider, IDIDProvider} from './did-provider';
 
-export enum VerificationState {
+export enum VerificationStatus {
   Started = 'Started',
   LoadingTemplate = 'LoadingTemplate',
   Filtering = 'Filtering',
@@ -27,22 +28,23 @@ function isRangeProofTemplate(templateJSON) {
 export function createVerificationController({
   wallet,
   credentialProvider,
+  didProvider,
 }: {
   wallet: IWallet;
-  credentialProvider: ICredentialProvider;
+  credentialProvider?: ICredentialProvider;
+  didProvider?: IDIDProvider;
 }) {
-  let emitter = new EventEmitter();
+  const emitter = new EventEmitter();
   let templateJSON = null;
-  let state = VerificationState.Started;
+  let status = VerificationStatus.Started;
   /**
    * Extra data to give better context to the current state
    * Can be used to show error messages, or more specific information about the state
    */
-  let stateData = null;
+  let statusData = null;
   let filteredCredentials = [];
   let selectedCredentialIds: string[] = [];
   let selectedAttributes = [];
-  let didKeyPairList = null;
   let selectedDID = null;
   let provingKey = null;
 
@@ -50,15 +52,19 @@ export function createVerificationController({
     credentialProvider = createCredentialProvider({wallet});
   }
 
+  if (!didProvider) {
+    didProvider = createDIDProvider({wallet});
+  }
+
   async function fetchProvingKey(templateJSON: any) {
     if (templateJSON.proving_key) {
-      setState(VerificationState.FetchingProvingKey);
+      setState(VerificationStatus.FetchingProvingKey);
       try {
         provingKey = await axios
           .get(templateJSON.proving_key)
           .then(res => res.data);
       } catch (err) {
-        setState(VerificationState.Error, {
+        setState(VerificationStatus.Error, {
           message: 'failed_to_fetch_proving_key',
         });
 
@@ -67,31 +73,45 @@ export function createVerificationController({
     }
   }
 
-  async function setTemplate(template) {
-    setState(VerificationState.LoadingTemplate);
+  async function start(template) {
+    setState(VerificationStatus.LoadingTemplate);
+
+    // check for dids
+    const dids = await didProvider.getAll();
+
+    if (!dids.length) {
+      setState(VerificationStatus.Error, {
+        message: 'no_dids_in_the_wallet',
+      });
+      throw new Error('No DIDs in the wallet');
+    }
+
+    if (dids.length === 1) {
+      selectedDID = dids[0];
+    }
 
     templateJSON = await getJSON(template);
 
     await fetchProvingKey(templateJSON);
     await loadCredentials();
 
-    setState(VerificationState.SelectingCredentials);
+    setState(VerificationStatus.SelectingCredentials);
   }
 
-  function setState(_state: VerificationState, _stateData?: any) {
-    state = _state;
-    stateData = _stateData;
-    emitter.emit(_state, stateData);
+  function setState(_status: VerificationStatus, data?: any) {
+    status = _status;
+    statusData = data;
+    emitter.emit(_status, data);
   }
 
   async function loadCredentials() {
-    setState(VerificationState.Filtering);
+    setState(VerificationStatus.Filtering);
 
     // get wallet credentials and apply pex filter
     const allCredentials = await credentialProvider.getCredentials();
 
     if (!allCredentials.length) {
-      setState(VerificationState.NoCredentialsInTheWallet);
+      setState(VerificationStatus.NoCredentialsInTheWallet);
       return;
     }
 
@@ -103,7 +123,7 @@ export function createVerificationController({
 
       filteredCredentials = result.verifiableCredential;
     } catch (err) {
-      setState(VerificationState.Error);
+      setState(VerificationStatus.Error);
       throw err;
     }
   }
@@ -135,14 +155,15 @@ export function createVerificationController({
       return selectedCredentialIds.includes(credential.id);
     });
 
+    const didKeyPairList = await didProvider.getDIDKeyPairs();
     const keyDoc = didKeyPairList.find(doc => doc.id === selectedDID);
 
-    assert(keyDoc, `No key doc found for the selected DID ${selectedDID}`);
+    assert(keyDoc, `No key pair found for the selected DID ${selectedDID}`);
 
     const presentation = await credentialServiceRPC.createPresentation({
       credentials,
       challenge: templateJSON.nonce,
-      keyDoc: didKeyPairList[0],
+      keyDoc: selectedDID,
       id: keyDoc.controller.startsWith('did:key:')
         ? keyDoc.id
         : `${keyDoc.controller}#keys-1`,
@@ -169,35 +190,29 @@ export function createVerificationController({
     });
   }
 
-  function getDIDs() {
-    return didKeyPairList;
-  }
-
   function getSelectedAttributes() {
     return selectedAttributes;
   }
 
-  function getState() {
-    return state;
+  function getStatus() {
+    return status;
   }
 
-  function getStateData() {
-    return stateData;
-  }
-
-  function getEmitter() {
-    return emitter;
+  function getStatusData() {
+    return statusData;
   }
 
   return {
-    getEmitter,
-    getState,
-    getStateData,
-    setTemplate,
+    emitter,
+    getStatus,
+    getStatusData,
+    getSelectedDID() {
+      return selectedDID;
+    },
+    start,
     loadCredentials,
     getSelectedAttributes,
     getFilteredCredentials,
-    getDIDs,
     getSelectedCredentials,
     setSelectedCredentialIds,
     getSelectedCredentialIds,
@@ -205,21 +220,6 @@ export function createVerificationController({
     createPresentation,
     getTemplateJSON() {
       return templateJSON;
-    },
-  };
-}
-
-export function createVerificationProvider({wallet}) {
-  return {
-    start: async ({template}) => {
-      const controller = createVerificationController({
-        wallet,
-        credentialProvider: createCredentialProvider({wallet}),
-      });
-
-      await controller.setTemplate(template);
-
-      return controller;
     },
   };
 }
