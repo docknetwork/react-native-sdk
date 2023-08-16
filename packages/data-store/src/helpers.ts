@@ -25,7 +25,7 @@ export function getDataSource(options: DataStoreConfigs) {
     dropSchema: options.dropSchema,
     driver: options.driver,
     sqlJsConfig: options.sqlJsConfig,
-    migrationsRun: process.env.NODE_ENV === 'test',
+    migrationsRun: process.env.NODE_ENV !== 'test',
     migrations: typeOrmMigrations,
     ...(options.typeORMConfigs || {}),
   });
