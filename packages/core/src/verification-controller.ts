@@ -25,6 +25,13 @@ function isRangeProofTemplate(templateJSON) {
   return templateJSON.proving_key;
 }
 
+type CredentialId = string;
+type CredentialSelection = {
+  credential: any;
+  attributesToReval?: string[];
+};
+type CredentialSelectionMap = Map<CredentialId, CredentialSelection>;
+
 export function createVerificationController({
   wallet,
   credentialProvider,
@@ -43,8 +50,7 @@ export function createVerificationController({
    */
   let statusData = null;
   let filteredCredentials = [];
-  let selectedCredentialIds: string[] = [];
-  let selectedAttributes = [];
+  let selectedCredentials: CredentialSelectionMap = new Map();
   let selectedDID = null;
   let provingKey = null;
 
@@ -130,18 +136,9 @@ export function createVerificationController({
     return templateJSON.request;
   }
 
-  function setSelectedCredentialIds(_credentialIds: string[]) {
-    selectedCredentialIds = _credentialIds;
-  }
-
-  function selectCredentialAttribute(
-    credentialId: string,
-    attributePath: string,
-  ) {}
-
   async function createPresentation() {
     assert(!!selectedDID, 'No DID selected');
-    assert(!!selectedCredentialIds.length, 'No credentials selected');
+    assert(!!selectedCredentials.size, 'No credentials selected');
     assert(!!filteredCredentials.length, 'No filtered credentials found');
 
     if (isRangeProofTemplate(templateJSON)) {
@@ -149,9 +146,12 @@ export function createVerificationController({
       assert(!!provingKey, 'No proving key found');
     }
 
-    const credentials = filteredCredentials.filter(credential => {
-      return selectedCredentialIds.includes(credential.id);
-    });
+    const credentials = [];
+
+    for (const credentialSelection of selectedCredentials.values()) {
+      // check if is bbs
+      credentials.push(credentialSelection.credential);
+    }
 
     const didKeyPairList = await didProvider.getDIDKeyPairs();
     const keyDoc = didKeyPairList.find(doc => doc.controller === selectedDID);
@@ -176,20 +176,6 @@ export function createVerificationController({
    */
   function getFilteredCredentials() {
     return filteredCredentials;
-  }
-
-  function getSelectedCredentialIds() {
-    return selectedCredentialIds;
-  }
-
-  function getSelectedCredentials() {
-    return filteredCredentials.filter(credential => {
-      return selectedCredentialIds.includes(credential.id);
-    });
-  }
-
-  function getSelectedAttributes() {
-    return selectedAttributes;
   }
 
   function getStatus() {
@@ -224,6 +210,7 @@ export function createVerificationController({
 
   return {
     emitter,
+    selectedCredentials,
     getStatus,
     getStatusData,
     getSelectedDID() {
@@ -232,12 +219,7 @@ export function createVerificationController({
     setSelectedDID,
     start,
     loadCredentials,
-    getSelectedAttributes,
     getFilteredCredentials,
-    getSelectedCredentials,
-    setSelectedCredentialIds,
-    getSelectedCredentialIds,
-    selectCredentialAttribute,
     createPresentation,
     evaluatePresentation,
     getTemplateJSON() {
