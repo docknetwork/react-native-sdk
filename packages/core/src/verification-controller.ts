@@ -73,7 +73,7 @@ export function createVerificationController({
     }
   }
 
-  async function start(template) {
+  async function start({template}: {template: string}) {
     setState(VerificationStatus.LoadingTemplate);
 
     // check for dids
@@ -86,10 +86,8 @@ export function createVerificationController({
       throw new Error('No DIDs in the wallet');
     }
 
-    if (dids.length === 1) {
-      selectedDID = dids[0];
-    }
-
+    // the application needs to verify if there are more DIDs available, and allow the user to change this selection before creating a presentation
+    selectedDID = dids[0].id;
     templateJSON = await getJSON(template);
 
     await fetchProvingKey(templateJSON);
@@ -202,6 +200,10 @@ export function createVerificationController({
     return statusData;
   }
 
+  function setSelectedDID(did: string) {
+    selectedDID = did;
+  }
+
   return {
     emitter,
     getStatus,
@@ -209,6 +211,7 @@ export function createVerificationController({
     getSelectedDID() {
       return selectedDID;
     },
+    setSelectedDID,
     start,
     loadCredentials,
     getSelectedAttributes,
