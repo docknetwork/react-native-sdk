@@ -1,8 +1,13 @@
 import {IWallet} from './types';
-import {createVerificationController} from './verification-controller';
+import {
+  createVerificationController,
+  VerificationStatus,
+} from './verification-controller';
 import {createWallet} from './wallet';
 import customerCredentialJSON from './fixtures/customer-credential.json';
 import {createDIDProvider, IDIDProvider} from './did-provider';
+import {getDock} from '@docknetwork/wallet-sdk-wasm/src/services/dock/service';
+import {Keyring} from '@polkadot/keyring';
 
 describe('Verification provider', () => {
   let wallet: IWallet;
@@ -43,6 +48,8 @@ describe('Verification provider', () => {
       databasePath: ':memory:',
     });
 
+    getDock().keyring = new Keyring();
+
     didProvider = createDIDProvider({
       wallet,
     });
@@ -64,7 +71,10 @@ describe('Verification provider', () => {
 
     const currentDID = await didProvider.getAll();
 
-    expect(controller.getSelectedDID()).toBe(currentDID[0].id);
+    expect(controller.getSelectedDID()).toBe(currentDID[0].didDocument.id);
+    expect(controller.getStatus()).toEqual(
+      VerificationStatus.SelectingCredentials,
+    );
     expect(controller.getSelectedAttributes()).toEqual([]);
     expect(controller.getTemplateJSON()).toEqual(verificationTemplateJSON);
     expect(controller.getFilteredCredentials()).toEqual([
@@ -90,6 +100,12 @@ describe('Verification provider', () => {
 
     const presentation = await controller.createPresentation();
 
-    expect(presentation).toEqual([]);
+    expect(presentation.credentials[0]).toStrictEqual(credentials[0]);
+    expect(presentation.type).toEqual(['VerifiablePresentation']);
+
+    // validate the presentation
+    const result = await controller.evaluatePresentation(presentation);
+
+    expect(result.isValid).toBe(true);
   });
 });

@@ -87,7 +87,7 @@ export function createVerificationController({
     }
 
     // the application needs to verify if there are more DIDs available, and allow the user to change this selection before creating a presentation
-    selectedDID = dids[0].id;
+    selectedDID = dids[0].didDocument.id;
     templateJSON = await getJSON(template);
 
     await fetchProvingKey(templateJSON);
@@ -154,14 +154,14 @@ export function createVerificationController({
     });
 
     const didKeyPairList = await didProvider.getDIDKeyPairs();
-    const keyDoc = didKeyPairList.find(doc => doc.id === selectedDID);
+    const keyDoc = didKeyPairList.find(doc => doc.controller === selectedDID);
 
     assert(keyDoc, `No key pair found for the selected DID ${selectedDID}`);
 
     const presentation = await credentialServiceRPC.createPresentation({
       credentials,
       challenge: templateJSON.nonce,
-      keyDoc: selectedDID,
+      keyDoc,
       id: keyDoc.controller.startsWith('did:key:')
         ? keyDoc.id
         : `${keyDoc.controller}#keys-1`,
@@ -204,6 +204,24 @@ export function createVerificationController({
     selectedDID = did;
   }
 
+  /**
+   * Use pex to evaluate presentation
+   *
+   * @param presentation
+   */
+  function evaluatePresentation(presentation) {
+    const result = credentialServiceRPC.evaluatePresentation({
+      presentation,
+      presentationDefinition: getPresentationDefinition(),
+    });
+
+    return {
+      isValid: result.errors.length === 0,
+      errors: result.errors,
+      warnings: result.warnings,
+    };
+  }
+
   return {
     emitter,
     getStatus,
@@ -221,6 +239,7 @@ export function createVerificationController({
     getSelectedCredentialIds,
     selectCredentialAttribute,
     createPresentation,
+    evaluatePresentation,
     getTemplateJSON() {
       return templateJSON;
     },
