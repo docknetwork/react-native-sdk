@@ -75,7 +75,7 @@ describe('Verification provider', () => {
     expect(controller.getStatus()).toEqual(
       VerificationStatus.SelectingCredentials,
     );
-    expect(controller.getSelectedAttributes()).toEqual([]);
+    expect(controller.selectedCredentials.size).toEqual(0);
     expect(controller.getTemplateJSON()).toEqual(verificationTemplateJSON);
     expect(controller.getFilteredCredentials()).toEqual([
       customerCredentialJSON,
@@ -96,7 +96,9 @@ describe('Verification provider', () => {
     const credentials = controller.getFilteredCredentials();
 
     // select the first credential in the filtered list
-    controller.setSelectedCredentialIds([credentials[0].id]);
+    controller.selectedCredentials.set(credentials[0].id, {
+      credential: credentials[0],
+    });
 
     const presentation = await controller.createPresentation();
 
@@ -106,6 +108,32 @@ describe('Verification provider', () => {
     // validate the presentation
     const result = await controller.evaluatePresentation(presentation);
 
+    expect(result.isValid).toBe(true);
+  });
+
+  it('expect to generate presentation for a bbs credential, selecting specific attributes to share', async () => {
+    const controller = createVerificationController({
+      wallet,
+      didProvider,
+    });
+
+    await controller.start({
+      template:
+        'https://creds-testnet.dock.io/proof/6de279ba-caf3-4979-a067-553284b40767',
+    });
+
+    const credentials = controller.getFilteredCredentials();
+
+    // select the first credential in the filtered list
+    controller.selectedCredentials.set(credentials[0].id, {
+      credential: credentials[0],
+    });
+
+    // set selected attributes
+
+    const presentation = await controller.createPresentation();
+
+    const result = await controller.evaluatePresentation(presentation);
     expect(result.isValid).toBe(true);
   });
 });
