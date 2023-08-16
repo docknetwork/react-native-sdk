@@ -66,7 +66,7 @@ export async function toV1Wallet(wallet: IWallet): Promise<IWallet> {
     ...wallet,
   };
 
-  accounts.wallet = newWallet;
+  (accounts as any).wallet = newWallet;
 
   return newWallet;
 }
