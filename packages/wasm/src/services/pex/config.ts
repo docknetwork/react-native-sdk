@@ -13,12 +13,12 @@ export const validation = {
 };
 
 export type FilterCredentialsParams = {
-  credentials: any[],
-  presentationDefinition: any,
-  holderDid: string,
+  credentials: any[];
+  presentationDefinition: any;
+  holderDIDs: string[];
 };
 
 export type EvaluatePresentationParams = {
-  presentation: any,
-  presentationDefinition: any,
+  presentation: any;
+  presentationDefinition: any;
 };
