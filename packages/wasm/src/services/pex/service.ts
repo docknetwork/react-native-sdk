@@ -9,6 +9,8 @@ import {PEX} from '@sphereon/pex';
 const pex: PEX = new PEX();
 
 class PEXService {
+  name: string;
+
   constructor() {
     this.name = serviceName;
   }
@@ -20,11 +22,11 @@ class PEXService {
 
   filterCredentials(params: FilterCredentialsParams) {
     validation.filterCredentials(params);
-    const {credentials, presentationDefinition, holderDid} = params;
+    const {credentials, presentationDefinition, holderDIDs} = params;
     const result = pex.selectFrom(
       presentationDefinition,
       credentials,
-      holderDid,
+      holderDIDs,
     );
 
     return result;
