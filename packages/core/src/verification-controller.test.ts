@@ -65,7 +65,7 @@ describe('Verification provider', () => {
     const currentDID = await didProvider.getAll();
 
     expect(controller.getSelectedDID()).toBe(currentDID[0].id);
-    expect(controller.getSelectedAttributes()).toBe([]);
+    expect(controller.getSelectedAttributes()).toEqual([]);
     expect(controller.getTemplateJSON()).toEqual(verificationTemplateJSON);
     expect(controller.getFilteredCredentials()).toEqual([
       customerCredentialJSON,
