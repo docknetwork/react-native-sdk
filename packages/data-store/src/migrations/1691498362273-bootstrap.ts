@@ -18,7 +18,7 @@ export class Bootstrap1691498362273 implements MigrationInterface {
       return;
     }
 
-    console.log('Running table bootstrap migration 2222');
+    console.log('Running table bootstrap migration');
 
     await queryRunner.createTable(
       new Table({
