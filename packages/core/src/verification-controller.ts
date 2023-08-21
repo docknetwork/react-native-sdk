@@ -28,7 +28,7 @@ function isRangeProofTemplate(templateJSON) {
 type CredentialId = string;
 type CredentialSelection = {
   credential: any;
-  attributesToReval?: string[];
+  attributesToReveal?: string[];
 };
 type CredentialSelectionMap = Map<CredentialId, CredentialSelection>;
 
@@ -79,7 +79,7 @@ export function createVerificationController({
     }
   }
 
-  async function start({template}: {template: string}) {
+  async function start({template}: {template: string | any}) {
     setState(VerificationStatus.LoadingTemplate);
 
     // check for dids
@@ -123,6 +123,7 @@ export function createVerificationController({
       const result = await pexService.filterCredentials({
         credentials: allCredentials,
         presentationDefinition: getPresentationDefinition(),
+        holderDIDs: [],
       });
 
       filteredCredentials = result.verifiableCredential;
@@ -134,6 +135,10 @@ export function createVerificationController({
 
   function getPresentationDefinition() {
     return templateJSON.request;
+  }
+
+  async function isBBSPlusCredential(credential) {
+    return credentialServiceRPC.isBBSPlusCredential({credential});
   }
 
   async function createPresentation() {
@@ -149,14 +154,35 @@ export function createVerificationController({
     const credentials = [];
 
     for (const credentialSelection of selectedCredentials.values()) {
-      // check if is bbs
-      credentials.push(credentialSelection.credential);
+      const isBBS = await isBBSPlusCredential(credentialSelection.credential);
+
+      if (!isBBS) {
+        credentials.push(credentialSelection.credential);
+      } else {
+        // derive BBS credential
+        const derivedCredentials =
+          await credentialServiceRPC.deriveVCFromBBSPresentation({
+            credentials: [
+              {
+                credential: credentialSelection.credential,
+                attributesToReveal: [
+                  ...(credentialSelection.attributesToReveal || []),
+                  'id',
+                ],
+              },
+            ],
+          });
+        credentials.push(derivedCredentials[0]);
+      }
     }
 
     const didKeyPairList = await didProvider.getDIDKeyPairs();
     const keyDoc = didKeyPairList.find(doc => doc.controller === selectedDID);
 
     assert(keyDoc, `No key pair found for the selected DID ${selectedDID}`);
+
+    // TODO: Figure out why this context is being created
+    delete credentials[0].proof.context;
 
     const presentation = await credentialServiceRPC.createPresentation({
       credentials,
@@ -196,9 +222,10 @@ export function createVerificationController({
    * @param presentation
    */
   function evaluatePresentation(presentation) {
+    const definition = getPresentationDefinition();
     const result = credentialServiceRPC.evaluatePresentation({
       presentation,
-      presentationDefinition: getPresentationDefinition(),
+      presentationDefinition: definition,
     });
 
     return {
@@ -218,6 +245,7 @@ export function createVerificationController({
     },
     setSelectedDID,
     start,
+    isBBSPlusCredential,
     loadCredentials,
     getFilteredCredentials,
     createPresentation,

@@ -1,0 +1,57 @@
+{
+  "@context": [
+    "https://www.w3.org/2018/credentials/v1",
+    {
+      "dk": "https://ld.dock.io/credentials#",
+      "UniversityDegree": "dk:UniversityDegree",
+      "degreeName": "dk:degreeName",
+      "degreeType": "dk:degreeType",
+      "dateEarned": "dk:dateEarned",
+      "name": "dk:name",
+      "email": "dk:email",
+      "dateOfBirth": "dk:dateOfBirth",
+      "description": "dk:description",
+      "logo": "dk:logo"
+    }
+  ],
+  "id": "https://creds-testnet.dock.io/cc2e0be92a9533ca68466ad011ea916216fedac6473d17b1bd0fc3a01b623b09",
+  "type": [
+    "VerifiableCredential",
+    "UniversityDegree"
+  ],
+  "credentialSubject": {
+    "id": "recipient id",
+    "degreeName": "degree name",
+    "degreeType": "degree type",
+    "dateEarned": "2023-02-07",
+    "name": "full name",
+    "email": "email@email.com",
+    "dateOfBirth": "2023-02-08"
+  },
+  "issuanceDate": "2023-02-06T11:15:19.995Z",
+  "name": "University Degree",
+  "proof": {
+    "@context": [
+      {
+        "sec": "https://w3id.org/security#",
+        "proof": {
+          "@id": "sec:proof",
+          "@type": "@id",
+          "@container": "@graph"
+        }
+      },
+      "https://ld.dock.io/security/bbs/v1"
+    ],
+    "type": "Bls12381BBS+SignatureDock2022",
+    "created": "2023-02-06T11:42:24Z",
+    "verificationMethod": "did:dock:5GAFgFX6dUMYzZKiRKHvV4nK92X64D5ekfy3WVpNEeMUnu38#keys-2",
+    "proofPurpose": "assertionMethod",
+    "proofValue": "znokfKbFLiBqTjuZVkg3FGftrogKGm47DKDSNRjwqd8SBQiw7iqeYpTdapL9cRGhax4R9pVwrDicWrm4P9fAmAAVjSHz79jZGnX9AVWesbn7HFssbguZgx2ZzXS6ySyfPfDa8qhUuMsepV6oDcydhEA4Hd"
+  },
+  "issuer": {
+    "name": "My New DID",
+    "description": "",
+    "logo": "",
+    "id": "did:dock:5GAFgFX6dUMYzZKiRKHvV4nK92X64D5ekfy3WVpNEeMUnu38"
+  }
+}

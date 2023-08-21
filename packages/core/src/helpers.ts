@@ -22,8 +22,12 @@ export function getJSON(jsonOrURL: string | any) {
     return jsonOrURL;
   }
 
-  if (typeof jsonOrURL === 'string' && isURL(jsonOrURL)) {
-    return getJSONFromURL(jsonOrURL);
+  if (typeof jsonOrURL === 'string') {
+    if (isURL(jsonOrURL)) {
+      return getJSONFromURL(jsonOrURL);
+    } else {
+      return JSON.parse(jsonOrURL);
+    }
   }
 
   throw new Error(`Invalid data ${jsonOrURL}`);
