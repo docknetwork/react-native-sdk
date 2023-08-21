@@ -1,0 +1,32 @@
+{
+  "qr": "https://creds-testnet.dock.io/proof/6de279ba-caf3-4979-a067-553284b40767",
+  "id": "6de279ba-caf3-4979-a067-553284b40767",
+  "name": "University Degree Credential",
+  "nonce": "b75fab9a5006216173500bfd3df5d0c5",
+  "created": "2023-08-09T20:19:46.278Z",
+  "updated": "2023-08-09T20:19:46.278Z",
+  "verified": false,
+  "response_url": "https://api-testnet.dock.io/proof-requests/6de279ba-caf3-4979-a067-553284b40767/send-presentation",
+  "request": {
+    "id": "6de279ba-caf3-4979-a067-553284b40767",
+    "input_descriptors": [
+      {
+        "id": "Credential 1",
+        "name": "University Degree Credential",
+        "purpose": "Any University Degree Credential",
+        "constraints": {
+          "fields": [
+            {
+              "path": ["$.name"],
+              "filter": {
+                "type": "string",
+                "pattern": "University Degree"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "type": "proof-request"
+}

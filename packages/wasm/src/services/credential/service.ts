@@ -14,10 +14,12 @@ const pex: PEX = new PEX();
 
 export function isBBSPlusCredential(credential) {
   return (
-    Array.isArray(credential['@context']) &&
-    credential['@context'].find(
-      context => context.bs && context.bs.indexOf('bbs') > -1,
-    )
+    (typeof credential?.proof?.type === 'string' &&
+      credential.proof.type.includes('BBS+SignatureDock')) ||
+    (Array.isArray(credential['@context']) &&
+      credential['@context'].find(
+        context => context.bs && context.bs.indexOf('bbs') > -1,
+      ))
   );
 }
 
@@ -32,6 +34,7 @@ class CredentialService {
     CredentialService.prototype.verifyCredential,
     CredentialService.prototype.createBBSPresentation,
     CredentialService.prototype.deriveVCFromBBSPresentation,
+    CredentialService.prototype.isBBSPlusCredential,
   ];
   generateCredential(params = {}) {
     validation.generateCredential(params);
@@ -113,6 +116,11 @@ class CredentialService {
     return result;
   }
 
+  isBBSPlusCredential(params) {
+    const {credential} = params;
+    return isBBSPlusCredential(credential);
+  }
+
   async createBBSPresentation(params) {
     validation.createBBSPresentation(params);
     const {credentials} = params;
@@ -168,6 +176,8 @@ class CredentialService {
         }
       });
       credentialJSON['@context'].push(customContext);
+
+      console.log();
       return VerifiableCredential.fromJSON(credentialJSON);
     });
   }
