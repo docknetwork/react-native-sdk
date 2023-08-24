@@ -5,7 +5,6 @@ import input from '@inquirer/input';
 import {IWallet} from '@docknetwork/wallet-sdk-core/lib/types';
 import {getWallet} from '../helpers';
 import {createVerificationController} from '@docknetwork/wallet-sdk-core/src/verification-controller';
-// import template from '@docknetwork/wallet-sdk-core/src/fixtures/iiw-template.json';
 import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
 import clipboardy from 'clipboardy';
 const verificationCommands = new Command('verification');
