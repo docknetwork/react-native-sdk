@@ -177,7 +177,6 @@ class CredentialService {
       });
       credentialJSON['@context'].push(customContext);
 
-      console.log();
       return VerifiableCredential.fromJSON(credentialJSON);
     });
   }
