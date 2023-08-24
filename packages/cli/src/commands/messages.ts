@@ -1,10 +1,11 @@
 import {Command} from 'commander';
 import inquirer from 'inquirer';
+import input from '@inquirer/input';
 import axios from 'axios';
 import {IWallet} from '@docknetwork/wallet-sdk-core/lib/types';
 import {RelayService} from '@docknetwork/wallet-sdk-relay-service/src';
 import testCredential from '../fixtures/customer-credential.json';
-import {getDIDProvider, getWallet} from '../helpers';
+import {getDIDProvider, getWallet, selectCredential} from '../helpers';
 
 const messagesCommand = new Command('messages').description(
   'fetch didcomm messages, send didcomm message',
@@ -32,9 +33,12 @@ messagesCommand
   .action(async () => {
     await getWallet();
     const keyPairDocs = await getDIDProvider().getDIDKeyPairs();
-    const recipientDid =
-      'did:key:z6MkoQzWru66w91EH7U9Xsv5eYXQabw9U3ZJd5GkatMWkmZT';
-    const message = 'Some message';
+    const recipientDid = await input({
+      message: 'Enter the recipient DID',
+    });
+    const message = await input({
+      message: 'Enter the message',
+    });
 
     console.log('Sending message to', {
       recipientDid,
@@ -51,22 +55,19 @@ messagesCommand
     console.log(result);
   });
 
-const DIDAddressBook = {
-  iosEmulator: 'did:key:z6MkuZRbStWnxNunsGRbWBfMdZaE9iqrgFkYZXi1C6dMtREi',
-  walletCli: 'did:key:z6Mkw67FPTpdJ47zjXUeLBnifjBGNeexjUAxmFKaZ4oqed6B',
-  iosDevice: 'did:key:z6MkoQzWru66w91EH7U9Xsv5eYXQabw9U3ZJd5GkatMWkmZT',
-};
-
 messagesCommand
   .command('send-credential')
   .description('Send message using DIDComm')
   .action(async () => {
     await getWallet();
     const keyPairDocs = await getDIDProvider().getDIDKeyPairs();
-    const recipientDid = DIDAddressBook.iosEmulator;
+    const recipientDid = await input({
+      message: 'Enter the recipient DID',
+    });
+    const credential = await selectCredential();
     const message = {
       domain: 'api.dock.io',
-      credentials: [testCredential],
+      credentials: [credential],
     };
 
     console.log('Sending VC to', recipientDid);

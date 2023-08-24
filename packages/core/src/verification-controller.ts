@@ -128,6 +128,15 @@ export function createVerificationController({
 
       filteredCredentials = result.verifiableCredential;
     } catch (err) {
+      console.error(
+        `Unable to filter credentials using the template: \n ${JSON.stringify(
+          templateJSON,
+          null,
+          2,
+        )}`,
+      );
+      console.error(err);
+
       setState(VerificationStatus.Error);
       throw err;
     }
