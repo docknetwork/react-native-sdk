@@ -43,7 +43,7 @@ export class Bootstrap1691498362273 implements MigrationInterface {
         name: 'document_entity',
         columns: [
           new TableColumn({name: 'id', type: 'text', isPrimary: true}),
-          new TableColumn({name: 'networkId', type: 'text'}),
+          new TableColumn({name: 'networkId', type: 'text', isNullable: true}),
           new TableColumn({name: 'type', type: 'text'}),
           new TableColumn({name: 'correlation', type: 'text'}),
           new TableColumn({name: 'data', type: 'blob'}),
@@ -56,7 +56,7 @@ export class Bootstrap1691498362273 implements MigrationInterface {
         name: 'wallet_entity',
         columns: [
           new TableColumn({name: 'id', type: 'varchar', isPrimary: true}),
-          new TableColumn({name: 'version', type: 'varchar'}),
+          new TableColumn({name: 'version', type: 'varchar', isNullable: true}),
           new TableColumn({name: 'networkId', type: 'varchar'}),
         ],
       }),
