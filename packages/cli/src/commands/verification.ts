@@ -34,6 +34,9 @@ verificationCommands
         template = await clipboardy.read();
       }
     }
+
+    console.log('Got template', template);
+
     console.log('Starting verification flow...');
     await controller.start({
       template,

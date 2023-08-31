@@ -180,6 +180,10 @@ class CredentialService {
       return VerifiableCredential.fromJSON(credentialJSON);
     });
   }
+
+  async testRangeProof() {
+    console.log('test')
+  }
 }
 
 export const credentialService = new CredentialService();
