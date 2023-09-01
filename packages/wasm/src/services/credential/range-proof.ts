@@ -23,6 +23,11 @@ import {
 import {BoundCheckSnarkSetup} from '@docknetwork/crypto-wasm-ts/lib/bound-check';
 import {initializeWasm} from '@docknetwork/crypto-wasm-ts/lib/index';
 
+// Use presentation builder instead of low level implementation
+// https://github.com/docknetwork/crypto-wasm-ts/blob/master/src/anonymous-credentials/presentation-builder.ts#L240.
+// https://github.com/docknetwork/crypto-wasm-ts/blob/master/tests/anonymous-credentials/presentation.spec.ts#L932
+
+// Low level implementation testing, we don't need to use it
 const stringToBytes = (string: string): Uint8Array =>
   Uint8Array.from(Buffer.from(string, 'utf-8'));
 
