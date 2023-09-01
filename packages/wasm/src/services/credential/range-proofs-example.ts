@@ -43,19 +43,20 @@ function getRevealedUnrevealed(
   return [revealedMsgs, unrevealedMsgs];
 }
 
-const earliestIssuance = 642709800000; // Timestamp of the earliest acceptable issuance, used as lower bound
-const latestIssuance = 1588271400000; // Timestamp of the latest acceptable issuance, used as upper bound
-const bornAfter = 642709800000; // Timestamp of the latest acceptable birth date, used as lower bound
-const now = 1620585000000; // Timestamp as of now, i.e proof generation
-const someDistantFuture = 1777746600000; // Timestamp from future
-
-export async function createRangeProofPresentation() {
+export async function rangeProofExample() {
   await initializeWasm();
 
-  const provingKey: LegoProvingKey = BoundCheckSnarkSetup();
+  const pk: LegoProvingKey = BoundCheckSnarkSetup();
 
-  const snarkProvingKey: LegoProvingKeyUncompressed = provingKey.decompress();
+  const snarkProvingKey: LegoProvingKeyUncompressed = pk.decompress();
+  const snarkVerifyingKey: LegoVerifyingKeyUncompressed =
+    pk.getVerifyingKeyUncompressed();
 
+  const earliestIssuance = 642709800000; // Timestamp of the earliest acceptable issuance, used as lower bound
+  const latestIssuance = 1588271400000; // Timestamp of the latest acceptable issuance, used as upper bound
+  const bornAfter = 642709800000; // Timestamp of the latest acceptable birth date, used as lower bound
+  const now = 1620585000000; // Timestamp as of now, i.e proof generation
+  const someDistantFuture = 1777746600000; // Timestamp from future
 
   const attributes: Uint8Array[] = [];
 
@@ -168,33 +169,7 @@ export async function createRangeProofPresentation() {
 
   console.log(proof);
 
-  verifyRangeProof({
-    nonce,
-    proof,
-    provingKey,
-    statement1,
-    metaStatements: metaStatements.values,
-  });
-
-  return true;
-}
-
-function verifyRangeProof({
-  nonce,
-  proof,
-  provingKey,
-  statement1,
-  metaStatements,
-}: {
-  nonce: Uint8Array;
-  proof: CompositeProofG1;
-  provingKey: LegoProvingKey;
-  statement1: Uint8Array;
-  metaStatements: Uint8Array[];
-}) {
-  const snarkVerifyingKey: LegoVerifyingKeyUncompressed =
-    provingKey.getVerifyingKeyUncompressed();
-
+  // Verify the proof
   const verifierSetupParams: SetupParam[] = [];
   verifierSetupParams.push(
     SetupParam.legosnarkVerifyingKeyUncompressed(snarkVerifyingKey),
@@ -225,19 +200,17 @@ function verifyRangeProof({
   verifierStatements.add(statement6);
   verifierStatements.add(statement7);
 
-  const _metaStatements = new MetaStatements();
-
-  metaStatements.forEach(metaStatement => {
-    _metaStatements.add(metaStatement);
-  });
-
   const verifierProofSpec = new QuasiProofSpecG1(
     verifierStatements,
-    _metaStatements,
+    metaStatements,
     verifierSetupParams,
   );
 
   const result = proof.verifyUsingQuasiProofSpec(verifierProofSpec, nonce);
 
   console.log(result);
+
+  return true;
 }
+
+rangeProofExample();
