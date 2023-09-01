@@ -117,12 +117,62 @@ verificationCommands
   });
 
 verificationCommands
-  .command('fetch')
-  .description('Fetch verification request messages')
-  .action(async () => {
+  .command('check-presentation')
+  .option('-t, --template <template>', 'Verification template')
+  .description('Check presentation JSON using a proof request template')
+  .action(async (options) => {
     const wallet: IWallet = await getWallet();
 
-    // check for relay service messages asking for a verification
+    let template = options.template;
+
+    if (!template) {
+      template = await input({
+        message:
+          'Enter the proof request template URL (leave it empty to copy a JSON from clipboard)',
+      });
+
+      if (!template) {
+        template = await clipboardy.read();
+      }
+    }
+
+    let presentation = options.presentation;
+
+    if (!presentation) {
+      presentation = await input({
+        message:
+          'Enter the presentation JSON (leave it empty to copy a JSON from clipboard)',
+      });
+
+      if (!presentation) {
+        presentation = await clipboardy.read();
+      }
+
+      presentation = JSON.parse(presentation);
+    }
+
+    console.log('Got template', template);
+
+    // await wallet.waitForEvent(WalletEvents.networkConnected);
+
+    const controller = createVerificationController({
+      wallet,
+    });
+
+    await controller.start({
+      template,
+    });
+
+    const result = await controller.evaluatePresentation(presentation);
+
+    console.log(result);
+
+    if (result.isValid) {
+      console.log('Verification successful!');
+    } else {
+      console.log('Verification result:');
+      console.log(JSON.stringify(result, null, 2));
+    }
   });
 
 export {verificationCommands};
