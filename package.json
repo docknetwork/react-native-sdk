@@ -79,7 +79,7 @@
     "build:rn:webview": "node  ./packages/react-native/bundler/build.js",
     "build-and-copy": "node  ./packages/react-native/bundler/build-and-copy.js",
     "build-packages": "yarn workspace @docknetwork/wallet-sdk-dids build",
-    "test": "export NODE_OPTIONS=\"--max_old_space_size=4096\";node --expose-gc ./node_modules/jest/bin/jest.js --logHeapUsage --forceExit",
+    "test": "export NODE_OPTIONS=\"--max_old_space_size=4096\";node ./node_modules/jest/bin/jest.js --forceExit",
     "test:ci": "sh ./scripts/test-ci.sh",
     "test:integration": "jest --config jest.config.e2e.js",
     "examples:all": "nodemon --exec NODE_ENV=development npx babel-node ./examples/index.js",
