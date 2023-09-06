@@ -155,6 +155,9 @@ class CredentialService {
       let customContext = {
         bs: 'https://ld.dock.io/bbs-pres-credentials#',
         proofPurpose: 'bs:proofPurpose',
+        boundedPseudonyms: 'bs:boundedPseudonyms',
+        unboundedPseudonyms: 'bs:unboundedPseudonyms',
+        sigType: 'bs:sigType',
         parsingOptions: 'bs:parsingOptions',
         defaultDecimalPlaces: 'bs:defaultDecimalPlaces',
         useDefaults: 'bs:useDefaults',
