@@ -1240,6 +1240,15 @@
     enabled "2.0.x"
     kuler "^2.0.0"
 
+"@digitalbazaar/bitstring@^1.1.0":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@digitalbazaar/bitstring/-/bitstring-1.2.1.tgz#079ffbc8600636fd1e9ca12c2ec77c60b67db26a"
+  integrity sha512-HyMYIRMhABBhtgG/jMjXOcPHol10BoElqw+W/DMF58eoOgqd6L1SltKIp5McQxeaY1hIfn3rK3dlQFMas1m2jQ==
+  dependencies:
+    base64url-universal "^1.1.0"
+    esm "^3.2.25"
+    pako "^1.0.11"
+
 "@digitalbazaar/did-io@^1.0.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@digitalbazaar/did-io/-/did-io-1.1.0.tgz#d9ba99641290ae1a68e7d2dae03f349bad180c9d"
@@ -1378,6 +1387,31 @@
     veres-one-context "^12.0.0"
     x25519-key-agreement-2020-context "^1.0.0"
 
+"@digitalbazaar/vc-status-list-context@^3.0.0":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@digitalbazaar/vc-status-list-context/-/vc-status-list-context-3.0.1.tgz#0507b7b6f6ee8b5e7e4d402e7a2905efdc70a316"
+  integrity sha512-vQsqQXpmSXKNy/C0xxFUOBzz60dHh6oupQam1xRC8IspVC11hYJiX9SAhmbI0ulHvX1R2JfqZaJHZjmAyMZ/aA==
+
+"@digitalbazaar/vc-status-list@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@digitalbazaar/vc-status-list/-/vc-status-list-4.0.0.tgz#592d3c3f9230adabf9bdb8f6ec1eb2dd0c490f25"
+  integrity sha512-8AsYwPt8aH9ahdzCw9mdqLWs0gXD/mU6h4tgnba+TV4VVfvUY0/Wh80B5HxZtzDjluNMlwAgwGwXNLsWWWY6mQ==
+  dependencies:
+    "@digitalbazaar/bitstring" "^1.1.0"
+    "@digitalbazaar/vc" "^2.1.0"
+    "@digitalbazaar/vc-status-list-context" "^3.0.0"
+    credentials-context "^2.0.0"
+    esm "^3.2.25"
+
+"@digitalbazaar/vc@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@digitalbazaar/vc/-/vc-2.1.0.tgz#6d227504d81ce6d02729a9c5a99efa86e50fc9ad"
+  integrity sha512-7rI/cJLfzto78/o15AgZCfMBkgOrgW2cJKWcZIe1PYywOOYiDGYsJvwefMlfDo311GH/z7pns1F2VUoBCeCmlw==
+  dependencies:
+    credentials-context "^2.0.0"
+    jsonld "^5.2.0"
+    jsonld-signatures "^9.3.0"
+
 "@digitalbazaar/x25519-key-agreement-key-2019@5.0.1":
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/@digitalbazaar/x25519-key-agreement-key-2019/-/x25519-key-agreement-key-2019-5.0.1.tgz#b31cbb83f38ddb0e01a1a2239175d2846b06f93d"
@@ -1413,22 +1447,26 @@
     esm "^3.2.25"
     tweetnacl "^1.0.3"
 
-"@docknetwork/crypto-wasm-ts@^0.33.3":
-  version "0.33.3"
-  resolved "https://registry.yarnpkg.com/@docknetwork/crypto-wasm-ts/-/crypto-wasm-ts-0.33.3.tgz#28f86d454e0f4170ef52aed9220e3b270ee49711"
-  integrity sha512-T8IBmi9fExCHOvdWeOzsLphPXi4/DTtXkDGngSsDqKGT2tuMgIswXlu5UCJoNa8qKnbmrUs/S/Vw7tDid4eyiA==
+"@docknetwork/crypto-wasm-ts@^0.38.1":
+  version "0.38.1"
+  resolved "https://registry.yarnpkg.com/@docknetwork/crypto-wasm-ts/-/crypto-wasm-ts-0.38.1.tgz#36742c1cf694de67b5838b1df51332b9982f2d68"
+  integrity sha512-Vfbo75UoHXiT12Hcz/Hd6JNkCiE3AX6HKmkxo+dU6XYjyh5DlvD2OAJdCWWR54UILefji570lUyEA+U0MoU/4g==
   dependencies:
-    "@docknetwork/crypto-wasm" "^0.18.0"
+    "@docknetwork/crypto-wasm" "0.19.0"
     "@types/flat" "^5.0.2"
+    "@types/lodash" "^4.14.195"
     bs58 "5.0.0"
     flat "^5.0.2"
     json-pointer "^0.6.2"
-    lzutf8 "^0.6.3"
+    lodash "^4.17.21"
+    lzutf8 "0.6.3"
 
-"@docknetwork/crypto-wasm@^0.18.0":
-  version "0.18.1"
-  resolved "https://registry.yarnpkg.com/@docknetwork/crypto-wasm/-/crypto-wasm-0.18.1.tgz#cbac61432ae3e0003ec65f85707667d0133e744b"
-  integrity sha512-kQMwBzYnuzz29Ae4M31yNEK0QCDNM73PW42m01q0i+hwfJkF8iP/d3j7mIT7YOfEUzvcalHIRRZbVQoTgR+6mQ==
+"@docknetwork/crypto-wasm@0.19.0":
+  version "0.19.0"
+  resolved "https://registry.yarnpkg.com/@docknetwork/crypto-wasm/-/crypto-wasm-0.19.0.tgz#64905fa517135a53ca61b2d1cc6c8267212d7bc6"
+  integrity sha512-ubk104MHeEBlH/jXKiNQ6xClaDMzu6WwK7AkNyMqtRcxJ7y5088LGekQwCdfOja85hTOKwx0LR/CRDBwQVRMRQ==
+  dependencies:
+    buffer "^6.0.3"
 
 "@docknetwork/minimal-cipher@^5.2.1":
   version "5.2.1"
@@ -1446,12 +1484,13 @@
   resolved "https://registry.yarnpkg.com/@docknetwork/node-types/-/node-types-0.16.0.tgz#23570042c823a6320654ee2c5b8c0da5d7c43d21"
   integrity sha512-VUZB8guX9161hDIEVn/UKJEUlXjIDE6vH5flx6uDHVc0QOhBy1bq6AGLayG4ZH19dCN39ta2sKGIFq9wLO4H2A==
 
-"@docknetwork/sdk@5.0.2":
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/@docknetwork/sdk/-/sdk-5.0.2.tgz#1ed64e5c57460c13ca81a579b07c35c61096a340"
-  integrity sha512-QQsrSq1R9En48aDZGKKYrETkFFyPHiifkHqLEizyJoUwsFjFRqQqqCCDju226vopOnyYTzK912szg9VxlMigxw==
+"@docknetwork/sdk@6.1.0":
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/@docknetwork/sdk/-/sdk-6.1.0.tgz#f5c877ffb95ccc5a739f053346c0835dc460ceab"
+  integrity sha512-Z+SAoGh5a5q/bZZLuG/UEOVCPiAVYCq/Fqni5GtYtozIgv49tpw091inKNKdpHfONPGPbOGzgdyEt+CD68KGnQ==
   dependencies:
-    "@docknetwork/crypto-wasm-ts" "^0.33.3"
+    "@digitalbazaar/vc-status-list" "^4.0.0"
+    "@docknetwork/crypto-wasm-ts" "^0.38.1"
     "@docknetwork/node-types" "^0.16.0"
     "@juanelas/base64" "^1.0.5"
     "@polkadot/api" "9.7.1"
@@ -1483,6 +1522,7 @@
     key-did-resolver "^1.4.0"
     mrklt "^0.2.0"
     n3 "1.16.2"
+    pako "^2.1.0"
     rify "^0.7.1"
 
 "@docknetwork/universal-wallet@^2.0.1":
@@ -3496,6 +3536,11 @@
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/@types/linkify-it/-/linkify-it-3.0.2.tgz#fd2cd2edbaa7eaac7e7f3c1748b52a19143846c9"
   integrity sha512-HZQYqbiFVWufzCwexrvh694SOim8z2d+xJl5UNamcvQFejLY/2YUtzXHYi3cHdI7PMlS8ejH2slRAOJQ32aNbA==
+
+"@types/lodash@^4.14.195":
+  version "4.14.197"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.197.tgz#e95c5ddcc814ec3e84c891910a01e0c8a378c54b"
+  integrity sha512-BMVOiWs0uNxHVlHBgzTIqJYmj+PgCo4euloGF+5m4okL3rEYzM2EEv78mw8zWSMM57dM7kVIgJ2QDvwHSoCI5g==
 
 "@types/markdown-it@^12.2.3":
   version "12.2.3"
@@ -6446,6 +6491,11 @@ credentials-context@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/credentials-context/-/credentials-context-1.0.0.tgz#a63cb4b7e0a4ca4460d247b7c9370a58b10ebac9"
   integrity sha512-rF3GPhTUGY58xlpuVRif/1i0BxVpynpmFdGNS81S2ezdKPSKoFke5ZOZWB8ZUvGi8bV8CuDM+ZcM/uf4z0PQVQ==
+
+credentials-context@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/credentials-context/-/credentials-context-2.0.0.tgz#68a9a1a88850c398d3bba4976c8490530af093e8"
+  integrity sha512-/mFKax6FK26KjgV2KW2D4YqKgoJ5DVJpNt87X2Jc9IxT2HBMy7nEIlc+n7pEi+YFFe721XqrvZPd+jbyyBjsvQ==
 
 cross-fetch@^3.1.5:
   version "3.1.5"
@@ -11294,7 +11344,7 @@ jsonld-document-loader@^1.2.0:
   resolved "https://registry.yarnpkg.com/jsonld-document-loader/-/jsonld-document-loader-1.2.1.tgz#d1bf82c4888cc097c5cbaf2c89c7f6331bc10355"
   integrity sha512-CtFyIBZApeVvs6QgyS7Gcp8h1dUs+1XNHcV4Sr6O9ItPaL0hVgqe47Tgs3RNH0A5Bc4p3UFPKAJVHKSOQq4mhQ==
 
-jsonld-signatures@^9.3.1:
+jsonld-signatures@^9.3.0, jsonld-signatures@^9.3.1:
   version "9.3.1"
   resolved "https://registry.yarnpkg.com/jsonld-signatures/-/jsonld-signatures-9.3.1.tgz#38f553fadb85c19bef61515247c3e53bb9a132ff"
   integrity sha512-OasKERvvbfbuItVFrb0pOHiclHPvT98IAorayZnEj48/E0Vz3rTPLzC14rDi1CEXjiiTGeNadLzTLdomdeZEAQ==
@@ -11303,7 +11353,7 @@ jsonld-signatures@^9.3.1:
     security-context "^4.0.0"
     serialize-error "^8.0.1"
 
-jsonld@5.2.0, jsonld@^5.0.0:
+jsonld@5.2.0, jsonld@^5.0.0, jsonld@^5.2.0:
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/jsonld/-/jsonld-5.2.0.tgz#d1e8af38a334cb95edf0f2ae4e2b58baf8d2b5a9"
   integrity sha512-JymgT6Xzk5CHEmHuEyvoTNviEPxv6ihLWSPu1gFdtjSAyM6cFqNrv02yS/SIur3BBIkCf0HjizRc24d8/FfQKw==
@@ -11646,7 +11696,7 @@ lz-string@^1.4.4:
   resolved "https://registry.yarnpkg.com/lz-string/-/lz-string-1.4.4.tgz#c0d8eaf36059f705796e1e344811cf4c498d3a26"
   integrity sha512-0ckx7ZHRPqb0oUm8zNr+90mtf9DQB60H1wMCjBtfi62Kl3a7JbHob6gA2bC+xRvZoOL+1hzUK8jeuEIQE8svEQ==
 
-lzutf8@^0.6.3:
+lzutf8@0.6.3:
   version "0.6.3"
   resolved "https://registry.yarnpkg.com/lzutf8/-/lzutf8-0.6.3.tgz#37a2ebe80922a8405f1e3f24c6c2b74c3e430981"
   integrity sha512-CAkF9HKrM+XpB0f3DepQ2to2iUEo0zrbh+XgBqgNBc1+k8HMM3u/YSfHI3Dr4GmoTIez2Pr/If1XFl3rU26AwA==
@@ -12988,7 +13038,7 @@ pako@^1.0.11, pako@~1.0.5:
   resolved "https://registry.yarnpkg.com/pako/-/pako-1.0.11.tgz#6c9599d340d54dfd3946380252a35705a6b992bf"
   integrity sha512-4hLB8Py4zZce5s4yd9XzopqwVv/yGNhV1Bl8NTmCq1763HeK2+EwVTv+leGeL13Dnh2wfbqowVPXCIO0z4taYw==
 
-pako@^2.0.4:
+pako@^2.0.4, pako@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/pako/-/pako-2.1.0.tgz#266cc37f98c7d883545d11335c00fbd4062c9a86"
   integrity sha512-w+eufiZ1WuJYgPXbV/PO3NCMEc3xqylkKHzp8bxp1uW4qaSNQUkwmLLEc3kKsfz8lpV1F8Ht3U1Cm+9Srog2ug==
