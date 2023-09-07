@@ -92,10 +92,7 @@ export function useCredentialUtils() {
       if (doesCredentialExist(credentials, jsonData)) {
         throw new Error('This credential already exists in the wallet');
       }
-      await wallet.add({
-        value: jsonData,
-        type: 'VerifiableCredential',
-      });
+      await wallet.addDocument(jsonData);
     },
     [credentials, doesCredentialExist, wallet],
   );
