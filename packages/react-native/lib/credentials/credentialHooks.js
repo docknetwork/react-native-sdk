@@ -88,12 +88,10 @@ export function useCredentialUtils() {
 
   const saveCredential = useCallback(
     async jsonData => {
-      console.log("aBout to validate")
       validateCredential(jsonData);
       if (doesCredentialExist(credentials, jsonData)) {
         throw new Error('This credential already exists in the wallet');
       }
-      console.log("aBout to add")
       await wallet.addDocument(jsonData);
     },
     [credentials, doesCredentialExist, wallet],
