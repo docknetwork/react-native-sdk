@@ -1,94 +1,125 @@
-import {MigrationInterface, QueryRunner} from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableColumn,
+  TableForeignKey,
+  TableIndex,
+} from 'typeorm';
 
 export class Bootstrap1691498362273 implements MigrationInterface {
   name = 'Bootstrap1691498362273';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    console.log('Running table bootstrap migration');
+    const hasNetworkEntityTable = await queryRunner.hasTable('network_entity');
 
-    try {
-      const result = await queryRunner.query(`SELECT * FROM  "network_entity"`);
+    if (hasNetworkEntityTable) {
       console.log('Table already bootstrapped');
-      console.log(result);
       return;
-    } catch (err) {
-      console.error(err);
     }
 
     console.log('Running table bootstrap migration');
 
-    await queryRunner.query(
-      `CREATE TABLE "network_entity" ("id" varchar PRIMARY KEY NOT NULL, "name" varchar NOT NULL, "configs" varchar NOT NULL)`,
+    await queryRunner.createTable(
+      new Table({
+        name: 'network_entity',
+        columns: [
+          new TableColumn({name: 'id', type: 'varchar', isPrimary: true}),
+          new TableColumn({name: 'name', type: 'varchar'}),
+          new TableColumn({name: 'configs', type: 'varchar'}),
+        ],
+      }),
     );
-    await queryRunner.query(
-      `CREATE TABLE "document_type_entity" ("id" text PRIMARY KEY NOT NULL)`,
+
+    await queryRunner.createTable(
+      new Table({
+        name: 'document_type_entity',
+        columns: [new TableColumn({name: 'id', type: 'text', isPrimary: true})],
+      }),
     );
-    await queryRunner.query(
-      `CREATE TABLE "document_entity" ("id" text PRIMARY KEY NOT NULL, "networkId" text, "type" text NOT NULL, "correlation" text NOT NULL, "data" blob NOT NULL)`,
+
+    await queryRunner.createTable(
+      new Table({
+        name: 'document_entity',
+        columns: [
+          new TableColumn({name: 'id', type: 'text', isPrimary: true}),
+          new TableColumn({name: 'networkId', type: 'text', isNullable: true}),
+          new TableColumn({name: 'type', type: 'text'}),
+          new TableColumn({name: 'correlation', type: 'text'}),
+          new TableColumn({name: 'data', type: 'blob'}),
+        ],
+      }),
     );
-    await queryRunner.query(
-      `CREATE TABLE "wallet_entity" ("id" varchar PRIMARY KEY NOT NULL, "version" varchar, "networkId" varchar NOT NULL)`,
+
+    await queryRunner.createTable(
+      new Table({
+        name: 'wallet_entity',
+        columns: [
+          new TableColumn({name: 'id', type: 'varchar', isPrimary: true}),
+          new TableColumn({name: 'version', type: 'varchar', isNullable: true}),
+          new TableColumn({name: 'networkId', type: 'varchar'}),
+        ],
+      }),
     );
-    await queryRunner.query(
-      `CREATE TABLE "document_entity__type_rel_document_type_entity" ("documentEntityId" text NOT NULL, "documentTypeEntityId" text NOT NULL, PRIMARY KEY ("documentEntityId", "documentTypeEntityId"))`,
+
+    await queryRunner.createTable(
+      new Table({
+        name: 'document_entity__type_rel_document_type_entity',
+        columns: [
+          new TableColumn({
+            name: 'documentEntityId',
+            type: 'text',
+            isPrimary: true,
+          }),
+          new TableColumn({
+            name: 'documentTypeEntityId',
+            type: 'text',
+            isPrimary: true,
+          }),
+        ],
+        foreignKeys: [
+          new TableForeignKey({
+            columnNames: ['documentEntityId'],
+            referencedColumnNames: ['id'],
+            referencedTableName: 'document_entity',
+            onDelete: 'CASCADE',
+            onUpdate: 'CASCADE',
+          }),
+          new TableForeignKey({
+            columnNames: ['documentTypeEntityId'],
+            referencedColumnNames: ['id'],
+            referencedTableName: 'document_type_entity',
+            onDelete: 'NO ACTION',
+            onUpdate: 'NO ACTION',
+          }),
+        ],
+      }),
     );
-    await queryRunner.query(
-      `CREATE INDEX "IDX_e929f32563f62d753a51bcd8b9" ON "document_entity__type_rel_document_type_entity" ("documentEntityId") `,
+
+    await queryRunner.createIndex(
+      'document_entity__type_rel_document_type_entity',
+      new TableIndex({
+        name: 'IDX_e929f32563f62d753a51bcd8b9',
+        columnNames: ['documentEntityId'],
+      }),
     );
-    await queryRunner.query(
-      `CREATE INDEX "IDX_7d377ef9ddb323247aedd63d66" ON "document_entity__type_rel_document_type_entity" ("documentTypeEntityId") `,
-    );
-    await queryRunner.query(`DROP INDEX "IDX_e929f32563f62d753a51bcd8b9"`);
-    await queryRunner.query(`DROP INDEX "IDX_7d377ef9ddb323247aedd63d66"`);
-    await queryRunner.query(
-      `CREATE TABLE "temporary_document_entity__type_rel_document_type_entity" ("documentEntityId" text NOT NULL, "documentTypeEntityId" text NOT NULL, CONSTRAINT "FK_e929f32563f62d753a51bcd8b9b" FOREIGN KEY ("documentEntityId") REFERENCES "document_entity" ("id") ON DELETE CASCADE ON UPDATE CASCADE, CONSTRAINT "FK_7d377ef9ddb323247aedd63d663" FOREIGN KEY ("documentTypeEntityId") REFERENCES "document_type_entity" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION, PRIMARY KEY ("documentEntityId", "documentTypeEntityId"))`,
-    );
-    await queryRunner.query(
-      `INSERT INTO "temporary_document_entity__type_rel_document_type_entity"("documentEntityId", "documentTypeEntityId") SELECT "documentEntityId", "documentTypeEntityId" FROM "document_entity__type_rel_document_type_entity"`,
-    );
-    await queryRunner.query(
-      `DROP TABLE "document_entity__type_rel_document_type_entity"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "temporary_document_entity__type_rel_document_type_entity" RENAME TO "document_entity__type_rel_document_type_entity"`,
-    );
-    await queryRunner.query(
-      `CREATE INDEX "IDX_e929f32563f62d753a51bcd8b9" ON "document_entity__type_rel_document_type_entity" ("documentEntityId") `,
-    );
-    await queryRunner.query(
-      `CREATE INDEX "IDX_7d377ef9ddb323247aedd63d66" ON "document_entity__type_rel_document_type_entity" ("documentTypeEntityId") `,
+
+    await queryRunner.createIndex(
+      'document_entity__type_rel_document_type_entity',
+      new TableIndex({
+        name: 'IDX_7d377ef9ddb323247aedd63d66',
+        columnNames: ['documentTypeEntityId'],
+      }),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DROP INDEX "IDX_7d377ef9ddb323247aedd63d66"`);
-    await queryRunner.query(`DROP INDEX "IDX_e929f32563f62d753a51bcd8b9"`);
-    await queryRunner.query(
-      `ALTER TABLE "document_entity__type_rel_document_type_entity" RENAME TO "temporary_document_entity__type_rel_document_type_entity"`,
+    await queryRunner.dropTable(
+      'document_entity__type_rel_document_type_entity',
     );
-    await queryRunner.query(
-      `CREATE TABLE "document_entity__type_rel_document_type_entity" ("documentEntityId" text NOT NULL, "documentTypeEntityId" text NOT NULL, PRIMARY KEY ("documentEntityId", "documentTypeEntityId"))`,
-    );
-    await queryRunner.query(
-      `INSERT INTO "document_entity__type_rel_document_type_entity"("documentEntityId", "documentTypeEntityId") SELECT "documentEntityId", "documentTypeEntityId" FROM "temporary_document_entity__type_rel_document_type_entity"`,
-    );
-    await queryRunner.query(
-      `DROP TABLE "temporary_document_entity__type_rel_document_type_entity"`,
-    );
-    await queryRunner.query(
-      `CREATE INDEX "IDX_7d377ef9ddb323247aedd63d66" ON "document_entity__type_rel_document_type_entity" ("documentTypeEntityId") `,
-    );
-    await queryRunner.query(
-      `CREATE INDEX "IDX_e929f32563f62d753a51bcd8b9" ON "document_entity__type_rel_document_type_entity" ("documentEntityId") `,
-    );
-    await queryRunner.query(`DROP INDEX "IDX_7d377ef9ddb323247aedd63d66"`);
-    await queryRunner.query(`DROP INDEX "IDX_e929f32563f62d753a51bcd8b9"`);
-    await queryRunner.query(
-      `DROP TABLE "document_entity__type_rel_document_type_entity"`,
-    );
-    await queryRunner.query(`DROP TABLE "wallet_entity"`);
-    await queryRunner.query(`DROP TABLE "document_entity"`);
-    await queryRunner.query(`DROP TABLE "document_type_entity"`);
-    await queryRunner.query(`DROP TABLE "network_entity"`);
+    await queryRunner.dropTable('wallet_entity');
+    await queryRunner.dropTable('document_entity');
+    await queryRunner.dropTable('document_type_entity');
+    await queryRunner.dropTable('network_entity');
   }
 }
