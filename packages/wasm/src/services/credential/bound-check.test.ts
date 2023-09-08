@@ -206,4 +206,59 @@ describe('Bound check', () => {
       provingKey,
     );
   });
+
+  it('expect to create bound check for minimum and maximum number', () => {
+    applyEnforceBounds({
+      builder,
+      proofRequest: createProofRequest([
+        {
+          path: ['$.credentialSubject.income'],
+          filter: {
+            type: 'number',
+            formatMaximum: 20000,
+            formatMinimum: 5000,
+          },
+          predicate: 'required',
+        },
+      ]),
+      provingKey,
+      provingKeyId,
+    });
+
+    const credIdx = 0;
+    const attributeName = 'credentialSubject.income';
+    const min = 5000;
+    const max = 20000;
+
+    expect(builder.enforceBounds).toHaveBeenCalledWith(
+      credIdx,
+      attributeName,
+      min,
+      max,
+      provingKeyId,
+      provingKey,
+    );
+  });
+
+  it('expect to throw error for unsupported type', () => {
+    expect(() =>
+      applyEnforceBounds({
+        builder,
+        proofRequest: createProofRequest([
+          {
+            path: ['$.credentialSubject.income'],
+            filter: {
+              type: 'string',
+              formatMaximum: 20000,
+            },
+            predicate: 'required',
+          },
+        ]),
+        provingKey,
+        provingKeyId,
+      }),
+    ).toThrowError(
+      'Unsupported format undefined and type string for enforce bounds',
+    );
+  });
 });
