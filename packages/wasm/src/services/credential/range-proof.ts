@@ -4,119 +4,76 @@ import {
   LegoProvingKey,
 } from '@docknetwork/crypto-wasm-ts/lib/legosnark';
 import {
-  BBSSignature,
   BBSSignatureParams,
-  BBSSecretKey,
-  WitnessEqualityMetaStatement,
-  BBSPublicKey,
-  Witnesses,
+  BBSCredential,
+  BBSPlusSignatureParamsG1,
+  BBSPlusCredential,
   MetaStatements,
   QuasiProofSpecG1,
-  MetaStatement,
-  CompositeProofG1,
   Statements,
-  Witness,
   Statement,
   SetupParam,
   PresentationBuilder,
   BBSKeypair,
+  CredentialSchema,
+  initializeWasm,
+  BBSPlusKeypairG2,
 } from '@docknetwork/crypto-wasm-ts/lib';
 import {BoundCheckSnarkSetup} from '@docknetwork/crypto-wasm-ts/lib/bound-check';
-import {initializeWasm} from '@docknetwork/crypto-wasm-ts/lib/index';
+import VerifiablePresentation from '@docknetwork/sdk/verifiable-presentation';
+import Presentation from '@docknetwork/sdk/presentation';
+import {credentialService} from './service';
+import credential from './range-proof-credential.json';
+import {dockService} from '../dock';
+import {NetworkManager} from '../../modules/network-manager';
 
-/**
- * 
- * @returns 
- * 
- * TODO
- * [] - get bbs credential for testing
- * [] - generate presentation using the builder
- * [] - use range proofs
- * [] - verify range proofs presentation
- * [] - create logic to convert proof request into builder params
- */
 export async function createRangeProofPresentation() {
+  console.log('initialize dock');
+  await dockService.init({
+    address: 'wss://knox-1.dock.io',
+  });
+
+  console.log('initialize wasm');
   await initializeWasm();
 
-  const provingKey: LegoProvingKey = BoundCheckSnarkSetup();
+  console.log('wasm initialized');
 
-  const snarkProvingKey: LegoProvingKeyUncompressed = provingKey.decompress();
+  // const cred = VerifiableCredential.fromJSON(credential);
 
-  const builder = new PresentationBuilder();
-
-  const nonce = stringToBytes('a nonce');
-
-  const presentation = {};
-
-
-  verifyRangeProof({
-    nonce,
-    presentation,
-    provingKey,
+  const [_credential] = await credentialService.deriveVCFromBBSPresentation({
+    credentials: [
+      {
+        credential,
+        attributesToReveal: ['credentialSubject.dateEarned', 'id'],
+      },
+    ],
   });
+
+  console.log(_credential);
 
   return true;
 }
 
-function verifyRangeProof({
-  nonce,
-  proof,
-  provingKey,
-  statement1,
-  metaStatements,
-}: {
-  nonce: Uint8Array;
-  proof: CompositeProofG1;
-  provingKey: LegoProvingKey;
-  statement1: Uint8Array;
-  metaStatements: Uint8Array[];
-}) {
-  const snarkVerifyingKey: LegoVerifyingKeyUncompressed =
-    provingKey.getVerifyingKeyUncompressed();
+export const stringToBytes = (string: string): Uint8Array =>
+  Uint8Array.from(Buffer.from(string, 'utf-8'));
 
-  const verifierSetupParams: SetupParam[] = [];
-  verifierSetupParams.push(
-    SetupParam.legosnarkVerifyingKeyUncompressed(snarkVerifyingKey),
-  );
+/**
+ *
+ * @returns
+ *
+ * TODO
+ * [x] - get bbs credential for testing
+ * [] - generate presentation using the builder
+ * [] - verify the presentation
+ * [] - use range proofs
+ * [] - verify range proofs presentation
+ * [] - create logic to convert proof request into builder params
+ */
 
-  // For verifying birth date was after `bornAfter`
-  const statement5 = Statement.boundCheckVerifierFromSetupParamRefs(
-    bornAfter,
-    now,
-    0,
-  );
-  // For verifying issuance date was between `earliestIssuance` and `latestIssuance`
-  const statement6 = Statement.boundCheckVerifierFromSetupParamRefs(
-    earliestIssuance,
-    latestIssuance,
-    0,
-  );
-  // For verifying expiration date was between `now` and `someDistantFuture`, i.e. its not expired as of now.
-  const statement7 = Statement.boundCheckVerifierFromSetupParamRefs(
-    now,
-    someDistantFuture,
-    0,
-  );
+// const snarkProvingKey: LegoProvingKeyUncompressed = provingKey.decompress();
+// const builder = new PresentationBuilder();
 
-  const verifierStatements = new Statements();
-  verifierStatements.add(statement1);
-  verifierStatements.add(statement5);
-  verifierStatements.add(statement6);
-  verifierStatements.add(statement7);
+// builder.addCredential(bbsCredential, keypair.pk);
 
-  const _metaStatements = new MetaStatements();
-
-  metaStatements.forEach(metaStatement => {
-    _metaStatements.add(metaStatement);
-  });
-
-  const verifierProofSpec = new QuasiProofSpecG1(
-    verifierStatements,
-    _metaStatements,
-    verifierSetupParams,
-  );
-
-  const result = proof.verifyUsingQuasiProofSpec(verifierProofSpec, nonce);
-
-  console.log(result);
-}
+//
+// console.log(presentation)
