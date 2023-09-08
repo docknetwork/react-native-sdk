@@ -80,6 +80,10 @@ export function applyEnforceBounds({
       } else if (type === 'number') {
         max = formatMaximum || MAX_NUMBER;
         min = formatMinimum || 0;
+      } else {
+        throw new Error(
+          `Unsupported format ${format} and type ${type} for enforce bounds`,
+        );
       }
 
       const attributeName = field.path.join('.').replace('$.', '');
