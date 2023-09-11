@@ -261,4 +261,32 @@ describe('Bound check', () => {
       'Unsupported format undefined and type string for enforce bounds',
     );
   });
+
+  describe('dateTimeToTimestamp', () => {
+    it('expect to return a Unix timestamp from a Date string', () => {
+      const date = '2021-09-11T12:00:00.000Z'; // UTC time
+      const expected = 1631361600;
+      const result = dateTimeToTimestamp(date);
+      expect(result).toBe(expected);
+    });
+
+    it('expect to return a Unix timestamp from a Date object', () => {
+      const date = new Date('2021-09-11T12:00:00.000Z'); // UTC time
+      const expected = 1631361600; // Unix timestamp for the above date
+      const result = dateTimeToTimestamp(date);
+      expect(result).toBe(expected);
+    });
+
+    it('expect to return a Unix timestamp from a Unix timestamp in milliseconds', () => {
+      const date = 1631366400000; // Milliseconds since Unix epoch
+      const expected = 1631366400;
+      const result = dateTimeToTimestamp(date);
+      expect(result).toBe(expected);
+    });
+
+    it('expect to throw an error for an invalid date', () => {
+      const date = 'invalid-date';
+      expect(() => dateTimeToTimestamp(date)).toThrow('Invalid date input');
+    });
+  });
 });
