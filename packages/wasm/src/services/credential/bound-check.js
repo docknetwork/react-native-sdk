@@ -102,8 +102,14 @@ export function applyEnforceBounds({
   return true;
 }
 
-export function dateTimeToTimestamp(date: string | number): number {
-  return new Date(date).getTime();
+export function dateTimeToTimestamp(date: string | number | Date): number {
+  const newDate = new Date(date);
+
+  if (isNaN(newDate.getTime())) {
+    throw new Error('Invalid date input');
+  }
+
+  return Math.floor(newDate.getTime() / 1000);
 }
 
 export async function fetchProvingKey(proofRequest: ProofRequest) {

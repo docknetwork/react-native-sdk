@@ -148,7 +148,7 @@ class CredentialService {
     if (proofRequest && hasProvingKey(proofRequest)) {
       const {provingKey, provingKeyId} = await fetchProvingKey(proofRequest);
       applyEnforceBounds({
-        builder: bbsPlusPresentation.builder,
+        builder: bbsPlusPresentation.presBuilder,
         proofRequest,
         provingKey,
         provingKeyId,
