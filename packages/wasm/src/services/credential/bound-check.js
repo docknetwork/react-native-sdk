@@ -56,10 +56,10 @@ export function applyEnforceBounds({
   provingKeyId,
   provingKey,
 }: {
-  builder: PresentationBuilder;
-  proofRequest: ProofRequest;
-  provingKeyId: string;
-  provingKey: LegoProvingKey;
+  builder: PresentationBuilder,
+  proofRequest: ProofRequest,
+  provingKeyId: string,
+  provingKey: LegoProvingKey,
 }) {
   proofRequest.request.input_descriptors.forEach(inputDescriptor => {
     inputDescriptor.constraints.fields.forEach((field: Field) => {
