@@ -1,4 +1,3 @@
-import {dock, universalResolverUrl} from '../lib/did/did-resolver';
 import {
   didcommCreateEncrypted,
   didcommDecrypt,
@@ -7,16 +6,14 @@ import {
 } from '../lib/didcomm';
 import {ALICE_KEY_PAIR_DOC, BOB_KEY_PAIR_DOC} from './mock-data';
 import {dockService} from '@docknetwork/wallet-sdk-wasm/src/services/dock/service';
-import {
-  DockResolver,
-  DIDKeyResolver,
-  MultiResolver,
-  UniversalResolver,
-} from '@docknetwork/sdk/resolver';
+import {WildcardMultiResolver} from '@docknetwork/sdk/resolver';
 
 const didList = [ALICE_KEY_PAIR_DOC, BOB_KEY_PAIR_DOC];
 
-class WalletSDKResolver extends MultiResolver {
+class WalletSDKResolver extends WildcardMultiResolver {
+  static PREFIX = WildcardMultiResolver.PREFIX;
+  static METHOD = WildcardMultiResolver.METHOD;
+
   async resolve(did) {
     const trimmedDID = did.split('#')[0];
     const document = didList.find(
@@ -31,13 +28,11 @@ class WalletSDKResolver extends MultiResolver {
   }
 }
 
-const mockDIDResolver = new WalletSDKResolver(
-  {
-    dock: new DockResolver(dock),
-    did: new DIDKeyResolver(),
-  },
-  new UniversalResolver(universalResolverUrl),
-);
+const mockDIDResolver = new WalletSDKResolver([
+  // new DockResolver(dock),
+  // new DIDKeyResolver(),
+  // new UniversalResolver(universalResolverUrl),
+]);
 
 dockService.createDIDResolver = () => mockDIDResolver;
 dockService.resolver = mockDIDResolver;
