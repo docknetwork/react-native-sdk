@@ -168,6 +168,7 @@ export function createVerificationController({
       if (!isBBS) {
         credentials.push(credentialSelection.credential);
       } else {
+        console.log('Creating derived credential');
         // derive BBS credential
         const derivedCredentials =
           await credentialServiceRPC.deriveVCFromBBSPresentation({
@@ -181,6 +182,9 @@ export function createVerificationController({
               },
             ],
           });
+
+        console.log('Credential derived');
+
         credentials.push(derivedCredentials[0]);
       }
     }
