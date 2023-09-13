@@ -9,6 +9,11 @@ import {verifyCredential} from '@docknetwork/sdk/utils/vc/credentials';
 import {PEX} from '@sphereon/pex';
 import {keyDocToKeypair} from './utils';
 import {dockService, getDock} from '../dock/service';
+import {
+  applyEnforceBounds,
+  hasProvingKey,
+  fetchProvingKey,
+} from './bound-check';
 
 const pex: PEX = new PEX();
 
@@ -138,7 +143,7 @@ class CredentialService {
   }
   async deriveVCFromBBSPresentation(params) {
     validation.deriveVCFromBBSPresentation(params);
-    const {credentials, options = {}} = params;
+    const {credentials, options = {}, proofRequest} = params;
     const bbsPlusPresentation = new BbsPlusPresentation();
     for (const {credential, attributesToReveal} of credentials) {
       const idx = await bbsPlusPresentation.addCredentialToPresent(credential, {
@@ -148,6 +153,17 @@ class CredentialService {
         await bbsPlusPresentation.addAttributeToReveal(idx, attributesToReveal);
       }
     }
+
+    if (proofRequest && hasProvingKey(proofRequest)) {
+      const {provingKey, provingKeyId} = await fetchProvingKey(proofRequest);
+      applyEnforceBounds({
+        builder: bbsPlusPresentation.builder,
+        proofRequest,
+        provingKey,
+        provingKeyId,
+      });
+    }
+
     const credentialsFromPresentation =
       await bbsPlusPresentation.deriveCredentials(options);
     return credentialsFromPresentation.map(credentialJSON => {
@@ -155,6 +171,9 @@ class CredentialService {
       let customContext = {
         bs: 'https://ld.dock.io/bbs-pres-credentials#',
         proofPurpose: 'bs:proofPurpose',
+        boundedPseudonyms: 'bs:boundedPseudonyms',
+        unboundedPseudonyms: 'bs:unboundedPseudonyms',
+        sigType: 'bs:sigType',
         parsingOptions: 'bs:parsingOptions',
         defaultDecimalPlaces: 'bs:defaultDecimalPlaces',
         useDefaults: 'bs:useDefaults',
@@ -179,6 +198,10 @@ class CredentialService {
 
       return VerifiableCredential.fromJSON(credentialJSON);
     });
+  }
+
+  async testRangeProof() {
+    console.log('test');
   }
 }
 
