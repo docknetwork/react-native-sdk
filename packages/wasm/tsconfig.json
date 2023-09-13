@@ -25,7 +25,5 @@
       },
       "esm": true
     },
-    "include": ["src/**/*"],
-    "exclude": ["**/__tests__/**/*", "**/build/**/*"]
+    "include": ["src/**/*"]
   }
-  
