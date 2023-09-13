@@ -12,7 +12,12 @@ function isURL(str) {
 }
 
 export function getJSONFromURL(url: string) {
-  return axios.get(url).then(res => res.data);
+  return axios
+    .get(url)
+    .then(res => res.data)
+    .catch(err => {
+      console.error(`Error fetching ${url}`, err);
+    });
 }
 
 export function getJSON(jsonOrURL: string | any) {
@@ -24,6 +29,7 @@ export function getJSON(jsonOrURL: string | any) {
 
   if (typeof jsonOrURL === 'string') {
     if (isURL(jsonOrURL)) {
+      console.log(`Fetching ${jsonOrURL}`);
       return getJSONFromURL(jsonOrURL);
     } else {
       return JSON.parse(jsonOrURL);
