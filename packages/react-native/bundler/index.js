@@ -10,6 +10,7 @@ const getWebpackConfig = ({entry, path, filename}) => ({
     filename,
   },
   resolve: {
+    extensions: ['.tsx', '.ts', '.js', '.json', '.mjs', '.cjs'],
     alias: {
       '@polkadot/types/packageInfo.cjs': resolve(
         __dirname,
@@ -45,12 +46,13 @@ const getWebpackConfig = ({entry, path, filename}) => ({
   module: {
     rules: [
       {
-        test: /\.(m|c)?js$/,
+        test: /\.(m|c)?(j|t)s$/,
         exclude: [/\/node_modules\/(?!@polkadot|@docknetwork|@digitalbazaar)/],
         use: {
           loader: require.resolve('babel-loader'),
           options: {
-            presets: ['@babel/preset-env'],
+            rootMode: 'upward',
+            presets: ['@babel/preset-env', '@babel/preset-typescript'],
             plugins: [
               '@babel/plugin-transform-async-to-generator',
               '@babel/plugin-syntax-bigint',
@@ -66,13 +68,11 @@ const getWebpackConfig = ({entry, path, filename}) => ({
           },
         },
       },
-      {
-        test: /\.wasm$/,
-        use: {
-          loader: require.resolve('wasm-loader'),
-        },
-      },
     ],
+  },
+  experiments: {
+    syncWebAssembly: true,
+    asyncWebAssembly: true,
   },
   plugins: [
     new webpack.DefinePlugin({
