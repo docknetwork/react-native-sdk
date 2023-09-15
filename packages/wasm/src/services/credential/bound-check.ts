@@ -74,7 +74,7 @@ export function applyEnforceBounds({
 
       if (format === 'date-time' || format === 'date') {
         max = formatMaximum || new Date(MAX_DATE_PLACEHOLDER);
-        min = formatMinimum || MIN_DATE_PLACEHOLDER;
+        min = formatMinimum || new Date(MIN_DATE_PLACEHOLDER);
       } else if (type === 'number') {
         max = formatMaximum || MAX_NUMBER;
         min = formatMinimum || 0;
