@@ -73,14 +73,20 @@ export function applyEnforceBounds({
       let min;
 
       if (format === 'date-time' || format === 'date') {
-        max = formatMaximum || new Date(MAX_DATE_PLACEHOLDER);
-        min = formatMinimum || new Date(MIN_DATE_PLACEHOLDER);
+        max = new Date(formatMaximum || MAX_DATE_PLACEHOLDER);
+        min = new Date(formatMinimum || MIN_DATE_PLACEHOLDER);
       } else if (type === 'number') {
         max = formatMaximum || MAX_NUMBER;
         min = formatMinimum || 0;
       }
 
       const attributeName = field.path.join('.').replace('$.', '');
+
+      console.log('enforceBounds', {
+        attributeName,
+        min,
+        max,
+      });
 
       builder.enforceBounds(
         0,
