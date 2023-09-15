@@ -1,7 +1,7 @@
 import {
   applyEnforceBounds,
-  dateTimeToTimestamp,
   MAX_DATE_PLACEHOLDER,
+  MIN_DATE_PLACEHOLDER,
   MAX_NUMBER,
 } from './bound-check';
 import {PresentationBuilder} from '@docknetwork/crypto-wasm-ts/lib';
@@ -63,7 +63,7 @@ describe('Bound check', () => {
 
     const credIdx = 0;
     const attributeName = 'credentialSubject.dateEarned';
-    const min = dateTimeToTimestamp('1999-01-01T00:00:00.000Z');
+    const min = '1999-01-01T00:00:00.000Z';
     const max = MAX_DATE_PLACEHOLDER;
 
     expect(builder.enforceBounds).toHaveBeenCalledWith(
@@ -96,8 +96,8 @@ describe('Bound check', () => {
 
     const credIdx = 0;
     const attributeName = 'credentialSubject.dateEarned';
-    const min = 0;
-    const max = dateTimeToTimestamp('1999-01-01T00:00:00.000Z');
+    const min = MIN_DATE_PLACEHOLDER;
+    const max = '1999-01-01T00:00:00.000Z';
 
     expect(builder.enforceBounds).toHaveBeenCalledWith(
       credIdx,
@@ -130,8 +130,8 @@ describe('Bound check', () => {
 
     const credIdx = 0;
     const attributeName = 'expirationDate';
-    const min = dateTimeToTimestamp('2023-01-01T00:00:00.000Z');
-    const max = dateTimeToTimestamp('2023-12-31T23:59:59.000Z');
+    const min = '2023-01-01T00:00:00.000Z';
+    const max = '2023-12-31T23:59:59.000Z';
 
     expect(builder.enforceBounds).toHaveBeenCalledWith(
       credIdx,
