@@ -36,7 +36,7 @@ describe('Wallet', () => {
     const dids = await createDIDProvider({wallet}).getAll();
     expect(dids.length).toBe(1);
     await wallet.setNetwork('testnet');
-
+    await new Promise(resolve => setTimeout(resolve, 1000));
     const dids2 = await createDIDProvider({wallet}).getAll();
     expect(dids2.length).toBe(1);
   });
