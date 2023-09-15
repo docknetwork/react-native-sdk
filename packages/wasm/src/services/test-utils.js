@@ -19,7 +19,7 @@ export async function initializeWalletService() {
 }
 
 export const TEST_FEE_AMOUNT = 2.48;
-export const API_MOCK_DISABLED = false;
+export const API_MOCK_DISABLED = true;
 
 let mockTransactionError;
 

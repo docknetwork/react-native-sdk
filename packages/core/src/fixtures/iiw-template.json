@@ -1,0 +1,33 @@
+{
+  "qr": "https://***REMOVED***/proof/f6b0c6a7-ae27-4044-80a3-07f5af6e61c8",
+  "id": "f6b0c6a7-ae27-4044-80a3-07f5af6e61c8",
+  "name": "boolean",
+  "nonce": "e2cb13292035d73e97543c8f463c3f06",
+  "created": "2023-08-17T17:38:38.276Z",
+  "updated": "2023-08-17T17:38:38.276Z",
+  "verified": false,
+  "response_url": "https://***REMOVED***/proof-requests/f6b0c6a7-ae27-4044-80a3-07f5af6e61c8/send-presentation",
+  "request": {
+    "id": "f6b0c6a7-ae27-4044-80a3-07f5af6e61c8",
+    "input_descriptors": [
+      {
+        "id": "Credential 1",
+        "name": "boolean",
+        "constraints": {
+          "fields": [
+            {
+              "path": [
+                "$.credentialSubject.booleanYesNO",
+                "$.credentialSubject.name",
+                "$.credentialSubject.id",
+                "$.credentialSubject.email",
+                "$.issuer.name"
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "type": "proof-request"
+}
