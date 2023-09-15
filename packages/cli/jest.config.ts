@@ -28,4 +28,3 @@ module.exports = {
       '/node_modules/(?!@polkadot|@babel|@docknetwork|@digitalbazaar)',
     ],
   };
-  

@@ -4,7 +4,7 @@
     "strict": false,
     "preserveConstEnums": true,
     "sourceMap": true,
-    "target": "ES5",
+    "target": "ESNext",
     "module": "CommonJS",
     "moduleResolution": "Node",
     "esModuleInterop": true,
@@ -12,6 +12,7 @@
     "declarationMap": true,
     "declaration": true,
     "composite": true,
+    "skipLibCheck": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "useUnknownInCatchVariables": false,
@@ -21,5 +22,5 @@
     "rootDir": "./src"
   },
   "include": ["./src/**/*.ts*"],
-  "exclude": ["src/**/*.spec.ts*", "src/**/*.test.ts*"]
+  "exclude": ["src/**/*.spec.ts*", "src/**/*.test.ts*", "node_modules"]
 }
