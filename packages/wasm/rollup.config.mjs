@@ -2,7 +2,7 @@ import json from '@rollup/plugin-json';
 import multiInput from 'rollup-plugin-multi-input';
 import commonjs from '@rollup/plugin-commonjs';
 import flow from 'rollup-plugin-flow';
-import typescript from '@rollup/plugin-typescript'; // Import the TypeScript plugin
+import typescript from '@rollup/plugin-typescript';
 
 export default async function () {
   return [

@@ -45,26 +45,6 @@ const getWebpackConfig = ({entry, path, filename}) => ({
   },
   module: {
     rules: [
-      // {
-      //   test: /\.ts?$/,
-      //   use: {
-      //     loader: require.resolve('ts-loader'),
-      //     options: {
-      //       onlyCompileBundledFiles: true,
-      //       compilerOptions: {
-      //         module: 'esnext',
-      //         target: 'esnext',
-      //       },
-      //     },
-      //   },
-      //   exclude: [/\/node_modules\/(?!@polkadot|@digitalbazaar)/],
-      // },
-      // {
-      //   test: /[\\/]node_modules[\\/]webassembly-interpreter[\\/]/,
-      //   resolve: {
-      //     fullySpecified: false,
-      //   },
-      // },
       {
         test: /\.(m|c)?(j|t)s$/,
         exclude: [/\/node_modules\/(?!@polkadot|@docknetwork|@digitalbazaar)/],
@@ -88,12 +68,6 @@ const getWebpackConfig = ({entry, path, filename}) => ({
           },
         },
       },
-      // {
-      //   test: /\.wasm$/,
-      //   use: {
-      //     loader: require.resolve('wasm-loader'),
-      //   },
-      // },
     ],
   },
   experiments: {
