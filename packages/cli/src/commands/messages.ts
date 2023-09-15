@@ -1,8 +1,11 @@
 import {Command} from 'commander';
 import inquirer from 'inquirer';
+import input from '@inquirer/input';
 import axios from 'axios';
 import {IWallet} from '@docknetwork/wallet-sdk-core/lib/types';
-import {getWallet} from '../helpers';
+import {RelayService} from '@docknetwork/wallet-sdk-relay-service/src';
+import testCredential from '../fixtures/customer-credential.json';
+import {getDIDProvider, getWallet, selectCredential} from '../helpers';
 
 const messagesCommand = new Command('messages').description(
   'fetch didcomm messages, send didcomm message',
@@ -12,44 +15,71 @@ messagesCommand
   .command('fetch')
   .description('Fetch DIDComm messages')
   .action(async () => {
-    const wallet: IWallet = await getWallet();
+    await getWallet();
+    const didProvider = getDIDProvider();
+    const keyPairDocs = await didProvider.getDIDKeyPairs();
 
-    // fetch did list from wallet
-    // fetch messages using relay service
+    const messages = await RelayService.getMessages({
+      keyPairDocs: keyPairDocs,
+      limit: 10,
+    });
+
+    console.log(JSON.stringify(messages, null, 2));
   });
 
 messagesCommand
   .command('send')
   .description('Send message using DIDComm')
   .action(async () => {
-    const wallet: IWallet = await getWallet();
+    await getWallet();
+    const keyPairDocs = await getDIDProvider().getDIDKeyPairs();
+    const recipientDid = await input({
+      message: 'Enter the recipient DID',
+    });
+    const message = await input({
+      message: 'Enter the message',
+    });
 
-    const {recipientDID, message} = await inquirer.prompt([
-      {
-        type: 'list',
-        name: 'did',
-        message: 'Select a DID to sign the message with',
-        choices: ['did:example:123', 'did:example:456'],
-      },
-      {
-        type: 'input',
-        name: 'recipientDID',
-        message: 'Enter the recipient DID',
-      },
-      {
-        type: 'editor',
-        name: 'message',
-        message: 'Enter the message (leave it empty to copy from clipboard)',
-      },
-    ]);
-
-    console.log(`Sending message to`, {
-      recipientDID,
+    console.log('Sending message to', {
+      recipientDid,
       message,
     });
 
-    // send relay service message
-    // if multiple dids, ask with did to use
+    const result = await RelayService.sendMessage({
+      keyPairDoc: keyPairDocs[0],
+      recipientDid,
+      message,
+    });
+
+    console.log('Message sent!');
+    console.log(result);
+  });
+
+messagesCommand
+  .command('send-credential')
+  .description('Send message using DIDComm')
+  .action(async () => {
+    await getWallet();
+    const keyPairDocs = await getDIDProvider().getDIDKeyPairs();
+    const recipientDid = await input({
+      message: 'Enter the recipient DID',
+    });
+    const credential = await selectCredential();
+    const message = {
+      domain: 'api.dock.io',
+      credentials: [credential],
+    };
+
+    console.log('Sending VC to', recipientDid);
+
+    const result = await RelayService.sendMessage({
+      keyPairDoc: keyPairDocs[0],
+      recipientDid,
+      message,
+    } as any);
+
+    console.log('Message sent!');
+    console.log(result);
   });
 
 export {messagesCommand};

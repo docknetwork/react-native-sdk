@@ -12,7 +12,7 @@ export function createAccountProvider({wallet}: ICreateAccountsProvider) {
     walletService: toV1WalletService(wallet),
   });
 
-  Accounts.instance = accountsModule;
+  (Accounts as any).instance = accountsModule;
 
   return accountsModule;
 }

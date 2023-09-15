@@ -12,6 +12,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "resolveJsonModule": true,
+    "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "isolatedModules": true,
     "allowJs": true,
