@@ -172,6 +172,7 @@ export function createVerificationController({
         // derive BBS credential
         const derivedCredentials =
           await credentialServiceRPC.deriveVCFromBBSPresentation({
+            proofRequest: templateJSON,
             credentials: [
               {
                 credential: credentialSelection.credential,
