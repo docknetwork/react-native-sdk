@@ -26,6 +26,9 @@ import {credentialService} from './service';
 import credential from './range-proof-credential.json';
 import {dockService} from '../dock';
 import {NetworkManager} from '../../modules/network-manager';
+import proofRequest from './proof-request.json';
+import fs from 'fs';
+import base64url from 'base64url';
 
 export async function createRangeProofPresentation() {
   console.log('initialize dock');
@@ -40,11 +43,24 @@ export async function createRangeProofPresentation() {
 
   // const cred = VerifiableCredential.fromJSON(credential);
 
+  // const provingKey = BoundCheckSnarkSetup();
+
+  // const provingKeyBytes: Uint8Array = provingKey.bytes;
+
+  // const base64Data = Buffer.from(provingKeyBytes).toString('base64');
+
+  // fs.writeFileSync('provingKey.data', base64Data);
+
+  // console.log(provingKeyBytes);
+
+
+  // provingKey.hex = stringToBytes(provingKey.hex);
   const [_credential] = await credentialService.deriveVCFromBBSPresentation({
+    proofRequest,
     credentials: [
       {
         credential,
-        attributesToReveal: ['credentialSubject.dateEarned', 'id'],
+        attributesToReveal: ['id'],
       },
     ],
   });
