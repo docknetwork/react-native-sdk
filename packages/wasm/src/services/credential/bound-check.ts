@@ -1,6 +1,12 @@
-import {LegoProvingKey} from '@docknetwork/crypto-wasm-ts/lib/legosnark';
+import {BoundCheckSnarkSetup} from '@docknetwork/crypto-wasm-ts/lib/bound-check';
+import {
+  LegoProvingKeyUncompressed,
+  LegoVerifyingKeyUncompressed,
+  LegoProvingKey,
+} from '@docknetwork/crypto-wasm-ts/lib/legosnark';
 import {PresentationBuilder} from '@docknetwork/crypto-wasm-ts/lib';
 import {isBase64} from '@polkadot/util-crypto';
+import base64url from 'base64url';
 
 interface Filter {
   type: string;
@@ -107,8 +113,12 @@ export async function fetchProvingKey(proofRequest: ProofRequest) {
   let blob: Uint8Array;
 
   if (isBase64(proofRequest.boundCheckSnarkKey)) {
-    const base64Data = proofRequest.boundCheckSnarkKey;
-    blob = Buffer.from(base64Data, 'base64');
+    blob = base64url.toBuffer(
+      proofRequest.boundCheckSnarkKey.replace(
+        /^data:application\/octet-stream;base64,/,
+        '',
+      ),
+    );
   } else {
     const response = await fetch(proofRequest.boundCheckSnarkKey);
     const arrayBuffer = await response.arrayBuffer();
