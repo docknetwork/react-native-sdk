@@ -172,6 +172,7 @@ export function createVerificationController({
         // derive BBS credential
         const derivedCredentials =
           await credentialServiceRPC.deriveVCFromBBSPresentation({
+            proofRequest: templateJSON,
             credentials: [
               {
                 credential: credentialSelection.credential,
@@ -248,11 +249,18 @@ export function createVerificationController({
     };
   }
 
+  function submitPresentation(presentation) {
+    return axios
+      .post(templateJSON.response_url, presentation)
+      .then(res => res.data);
+  }
+
   return {
     emitter,
     selectedCredentials,
     getStatus,
     getStatusData,
+    submitPresentation,
     getSelectedDID() {
       return selectedDID;
     },
