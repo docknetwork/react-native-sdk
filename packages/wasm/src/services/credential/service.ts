@@ -177,6 +177,7 @@ class CredentialService {
         parsingOptions: 'bs:parsingOptions',
         defaultDecimalPlaces: 'bs:defaultDecimalPlaces',
         useDefaults: 'bs:useDefaults',
+        defaultMinimumDate: 'bs:defaultMinimumDate',
         version: 'bs:version',
         defaultMinimumInteger: 'bs:defaultMinimumInteger',
         attributeCiphertexts: 'bs:attributeCiphertexts',
