@@ -1,3 +1,4 @@
+import {createDIDProvider} from './did-provider';
 import {createWallet, ensureDocumentContext, IWallet} from './wallet';
 
 describe('Wallet', () => {
@@ -29,6 +30,16 @@ describe('Wallet', () => {
 
     expect(result[0]['@context']).toStrictEqual(['https://w3id.org/wallet/v1']);
     expect(result[1]['@context']).toEqual('test');
+  });
+
+  it('expect to create default dids', async () => {
+    const mainnetDIDs = await createDIDProvider({wallet}).getAll();
+    expect(mainnetDIDs.length).toBe(1);
+    await wallet.setNetwork('testnet');
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    const testnetDIDs = await createDIDProvider({wallet}).getAll();
+    expect(testnetDIDs.length).toBe(1);
+    expect(mainnetDIDs[0]).not.toEqual(testnetDIDs[0]);
   });
 
   describe('document CRUD', () => {
