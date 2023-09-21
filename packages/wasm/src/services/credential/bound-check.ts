@@ -1,6 +1,12 @@
-import {LegoProvingKey} from '@docknetwork/crypto-wasm-ts/lib/legosnark';
+import {BoundCheckSnarkSetup} from '@docknetwork/crypto-wasm-ts/lib/bound-check';
+import {
+  LegoProvingKeyUncompressed,
+  LegoVerifyingKeyUncompressed,
+  LegoProvingKey,
+} from '@docknetwork/crypto-wasm-ts/lib/legosnark';
 import {PresentationBuilder} from '@docknetwork/crypto-wasm-ts/lib';
 import {isBase64} from '@polkadot/util-crypto';
+import base64url from 'base64url';
 
 interface Filter {
   type: string;
@@ -72,17 +78,21 @@ export function applyEnforceBounds({
       let max;
       let min;
 
-      if (format === 'date-time') {
-        max = formatMaximum
-          ? dateTimeToTimestamp(formatMaximum)
-          : MAX_DATE_PLACEHOLDER;
-        min = formatMinimum ? dateTimeToTimestamp(formatMinimum) : 0;
+      if (format === 'date-time' || format === 'date') {
+        max = new Date(formatMaximum || MAX_DATE_PLACEHOLDER);
+        min = new Date(formatMinimum || MIN_DATE_PLACEHOLDER);
       } else if (type === 'number') {
         max = formatMaximum || MAX_NUMBER;
         min = formatMinimum || 0;
       }
 
       const attributeName = field.path.join('.').replace('$.', '');
+
+      console.log('enforceBounds', {
+        attributeName,
+        min,
+        max,
+      });
 
       builder.enforceBounds(
         0,
@@ -98,23 +108,17 @@ export function applyEnforceBounds({
   return true;
 }
 
-export function dateTimeToTimestamp(date: string | number | Date): number {
-  const newDate = new Date(date);
-
-  if (isNaN(newDate.getTime())) {
-    throw new Error('Invalid date input');
-  }
-
-  return Math.floor(newDate.getTime() / 1000);
-}
-
 export async function fetchProvingKey(proofRequest: ProofRequest) {
   let provingKey: LegoProvingKey;
   let blob: Uint8Array;
 
   if (isBase64(proofRequest.boundCheckSnarkKey)) {
-    const base64Data = proofRequest.boundCheckSnarkKey;
-    blob = Buffer.from(base64Data, 'base64');
+    blob = base64url.toBuffer(
+      proofRequest.boundCheckSnarkKey.replace(
+        /^data:application\/octet-stream;base64,/,
+        '',
+      ),
+    );
   } else {
     const response = await fetch(proofRequest.boundCheckSnarkKey);
     const arrayBuffer = await response.arrayBuffer();
@@ -127,6 +131,7 @@ export async function fetchProvingKey(proofRequest: ProofRequest) {
 }
 
 export const MAX_DATE_PLACEHOLDER = 884541351600000;
+export const MIN_DATE_PLACEHOLDER = -62167219200000;
 export const MAX_NUMBER = Math.pow(100, 9);
 
 export const hasProvingKey = (proofRequest: ProofRequest) =>

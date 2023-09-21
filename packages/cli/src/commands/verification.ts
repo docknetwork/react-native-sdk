@@ -114,13 +114,23 @@ verificationCommands
       console.log('Verification result:');
       console.log(JSON.stringify(result, null, 2));
     }
+
+    try {
+      const result = await controller.submitPresentation(presentation);
+      console.log('Presentation submitted');
+      console.log('Result:');
+      console.log(JSON.stringify(result, null, 2));
+    } catch (err) {
+      console.log('Error submitting presentation');
+      console.log(err);
+    }
   });
 
 verificationCommands
   .command('check-presentation')
   .option('-t, --template <template>', 'Verification template')
   .description('Check presentation JSON using a proof request template')
-  .action(async (options) => {
+  .action(async options => {
     const wallet: IWallet = await getWallet();
 
     let template = options.template;
