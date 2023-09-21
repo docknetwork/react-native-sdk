@@ -21,6 +21,7 @@ import {EventEmitter} from 'events';
 import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
 import {walletService} from '@docknetwork/wallet-sdk-wasm/src/services/wallet';
 import {importUniversalWalletDocuments} from '@docknetwork/wallet-sdk-data-store/src/migration/migration1/migrate-v1-data';
+import {ensureDID} from './did-provider';
 export type {IWallet};
 
 function once(emitter: EventEmitter, eventName: string) {
@@ -187,6 +188,16 @@ export async function createWallet(
   const v1Wallet = await toV1Wallet(wallet);
 
   await initWalletWasm(v1Wallet);
+
+  await ensureDID({
+    wallet: v1Wallet,
+  });
+
+  eventEmitter.on(WalletEvents.networkUpdated, () => {
+    ensureDID({
+      wallet: v1Wallet,
+    });
+  });
 
   return v1Wallet;
 }
