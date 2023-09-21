@@ -33,12 +33,13 @@ describe('Wallet', () => {
   });
 
   it('expect to create default dids', async () => {
-    const dids = await createDIDProvider({wallet}).getAll();
-    expect(dids.length).toBe(1);
+    const mainnetDIDs = await createDIDProvider({wallet}).getAll();
+    expect(mainnetDIDs.length).toBe(1);
     await wallet.setNetwork('testnet');
     await new Promise(resolve => setTimeout(resolve, 1000));
-    const dids2 = await createDIDProvider({wallet}).getAll();
-    expect(dids2.length).toBe(1);
+    const testnetDIDs = await createDIDProvider({wallet}).getAll();
+    expect(testnetDIDs.length).toBe(1);
+    expect(mainnetDIDs[0]).not.toEqual(testnetDIDs[0]);
   });
 
   describe('document CRUD', () => {
