@@ -93,7 +93,8 @@
   "dependencies": {
     "@babel/node": "^7.22.10",
     "@babel/plugin-proposal-class-properties": "^7.18.6",
-    "@babel/plugin-proposal-private-property-in-object": "^7.18.6",
+    "@babel/plugin-proposal-private-methods": "^7.18.6",
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@babel/plugin-syntax-bigint": "^7.8.3",
     "@babel/plugin-transform-flow-strip-types": "^7.16.0",
     "@babel/plugin-transform-modules-commonjs": "^7.18.6",
