@@ -1425,12 +1425,12 @@
     esm "^3.2.25"
     tweetnacl "^1.0.3"
 
-"@docknetwork/crypto-wasm-ts@^0.38.1":
-  version "0.38.1"
-  resolved "https://registry.yarnpkg.com/@docknetwork/crypto-wasm-ts/-/crypto-wasm-ts-0.38.1.tgz#36742c1cf694de67b5838b1df51332b9982f2d68"
-  integrity sha512-Vfbo75UoHXiT12Hcz/Hd6JNkCiE3AX6HKmkxo+dU6XYjyh5DlvD2OAJdCWWR54UILefji570lUyEA+U0MoU/4g==
+"@docknetwork/crypto-wasm-ts@0.44.0":
+  version "0.44.0"
+  resolved "https://registry.yarnpkg.com/@docknetwork/crypto-wasm-ts/-/crypto-wasm-ts-0.44.0.tgz#38bbee2182e613111ce167362bd07bb32ca0ada5"
+  integrity sha512-xF53RZVWlVbngTnnOqsX6lH4U99A4TdtK/XxOonDSN4EXuGlqRD2vsqhXBne9Bk0B0ingbr9Gkp0PEk3w2DGMw==
   dependencies:
-    "@docknetwork/crypto-wasm" "0.19.0"
+    "@docknetwork/crypto-wasm" "0.21.0"
     "@types/flat" "^5.0.2"
     "@types/lodash" "^4.14.195"
     bs58 "5.0.0"
@@ -1438,11 +1438,12 @@
     json-pointer "^0.6.2"
     lodash "^4.17.21"
     lzutf8 "0.6.3"
+    semver "^7.5.4"
 
-"@docknetwork/crypto-wasm@0.19.0":
-  version "0.19.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/crypto-wasm/-/crypto-wasm-0.19.0.tgz#64905fa517135a53ca61b2d1cc6c8267212d7bc6"
-  integrity sha512-ubk104MHeEBlH/jXKiNQ6xClaDMzu6WwK7AkNyMqtRcxJ7y5088LGekQwCdfOja85hTOKwx0LR/CRDBwQVRMRQ==
+"@docknetwork/crypto-wasm@0.21.0":
+  version "0.21.0"
+  resolved "https://registry.yarnpkg.com/@docknetwork/crypto-wasm/-/crypto-wasm-0.21.0.tgz#0831fa7d85c43d5e78c467d11ed4279f8a958ad4"
+  integrity sha512-iSxb0CeWO3SpIKFiBOzV4SR5qnw3GXCyiXVOvT+qJGxNsGUZJh/Qa5LR0k1YKG02b7K2034EVKKlu7D+1xCMYg==
   dependencies:
     buffer "^6.0.3"
 
@@ -1462,13 +1463,13 @@
   resolved "https://registry.yarnpkg.com/@docknetwork/node-types/-/node-types-0.16.0.tgz#23570042c823a6320654ee2c5b8c0da5d7c43d21"
   integrity sha512-VUZB8guX9161hDIEVn/UKJEUlXjIDE6vH5flx6uDHVc0QOhBy1bq6AGLayG4ZH19dCN39ta2sKGIFq9wLO4H2A==
 
-"@docknetwork/sdk@6.1.0":
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/sdk/-/sdk-6.1.0.tgz#f5c877ffb95ccc5a739f053346c0835dc460ceab"
-  integrity sha512-Z+SAoGh5a5q/bZZLuG/UEOVCPiAVYCq/Fqni5GtYtozIgv49tpw091inKNKdpHfONPGPbOGzgdyEt+CD68KGnQ==
+"@docknetwork/sdk@6.4.0":
+  version "6.4.0"
+  resolved "https://registry.yarnpkg.com/@docknetwork/sdk/-/sdk-6.4.0.tgz#b0a74a0ac57230c63c1edf739a1b2275b06e8c2e"
+  integrity sha512-UsSUesRLPKqP5Ux5YwfhNkk7zOqG+O8chbJnrwMbBw8WtBrtCoGuWAM5bpR+CoL40XUVLokHNwVL02U+bZ8DtA==
   dependencies:
     "@digitalbazaar/vc-status-list" "^4.0.0"
-    "@docknetwork/crypto-wasm-ts" "^0.38.1"
+    "@docknetwork/crypto-wasm-ts" "0.44.0"
     "@docknetwork/node-types" "^0.16.0"
     "@juanelas/base64" "^1.0.5"
     "@polkadot/api" "9.7.1"
