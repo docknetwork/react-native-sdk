@@ -10,7 +10,7 @@
   "resolutions": {
     "@polkadot/wasm-crypto": "6.3.1",
     "@polkadot/rpc-core": "9.7.1",
-    "@docknetwork/sdk": "6.1.0",
+    "@docknetwork/sdk": "6.4.0",
     "@polkadot/api": "9.7.1",
     "@polkadot/keyring": "10.1.11",
     "@polkadot/rpc-provider": "9.7.1",
@@ -24,7 +24,7 @@
   "devDependencies": {
     "@babel/core": "^7.16.0",
     "@babel/preset-env": "^7.22.10",
-    "@docknetwork/sdk": "6.1.0",
+    "@docknetwork/sdk": "6.4.0",
     "@docknetwork/universal-wallet": "^2.0.1",
     "@polkadot/api": "9.7.1",
     "@polkadot/keyring": "10.1.11",
