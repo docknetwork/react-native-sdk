@@ -1463,10 +1463,10 @@
   resolved "https://registry.yarnpkg.com/@docknetwork/node-types/-/node-types-0.16.0.tgz#23570042c823a6320654ee2c5b8c0da5d7c43d21"
   integrity sha512-VUZB8guX9161hDIEVn/UKJEUlXjIDE6vH5flx6uDHVc0QOhBy1bq6AGLayG4ZH19dCN39ta2sKGIFq9wLO4H2A==
 
-"@docknetwork/sdk@6.4.0":
-  version "6.4.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/sdk/-/sdk-6.4.0.tgz#b0a74a0ac57230c63c1edf739a1b2275b06e8c2e"
-  integrity sha512-UsSUesRLPKqP5Ux5YwfhNkk7zOqG+O8chbJnrwMbBw8WtBrtCoGuWAM5bpR+CoL40XUVLokHNwVL02U+bZ8DtA==
+"@docknetwork/sdk@6.5.0":
+  version "6.5.0"
+  resolved "https://registry.yarnpkg.com/@docknetwork/sdk/-/sdk-6.5.0.tgz#92f11a93af99ea5205e3ba5ac5982eb30c7cd616"
+  integrity sha512-igInaZn8VEIj2swL9nyUAUVSb/Q2nmzb/7DbvpLufeUp2agNSRzhxK+0BB4pBnNxzZNyBeXEAtFzW8jrsHXW9g==
   dependencies:
     "@digitalbazaar/vc-status-list" "^4.0.0"
     "@docknetwork/crypto-wasm-ts" "0.44.0"
