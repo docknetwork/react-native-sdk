@@ -1463,27 +1463,16 @@
   resolved "https://registry.yarnpkg.com/@docknetwork/node-types/-/node-types-0.16.0.tgz#23570042c823a6320654ee2c5b8c0da5d7c43d21"
   integrity sha512-VUZB8guX9161hDIEVn/UKJEUlXjIDE6vH5flx6uDHVc0QOhBy1bq6AGLayG4ZH19dCN39ta2sKGIFq9wLO4H2A==
 
-"@docknetwork/sdk@6.5.0":
-  version "6.5.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/sdk/-/sdk-6.5.0.tgz#92f11a93af99ea5205e3ba5ac5982eb30c7cd616"
-  integrity sha512-igInaZn8VEIj2swL9nyUAUVSb/Q2nmzb/7DbvpLufeUp2agNSRzhxK+0BB4pBnNxzZNyBeXEAtFzW8jrsHXW9g==
+"@docknetwork/sdk@6.5.1":
+  version "6.5.1"
+  resolved "https://registry.yarnpkg.com/@docknetwork/sdk/-/sdk-6.5.1.tgz#a2d1423459f8f0a15974c5ad1992ed0f890baa58"
+  integrity sha512-NISpsYCLPS36CIw1kV+69zvwHQ9Wn5VYZPqxF4f3K4A3brx8Ofk0pwEuPBCkXQkhBgLmAaCfp+JtY6kix1uJ4g==
   dependencies:
     "@digitalbazaar/vc-status-list" "^4.0.0"
     "@docknetwork/crypto-wasm-ts" "0.44.0"
     "@docknetwork/node-types" "^0.16.0"
     "@juanelas/base64" "^1.0.5"
     "@polkadot/api" "9.7.1"
-    "@polkadot/keyring" "10.1.11"
-    "@polkadot/rpc-provider" "9.7.1"
-    "@polkadot/types" "9.7.1"
-    "@polkadot/types-known" "9.7.1"
-    "@polkadot/util" "10.1.11"
-    "@polkadot/util-crypto" "10.1.11"
-    "@polkadot/x-fetch" "10.1.11"
-    "@polkadot/x-randomvalues" "10.1.11"
-    "@polkadot/x-textdecoder" "10.1.11"
-    "@polkadot/x-textencoder" "10.1.11"
-    "@polkadot/x-ws" "10.1.11"
     "@transmute/json-web-signature" "^0.7.0-unstable.80"
     axios "0.27.2"
     base64url "3.0.1"
@@ -2559,16 +2548,6 @@
     "@babel/runtime" "^7.20.13"
     "@polkadot/x-global" "10.4.2"
 
-"@polkadot/x-fetch@10.1.11":
-  version "10.1.11"
-  resolved "https://registry.yarnpkg.com/@polkadot/x-fetch/-/x-fetch-10.1.11.tgz#8f579bb166096c977acff91a40b3848fb5581900"
-  integrity sha512-WtyUr9itVD9BLnxCUloJ1iwrXOY/lnlEShEYKHcSm6MIHtbJolePd3v1+o5mOX+bdDbHXhPZnH8anCCqDNDRqg==
-  dependencies:
-    "@babel/runtime" "^7.19.4"
-    "@polkadot/x-global" "10.1.11"
-    "@types/node-fetch" "^2.6.2"
-    node-fetch "^3.2.10"
-
 "@polkadot/x-fetch@^10.1.11":
   version "10.4.2"
   resolved "https://registry.yarnpkg.com/@polkadot/x-fetch/-/x-fetch-10.4.2.tgz#bc6ba70de71a252472fbe36180511ed920e05f05"
@@ -2616,16 +2595,6 @@
   dependencies:
     "@babel/runtime" "^7.19.4"
     "@polkadot/x-global" "10.1.11"
-
-"@polkadot/x-ws@10.1.11":
-  version "10.1.11"
-  resolved "https://registry.yarnpkg.com/@polkadot/x-ws/-/x-ws-10.1.11.tgz#7431ad72064d56519d4293278f03ae97b9ea9271"
-  integrity sha512-EUbL/R1A/NxYf6Rnb1M7U9yeTuo5r4y2vcQllE5aBLaQ0cFnRykHzlmZlVX1E7O5uy3lYVdxWC7sNgxItIWkWA==
-  dependencies:
-    "@babel/runtime" "^7.19.4"
-    "@polkadot/x-global" "10.1.11"
-    "@types/websocket" "^1.0.5"
-    websocket "^1.0.34"
 
 "@polkadot/x-ws@^10.1.11":
   version "10.4.2"
