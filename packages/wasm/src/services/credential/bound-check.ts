@@ -67,6 +67,8 @@ export function applyEnforceBounds({
   provingKeyId: string;
   provingKey: LegoProvingKey;
 }) {
+  let skipProvingKey = false;
+
   proofRequest.request.input_descriptors.forEach(inputDescriptor => {
     inputDescriptor.constraints.fields.forEach((field: Field) => {
       const {formatMaximum, formatMinimum, format, type} = field.filter || {};
@@ -104,8 +106,11 @@ export function applyEnforceBounds({
         min,
         max,
         provingKeyId,
-        provingKey,
+        !skipProvingKey ? provingKey : undefined,
       );
+
+      // Proving key will be used only for the first enforce bounds call
+      skipProvingKey = true;
     });
   });
 
