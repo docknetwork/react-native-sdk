@@ -277,6 +277,37 @@ describe('Bound check', () => {
     );
   });
 
+  it('expect to use proving key only on first enforce bounds call', () => {
+    applyEnforceBounds({
+      builder,
+      proofRequest: createProofRequest([
+        {
+          path: ['$.credentialSubject.dateEarned'],
+          filter: {
+            type: 'string',
+            format: 'date-time',
+            formatMaximum: '1999-01-01T00:00:00.000Z',
+          },
+          predicate: 'required',
+        },
+        {
+          path: ['$.issuanceDate'],
+          filter: {
+            type: 'string',
+            format: 'date-time',
+            formatMaximum: '1999-01-01T00:00:00.000Z',
+          },
+          predicate: 'required',
+        },
+      ]),
+      provingKey,
+      provingKeyId,
+    });
+
+    const callArgs = (builder.enforceBounds as jest.Mock).mock.calls[1];
+    expect(callArgs[callArgs.length - 1]).toBe(undefined);
+  });
+
   it('expect to throw error for unsupported type', () => {
     expect(() =>
       applyEnforceBounds({
