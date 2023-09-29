@@ -20,11 +20,8 @@ const pex: PEX = new PEX();
 export function isBBSPlusCredential(credential) {
   return (
     (typeof credential?.proof?.type === 'string' &&
-      credential.proof.type.includes('BBS+SignatureDock')) ||
-    (Array.isArray(credential['@context']) &&
-      credential['@context'].find(
-        context => context.bs && context.bs.indexOf('bbs') > -1,
-      ))
+      (credential.proof.type.includes('BBS+SignatureDock')) ||
+    (Array.isArray(credential['@context']) && credential['@context'].find(context => typeof context === 'string' && context.indexOf('bbs') > -1)))
   );
 }
 
@@ -167,36 +164,7 @@ class CredentialService {
     const credentialsFromPresentation =
       await bbsPlusPresentation.deriveCredentials(options);
     return credentialsFromPresentation.map(credentialJSON => {
-      const {credentialSubject} = credentialJSON;
-      let customContext = {
-        bs: 'https://ld.dock.io/bbs-pres-credentials#',
-        proofPurpose: 'bs:proofPurpose',
-        boundedPseudonyms: 'bs:boundedPseudonyms',
-        unboundedPseudonyms: 'bs:unboundedPseudonyms',
-        sigType: 'bs:sigType',
-        parsingOptions: 'bs:parsingOptions',
-        defaultDecimalPlaces: 'bs:defaultDecimalPlaces',
-        useDefaults: 'bs:useDefaults',
-        defaultMinimumDate: 'bs:defaultMinimumDate',
-        version: 'bs:version',
-        defaultMinimumInteger: 'bs:defaultMinimumInteger',
-        attributeCiphertexts: 'bs:attributeCiphertexts',
-        attributeEqualities: 'bs:attributeEqualities',
-        created: 'bs:created',
-        nonce: 'bs:nonce',
-        proofValue: 'bs:proofValue',
-        verificationMethod: 'bs:verificationMethod',
-      };
-      Object.keys(credentialSubject || {}).forEach(key => {
-        if (key.trim() !== 'id') {
-          customContext = {
-            ...customContext,
-            [key]: `bs:${key}`,
-          };
-        }
-      });
-      credentialJSON['@context'].push(customContext);
-
+      credentialJSON['@context'].push('https://ld.dock.io/security/bbs/v1');
       return VerifiableCredential.fromJSON(credentialJSON);
     });
   }
