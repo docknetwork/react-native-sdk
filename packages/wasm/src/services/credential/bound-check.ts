@@ -106,7 +106,7 @@ export function applyEnforceBounds({
         min,
         max,
         provingKeyId,
-        !skipProvingKey && provingKey,
+        !skipProvingKey ? provingKey : undefined,
       );
 
       // Proving key will be used only for the first enforce bounds call
