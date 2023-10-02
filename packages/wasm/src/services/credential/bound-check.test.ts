@@ -4,6 +4,7 @@ import {
   MIN_DATE_PLACEHOLDER,
   MAX_NUMBER,
   fetchProvingKey,
+  isBase64OrDataUrl,
 } from './bound-check';
 import {PresentationBuilder} from '@docknetwork/crypto-wasm-ts/lib';
 import proofRequest from './proof-request.json';
@@ -34,6 +35,37 @@ const createProofRequest = fields => ({
   type: 'proof-request',
 });
 
+const expectEnforceBoundsToHaveBeenCalledWithDate = (
+  builder,
+  credIdx,
+  attributeName,
+  min,
+  max,
+  provingKeyId,
+  provingKey
+) => {
+  expect(builder.enforceBounds).toHaveBeenCalledWith(
+    credIdx,
+    attributeName,
+    expect.objectContaining({
+      getTime: expect.any(Function),
+      valueOf: expect.any(Function),
+    }),
+    expect.objectContaining({
+      getTime: expect.any(Function),
+      valueOf: expect.any(Function),
+    }),
+    provingKeyId,
+    provingKey
+  );
+
+  // Check if Dates actually have the time we expect them to have
+  const callArgs = builder.enforceBounds.mock.calls[0];
+  expect(callArgs[2].getTime()).toBe(new Date(min).getTime());
+  expect(callArgs[3].getTime()).toBe(new Date(max).getTime());
+};
+
+
 describe('Bound check', () => {
   const provingKey = {} as any;
   const provingKeyId = 'provingKeyId';
@@ -45,228 +77,276 @@ describe('Bound check', () => {
     } as any;
   });
 
-  // it('expect to create bound check for minimum date', () => {
-  //   applyEnforceBounds({
-  //     builder,
-  //     proofRequest: createProofRequest([
-  //       {
-  //         path: ['$.credentialSubject.dateEarned'],
-  //         filter: {
-  //           type: 'string',
-  //           format: 'date-time',
-  //           formatMinimum: '1999-01-01T00:00:00.000Z',
-  //         },
-  //         predicate: 'required',
-  //       },
-  //     ]),
-  //     provingKey,
-  //     provingKeyId,
-  //   });
+  it('expect to create bound check for minimum date', () => {
+    applyEnforceBounds({
+      builder,
+      proofRequest: createProofRequest([
+        {
+          path: ['$.credentialSubject.dateEarned'],
+          filter: {
+            type: 'string',
+            format: 'date-time',
+            formatMinimum: '1999-01-01T00:00:00.000Z',
+          },
+          predicate: 'required',
+        },
+      ]),
+      provingKey,
+      provingKeyId,
+    });
 
-  //   const credIdx = 0;
-  //   const attributeName = 'credentialSubject.dateEarned';
-  //   const min = '1999-01-01T00:00:00.000Z';
-  //   const max = MAX_DATE_PLACEHOLDER;
+    const credIdx = 0;
+    const attributeName = 'credentialSubject.dateEarned';
+    const min = '1999-01-01T00:00:00.000Z';
+    const max = MAX_DATE_PLACEHOLDER;
 
-  //   expect(builder.enforceBounds).toHaveBeenCalledWith(
-  //     credIdx,
-  //     attributeName,
-  //     min,
-  //     max,
-  //     provingKeyId,
-  //     provingKey,
-  //   );
-  // });
+    expectEnforceBoundsToHaveBeenCalledWithDate(
+      builder,
+      credIdx,
+      attributeName,
+      min,
+      max,
+      provingKeyId,
+      provingKey,
+    )
+  });
 
-  // it('expect to create bound check for maximum date', () => {
-  //   applyEnforceBounds({
-  //     builder,
-  //     proofRequest: createProofRequest([
-  //       {
-  //         path: ['$.credentialSubject.dateEarned'],
-  //         filter: {
-  //           type: 'string',
-  //           format: 'date-time',
-  //           formatMaximum: '1999-01-01T00:00:00.000Z',
-  //         },
-  //         predicate: 'required',
-  //       },
-  //     ]),
-  //     provingKey,
-  //     provingKeyId,
-  //   });
+  it('expect to create bound check for maximum date', () => {
+    applyEnforceBounds({
+      builder,
+      proofRequest: createProofRequest([
+        {
+          path: ['$.credentialSubject.dateEarned'],
+          filter: {
+            type: 'string',
+            format: 'date-time',
+            formatMaximum: '1999-01-01T00:00:00.000Z',
+          },
+          predicate: 'required',
+        },
+      ]),
+      provingKey,
+      provingKeyId,
+    });
 
-  //   const credIdx = 0;
-  //   const attributeName = 'credentialSubject.dateEarned';
-  //   const min = MIN_DATE_PLACEHOLDER;
-  //   const max = '1999-01-01T00:00:00.000Z';
+    const credIdx = 0;
+    const attributeName = 'credentialSubject.dateEarned';
+    const min = MIN_DATE_PLACEHOLDER;
+    const max = '1999-01-01T00:00:00.000Z';
 
-  //   expect(builder.enforceBounds).toHaveBeenCalledWith(
-  //     credIdx,
-  //     attributeName,
-  //     min,
-  //     max,
-  //     provingKeyId,
-  //     provingKey,
-  //   );
-  // });
+    expectEnforceBoundsToHaveBeenCalledWithDate(
+      builder,
+      credIdx,
+      attributeName,
+      min,
+      max,
+      provingKeyId,
+      provingKey,
+    )
+  });
 
-  // it('expect to create bound check for maximum date and minimum', () => {
-  //   applyEnforceBounds({
-  //     builder,
-  //     proofRequest: createProofRequest([
-  //       {
-  //         path: ['$.expirationDate'],
-  //         filter: {
-  //           type: 'string',
-  //           format: 'date-time',
-  //           formatMaximum: '2023-12-31T23:59:59.000Z',
-  //           formatMinimum: '2023-01-01T00:00:00.000Z',
-  //         },
-  //         predicate: 'required',
-  //       },
-  //     ]),
-  //     provingKey,
-  //     provingKeyId,
-  //   });
+  it('expect to create bound check for maximum date and minimum', () => {
+    applyEnforceBounds({
+      builder,
+      proofRequest: createProofRequest([
+        {
+          path: ['$.expirationDate'],
+          filter: {
+            type: 'string',
+            format: 'date-time',
+            formatMaximum: '2023-12-31T23:59:59.000Z',
+            formatMinimum: '2023-01-01T00:00:00.000Z',
+          },
+          predicate: 'required',
+        },
+      ]),
+      provingKey,
+      provingKeyId,
+    });
 
-  //   const credIdx = 0;
-  //   const attributeName = 'expirationDate';
-  //   const min = '2023-01-01T00:00:00.000Z';
-  //   const max = '2023-12-31T23:59:59.000Z';
+    const credIdx = 0;
+    const attributeName = 'expirationDate';
+    const min = '2023-01-01T00:00:00.000Z';
+    const max = '2023-12-31T23:59:59.000Z';
 
-  //   expect(builder.enforceBounds).toHaveBeenCalledWith(
-  //     credIdx,
-  //     attributeName,
-  //     min,
-  //     max,
-  //     provingKeyId,
-  //     provingKey,
-  //   );
-  // });
+    expectEnforceBoundsToHaveBeenCalledWithDate(
+      builder,
+      credIdx,
+      attributeName,
+      min,
+      max,
+      provingKeyId,
+      provingKey,
+    )
+  });
 
-  // it('expect to create bound check for maximum number', () => {
-  //   applyEnforceBounds({
-  //     builder,
-  //     proofRequest: createProofRequest([
-  //       {
-  //         path: ['$.credentialSubject.income'],
-  //         filter: {
-  //           type: 'number',
-  //           formatMaximum: 20000,
-  //         },
-  //         predicate: 'required',
-  //       },
-  //     ]),
-  //     provingKey,
-  //     provingKeyId,
-  //   });
+  it('expect to create bound check for maximum number', () => {
+    applyEnforceBounds({
+      builder,
+      proofRequest: createProofRequest([
+        {
+          path: ['$.credentialSubject.income'],
+          filter: {
+            type: 'number',
+            formatMaximum: 20000,
+          },
+          predicate: 'required',
+        },
+      ]),
+      provingKey,
+      provingKeyId,
+    });
 
-  //   const credIdx = 0;
-  //   const attributeName = 'credentialSubject.income';
-  //   const min = 0;
-  //   const max = 20000;
+    const credIdx = 0;
+    const attributeName = 'credentialSubject.income';
+    const min = 0;
+    const max = 20000;
 
-  //   expect(builder.enforceBounds).toHaveBeenCalledWith(
-  //     credIdx,
-  //     attributeName,
-  //     min,
-  //     max,
-  //     provingKeyId,
-  //     provingKey,
-  //   );
-  // });
+    expect(builder.enforceBounds).toHaveBeenCalledWith(
+      credIdx,
+      attributeName,
+      min,
+      max,
+      provingKeyId,
+      provingKey,
+    );
+  });
 
-  // it('expect to create bound check for minimum number', () => {
-  //   applyEnforceBounds({
-  //     builder,
-  //     proofRequest: createProofRequest([
-  //       {
-  //         path: ['$.credentialSubject.income'],
-  //         filter: {
-  //           type: 'number',
-  //           formatMinimum: 20000,
-  //         },
-  //         predicate: 'required',
-  //       },
-  //     ]),
-  //     provingKey,
-  //     provingKeyId,
-  //   });
+  it('expect to create bound check for minimum number', () => {
+    applyEnforceBounds({
+      builder,
+      proofRequest: createProofRequest([
+        {
+          path: ['$.credentialSubject.income'],
+          filter: {
+            type: 'number',
+            formatMinimum: 20000,
+          },
+          predicate: 'required',
+        },
+      ]),
+      provingKey,
+      provingKeyId,
+    });
 
-  //   const credIdx = 0;
-  //   const attributeName = 'credentialSubject.income';
-  //   const min = 20000;
-  //   const max = MAX_NUMBER;
+    const credIdx = 0;
+    const attributeName = 'credentialSubject.income';
+    const min = 20000;
+    const max = MAX_NUMBER;
 
-  //   expect(builder.enforceBounds).toHaveBeenCalledWith(
-  //     credIdx,
-  //     attributeName,
-  //     min,
-  //     max,
-  //     provingKeyId,
-  //     provingKey,
-  //   );
-  // });
+    expect(builder.enforceBounds).toHaveBeenCalledWith(
+      credIdx,
+      attributeName,
+      min,
+      max,
+      provingKeyId,
+      provingKey,
+    );
+  });
 
-  // it('expect to create bound check for minimum and maximum number', () => {
-  //   applyEnforceBounds({
-  //     builder,
-  //     proofRequest: createProofRequest([
-  //       {
-  //         path: ['$.credentialSubject.income'],
-  //         filter: {
-  //           type: 'number',
-  //           formatMaximum: 20000,
-  //           formatMinimum: 5000,
-  //         },
-  //         predicate: 'required',
-  //       },
-  //     ]),
-  //     provingKey,
-  //     provingKeyId,
-  //   });
+  it('expect to create bound check for minimum and maximum number', () => {
+    applyEnforceBounds({
+      builder,
+      proofRequest: createProofRequest([
+        {
+          path: ['$.credentialSubject.income'],
+          filter: {
+            type: 'number',
+            formatMaximum: 20000,
+            formatMinimum: 5000,
+          },
+          predicate: 'required',
+        },
+      ]),
+      provingKey,
+      provingKeyId,
+    });
 
-  //   const credIdx = 0;
-  //   const attributeName = 'credentialSubject.income';
-  //   const min = 5000;
-  //   const max = 20000;
+    const credIdx = 0;
+    const attributeName = 'credentialSubject.income';
+    const min = 5000;
+    const max = 20000;
 
-  //   expect(builder.enforceBounds).toHaveBeenCalledWith(
-  //     credIdx,
-  //     attributeName,
-  //     min,
-  //     max,
-  //     provingKeyId,
-  //     provingKey,
-  //   );
-  // });
+    expect(builder.enforceBounds).toHaveBeenCalledWith(
+      credIdx,
+      attributeName,
+      min,
+      max,
+      provingKeyId,
+      provingKey,
+    );
+  });
 
-  // it('expect to throw error for unsupported type', () => {
-  //   expect(() =>
-  //     applyEnforceBounds({
-  //       builder,
-  //       proofRequest: createProofRequest([
-  //         {
-  //           path: ['$.credentialSubject.income'],
-  //           filter: {
-  //             type: 'string',
-  //             formatMaximum: 20000,
-  //           },
-  //           predicate: 'required',
-  //         },
-  //       ]),
-  //       provingKey,
-  //       provingKeyId,
-  //     }),
-  //   ).toThrowError(
-  //     'Unsupported format undefined and type string for enforce bounds',
-  //   );
-  // });
+  it('expect to use proving key only on first enforce bounds call', () => {
+    applyEnforceBounds({
+      builder,
+      proofRequest: createProofRequest([
+        {
+          path: ['$.credentialSubject.dateEarned'],
+          filter: {
+            type: 'string',
+            format: 'date-time',
+            formatMaximum: '1999-01-01T00:00:00.000Z',
+          },
+          predicate: 'required',
+        },
+        {
+          path: ['$.issuanceDate'],
+          filter: {
+            type: 'string',
+            format: 'date-time',
+            formatMaximum: '1999-01-01T00:00:00.000Z',
+          },
+          predicate: 'required',
+        },
+      ]),
+      provingKey,
+      provingKeyId,
+    });
+
+    const callArgs = (builder.enforceBounds as jest.Mock).mock.calls[1];
+    expect(callArgs[callArgs.length - 1]).toBe(undefined);
+  });
+
+  it('expect to throw error for unsupported type', () => {
+    expect(() =>
+      applyEnforceBounds({
+        builder,
+        proofRequest: createProofRequest([
+          {
+            path: ['$.credentialSubject.income'],
+            filter: {
+              type: 'string',
+              formatMaximum: 20000,
+            },
+            predicate: 'required',
+          },
+        ]),
+        provingKey,
+        provingKeyId,
+      }),
+    ).toThrowError(
+      'Unsupported format undefined and type string for enforce bounds',
+    );
+  });
 
   it('expect to fetch proving key', async () => {
     const result = await fetchProvingKey(proofRequest);
 
     console.log(result);
+  });
+
+  describe('isBase64OrDataUrl', () => {
+    it('expect to return true for base64 string', () => {
+      expect(isBase64OrDataUrl('base64string')).toBe(true);
+    });
+
+    it('expect to return true for data URL', () => {
+      expect(isBase64OrDataUrl('data:application/octet-stream;base64,base64string')).toBe(true);
+    });
+
+    it('expect to return false for other strings', () => {
+      expect(isBase64OrDataUrl('http://certs.dock.io/some-key')).toBe(false);
+    });
   });
 });
