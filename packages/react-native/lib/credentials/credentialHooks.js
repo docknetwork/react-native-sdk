@@ -66,7 +66,7 @@ async function getCredentialValidityStatus(credential) {
 }
 
 export function useCredentialUtils() {
-  const {documents, wallet} = useWallet();
+  const { documents, wallet } = useWallet();
 
   const credentials = useMemo(() => {
     if (Array.isArray(documents)) {
@@ -82,39 +82,31 @@ export function useCredentialUtils() {
     return [];
   }, [documents]);
 
-  const doesCredentialExist = useCallback((allCredentials, credentialToAdd) => {
+  const doesCredentialExist = (allCredentials, credentialToAdd) => {
     return !!allCredentials.find(item => item.id === credentialToAdd.id);
-  }, []);
+  };
 
-  const saveCredential = useCallback(
-    async jsonData => {
-      validateCredential(jsonData);
-      if (doesCredentialExist(credentials, jsonData)) {
-        throw new Error('This credential already exists in the wallet');
-      }
-      await wallet.addDocument(jsonData);
-    },
-    [credentials, doesCredentialExist, wallet],
-  );
-  const deleteCredential = useCallback(
-    async credentialId => {
-      assert(
-        typeof credentialId === 'string' && credentialId.length > 0,
-        'Credential ID is not set',
-      );
-      return await wallet.remove(credentialId);
-    },
-    [wallet],
-  );
+  const saveCredential = async jsonData => {
+    validateCredential(jsonData);
+    if (doesCredentialExist(credentials, jsonData)) {
+      throw new Error('This credential already exists in the wallet');
+    }
+    await wallet.addDocument(jsonData);
+  };
+  const deleteCredential = async credentialId => {
+    assert(
+      typeof credentialId === 'string' && credentialId.length > 0,
+      'Credential ID is not set',
+    );
+    return await wallet.remove(credentialId);
+  };
 
-  return useMemo(() => {
-    return {
-      credentials,
-      doesCredentialExist,
-      saveCredential,
-      deleteCredential,
-    };
-  }, [credentials, doesCredentialExist, saveCredential, deleteCredential]);
+  return {
+    credentials,
+    doesCredentialExist,
+    saveCredential,
+    deleteCredential,
+  };
 }
 export function isInThePast(date) {
   const today = new Date();
@@ -130,7 +122,7 @@ export async function getCredentialStatus(credential) {
   if (hasExpired) {
     return CREDENTIAL_STATUS.EXPIRED;
   }
-  const {verified, error} = await getCredentialValidityStatus(credential);
+  const { verified, error } = await getCredentialValidityStatus(credential);
 
   if (
     typeof error === 'string' &&
@@ -144,6 +136,7 @@ export async function getCredentialStatus(credential) {
   return CREDENTIAL_STATUS.INVALID;
 }
 
+//TODO: Implement a caching mechanism that is attached to credentials context instead of global
 export let cachedCredentialStatus = {};
 
 export function useGetCredentialStatus({credential}) {
