@@ -66,7 +66,7 @@ async function getCredentialValidityStatus(credential) {
 }
 
 export function useCredentialUtils() {
-  const {documents, wallet} = useWallet({syncDocs: true});
+  const {documents, wallet} = useWallet();
 
   const credentials = useMemo(() => {
     if (Array.isArray(documents)) {
