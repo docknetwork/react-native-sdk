@@ -2,7 +2,7 @@ import {getAccount, useWallet} from './index';
 import {useMemo} from 'react';
 
 export function useAccounts() {
-  const {documents, wallet} = useWallet();
+  const { documents, wallet } = useWallet();
   const accounts = useMemo(() => {
     if (Array.isArray(documents)) {
       return documents
@@ -21,9 +21,7 @@ export function useAccounts() {
     return [];
   }, [documents, wallet?.accounts]);
 
-  return useMemo(() => {
-    return {
-      accounts,
-    };
-  }, [accounts]);
+  return {
+    accounts,
+  };
 }
