@@ -83,7 +83,7 @@ export async function createDIDock({wallet, address, name}) {
   await wallet.add(dockDIDResolution);
 }
 
-const createDIDKeyDocument = async (
+export const createDIDKeyDocument = async (
   keypairDoc: any,
   didDocParams: any = {},
 ) => {
