@@ -1425,12 +1425,12 @@
     esm "^3.2.25"
     tweetnacl "^1.0.3"
 
-"@docknetwork/crypto-wasm-ts@^0.42.0":
-  version "0.42.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/crypto-wasm-ts/-/crypto-wasm-ts-0.42.0.tgz#4edd11e315b8ed62b5d470eed9de8d7a6332117c"
-  integrity sha512-M5dp6WiX5OS9AzUv7TaWAU/dDg7GlWHx3e3BbvquQV1qgklDlkqpgdM2O2rWYdQMCgyAEcGwFMtD2dyF8e8xyQ==
+"@docknetwork/crypto-wasm-ts@0.45.0":
+  version "0.45.0"
+  resolved "https://registry.yarnpkg.com/@docknetwork/crypto-wasm-ts/-/crypto-wasm-ts-0.45.0.tgz#09a80e2e5ef0a4e1b97bbc04588f7171a12bef84"
+  integrity sha512-cvoNyEHF/13VxPwOA02p0vjIt6BnqwnLcRgmw8WzewqFYN0353XWKGO9OfvpQY9fJ5cP+scWQjE8HAuygzLWkg==
   dependencies:
-    "@docknetwork/crypto-wasm" "0.21.0"
+    "@docknetwork/crypto-wasm" "0.22.0"
     "@types/flat" "^5.0.2"
     "@types/lodash" "^4.14.195"
     bs58 "5.0.0"
@@ -1438,11 +1438,12 @@
     json-pointer "^0.6.2"
     lodash "^4.17.21"
     lzutf8 "0.6.3"
+    semver "^7.5.4"
 
-"@docknetwork/crypto-wasm@0.21.0":
-  version "0.21.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/crypto-wasm/-/crypto-wasm-0.21.0.tgz#0831fa7d85c43d5e78c467d11ed4279f8a958ad4"
-  integrity sha512-iSxb0CeWO3SpIKFiBOzV4SR5qnw3GXCyiXVOvT+qJGxNsGUZJh/Qa5LR0k1YKG02b7K2034EVKKlu7D+1xCMYg==
+"@docknetwork/crypto-wasm@0.22.0":
+  version "0.22.0"
+  resolved "https://registry.yarnpkg.com/@docknetwork/crypto-wasm/-/crypto-wasm-0.22.0.tgz#be7f42b7877a53ba328b69cdd55c390b823e53b5"
+  integrity sha512-A9n+osu+TmPD/stztB+VBHaoTV8cSjur0oIVqiu9XRit2ZSIDPvdZ8dxkGWfV7EuavoVAM5OrZRDDwCzFhk+SQ==
   dependencies:
     buffer "^6.0.3"
 
@@ -1462,27 +1463,16 @@
   resolved "https://registry.yarnpkg.com/@docknetwork/node-types/-/node-types-0.16.0.tgz#23570042c823a6320654ee2c5b8c0da5d7c43d21"
   integrity sha512-VUZB8guX9161hDIEVn/UKJEUlXjIDE6vH5flx6uDHVc0QOhBy1bq6AGLayG4ZH19dCN39ta2sKGIFq9wLO4H2A==
 
-"@docknetwork/sdk@6.3.1":
-  version "6.3.1"
-  resolved "https://registry.yarnpkg.com/@docknetwork/sdk/-/sdk-6.3.1.tgz#4d84f49a06db7a7a42ed9ae25b8a2f2e15e98a02"
-  integrity sha512-3GtwajpUtf01zPQCnN/QfdmCAfqIdJZuc9+VgNynDBBlj6cf/s1fD4TzL9Z/q1dLcMmytOtDU/6ck4R1FIztfw==
+"@docknetwork/sdk@6.6.0":
+  version "6.6.0"
+  resolved "https://registry.yarnpkg.com/@docknetwork/sdk/-/sdk-6.6.0.tgz#fd2e5e35c637b319c399247b44c67ded2f4403d4"
+  integrity sha512-wltSCS4PsdwIspyN7dfWttgF0xL1wpXsiQ2KyVpJJATd2k4oC5CqE7u+etgWB0jz5bsvViTVgCuC/e8OaFJrNA==
   dependencies:
     "@digitalbazaar/vc-status-list" "^4.0.0"
-    "@docknetwork/crypto-wasm-ts" "^0.42.0"
+    "@docknetwork/crypto-wasm-ts" "0.45.0"
     "@docknetwork/node-types" "^0.16.0"
     "@juanelas/base64" "^1.0.5"
     "@polkadot/api" "9.7.1"
-    "@polkadot/keyring" "10.1.11"
-    "@polkadot/rpc-provider" "9.7.1"
-    "@polkadot/types" "9.7.1"
-    "@polkadot/types-known" "9.7.1"
-    "@polkadot/util" "10.1.11"
-    "@polkadot/util-crypto" "10.1.11"
-    "@polkadot/x-fetch" "10.1.11"
-    "@polkadot/x-randomvalues" "10.1.11"
-    "@polkadot/x-textdecoder" "10.1.11"
-    "@polkadot/x-textencoder" "10.1.11"
-    "@polkadot/x-ws" "10.1.11"
     "@transmute/json-web-signature" "^0.7.0-unstable.80"
     axios "0.27.2"
     base64url "3.0.1"
@@ -2558,16 +2548,6 @@
     "@babel/runtime" "^7.20.13"
     "@polkadot/x-global" "10.4.2"
 
-"@polkadot/x-fetch@10.1.11":
-  version "10.1.11"
-  resolved "https://registry.yarnpkg.com/@polkadot/x-fetch/-/x-fetch-10.1.11.tgz#8f579bb166096c977acff91a40b3848fb5581900"
-  integrity sha512-WtyUr9itVD9BLnxCUloJ1iwrXOY/lnlEShEYKHcSm6MIHtbJolePd3v1+o5mOX+bdDbHXhPZnH8anCCqDNDRqg==
-  dependencies:
-    "@babel/runtime" "^7.19.4"
-    "@polkadot/x-global" "10.1.11"
-    "@types/node-fetch" "^2.6.2"
-    node-fetch "^3.2.10"
-
 "@polkadot/x-fetch@^10.1.11":
   version "10.4.2"
   resolved "https://registry.yarnpkg.com/@polkadot/x-fetch/-/x-fetch-10.4.2.tgz#bc6ba70de71a252472fbe36180511ed920e05f05"
@@ -2615,16 +2595,6 @@
   dependencies:
     "@babel/runtime" "^7.19.4"
     "@polkadot/x-global" "10.1.11"
-
-"@polkadot/x-ws@10.1.11":
-  version "10.1.11"
-  resolved "https://registry.yarnpkg.com/@polkadot/x-ws/-/x-ws-10.1.11.tgz#7431ad72064d56519d4293278f03ae97b9ea9271"
-  integrity sha512-EUbL/R1A/NxYf6Rnb1M7U9yeTuo5r4y2vcQllE5aBLaQ0cFnRykHzlmZlVX1E7O5uy3lYVdxWC7sNgxItIWkWA==
-  dependencies:
-    "@babel/runtime" "^7.19.4"
-    "@polkadot/x-global" "10.1.11"
-    "@types/websocket" "^1.0.5"
-    websocket "^1.0.34"
 
 "@polkadot/x-ws@^10.1.11":
   version "10.4.2"
