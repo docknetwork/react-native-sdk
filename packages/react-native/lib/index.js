@@ -86,7 +86,7 @@ export function getAccount(address, documents): AccountDetails {
 }
 
 export function useAccount(address) {
-  const {documents, wallet} = useWallet({syncDocs: true});
+  const {documents, wallet} = useWallet();
   const account = getAccount(address, documents);
 
   return {
@@ -97,7 +97,7 @@ export function useAccount(address) {
   };
 }
 
-export function useWallet({syncDocs = true} = {}) {
+export function useWallet() {
   return useContext(WalletSDKContext);
 }
 
@@ -108,9 +108,7 @@ export function _useWalletController() {
   const [firstFetch, setFirstFetch] = useState();
   const [networkId, setNetworkId] = useState();
 
-  const testMode = useMemo(() => {
-    return networkId === wallet?.dataStore?.testNetworkId;
-  }, [wallet, networkId]);
+  const testMode = networkId === wallet?.dataStore?.testNetworkId;
 
   const toggleTestMode = async () => {
     await wallet.setNetwork(
@@ -134,8 +132,7 @@ export function _useWalletController() {
     wallet.getAllDocuments().then(setDocuments);
   }, [documents, wallet, firstFetch]);
 
-  const refetch = useCallback(
-    async ({fetchBalances} = {}) => {
+  const refetch = async ({fetchBalances} = {fetchBalances: true}) => {
       try {
         const allDocs = await wallet.query({});
         if (fetchBalances) {
@@ -152,9 +149,7 @@ export function _useWalletController() {
       } catch (err) {
         console.error(err);
       }
-    },
-    [wallet, setDocuments],
-  );
+    }
 
   useEffect(() => {
     if (!wallet) {
@@ -182,10 +177,10 @@ export function _useWalletController() {
     });
   }, [status, wallet, refetch]);
 
-  const createWallet = useCallback(async () => {
+  const createWallet = async () => {
     const newWallet = await getOrCreateWallet();
     setWallet(newWallet);
-  }, [setWallet]);
+  };
 
   return {
     wallet,
@@ -194,7 +189,7 @@ export function _useWalletController() {
     testMode,
     documents,
     status,
-    refetch: () => refetch({fetchBalances: true}),
+    refetch,
   };
 }
 

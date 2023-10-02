@@ -1,64 +1,15 @@
 import {useCallback, useMemo} from 'react';
 import {didServiceRPC} from '@docknetwork/wallet-sdk-wasm/src/services/dids';
-import {createDIDProvider} from '@docknetwork/wallet-sdk-core/src/did-provider';
+import {createDIDKeyDocument, createDIDProvider} from '@docknetwork/wallet-sdk-core/src/did-provider';
 import {useWallet} from './index';
 
-// TODO: there is no point in using hooks here
-// we could just use a regular function and createDIDKeypairDocument looks redundant
-export function useDIDUtils() {
-  const createDIDKeypairDocument = useCallback(async keypairParams => {
-    const {type, derivePath} = keypairParams;
-    return didServiceRPC.generateKeyDoc({
-      type,
-      derivePath,
-      controller: keypairParams.controller,
-    });
-  }, []);
-
-  const createDIDKeyDocument = useCallback(
-    async (keypairDoc, didDocParams = {}) => {
-      const keypairDocCorrelations = Array.isArray(keypairDoc.correlation)
-        ? keypairDoc.correlation
-        : [];
-
-      const {didDocument} = await didServiceRPC.keypairToDIDKeyDocument({
-        keypairDoc: keypairDoc,
-      });
-
-      const didDocumentResolution = await didServiceRPC.getDIDResolution({
-        didDocumentCustomProp: didDocParams,
-        didDocument,
-      });
-
-      didDocumentResolution.correlation.push(keypairDoc.id);
-
-      keypairDocCorrelations.push(didDocumentResolution.id);
-
-      return {
-        didDocumentResolution,
-        keypairDoc,
-      };
-    },
-    [],
-  );
-
-  return useMemo(() => {
-    return {
-      createDIDKeypairDocument,
-      createDIDKeyDocument,
-    };
-  }, [createDIDKeypairDocument, createDIDKeyDocument]);
-}
-
 export function useDIDManagement() {
-  const {wallet, documents} = useWallet({syncDocs: true});
+  const { wallet, documents } = useWallet();
   const didProvider = useMemo(() => {
     return createDIDProvider({
       wallet,
     });
   }, [wallet]);
-  const {createDIDKeypairDocument, createDIDKeyDocument} = useDIDUtils();
-
   const didList = useMemo(() => {
     if (Array.isArray(documents)) {
       return documents.filter(doc => {
@@ -69,31 +20,31 @@ export function useDIDManagement() {
   }, [documents]);
 
   const didMethodKey = useCallback(
-    async ({derivePath, type, name}) => {
-      const keydoc = await createDIDKeypairDocument({
-        derivePath,
+    async ({ derivePath, type, name }) => {
+      const keydoc = await didServiceRPC.generateKeyDoc({
         type,
+        derivePath,
       });
-      const {didDocumentResolution} = await createDIDKeyDocument(keydoc, {
+      const { didDocumentResolution } = await createDIDKeyDocument(keydoc, {
         name,
       });
       await wallet.add(keydoc);
       await wallet.add(didDocumentResolution);
     },
-    [createDIDKeyDocument, createDIDKeypairDocument, wallet],
+    [wallet],
   );
 
   const createDID = useCallback(
     async didParams => {
-      const {derivePath, type = 'ed25519', name, didType, address} = didParams;
+      const { derivePath, type = 'ed25519', name, didType, address } = didParams;
       switch (didType) {
         case 'diddock':
-          return didProvider.createDIDock({address, name});
+          return didProvider.createDIDock({ address, name });
         case 'didkey':
           // TODO: use the same approach as we have for DIDDock
           // move didMethodKey to didProvider, and stop using react hooks for it
           // so that it can be used with non-react apps later on (e.g: flutter, nodejs)
-          return didMethodKey({derivePath, name, type});
+          return didMethodKey({ derivePath, name, type });
         default:
           throw Error('Invalid DID type');
       }
@@ -102,7 +53,7 @@ export function useDIDManagement() {
   );
   const editDID = useCallback(
     async didParams => {
-      const {id, name} = didParams;
+      const { id, name } = didParams;
       if (typeof id === 'string' && id.length > 0) {
         const docs = await wallet.query({
           id,
@@ -122,7 +73,7 @@ export function useDIDManagement() {
   );
   const deleteDID = useCallback(
     async didParams => {
-      const {id} = didParams;
+      const { id } = didParams;
       if (typeof id === 'string' && id.length > 0) {
         return await wallet.remove(id);
       } else {
@@ -133,7 +84,7 @@ export function useDIDManagement() {
   );
 
   const exportDID = useCallback(
-    async ({id, password}) => {
+    async ({ id, password }) => {
       const existingDoc = await wallet.getDocumentById(id);
       if (existingDoc) {
         const allCorrelationDocuments = (

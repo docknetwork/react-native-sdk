@@ -2,7 +2,7 @@ import {getAccount, useWallet} from './index';
 import {useMemo} from 'react';
 
 export function useAccounts() {
-  const {documents, wallet} = useWallet({syncDocs: true});
+  const {documents, wallet} = useWallet();
   const accounts = useMemo(() => {
     if (Array.isArray(documents)) {
       return documents
