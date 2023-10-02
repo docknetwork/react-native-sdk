@@ -67,6 +67,8 @@ export function applyEnforceBounds({
   provingKeyId: string;
   provingKey: LegoProvingKey;
 }) {
+  let skipProvingKey = false;
+
   proofRequest.request.input_descriptors.forEach(inputDescriptor => {
     inputDescriptor.constraints.fields.forEach((field: Field) => {
       const {formatMaximum, formatMinimum, format, type} = field.filter || {};
@@ -84,6 +86,10 @@ export function applyEnforceBounds({
       } else if (type === 'number') {
         max = formatMaximum || MAX_NUMBER;
         min = formatMinimum || 0;
+      } else {
+        throw new Error(
+          `Unsupported format ${format} and type ${type} for enforce bounds`
+        )
       }
 
       const attributeName = field.path.join('.').replace('$.', '');
@@ -100,34 +106,52 @@ export function applyEnforceBounds({
         min,
         max,
         provingKeyId,
-        provingKey,
+        !skipProvingKey ? provingKey : undefined,
       );
+
+      // Proving key will be used only for the first enforce bounds call
+      skipProvingKey = true;
     });
   });
 
   return true;
 }
 
-export async function fetchProvingKey(proofRequest: ProofRequest) {
-  let provingKey: LegoProvingKey;
-  let blob: Uint8Array;
-
-  if (isBase64(proofRequest.boundCheckSnarkKey)) {
-    blob = base64url.toBuffer(
-      proofRequest.boundCheckSnarkKey.replace(
-        /^data:application\/octet-stream;base64,/,
-        '',
-      ),
-    );
-  } else {
-    const response = await fetch(proofRequest.boundCheckSnarkKey);
+export async function fetchBlobFromUrl(url: string): Promise<Uint8Array> {
+  try {
+    const response = await fetch(url);
     const arrayBuffer = await response.arrayBuffer();
-    blob = new Uint8Array(arrayBuffer);
+    return new Uint8Array(arrayBuffer);
+  } catch (err) {
+    throw new Error(`Error fetching proving key: ${err.message}`);
+  }
+}
+
+export function blobFromBase64(base64String: string): Uint8Array {
+  const cleanedBase64 = base64String.replace(
+    /^data:application\/octet-stream;base64,/,
+    '',
+  );
+  return base64url.toBuffer(cleanedBase64);
+}
+
+export function isBase64OrDataUrl(str: string): boolean {
+  return isBase64(str) || (str as string).indexOf('data:application/octet-stream') > -1;
+}
+
+export async function fetchProvingKey(proofRequest: ProofRequest) {
+  let blob: Uint8Array;
+  
+  if (isBase64OrDataUrl(proofRequest.boundCheckSnarkKey)) {
+    console.log('Is base64');
+    blob = blobFromBase64(proofRequest.boundCheckSnarkKey);
+  } else {
+    console.log('is not base64');
+    blob = await fetchBlobFromUrl(proofRequest.boundCheckSnarkKey);
   }
 
-  provingKey = new LegoProvingKey(blob);
-
-  return {provingKey, provingKeyId: 'key0'};
+  const provingKey = new LegoProvingKey(blob);
+  return { provingKey, provingKeyId: 'key0' };
 }
 
 export const MAX_DATE_PLACEHOLDER = 884541351600000;
