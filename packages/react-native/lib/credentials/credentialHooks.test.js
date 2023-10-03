@@ -279,7 +279,7 @@ describe('sortByIssuanceDate', () => {
       },
     };
     const response = await getCredentialStatus(credential);
-    expect(response).toBe(CREDENTIAL_STATUS.EXPIRED);
+    expect(response.status).toBe(CREDENTIAL_STATUS.EXPIRED);
   });
   it('expect to get revoked credential status', async () => {
     const credential = {
@@ -297,7 +297,7 @@ describe('sortByIssuanceDate', () => {
       },
     };
     const response = await getCredentialStatus(credential);
-    expect(response).toBe(CREDENTIAL_STATUS.REVOKED);
+    expect(response.status).toBe(CREDENTIAL_STATUS.REVOKED);
   });
 
   it('expect to cache credential verification result', async () => {
@@ -322,7 +322,7 @@ describe('sortByIssuanceDate', () => {
     await waitForNextUpdate();
 
     expect(cachedCredentialStatus[credential.id]).toBeDefined();
-    expect(result.current).toBe(CREDENTIAL_STATUS.REVOKED);
+    expect(result.curren.statust).toBe(CREDENTIAL_STATUS.REVOKED);
   });
 
   describe('waitFor', () => {
