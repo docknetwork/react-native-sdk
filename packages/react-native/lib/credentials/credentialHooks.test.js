@@ -322,7 +322,7 @@ describe('sortByIssuanceDate', () => {
     await waitForNextUpdate();
 
     expect(cachedCredentialStatus[credential.id]).toBeDefined();
-    expect(result.curren.statust).toBe(CREDENTIAL_STATUS.REVOKED);
+    expect(result.current.status).toBe(CREDENTIAL_STATUS.REVOKED);
   });
 
   describe('waitFor', () => {
