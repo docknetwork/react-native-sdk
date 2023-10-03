@@ -5,6 +5,7 @@ import {
   MAX_NUMBER,
   fetchProvingKey,
   isBase64OrDataUrl,
+  MIN_INTEGER,
 } from './bound-check';
 import {PresentationBuilder} from '@docknetwork/crypto-wasm-ts/lib';
 import proofRequest from './proof-request.json';
@@ -199,7 +200,7 @@ describe('Bound check', () => {
 
     const credIdx = 0;
     const attributeName = 'credentialSubject.income';
-    const min = 0;
+    const min = MIN_INTEGER;
     const max = 20000;
 
     expect(builder.enforceBounds).toHaveBeenCalledWith(
