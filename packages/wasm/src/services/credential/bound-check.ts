@@ -85,7 +85,7 @@ export function applyEnforceBounds({
         min = new Date(formatMinimum || MIN_DATE_PLACEHOLDER);
       } else if (type === 'number') {
         max = formatMaximum || MAX_NUMBER;
-        min = formatMinimum || 0;
+        min = formatMinimum || MIN_INTEGER;
       } else {
         throw new Error(
           `Unsupported format ${format} and type ${type} for enforce bounds`
@@ -155,8 +155,9 @@ export async function fetchProvingKey(proofRequest: ProofRequest) {
 }
 
 export const MAX_DATE_PLACEHOLDER = 884541351600000;
-export const MIN_DATE_PLACEHOLDER = -62167219200000;
+export const MIN_DATE_PLACEHOLDER = -17592186044415;
 export const MAX_NUMBER = Math.pow(100, 9);
+export const MIN_INTEGER = -4294967295;
 
 export const hasProvingKey = (proofRequest: ProofRequest) =>
   !!proofRequest.boundCheckSnarkKey;

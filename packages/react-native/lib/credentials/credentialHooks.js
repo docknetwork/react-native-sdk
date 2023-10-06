@@ -5,12 +5,13 @@ import {credentialServiceRPC} from '@docknetwork/wallet-sdk-wasm/src/services/cr
 import {dockService} from '@docknetwork/wallet-sdk-wasm/src/services/dock';
 
 export const CREDENTIAL_STATUS = {
-  INVALID: 1,
-  EXPIRED: 2,
-  VERIFIED: 3,
-  REVOKED: 4,
-  PENDING: 5,
+  INVALID: 'invalid',
+  EXPIRED: 'expired',
+  VERIFIED: 'verified',
+  REVOKED: 'revoked',
+  PENDING: 'pending',
 };
+
 const validateCredential = credential => {
   assert(typeof credential !== 'undefined', 'Invalid Credential');
   assert(typeof credential?.id === 'string', 'Credential has no ID');
@@ -113,27 +114,42 @@ export function isInThePast(date) {
   today.setHours(0, 0, 0, 0);
   return date < today;
 }
+
 export async function getCredentialStatus(credential) {
   assert(typeof credential !== 'undefined', 'Invalid Credential');
-  const hasExpired = credential.expirationDate
-    ? isInThePast(new Date(credential.expirationDate))
-    : false;
 
-  if (hasExpired) {
-    return CREDENTIAL_STATUS.EXPIRED;
+  if (isCredentialExpired(credential)) {
+    return buildStatusResponse(CREDENTIAL_STATUS.EXPIRED);
   }
+
   const { verified, error } = await getCredentialValidityStatus(credential);
 
-  if (
-    typeof error === 'string' &&
-    error.toLowerCase().indexOf('revocation') > -1
-  ) {
-    return CREDENTIAL_STATUS.REVOKED;
+  if (isCredentialRevoked(error)) {
+    return buildStatusResponse(CREDENTIAL_STATUS.REVOKED, error);
   }
+
   if (verified) {
-    return CREDENTIAL_STATUS.VERIFIED;
+    return buildStatusResponse(CREDENTIAL_STATUS.VERIFIED);
   }
-  return CREDENTIAL_STATUS.INVALID;
+
+  return buildStatusResponse(CREDENTIAL_STATUS.INVALID, error);
+}
+
+function isCredentialExpired(credential) {
+  return credential.expirationDate
+    ? isInThePast(new Date(credential.expirationDate))
+    : false;
+}
+
+function isCredentialRevoked(error) {
+  return typeof error === 'string' && error.toLowerCase().includes('revocation');
+}
+
+function buildStatusResponse(status, error = null) {
+  return {
+    status,
+    error,
+  };
 }
 
 //TODO: Implement a caching mechanism that is attached to credentials context instead of global
@@ -141,7 +157,7 @@ export let cachedCredentialStatus = {};
 
 export function useGetCredentialStatus({credential}) {
   const [status, setStatus] = useState(
-    cachedCredentialStatus[credential.id] || CREDENTIAL_STATUS.PENDING,
+    cachedCredentialStatus[credential.id] || buildStatusResponse(CREDENTIAL_STATUS.PENDING),
   );
 
   useEffect(() => {
