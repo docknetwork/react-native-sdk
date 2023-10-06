@@ -60,6 +60,12 @@ export function createMessageProvider({
 
     async markMessageAsRead(messageId: string) {
       try {
+        const message = await wallet.getDocumentById(messageId);
+
+        if (message.type !== 'DIDCommMessage') {
+          throw new Error(`Document with id ${messageId} is not a DIDCommMessage`);
+        }
+
         await wallet.removeDocument(messageId);
       } catch (error) {
         throw new Error(`Failed to mark message as read: ${error.message}`);
