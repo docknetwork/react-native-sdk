@@ -13,6 +13,8 @@ import {RelayService as relayServiceClient} from '@docknetwork/wallet-sdk-relay-
  * RelayService
  */
 export class RelayService {
+  name: string;
+
   rpcMethods = [
     RelayService.prototype.getMessages,
     RelayService.prototype.sendMessage,
