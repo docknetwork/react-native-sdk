@@ -7,6 +7,7 @@ import {
 import {PresentationBuilder} from '@docknetwork/crypto-wasm-ts/lib';
 import {isBase64} from '@polkadot/util-crypto';
 import base64url from 'base64url';
+import {pexToBounds} from './pex-to-bounds';
 
 interface Filter {
   type: string;
@@ -61,60 +62,38 @@ export function applyEnforceBounds({
   proofRequest,
   provingKeyId,
   provingKey,
+  selectedCredentials,
 }: {
   builder: PresentationBuilder;
   proofRequest: ProofRequest;
+  selectedCredentials: any[];
   provingKeyId: string;
   provingKey: LegoProvingKey;
 }) {
-  let skipProvingKey = false;
+  const descriptorBounds = pexToBounds(
+    proofRequest.request,
+    selectedCredentials,
+  );
+  let bounds = [];
 
-  proofRequest.request.input_descriptors.forEach(inputDescriptor => {
-    inputDescriptor.constraints.fields.forEach((field: Field) => {
-      const {formatMaximum, formatMinimum, format, type} = field.filter || {};
-
-      if (!formatMaximum && !formatMinimum) {
-        return;
-      }
-
-      let max;
-      let min;
-
-      if (format === 'date-time' || format === 'date') {
-        max = new Date(formatMaximum || MAX_DATE_PLACEHOLDER);
-        min = new Date(formatMinimum || MIN_DATE_PLACEHOLDER);
-      } else if (type === 'number') {
-        max = formatMaximum || MAX_NUMBER;
-        min = formatMinimum || MIN_INTEGER;
-      } else {
-        throw new Error(
-          `Unsupported format ${format} and type ${type} for enforce bounds`
-        )
-      }
-
-      const attributeName = field.path.join('.').replace('$.', '');
-
-      console.log('enforceBounds', {
-        attributeName,
-        min,
-        max,
-      });
-
-      builder.enforceBounds(
-        0,
-        attributeName,
-        min,
-        max,
-        provingKeyId,
-        !skipProvingKey ? provingKey : undefined,
-      );
-
-      // Proving key will be used only for the first enforce bounds call
-      skipProvingKey = true;
-    });
+  descriptorBounds.forEach((items) => {
+    items.forEach((bound, idx) => {
+      bounds.push(bound);
+   });
   });
 
-  return true;
+  bounds.forEach((bound, idx) => {
+    builder.enforceBounds(
+      0,
+      bound.attributeName,
+      bound.min,
+      bound.max,
+      provingKeyId,
+      idx === 0 ? provingKey : undefined,
+    );
+  });
+
+  return bounds;
 }
 
 export async function fetchBlobFromUrl(url: string): Promise<Uint8Array> {
@@ -136,12 +115,15 @@ export function blobFromBase64(base64String: string): Uint8Array {
 }
 
 export function isBase64OrDataUrl(str: string): boolean {
-  return isBase64(str) || (str as string).indexOf('data:application/octet-stream') > -1;
+  return (
+    isBase64(str) ||
+    (str as string).indexOf('data:application/octet-stream') > -1
+  );
 }
 
 export async function fetchProvingKey(proofRequest: ProofRequest) {
   let blob: Uint8Array;
-  
+
   if (isBase64OrDataUrl(proofRequest.boundCheckSnarkKey)) {
     console.log('Is base64');
     blob = blobFromBase64(proofRequest.boundCheckSnarkKey);
@@ -151,7 +133,7 @@ export async function fetchProvingKey(proofRequest: ProofRequest) {
   }
 
   const provingKey = new LegoProvingKey(blob);
-  return { provingKey, provingKeyId: 'key0' };
+  return {provingKey, provingKeyId: 'key0'};
 }
 
 export const MAX_DATE_PLACEHOLDER = 884541351600000;
