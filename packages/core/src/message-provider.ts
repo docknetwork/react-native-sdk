@@ -1,4 +1,5 @@
 import { IDIDProvider } from './did-provider';
+import { captureException } from './helpers';
 import { IWallet } from './types';
 import { relayService as defaultRelayService } from '@docknetwork/wallet-sdk-wasm/src/services/relay-service';
 
@@ -41,6 +42,7 @@ export function createMessageProvider({
         }
         await relayService.sendMessage({ keyPairDoc, message, recipientDid });
       } catch (error) {
+        captureException(error);
         throw new Error(`Failed to send message: ${error.message}`);
       }
     },
@@ -50,10 +52,16 @@ export function createMessageProvider({
         const messages = await wallet.getDocumentsByType('DIDCommMessage');
         const keyPairDocs = await getKeyPairDocs(didProvider);
         for (const { encryptedMessage } of messages) {
-          const decryptedMessage = await relayService.resolveDidcommMessage({ keyPairDocs, encryptedMessage });
-          wallet.eventManager.emit('didcomm-message-decrypted', decryptedMessage);
+          try {
+            const decryptedMessage = await relayService.resolveDidcommMessage({ keyPairDocs, encryptedMessage });
+            wallet.eventManager.emit('didcomm-message-decrypted', decryptedMessage);
+          } catch(err) {
+            captureException(err);
+            console.error(err);
+          }
         }
       } catch (error) {
+        captureException(error);
         throw new Error(`Failed to process DIDComm messages: ${error.message}`);
       }
     },
@@ -68,6 +76,7 @@ export function createMessageProvider({
 
         await wallet.removeDocument(messageId);
       } catch (error) {
+        captureException(error);
         throw new Error(`Failed to mark message as read: ${error.message}`);
       }
     },
@@ -95,6 +104,7 @@ export function createMessageProvider({
 
         return encryptedMessages;
       } catch (error) {
+        captureException(error);
         throw new Error(`Failed to fetch messages: ${error.message}`);
       }
     },
