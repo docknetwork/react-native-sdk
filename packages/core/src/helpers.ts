@@ -1,8 +1,13 @@
 import axios from 'axios';
 import assert from 'assert';
 
-let sentryCaptureException: any = (error) => {
-  console.error(error); 
+let sentryCaptureException: any = error => {
+  console.error(error);
+};
+
+export const WalletDocumentTypes = {
+  // This is used to store encrypted DIDComm messasges recieved from relay service
+  DIDCommMessage: 'DIDCommMessage',
 };
 
 function isURL(str) {
