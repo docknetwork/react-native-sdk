@@ -1,6 +1,10 @@
 import axios from 'axios';
 import assert from 'assert';
 
+let sentryCaptureException: any = (error) => {
+  console.error(error); 
+};
+
 function isURL(str) {
   try {
     // eslint-disable-next-line no-new
@@ -37,4 +41,14 @@ export function getJSON(jsonOrURL: string | any) {
   }
 
   throw new Error(`Invalid data ${jsonOrURL}`);
+}
+
+export function setSentryCaptureException(impl: any) {
+  sentryCaptureException = impl;
+}
+
+export function captureException(error) {
+  if (sentryCaptureException) {
+    sentryCaptureException(error);
+  }
 }
