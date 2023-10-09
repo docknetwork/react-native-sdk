@@ -55,9 +55,9 @@ export function createMessageProvider({
           try {
             const decryptedMessage = await relayService.resolveDidcommMessage({ keyPairDocs, encryptedMessage });
             wallet.eventManager.emit('didcomm-message-decrypted', decryptedMessage);
+            // the wallet app will call markMessageAsRead after the message is processed
           } catch(err) {
             captureException(err);
-            console.error(err);
           }
         }
       } catch (error) {
@@ -100,7 +100,6 @@ export function createMessageProvider({
           } catch(err) {
             // this message will be lost if it fails to be stored in the wallet
             captureException(err);
-            console.error(err);
           }
         }
 
