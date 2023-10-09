@@ -1,5 +1,5 @@
 import { IDIDProvider } from './did-provider';
-import { captureException } from './helpers';
+import { WalletDocumentTypes, captureException } from './helpers';
 import { IWallet } from './types';
 import { relayService as defaultRelayService } from '@docknetwork/wallet-sdk-wasm/src/services/relay-service';
 
@@ -49,7 +49,7 @@ export function createMessageProvider({
 
     async processDIDCommMessages() {
       try {
-        const messages = await wallet.getDocumentsByType('DIDCommMessage');
+        const messages = await wallet.getDocumentsByType(WalletDocumentTypes.DIDCommMessage);
         const keyPairDocs = await getKeyPairDocs(didProvider);
         for (const { encryptedMessage } of messages) {
           try {
@@ -70,7 +70,7 @@ export function createMessageProvider({
       try {
         const message = await wallet.getDocumentById(messageId);
 
-        if (message.type !== 'DIDCommMessage') {
+        if (message.type !== WalletDocumentTypes.DIDCommMessage) {
           throw new Error(`Document with id ${messageId} is not a DIDCommMessage`);
         }
 
@@ -91,11 +91,17 @@ export function createMessageProvider({
         });
 
         for (const { _id, encryptedMessage } of encryptedMessages) {
-          await wallet.addDocument({
-            id: _id,
-            type: 'DIDCommMessage',
-            encryptedMessage,
-          });
+          try {
+            await wallet.addDocument({
+              id: _id,
+              type: WalletDocumentTypes.DIDCommMessage,
+              encryptedMessage,
+            });
+          } catch(err) {
+            // this message will be lost if it fails to be stored in the wallet
+            captureException(err);
+            console.error(err);
+          }
         }
 
         if (encryptedMessages.length > 0) {
