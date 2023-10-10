@@ -1,6 +1,27 @@
 import axios from 'axios';
 import assert from 'assert';
 
+// Sentry implementation will be injected by the wallet-app
+let sentryCaptureException: any = error => {
+  console.error(error);
+};
+
+export function setSentryCaptureException(impl: any) {
+  sentryCaptureException = impl;
+}
+
+export function captureException(error) {
+  if (sentryCaptureException) {
+    sentryCaptureException(error);
+  }
+}
+
+
+export const WalletDocumentTypes = {
+  // This is used to store encrypted DIDComm messasges recieved from relay service
+  DIDCommMessage: 'DIDCommMessage',
+};
+
 function isURL(str) {
   try {
     // eslint-disable-next-line no-new
