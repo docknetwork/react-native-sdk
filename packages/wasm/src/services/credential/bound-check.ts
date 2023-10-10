@@ -78,7 +78,7 @@ export function applyEnforceBounds({
   let skipProvingKey = false;
 
   descriptorBounds.forEach((items, credentialIdx) => {
-    items.forEach((bound, idx) => {
+    items.forEach((bound) => {
       builder.enforceBounds(
         credentialIdx,
         bound.attributeName,
@@ -87,6 +87,7 @@ export function applyEnforceBounds({
         provingKeyId,
         skipProvingKey ? undefined : provingKey,
       );
+      skipProvingKey = true;
    });
   });
 

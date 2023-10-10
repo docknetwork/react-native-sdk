@@ -145,6 +145,12 @@ class CredentialService {
     const selectedCredentials = credentials.map(({credential}) => credential);
     let descriptorBounds = [];
 
+    for (const {credential} of credentials) {
+      await bbsPlusPresentation.addCredentialToPresent(credential, {
+        resolver: dockService.resolver,
+      });
+    }
+
     if (proofRequest && hasProvingKey(proofRequest)) {
       const {provingKey, provingKeyId} = await fetchProvingKey(proofRequest);
       descriptorBounds = applyEnforceBounds({
@@ -156,22 +162,16 @@ class CredentialService {
       });
     }
 
-
-    for (const {credential, attributesToReveal} of credentials) {
-      const idx = await bbsPlusPresentation.addCredentialToPresent(credential, {
-        resolver: dockService.resolver,
-      });
+    let idx = 0;
+    for (const {attributesToReveal} of credentials) {
       const attributesToSkip = descriptorBounds[idx].map((bound) => bound.attributeName);
       const filteredAttributes = attributesToReveal.filter((attribute) => !attributesToSkip.includes(attribute));
 
       if (Array.isArray(filteredAttributes) && filteredAttributes.length > 0) {
-        revealedAttributes.push({
-          idx,
-          attributes: filteredAttributes,
-        });
+        bbsPlusPresentation.addAttributeToReveal(idx, filteredAttributes);
       }
 
-      selectedCredentials.push(credential);
+      idx++;
     }
 
     const credentialsFromPresentation =
