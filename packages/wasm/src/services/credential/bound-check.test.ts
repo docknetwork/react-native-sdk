@@ -81,6 +81,11 @@ describe('Bound check', () => {
   it('expect to create bound check for minimum date', () => {
     applyEnforceBounds({
       builder,
+      selectedCredentials: [{
+        credentialSubject: {
+          dateEarned: '1999-01-01T00:00:00.000Z',
+        },
+      }],
       proofRequest: createProofRequest([
         {
           path: ['$.credentialSubject.dateEarned'],
@@ -115,6 +120,11 @@ describe('Bound check', () => {
   it('expect to create bound check for maximum date', () => {
     applyEnforceBounds({
       builder,
+      selectedCredentials: [{
+        credentialSubject: {
+          dateEarned: '1999-01-01T00:00:00.000Z',
+        },
+      }],
       proofRequest: createProofRequest([
         {
           path: ['$.credentialSubject.dateEarned'],
@@ -149,6 +159,9 @@ describe('Bound check', () => {
   it('expect to create bound check for maximum date and minimum', () => {
     applyEnforceBounds({
       builder,
+      selectedCredentials: [{
+        expirationDate: '2023-06-01T00:00:00.000Z',
+      }],
       proofRequest: createProofRequest([
         {
           path: ['$.expirationDate'],
@@ -184,6 +197,11 @@ describe('Bound check', () => {
   it('expect to create bound check for maximum number', () => {
     applyEnforceBounds({
       builder,
+      selectedCredentials: [{
+        credentialSubject: {
+          income: 20000,
+        },
+      }],
       proofRequest: createProofRequest([
         {
           path: ['$.credentialSubject.income'],
@@ -216,6 +234,11 @@ describe('Bound check', () => {
   it('expect to create bound check for minimum number', () => {
     applyEnforceBounds({
       builder,
+      selectedCredentials: [{
+        credentialSubject: {
+          income: 20000,
+        },
+      }],
       proofRequest: createProofRequest([
         {
           path: ['$.credentialSubject.income'],
@@ -248,6 +271,11 @@ describe('Bound check', () => {
   it('expect to create bound check for minimum and maximum number', () => {
     applyEnforceBounds({
       builder,
+      selectedCredentials: [{
+        credentialSubject: {
+          income: 20000,
+        },
+      }],
       proofRequest: createProofRequest([
         {
           path: ['$.credentialSubject.income'],
@@ -281,6 +309,11 @@ describe('Bound check', () => {
   it('expect to use proving key only on first enforce bounds call', () => {
     applyEnforceBounds({
       builder,
+      selectedCredentials: [{
+        credentialSubject: {
+          dateEarned: '1999-01-01T00:00:00.000Z',
+        },
+      }],
       proofRequest: createProofRequest([
         {
           path: ['$.credentialSubject.dateEarned'],
@@ -313,6 +346,11 @@ describe('Bound check', () => {
     expect(() =>
       applyEnforceBounds({
         builder,
+        selectedCredentials: [{
+          credentialSubject: {
+            income: 20000,
+          },
+        }],
         proofRequest: createProofRequest([
           {
             path: ['$.credentialSubject.income'],
