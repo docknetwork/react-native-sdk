@@ -74,26 +74,23 @@ export function applyEnforceBounds({
     proofRequest.request,
     selectedCredentials,
   );
-  let bounds = [];
 
-  descriptorBounds.forEach((items) => {
+  let skipProvingKey = false;
+
+  descriptorBounds.forEach((items, credentialIdx) => {
     items.forEach((bound, idx) => {
-      bounds.push(bound);
+      builder.enforceBounds(
+        credentialIdx,
+        bound.attributeName,
+        bound.min,
+        bound.max,
+        provingKeyId,
+        skipProvingKey ? undefined : provingKey,
+      );
    });
   });
 
-  bounds.forEach((bound, idx) => {
-    builder.enforceBounds(
-      0,
-      bound.attributeName,
-      bound.min,
-      bound.max,
-      provingKeyId,
-      idx === 0 ? provingKey : undefined,
-    );
-  });
-
-  return bounds;
+  return descriptorBounds;
 }
 
 export async function fetchBlobFromUrl(url: string): Promise<Uint8Array> {

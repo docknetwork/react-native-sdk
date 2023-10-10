@@ -142,41 +142,36 @@ class CredentialService {
     validation.deriveVCFromBBSPresentation(params);
     const {credentials, options = {}, proofRequest} = params;
     const bbsPlusPresentation = new BbsPlusPresentation();
-    const selectedCredentials = [];
-    const revealedAttributes = [];
-
-    for (const {credential, attributesToReveal} of credentials) {
-      const idx = await bbsPlusPresentation.addCredentialToPresent(credential, {
-        resolver: dockService.resolver,
-      });
-
-      if (Array.isArray(attributesToReveal) && attributesToReveal.length > 0) {
-        revealedAttributes.push({
-          idx,
-          attributes: attributesToReveal,
-        });
-      }
-
-      selectedCredentials.push(credential);
-    }
-
-    let attributesToSkip = [];
+    const selectedCredentials = credentials.map(({credential}) => credential);
+    let descriptorBounds = [];
 
     if (proofRequest && hasProvingKey(proofRequest)) {
       const {provingKey, provingKeyId} = await fetchProvingKey(proofRequest);
-      const bounds = applyEnforceBounds({
+      descriptorBounds = applyEnforceBounds({
         builder: bbsPlusPresentation.presBuilder,
         proofRequest,
         provingKey,
         provingKeyId,
         selectedCredentials,
       });
-
-      attributesToSkip = bounds.map((bound) => bound.attributeName);
     }
 
-    for (const {idx, attributes} of revealedAttributes) { 
-      await bbsPlusPresentation.addAttributeToReveal(idx, attributes);
+
+    for (const {credential, attributesToReveal} of credentials) {
+      const idx = await bbsPlusPresentation.addCredentialToPresent(credential, {
+        resolver: dockService.resolver,
+      });
+      const attributesToSkip = descriptorBounds[idx].map((bound) => bound.attributeName);
+      const filteredAttributes = attributesToReveal.filter((attribute) => !attributesToSkip.includes(attribute));
+
+      if (Array.isArray(filteredAttributes) && filteredAttributes.length > 0) {
+        revealedAttributes.push({
+          idx,
+          attributes: filteredAttributes,
+        });
+      }
+
+      selectedCredentials.push(credential);
     }
 
     const credentialsFromPresentation =
