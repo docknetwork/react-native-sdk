@@ -142,23 +142,36 @@ class CredentialService {
     validation.deriveVCFromBBSPresentation(params);
     const {credentials, options = {}, proofRequest} = params;
     const bbsPlusPresentation = new BbsPlusPresentation();
-    for (const {credential, attributesToReveal} of credentials) {
-      const idx = await bbsPlusPresentation.addCredentialToPresent(credential, {
+    const selectedCredentials = credentials.map(({credential}) => credential);
+    let descriptorBounds = [];
+
+    for (const {credential} of credentials) {
+      await bbsPlusPresentation.addCredentialToPresent(credential, {
         resolver: dockService.resolver,
       });
-      if (Array.isArray(attributesToReveal) && attributesToReveal.length > 0) {
-        await bbsPlusPresentation.addAttributeToReveal(idx, attributesToReveal);
-      }
     }
 
     if (proofRequest && hasProvingKey(proofRequest)) {
       const {provingKey, provingKeyId} = await fetchProvingKey(proofRequest);
-      applyEnforceBounds({
+      descriptorBounds = applyEnforceBounds({
         builder: bbsPlusPresentation.presBuilder,
         proofRequest,
         provingKey,
         provingKeyId,
+        selectedCredentials,
       });
+    }
+
+    let idx = 0;
+    for (const {attributesToReveal} of credentials) {
+      const attributesToSkip = descriptorBounds[idx].map((bound) => bound.attributeName);
+      const filteredAttributes = attributesToReveal.filter((attribute) => !attributesToSkip.includes(attribute));
+
+      if (Array.isArray(filteredAttributes) && filteredAttributes.length > 0) {
+        bbsPlusPresentation.addAttributeToReveal(idx, filteredAttributes);
+      }
+
+      idx++;
     }
 
     const credentialsFromPresentation =
