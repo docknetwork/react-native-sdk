@@ -59,7 +59,11 @@ const sendMessage = async ({keyPairDoc, recipientDid, message}) => {
   }
 };
 
-const getMessages = async ({keyPairDocs, limit = 20}) => {
+const getMessages = async ({
+  keyPairDocs,
+  limit = 20,
+  skipMessageResolution = false,
+}) => {
   assert(!!keyPairDocs, 'keyPairDoc is required');
   assert(Array.isArray(keyPairDocs), 'keyPairDocs must be an array');
   assert(!!keyPairDocs.length, 'keyPairDocs must not be empty');
@@ -78,6 +82,10 @@ const getMessages = async ({keyPairDocs, limit = 20}) => {
     );
 
     const data = result.data;
+
+    if (skipMessageResolution) {
+      return data;
+    }
 
     const messages = await Promise.all(
       data.map(async message => {
