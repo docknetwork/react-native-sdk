@@ -83,7 +83,52 @@ export async function createDIDock({wallet, address, name}) {
   await wallet.add(dockDIDResolution);
 }
 
-const createDIDKeyDocument = async (
+async function editDID({wallet, id, name}){
+  if (typeof id === 'string' && id.length > 0) {
+    const docs = await wallet.query({
+      id,
+    });
+    if (docs.length === 1) {
+      const doc = docs[0];
+      await wallet.update({
+        ...doc,
+        name,
+      });
+    }
+  } else {
+    throw new Error('Document ID is not set');
+  }
+};
+
+async function deleteDID({wallet, id}){
+  if (typeof id === 'string' && id.length > 0) {
+    return await wallet.remove(id);
+  } else {
+    throw Error('Document ID is not set');
+  }
+}
+
+async function exportDID({wallet, id, password }){
+  const existingDoc = await wallet.getDocumentById(id);
+  if (existingDoc) {
+    const allCorrelationDocuments = (
+      await wallet.resolveCorrelations(id)
+    ).filter(doc => doc && doc?.id !== existingDoc.id);
+    const documentsToExport = [existingDoc, ...allCorrelationDocuments];
+
+    if (allCorrelationDocuments.length >= 1) {
+      return wallet.exportDocuments({
+        documents: documentsToExport,
+        password,
+      });
+    }
+    throw new Error('DID KeyPair not found');
+  }
+
+  throw new Error('DID Document not found');
+}
+
+export const createDIDKeyDocument = async (
   keypairDoc: any,
   didDocParams: any = {},
 ) => {
@@ -110,11 +155,11 @@ const createDIDKeyDocument = async (
   };
 };
 
-export async function createDIKey({wallet, name}) {
+export async function createDIDKey({wallet, name, derivePath=undefined, type=undefined}) {
   assert(!!wallet, 'wallet is required');
   assert(!!name, 'name is required');
 
-  const keyDoc = await didServiceRPC.generateKeyDoc({});
+  const keyDoc = await didServiceRPC.generateKeyDoc({derivePath, type});
 
   const {didDocumentResolution} = await createDIDKeyDocument(keyDoc, {
     name,
@@ -156,7 +201,7 @@ export async function ensureDID({wallet}) {
   assert(!!wallet, 'wallet is required');
   const dids = await getAll({wallet});
   if (dids.length === 0) {
-    return createDIKey({wallet, name: 'Default DID'});
+    return createDIDKey({wallet, name: 'Default DID'});
   }
 }
 
@@ -166,7 +211,10 @@ export interface IDIDProvider {
     password: string;
   }): Promise<void>;
   createDIDock(params: {address: string; name: string}): Promise<void>;
-  createDIDKey(params: {name: string}): Promise<any>;
+  createDIDKey(params: {name: string, derivePath?:string, type?: string}): Promise<any>;
+  editDID(params: {id: string; name: string}): Promise<void>;
+  deleteDID(params: {id: string;}): Promise<void>;
+  exportDID(params: {id: string; password: string}): Promise<void>;
   getAll(): Promise<any>;
   getDIDKeyPairs(): Promise<any>;
   ensureDID(): Promise<any>;
@@ -180,8 +228,17 @@ export function createDIDProvider({wallet}): IDIDProvider {
     async createDIDock({address, name}) {
       return createDIDock({wallet, address, name});
     },
-    async createDIDKey({name}) {
-      return createDIKey({wallet, name});
+    async createDIDKey({name, derivePath, type}) {
+      return createDIDKey({wallet, name, derivePath, type});
+    },
+    async editDID(params) {
+      return editDID({wallet, ...params});
+    },
+    async deleteDID(params) {
+      return deleteDID({wallet, ...params});
+    },
+    async exportDID(params) {
+      return exportDID({wallet, ...params});
     },
     async getAll() {
       return getAll({wallet});
