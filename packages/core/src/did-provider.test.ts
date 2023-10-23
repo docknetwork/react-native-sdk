@@ -63,7 +63,6 @@ describe('DID Provider', () => {
       });
 
       const documents = await wallet.getAllDocuments();
-      console.log("docdoc", documents);
       const keyDocument = documents.find(
         item => item.type === 'Ed25519VerificationKey2018',
       );
