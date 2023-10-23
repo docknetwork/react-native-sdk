@@ -1,6 +1,6 @@
 import {IWallet} from './types';
 import {createWallet} from './wallet';
-import {createDIDock, createDIDProvider, IDIDProvider} from './did-provider';
+import {createDIDock, createDIDKey, createDIDProvider, IDIDProvider} from './did-provider';
 import {createAccountProvider} from './account-provider';
 import {didServiceRPC} from '@docknetwork/wallet-sdk-wasm/src/services/dids';
 
@@ -63,13 +63,14 @@ describe('DID Provider', () => {
       });
 
       const documents = await wallet.getAllDocuments();
+      console.log("docdoc", documents);
       const keyDocument = documents.find(
         item => item.type === 'Ed25519VerificationKey2018',
       );
       const didResolution = documents.find(
         item => item.type === 'DIDResolutionResponse',
       );
-      expect(documents.length).toBe(2);
+      expect(documents.length).toBe(4);
       expect(didResolution).toBeDefined();
       expect(keyDocument).toBeDefined();
     });
@@ -120,7 +121,7 @@ describe('DID Provider', () => {
       );
 
       expect(keyDocuments.length).toBe(1);
-      expect(didDocument.length).toBe(1);
+      expect(didDocument.length).toBe(2);
     });
     it('expect to assert parameters', async () => {
       await expect(
@@ -140,6 +141,60 @@ describe('DID Provider', () => {
       await expect(
         createDIDock({
           address: 'some-address',
+          name: 'Some name',
+          wallet: null,
+        }),
+      ).rejects.toThrowError('wallet is required');
+    });
+  });
+
+  describe('create DID Key', () => {
+    it('expect to create a DID Key', async () => {
+
+      jest.spyOn(didServiceRPC, 'generateKeyDoc').mockResolvedValueOnce({
+        id: 'did:key:abcde#key-1',
+        type: 'KeyDocument',
+      });
+
+      jest.spyOn(didServiceRPC, 'keypairToDIDKeyDocument').mockResolvedValueOnce({
+        didDocument: {
+          id: 'did:key:abcde#key-2',
+          type: 'DidDocument',
+        }
+      });
+
+      jest.spyOn(didServiceRPC, 'getDIDResolution').mockResolvedValueOnce({
+        id: new Date().getTime().toString(),
+        type: 'DIDResolutionResponse',
+        didDocument: {
+          id: 'did:key:abcde#key-2',
+          type: 'DidDocument',
+        },
+        correlation: [],
+      });
+
+      await didProvider.createDIDKey({
+        name: 'Test DID',
+      });
+
+      const keyDocuments = await wallet.getDocumentsByType('KeyDocument');
+      const didDocument = await wallet.getDocumentsByType(
+        'DIDResolutionResponse',
+      );
+
+      expect(keyDocuments.length).toBe(1);
+      expect(didDocument.length).toBe(2);
+    });
+    it('expect to assert parameters', async () => {
+
+      await expect(
+        didProvider.createDIDKey({
+          name: ''
+        }),
+      ).rejects.toThrowError('name is required');
+
+      await expect(
+        createDIDKey({
           name: 'Some name',
           wallet: null,
         }),
