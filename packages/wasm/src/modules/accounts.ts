@@ -72,11 +72,13 @@ export class Accounts {
   async fetchBalance(address) {
     assert(isAddressValid(address), 'invalid address');
     console.log('fetching balance from substrate');
-    const balance = await substrateService.getAccountBalance({address});
+    let balance;
 
-    console.log('balance found', balance.toString());
-    
     try {
+      balance = await substrateService.getAccountBalance({address});
+
+      console.log('balance found', balance.toString());
+
       console.log('updating cache');
       const currency = await this.findCorrelationByType(
         address,
