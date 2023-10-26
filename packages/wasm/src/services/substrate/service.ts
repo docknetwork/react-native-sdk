@@ -35,7 +35,10 @@ export class SubstrateService {
   async getAccountBalance(params: GetAccountBalanceParams) {
     validation.getAccountBalance(params);
 
+    console.log('ensure dock ready');
     await dockService.ensureDockReady();
+
+    console.log('ensure dock ready done');
 
     const {
       data: {free},
