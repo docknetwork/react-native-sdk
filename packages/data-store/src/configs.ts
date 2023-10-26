@@ -11,7 +11,7 @@ export const DEFAULT_CONFIGS: DataStoreConfigs = {
       id: 'mainnet',
       credentialHostnames: ['creds.dock.io'],
       configs: {
-        substrateUrl: 'wss://mainnet-node.dock.io',
+        substrateUrl: 'https://mainnet-node.dock.io/h',
         addressPrefix: 22,
       },
     },
@@ -20,7 +20,7 @@ export const DEFAULT_CONFIGS: DataStoreConfigs = {
       id: 'testnet',
       credentialHostnames: ['creds-testnet.dock.io', '***REMOVED***'],
       configs: {
-        substrateUrl: 'wss://knox-1.dock.io',
+        substrateUrl: 'https://knox-1.dock.io/h',
         addressPrefix: 21,
       },
     },

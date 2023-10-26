@@ -1,8 +1,12 @@
 import {createWallet, IWallet} from '@docknetwork/wallet-sdk-core/src/wallet';
 import {dockDocumentNetworkResolver} from '@docknetwork/wallet-sdk-core/src/network-resolver';
 import {DataStoreConfigs} from '@docknetwork/wallet-sdk-data-store/src/types';
+import { createDIDProvider, IDIDProvider } from '@docknetwork/wallet-sdk-core/src/did-provider';
+import { createMessageProvider, IMessageProvider } from '@docknetwork/wallet-sdk-core/src/message-provider';
 
 let wallet: IWallet;
+let didProvider: IDIDProvider;
+let messageProvider: IMessageProvider;
 
 export function getWallet() {
   if (!wallet) {
@@ -12,8 +16,32 @@ export function getWallet() {
   return wallet;
 }
 
+export function getMessageProvider() {
+  if (!messageProvider) {
+    throw new Error('Message provider not initialized');
+  }
+
+  return messageProvider;
+}
+
+export function getDIDProvider() {
+  if (!didProvider) {
+    throw new Error('DID provider not initialized');
+  }
+
+  return didProvider;
+}
+
 export function setWallet(_wallet: IWallet) {
   wallet = _wallet;
+}
+
+export function setDIDProvider(_didProvider: IDIDProvider) {
+  didProvider = _didProvider;
+}
+
+export function setMessageProvider(_messageProvider: IMessageProvider) {
+  messageProvider = _messageProvider;
 }
 
 export async function getOrCreateWallet(params: DataStoreConfigs = {} as any) {
@@ -34,6 +62,19 @@ export async function initializeWallet(params: DataStoreConfigs = {} as any) {
   });
 
   setWallet(_wallet);
+
+  const _didProvider = createDIDProvider({
+    wallet: _wallet,
+  });
+
+  setDIDProvider(_didProvider);
+
+  const _messageProvider = createMessageProvider({
+    wallet: _wallet,
+    didProvider: _didProvider,
+  });
+
+  setMessageProvider(_messageProvider);
 
   return _wallet;
 }
