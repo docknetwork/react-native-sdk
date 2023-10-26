@@ -31,7 +31,10 @@ export async function createDocument({
     types: json.type,
   });
 
-  const documentId = json.id || uuid();
+  if (!json.id) {
+    json.id = uuid()
+  }
+
   let networkId;
 
   if (json._networkId) {
@@ -48,7 +51,7 @@ export async function createDocument({
 
   const entity: DocumentEntity = {
     networkId,
-    id: documentId,
+    id: json.id,
     type: json.type,
     _typeRel,
     correlation: json.correlation || [],
