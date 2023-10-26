@@ -47,18 +47,30 @@ export function createMessageProvider({
       }
     },
 
-    async processDIDCommMessages() {
+    async processDIDCommMessages(limit = 1) {
       try {
         const messages = await wallet.getDocumentsByType(WalletDocumentTypes.DIDCommMessage);
         const keyPairDocs = await getKeyPairDocs(didProvider);
-        for (const { encryptedMessage } of messages) {
+        let count = 0;
+        for (const message of messages) {
+          if (count >= limit) {
+            return;
+          }
           try {
-            const decryptedMessage = await relayService.resolveDidcommMessage({ keyPairDocs, encryptedMessage });
-            wallet.eventManager.emit('didcomm-message-decrypted', decryptedMessage);
+            if (!message.encryptedMessage) {
+              await wallet.removeDocument(message.id);
+              throw new Error(`Message with payload ${JSON.stringify(message)} is invalid`);
+            }
+            const decryptedMessage = await relayService.resolveDidcommMessage({ keyPairDocs, message: message.encryptedMessage });
+            wallet.eventManager.emit('didcomm-message-decrypted', {
+              decryptedMessage,
+              messageId: message.id
+            });
             // the wallet app will call markMessageAsRead after the message is processed
           } catch(err) {
             captureException(err);
           }
+          count++;
         }
       } catch (error) {
         captureException(error);
@@ -90,12 +102,12 @@ export function createMessageProvider({
           skipMessageResolution: true,
         });
 
-        for (const { _id, encryptedMessage } of encryptedMessages) {
+        for (const message of encryptedMessages) {
           try {
             await wallet.addDocument({
-              id: _id,
+              id: message._id,
               type: WalletDocumentTypes.DIDCommMessage,
-              encryptedMessage,
+              encryptedMessage: message,
             });
           } catch(err) {
             // this message will be lost if it fails to be stored in the wallet
