@@ -72,7 +72,13 @@ export function toWalletDocument(entity: DocumentEntity): WalletDocument {
     return entity;
   }
 
-  return JSON.parse(entity.data);
+  const result = JSON.parse(entity.data);
+
+  if (!result.id) {
+    result.id = entity.id;
+  }
+
+  return result;
 }
 
 /**
