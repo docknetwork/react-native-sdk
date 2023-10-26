@@ -50,6 +50,7 @@ export async function setSubstrateNetwork(wallet: IWallet) {
     })
     .catch(err => {
       captureException(new Error('Unable to connect to substrate node'));
+      captureException(err);
       console.error(err);
       wallet.eventManager.emit(WalletEvents.networkError, err);
     });
