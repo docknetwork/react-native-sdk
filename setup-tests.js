@@ -1,8 +1,8 @@
 import '@testing-library/jest-dom';
 import {JSDOM} from 'jsdom';
 
-jest.mock('@digitalbazaar/vc-status-list', () => {
-  return {};
+jest.mock('esm', () => {
+  return (module) => module.require;
 });
 
 import {NetworkManager} from './packages/wasm/src/modules/network-manager';
