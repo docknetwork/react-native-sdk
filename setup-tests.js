@@ -1,6 +1,10 @@
 import '@testing-library/jest-dom';
 import {JSDOM} from 'jsdom';
 
+jest.mock('@digitalbazaar/vc-status-list', () => {
+  return {};
+});
+
 import {NetworkManager} from './packages/wasm/src/modules/network-manager';
 import {getStorage} from './packages/wasm/src/core/storage';
 import './packages/transactions/lib/schema';
