@@ -14,7 +14,7 @@ module.exports = {
   },
   transform: {
     '^.+\\.(ts|tsx)?$': 'ts-jest',
-    '^.+\\.(js|jsx)$': [
+    '^.+\\.(js|jsx|cjs)$': [
       'babel-jest',
       {
         configFile: require.resolve('./babel.config.js'),
@@ -39,6 +39,6 @@ module.exports = {
     '@docknetwork/wallet-sdk-data-store/lib': '@docknetwork/wallet-sdk-data-store/src'
   },
   transformIgnorePatterns: [
-    '/node_modules/(?!@polkadot|@babel|@docknetwork|@digitalbazaar)',
+    '/node_modules/(?!@polkadot|@babel|@docknetwork|@digitalbazaar|base58-universal)',
   ],
 };
