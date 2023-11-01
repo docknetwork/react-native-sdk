@@ -5,6 +5,7 @@ import {dockService} from '@docknetwork/wallet-sdk-wasm/src/services/dock';
 import {IWallet} from './types';
 import {Network} from '@docknetwork/wallet-sdk-data-store/src/types';
 import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
+import { captureException } from './helpers';
 
 function isSubstrateNetwork(network: Network) {
   return !!network.configs.substrateUrl;
@@ -48,6 +49,8 @@ export async function setSubstrateNetwork(wallet: IWallet) {
       wallet.eventManager.emit(WalletEvents.networkConnected);
     })
     .catch(err => {
+      captureException(new Error('Unable to connect to substrate node'));
+      captureException(err);
       console.error(err);
       wallet.eventManager.emit(WalletEvents.networkError, err);
     });
