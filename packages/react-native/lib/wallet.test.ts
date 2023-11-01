@@ -6,7 +6,7 @@ import {
 } from './wallet';
 
 describe('Wallet handler', () => {
-  it('expect to dispatchEvent to webview', async () => {
+  it('expect to dispatchEvent when wallet is ready for react-native usage', async () => {
     jest.spyOn(walletEventEmitter, 'on');
 
     await initializeWallet();
