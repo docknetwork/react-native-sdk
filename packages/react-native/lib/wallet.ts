@@ -1,12 +1,25 @@
+import {EventEmitter} from 'events';
 import {createWallet, IWallet} from '@docknetwork/wallet-sdk-core/src/wallet';
 import {dockDocumentNetworkResolver} from '@docknetwork/wallet-sdk-core/src/network-resolver';
 import {DataStoreConfigs} from '@docknetwork/wallet-sdk-data-store/src/types';
-import { createDIDProvider, IDIDProvider } from '@docknetwork/wallet-sdk-core/src/did-provider';
-import { createMessageProvider, IMessageProvider } from '@docknetwork/wallet-sdk-core/src/message-provider';
+import {
+  createDIDProvider,
+  IDIDProvider,
+} from '@docknetwork/wallet-sdk-core/src/did-provider';
+import {
+  createMessageProvider,
+  IMessageProvider,
+} from '@docknetwork/wallet-sdk-core/src/message-provider';
 
 let wallet: IWallet;
 let didProvider: IDIDProvider;
 let messageProvider: IMessageProvider;
+
+export const WalletEvents = {
+  walletInitialized: 'walletInitialized',
+};
+
+export const walletEventEmitter = new EventEmitter();
 
 export function getWallet() {
   if (!wallet) {
@@ -75,6 +88,8 @@ export async function initializeWallet(params: DataStoreConfigs = {} as any) {
   });
 
   setMessageProvider(_messageProvider);
+
+  walletEventEmitter.emit(WalletEvents.walletInitialized);
 
   return _wallet;
 }
