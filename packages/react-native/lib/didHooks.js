@@ -25,7 +25,7 @@ export function useDIDManagement() {
       case 'diddock':
         return didProvider.createDIDock({ address, name });
       case 'didkey':
-        return didProvider.createDidKey({ derivePath, name, type });
+        return didProvider.createDIDKey({ derivePath, name, type });
       default:
         throw Error('Invalid DID type');
     }
