@@ -154,7 +154,7 @@ export function _useWalletController() {
       return;
     }
 
-    const _refetch = debounce(refetch, 100);
+    const _refetch = debounce(refetch, 800);
 
     setStatus(wallet.status);
     setNetworkId(wallet.getNetworkId());
