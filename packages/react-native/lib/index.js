@@ -130,7 +130,7 @@ export function _useWalletController() {
     wallet.getAllDocuments().then(setDocuments);
   }, [documents, wallet, firstFetch]);
 
-  const refetch = async ({fetchBalances} = {fetchBalances: true}) => {
+  const refetch = useCallback(async ({fetchBalances} = {fetchBalances: true}) => {
       try {
         const allDocs = await wallet.query({});
         if (fetchBalances) {
@@ -147,14 +147,14 @@ export function _useWalletController() {
       } catch (err) {
         console.error(err);
       }
-    }
+  }, [wallet, setDocuments]);
 
   useEffect(() => {
     if (!wallet) {
       return;
     }
 
-    const _refetch = debounce(refetch, 800);
+    const _refetch = debounce(refetch, 100);
 
     setStatus(wallet.status);
     setNetworkId(wallet.getNetworkId());
