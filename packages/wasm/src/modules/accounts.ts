@@ -32,6 +32,7 @@ export type CreateAccountParams = {
   json: string,
   password: string,
   getIfExists: boolean,
+  hasBackup: boolean,
 };
 
 export class Accounts {
@@ -166,7 +167,7 @@ export class Accounts {
   }
 
   async create(params: CreateAccountParams): Promise<Account> {
-    let {name, json, password, type = 'sr25519', getIfExists} = params;
+    let {name, json, password, type = 'sr25519', getIfExists, hasBackup} = params;
 
     assert(!!name, 'name is required');
     assert(!!type, 'keypair type is required');
@@ -228,6 +229,7 @@ export class Accounts {
       mnemonic,
       json,
       password,
+      hasBackup,
     });
 
     documents.forEach(doc => {
