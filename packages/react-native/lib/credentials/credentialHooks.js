@@ -150,7 +150,9 @@ function isCredentialExpired(credential) {
 }
 
 function isCredentialRevoked(error) {
-  return typeof error === 'string' && error.toLowerCase().includes('revocation');
+  return (
+    typeof error === 'string' && error.toLowerCase().includes('revocation')
+  );
 }
 
 function buildStatusResponse(status, error = null) {
@@ -164,7 +166,8 @@ export let cachedCredentialStatus = {};
 
 export function useGetCredentialStatus({credential}) {
   const [status, setStatus] = useState(
-    cachedCredentialStatus[credential.id] || buildStatusResponse(CREDENTIAL_STATUS.PENDING),
+    cachedCredentialStatus[credential.id] ||
+      buildStatusResponse(CREDENTIAL_STATUS.PENDING),
   );
 
   useEffect(() => {
