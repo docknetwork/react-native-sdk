@@ -200,12 +200,12 @@ export function WalletSDKProvider({onError, customUri, children, onReady}) {
 
   const {createWallet} = controller;
 
-  const handleReady = async () => {
+  const handleReady = useCallback(async () => {
     await createWallet();
     if (onReady) {
       onReady();
     }
-  };
+  }, [onReady, createWallet]);
 
   const eventHandler: WebviewEventHandler = useMemo(
     () =>
