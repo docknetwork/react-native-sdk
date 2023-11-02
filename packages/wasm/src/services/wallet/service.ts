@@ -100,7 +100,7 @@ export class WalletService {
     return this.wallet.add(content);
   }
 
-  remove(id: sring) {
+  remove(id: string) {
     this._assertWallet();
     validation.remove(id);
     return this.wallet.remove(id);
@@ -191,6 +191,7 @@ export class WalletService {
       mnemonic,
       json,
       password,
+      hasBackup
     } = params;
 
     const keyringPair = json
@@ -233,6 +234,7 @@ export class WalletService {
       address: keyringPair.address,
       name,
       correlation: correlationDocs.map(doc => doc.id),
+      hasBackup,
     };
 
     await this.wallet.add(addressDocument);

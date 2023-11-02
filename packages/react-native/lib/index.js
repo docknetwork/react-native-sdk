@@ -130,7 +130,7 @@ export function _useWalletController() {
     wallet.getAllDocuments().then(setDocuments);
   }, [documents, wallet, firstFetch]);
 
-  const refetch = async ({fetchBalances} = {fetchBalances: true}) => {
+  const refetch = useCallback(async ({fetchBalances} = {fetchBalances: true}) => {
       try {
         const allDocs = await wallet.query({});
         if (fetchBalances) {
@@ -147,7 +147,7 @@ export function _useWalletController() {
       } catch (err) {
         console.error(err);
       }
-    }
+  }, [wallet, setDocuments]);
 
   useEffect(() => {
     if (!wallet) {
@@ -200,12 +200,12 @@ export function WalletSDKProvider({onError, customUri, children, onReady}) {
 
   const {createWallet} = controller;
 
-  const handleReady = async () => {
+  const handleReady = useCallback(async () => {
     await createWallet();
     if (onReady) {
       onReady();
     }
-  };
+  }, [onReady, createWallet]);
 
   const eventHandler: WebviewEventHandler = useMemo(
     () =>
