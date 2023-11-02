@@ -92,6 +92,7 @@ export function toV1WalletService(wallet: IWallet) {
       mnemonic?: string;
       type?: KeypairType;
       derivePath?: string;
+      hasBackup?: boolean;
     }) => {
       walletServiceConfigs.validation.createAccountDocuments(params);
 
@@ -102,6 +103,7 @@ export function toV1WalletService(wallet: IWallet) {
         mnemonic,
         json,
         password,
+        hasBackup
       } = params;
 
       const keyringJson = json
@@ -144,6 +146,7 @@ export function toV1WalletService(wallet: IWallet) {
         value: keyringJson.address,
         address: keyringJson.address,
         name,
+        hasBackup,
         correlation: correlations.map(doc => doc.id),
       });
 
