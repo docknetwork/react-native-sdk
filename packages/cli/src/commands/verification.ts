@@ -7,6 +7,11 @@ import {getWallet} from '../helpers';
 import {createVerificationController} from '@docknetwork/wallet-sdk-core/src/verification-controller';
 import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
 import clipboardy from 'clipboardy';
+import rangeProofsTemplate from '../fixtures/range-proofs-template.json';
+import rangeProofsCredential from '../fixtures/range-proofs-credential.json';
+import bbsTemplate from '../fixtures/bbs-template.json';
+import bbsCredential from '../fixtures/bbs-credential.json';
+
 const verificationCommands = new Command('verification');
 
 verificationCommands
@@ -102,28 +107,82 @@ verificationCommands
 
     const presentation = await controller.createPresentation();
 
+    clipboardy.write(JSON.stringify(presentation, null, 2));
+    console.log('Presentation generated:');
+    console.log(JSON.stringify(presentation, null, 2));
+  });
+
+verificationCommands
+  .command('test-range-proofs')
+  .action(async options => {
+    const wallet: IWallet = await getWallet();
+
+    await wallet.waitForEvent(WalletEvents.networkConnected);
+
+    const controller = createVerificationController({
+      wallet,
+    });
+
+    console.log('Starting verification flow...');
+    await controller.start({
+      template: rangeProofsTemplate,
+    });
+
+
+    let attributesToReveal = [
+      'credentialSubject.name'
+    ];
+
+    controller.selectedCredentials.set(rangeProofsCredential.id, {
+      credential: rangeProofsCredential,
+      attributesToReveal,
+    });
+
+    console.log('Generating presentation...');
+
+    const presentation = await controller.createPresentation();
+
+    clipboardy.write(JSON.stringify(presentation, null, 2));
     console.log('Presentation generated:');
     console.log(JSON.stringify(presentation, null, 2));
     console.log('Verifying presentation...');
+  });
 
-    const result = await controller.evaluatePresentation(presentation);
 
-    if (result.isValid) {
-      console.log('Verification successful!');
-    } else {
-      console.log('Verification result:');
-      console.log(JSON.stringify(result, null, 2));
-    }
 
-    try {
-      const result = await controller.submitPresentation(presentation);
-      console.log('Presentation submitted');
-      console.log('Result:');
-      console.log(JSON.stringify(result, null, 2));
-    } catch (err) {
-      console.log('Error submitting presentation');
-      console.log(err);
-    }
+verificationCommands
+  .command('test-bbs-plus')
+  .action(async options => {
+    const wallet: IWallet = await getWallet();
+
+    await wallet.waitForEvent(WalletEvents.networkConnected);
+
+    const controller = createVerificationController({
+      wallet,
+    });
+
+    console.log('Starting verification flow...');
+    await controller.start({
+      template: bbsTemplate,
+    });
+
+    let attributesToReveal = [
+      'credentialSubject.name'
+    ];
+
+    controller.selectedCredentials.set(rangeProofsCredential.id, {
+      credential: bbsCredential,
+      attributesToReveal,
+    });
+
+    console.log('Generating presentation...');
+
+    const presentation = await controller.createPresentation();
+
+    clipboardy.write(JSON.stringify(presentation, null, 2));
+    console.log('Presentation generated:');
+    console.log(JSON.stringify(presentation, null, 2));
+    console.log('Verifying presentation...');
   });
 
 verificationCommands
