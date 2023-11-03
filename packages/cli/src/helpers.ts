@@ -1,3 +1,7 @@
+import {
+  createMessageProvider,
+  IMessageProvider,
+} from './../../core/src/message-provider';
 import {createWallet, IWallet} from '@docknetwork/wallet-sdk-core/lib/wallet';
 import {
   createCredentialProvider,
@@ -12,6 +16,7 @@ import select from '@inquirer/select';
 let wallet: IWallet;
 let didProvider: IDIDProvider;
 let credentialProvider: ICredentialProvider;
+let messageProvider: IMessageProvider;
 
 export async function getWallet(): Promise<IWallet> {
   if (!wallet) {
@@ -21,12 +26,19 @@ export async function getWallet(): Promise<IWallet> {
       defaultNetwork: 'testnet',
     });
 
+    wallet.setNetwork('testnet');
+
     didProvider = createDIDProvider({wallet});
     credentialProvider = createCredentialProvider({wallet});
+    messageProvider = createMessageProvider({wallet, didProvider});
     await didProvider.ensureDID();
   }
 
   return wallet;
+}
+
+export function getMessageProvider(): IMessageProvider {
+  return messageProvider;
 }
 
 export function getDIDProvider(): IDIDProvider {
