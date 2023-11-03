@@ -164,7 +164,7 @@ class CredentialService {
 
     let idx = 0;
     for (const {attributesToReveal} of credentials) {
-      const attributesToSkip = descriptorBounds[idx].map((bound) => bound.attributeName);
+      const attributesToSkip = descriptorBounds[idx] ? descriptorBounds[idx].map((bound) => bound.attributeName) : [];
       const filteredAttributes = attributesToReveal.filter((attribute) => !attributesToSkip.includes(attribute));
 
       if (Array.isArray(filteredAttributes) && filteredAttributes.length > 0) {
