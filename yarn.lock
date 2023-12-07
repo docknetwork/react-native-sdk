@@ -1447,10 +1447,33 @@
     lzutf8 "0.6.3"
     semver "^7.5.4"
 
+"@docknetwork/crypto-wasm-ts@0.48.0":
+  version "0.48.0"
+  resolved "https://registry.yarnpkg.com/@docknetwork/crypto-wasm-ts/-/crypto-wasm-ts-0.48.0.tgz#1d63d20fbb2ae101ab5ade50ddbaaa8737aa508c"
+  integrity sha512-6YhqNPgI42vgd+nhH/Sydlc46uPAQcVOHv0alhA4VSMN+Ujv9IZ3oRG2x2zJdYf+62nC9SvnFmFA5mDGOfPYMA==
+  dependencies:
+    "@docknetwork/crypto-wasm" "0.23.0"
+    "@types/flat" "^5.0.2"
+    "@types/lodash" "^4.14.195"
+    bs58 "5.0.0"
+    flat "^5.0.2"
+    json-pointer "^0.6.2"
+    json-stringify-deterministic "^1.0.11"
+    lodash "^4.17.21"
+    lzutf8 "0.6.3"
+    semver "^7.5.4"
+
 "@docknetwork/crypto-wasm@0.22.0":
   version "0.22.0"
   resolved "https://registry.yarnpkg.com/@docknetwork/crypto-wasm/-/crypto-wasm-0.22.0.tgz#be7f42b7877a53ba328b69cdd55c390b823e53b5"
   integrity sha512-A9n+osu+TmPD/stztB+VBHaoTV8cSjur0oIVqiu9XRit2ZSIDPvdZ8dxkGWfV7EuavoVAM5OrZRDDwCzFhk+SQ==
+  dependencies:
+    buffer "^6.0.3"
+
+"@docknetwork/crypto-wasm@0.23.0":
+  version "0.23.0"
+  resolved "https://registry.yarnpkg.com/@docknetwork/crypto-wasm/-/crypto-wasm-0.23.0.tgz#5ae04db0f7990fb6fc9c7ad3f0a1cb7255518169"
+  integrity sha512-/bDSy05HkIZIZL9HDHowjCKxTDf9Cf04e1ElIY0o/q9ewbxHQ4/r8Ppv5V5bOnVkxcFG9lWQQstKXQDV86UWRw==
   dependencies:
     buffer "^6.0.3"
 
@@ -1470,18 +1493,17 @@
   resolved "https://registry.yarnpkg.com/@docknetwork/node-types/-/node-types-0.16.0.tgz#23570042c823a6320654ee2c5b8c0da5d7c43d21"
   integrity sha512-VUZB8guX9161hDIEVn/UKJEUlXjIDE6vH5flx6uDHVc0QOhBy1bq6AGLayG4ZH19dCN39ta2sKGIFq9wLO4H2A==
 
-"@docknetwork/sdk@6.6.0":
-  version "6.6.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/sdk/-/sdk-6.6.0.tgz#fd2e5e35c637b319c399247b44c67ded2f4403d4"
-  integrity sha512-wltSCS4PsdwIspyN7dfWttgF0xL1wpXsiQ2KyVpJJATd2k4oC5CqE7u+etgWB0jz5bsvViTVgCuC/e8OaFJrNA==
+"@docknetwork/sdk@6.6.0", "@docknetwork/sdk@6.8.1":
+  version "6.8.1"
+  resolved "https://registry.yarnpkg.com/@docknetwork/sdk/-/sdk-6.8.1.tgz#be421340fe3db429390d4ca19128f0787307cd6f"
+  integrity sha512-e2ODhAw6w4nBMepd1vW07jtqREcC+fUvHaoXlgxsrU+AiHES68NffMOPTtnPkLkSIDkVjnPG9ZhJWJn8cgJAQQ==
   dependencies:
     "@digitalbazaar/vc-status-list" "^4.0.0"
-    "@docknetwork/crypto-wasm-ts" "0.45.0"
+    "@docknetwork/crypto-wasm-ts" "0.48.0"
     "@docknetwork/node-types" "^0.16.0"
     "@juanelas/base64" "^1.0.5"
     "@polkadot/api" "9.7.1"
     "@transmute/json-web-signature" "^0.7.0-unstable.80"
-    axios "0.27.2"
     base64url "3.0.1"
     blake2b "2.1.4"
     bs58 "5.0.0"
@@ -1491,6 +1513,7 @@
     flat "^5.0.2"
     js-sha256 "0.9.0"
     json-canonicalize "1.0.4"
+    json-stringify-deterministic "^1.0.11"
     jsonld "^5.0.0"
     jsonld-signatures "^9.3.1"
     jsonschema "1.4.1"
@@ -10885,6 +10908,11 @@ json-stable-stringify-without-jsonify@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/json-stable-stringify-without-jsonify/-/json-stable-stringify-without-jsonify-1.0.1.tgz#9db7b59496ad3f3cfef30a75142d2d930ad72651"
   integrity sha512-Bdboy+l7tA3OGW6FjyFHWkP5LuByj1Tk33Ljyq0axyzdk9//JSi2u3fP1QSmd1KNwq6VOKYGlAu87CisVir6Pw==
+
+json-stringify-deterministic@^1.0.11:
+  version "1.0.12"
+  resolved "https://registry.yarnpkg.com/json-stringify-deterministic/-/json-stringify-deterministic-1.0.12.tgz#aaa3f907466ed01e3afd77b898d0a2b3b132820a"
+  integrity sha512-q3PN0lbUdv0pmurkBNdJH3pfFvOTL/Zp0lquqpvcjfKzt6Y0j49EPHAmVHCAS4Ceq/Y+PejWTzyiVpoY71+D6g==
 
 json-stringify-safe@^5.0.1, json-stringify-safe@~5.0.1:
   version "5.0.1"
