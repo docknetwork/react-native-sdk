@@ -10,7 +10,7 @@
   "resolutions": {
     "@polkadot/wasm-crypto": "6.3.1",
     "@polkadot/rpc-core": "9.7.1",
-    "@docknetwork/sdk": "6.6.0",
+    "@docknetwork/sdk": "6.8.1",
     "@polkadot/api": "9.7.1",
     "@polkadot/keyring": "10.1.11",
     "@polkadot/rpc-provider": "9.7.1",
