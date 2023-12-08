@@ -1,8 +1,8 @@
-import {ContextProps, WalletDocument} from '../../types';
-import {v4 as uuid} from 'uuid';
-import {DocumentEntity} from './document.entity';
-import {getOrCreateDocumentTypes, saveOptions} from './helpers';
-import {getDocumentById} from './get-document-by-id';
+import { ContextProps, WalletDocument } from '../../types';
+import { v4 as uuid } from 'uuid';
+import { DocumentEntity } from './document.entity';
+import { getOrCreateDocumentTypes, saveOptions } from './helpers';
+import { getDocumentById } from './get-document-by-id';
 
 /**
  * Create document
@@ -15,50 +15,52 @@ export async function createDocument({
 }: ContextProps & {
   json: any;
 }): Promise<WalletDocument> {
-  if (json.id) {
-    const existingDocument = await getDocumentById({
-      dataStore,
-      id: json.id,
-    });
+  return dataStore.db.transaction(async transactionalEntityManager => {
+    if (json.id) {
+      const existingDocument = await getDocumentById({
+        dataStore,
+        id: json.id,
+      });
 
-    if (existingDocument) {
-      throw new Error(`Document with id ${json.id} already exists`);
+      if (existingDocument) {
+        throw new Error(`Document with id ${json.id} already exists`);
+      }
     }
-  }
 
-  const _typeRel = await getOrCreateDocumentTypes({
-    dataStore,
-    types: json.type,
-  });
-
-  if (!json.id) {
-    json.id = uuid()
-  }
-
-  let networkId;
-
-  if (json._networkId) {
-    networkId = json._networkId;
-    delete json._networkId;
-  } else {
-    const resolution = await dataStore.resolveDocumentNetwork({
-      document: json,
+    const _typeRel = await getOrCreateDocumentTypes({
       dataStore,
+      types: json.type,
     });
 
-    networkId = resolution.networkId;
-  }
+    if (!json.id) {
+      json.id = uuid();
+    }
 
-  const entity: DocumentEntity = {
-    networkId,
-    id: json.id,
-    type: json.type,
-    _typeRel,
-    correlation: json.correlation || [],
-    data: JSON.stringify(json),
-  };
+    let networkId;
 
-  const repository = dataStore.db.getRepository(DocumentEntity);
+    if (json._networkId) {
+      networkId = json._networkId;
+      delete json._networkId;
+    } else {
+      const resolution = await dataStore.resolveDocumentNetwork({
+        document: json,
+        dataStore,
+      });
 
-  return repository.save(entity, saveOptions);
+      networkId = resolution.networkId;
+    }
+
+    const entity: DocumentEntity = {
+      networkId,
+      id: json.id,
+      type: json.type,
+      _typeRel,
+      correlation: json.correlation || [],
+      data: JSON.stringify(json),
+    };
+
+    const repository = transactionalEntityManager.getRepository(DocumentEntity);
+
+    return repository.save(entity, saveOptions);
+  });
 }
