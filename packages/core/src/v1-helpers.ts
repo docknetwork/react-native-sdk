@@ -135,9 +135,13 @@ export function toV1WalletService(wallet: IWallet) {
         });
       }
 
-      const correlationsDocs = await Promise.all(
-        correlations.map(doc => wallet.addDocument(doc)),
-      );
+      const correlationsDocs = [];
+
+      for (let i = 0; i < correlations.length; i++) {
+        const doc = correlations[i];
+        const addedDoc = await wallet.addDocument(doc);
+        correlationsDocs.push(addedDoc);
+      }
 
       const addressDocument = await wallet.addDocument({
         '@context': ['https://w3id.org/wallet/v1'],
