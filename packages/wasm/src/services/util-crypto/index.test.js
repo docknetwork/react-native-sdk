@@ -79,6 +79,7 @@ describe('UtilCryptoService', () => {
 
       it('expect to not be base64', async () => {
         expect(await service.isBase64('wrong value')).toBe(false);
+        expect(await service.isBase64('Test')).toBe(false);
       });
     });
 
