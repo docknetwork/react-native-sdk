@@ -7,7 +7,6 @@ import {
   keyExtractSuri,
   mnemonicGenerate,
   mnemonicValidate,
-  isBase64,
 } from '@polkadot/util-crypto';
 import assert from 'assert';
 import {validation} from './configs';
@@ -35,7 +34,13 @@ export class UtilCryptoService {
   }
 
   isBase64(value) {
-    return isBase64(value);
+    if (typeof value !== 'string') {
+      return false;
+    }
+
+    const decoded1 = Buffer.from(value, 'base64').toString('utf8');
+    const encoded2 = Buffer.from(decoded1, 'binary').toString('base64');
+    return value === encoded2;
   }
 
   mnemonicValidate(phrase) {
