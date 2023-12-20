@@ -183,15 +183,20 @@ export function useGetCredentialStatus({ credential }) {
   }, [status]);
 }
 
+export async function getIssuerEcosystems(issuer, isTestMode = false) {
+  const API = isTestMode ? "https://api-testnet.dock.io" : "https://api.dock.io";
+  //TODO: Temporary implementation - Replace API fetch with sdk when sdk implementation
+  const response = axios.get(`${API}/dids/${issuer.id}/ecosystems`);
+  return (await response).data?.list
+}
+
 export function useEcosystems({ issuer }) {
   const { testMode } = useWallet();
   const [ecosystems, setEcosystems] = useState([]);
 
-  const API = testMode ? "https://api-testnet.dock.io" : "https://api.dock.io";
   useEffect(() => {
-    //TODO: Temporary implementation - Replace API fetch with sdk when sdk implementation
-    axios.get(`${API}/dids/${issuer.id}/ecosystems`).then(result => {
-      setEcosystems(result.data?.list || []);
+    getIssuerEcosystems(issuer, testMode).then(ecosystems => {
+      setEcosystems(ecosystems || []);
     })
   }, [issuer.id]);
 
