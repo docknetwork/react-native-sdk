@@ -193,11 +193,11 @@ export async function createWallet(
     wallet: v1Wallet,
   });
 
-  eventEmitter.on(WalletEvents.networkUpdated, () => {
+  [WalletEvents.networkUpdated, WalletEvents.walletDeleted].forEach((event) => eventEmitter.on(event, () => {
     ensureDID({
       wallet: v1Wallet,
     });
-  });
+  }));
 
   return v1Wallet;
 }
