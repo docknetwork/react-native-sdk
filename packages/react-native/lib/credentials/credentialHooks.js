@@ -1,8 +1,8 @@
-import { useMemo, useCallback, useState, useEffect } from 'react';
-import { useWallet } from '../index';
+import {useMemo, useCallback, useState, useEffect} from 'react';
+import {useWallet} from '../index';
 import assert from 'assert';
-import { credentialServiceRPC } from '@docknetwork/wallet-sdk-wasm/src/services/credential';
-import { dockService } from '@docknetwork/wallet-sdk-wasm/src/services/dock';
+import {credentialServiceRPC} from '@docknetwork/wallet-sdk-wasm/src/services/credential';
+import {dockService} from '@docknetwork/wallet-sdk-wasm/src/services/dock';
 import axios from 'axios';
 
 export const CREDENTIAL_STATUS = {
@@ -183,17 +183,29 @@ export function useGetCredentialStatus({ credential }) {
   }, [status]);
 }
 
-export function useEcosystems({ issuer }) {
-  const { testMode } = useWallet();
+export function useEcosystems({issuer, credentialId}) {
+  const {testMode} = useWallet();
   const [ecosystems, setEcosystems] = useState([]);
 
-  const API = testMode ? "https://api-testnet.dock.io" : "https://api.dock.io";
   useEffect(() => {
-    //TODO: Temporary implementation - Replace API fetch with sdk when sdk implementation
-    axios.get(`${API}/dids/${issuer.id}/ecosystems`).then(result => {
-      setEcosystems(result.data?.list || []);
-    })
-  }, [issuer.id]);
+    let apiUrl = testMode
+      ? 'https://api-testnet.dock.io'
+      : 'https://api.dock.io';
 
-  return { ecosystems };
+    if (credentialId && credentialId.indexOf('.dock.io')) {
+      const origin = /^(https?:\/\/[^\/]+)/.exec(credentialId);
+      if (origin && origin[0]) {
+        apiUrl = origin[0].replace('creds-', 'api-');
+      }
+    }
+
+    console.log('apiUrl', apiUrl);
+
+    //TODO: Temporary implementation - Replace API fetch with sdk when sdk implementation
+    axios.get(`${apiUrl}/dids/${issuer}/ecosystems`).then(result => {
+      setEcosystems(result.data?.list || []);
+    });
+  }, [issuer, credentialId, testMode]);
+
+  return {ecosystems};
 }
