@@ -199,8 +199,6 @@ export function useEcosystems({issuer, credentialId}) {
       }
     }
 
-    console.log('apiUrl', apiUrl);
-
     //TODO: Temporary implementation - Replace API fetch with sdk when sdk implementation
     axios.get(`${apiUrl}/dids/${issuer}/ecosystems`).then(result => {
       setEcosystems(result.data?.list || []);
