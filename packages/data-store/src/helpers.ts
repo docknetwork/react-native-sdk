@@ -7,6 +7,8 @@ import {DocumentEntity} from './entities/document/document.entity';
 import {DocumentTypeEntity} from './entities/document-type.entity';
 import {WalletEntity} from './entities/wallet.entity';
 import typeOrmMigrations from './migrations';
+import { LogEntity } from './entities/log.entity';
+import { TransactionEntity } from './entities/transaction.entity';
 
 export function documentHasType(document: any, type: string) {
   if (Array.isArray(document.type)) {
