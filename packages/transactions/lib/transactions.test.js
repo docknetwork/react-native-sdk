@@ -1,5 +1,5 @@
+import {getLocalStorage} from '@docknetwork/wallet-sdk-data-store/src';
 import {TransactionStatus, Transactions} from './transactions';
-import {getRealm, initRealm} from '@docknetwork/wallet-sdk-wasm/src/core/realm';
 
 const initMockTransactions = () => {
   const today = new Date();
@@ -122,15 +122,8 @@ const initMockTransactions = () => {
 
 describe('TransactionsModule', () => {
   describe('Transactions history', () => {
-    let realm;
     beforeAll(async () => {
-      await initRealm();
-      realm = getRealm();
-      await realm.write(() => {
-        for (const tx of initMockTransactions()) {
-          realm.create('Transaction', tx, 'modified');
-        }
-      });
+      getLocalStorage().setItem('transactions', JSON.stringify(initMockTransactions()));
     });
 
     it('expect to filter only transactions for the given address', async () => {
