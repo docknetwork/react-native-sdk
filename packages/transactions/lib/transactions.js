@@ -1,4 +1,3 @@
-import './schema';
 import assert from 'assert';
 import {DOCK_TOKEN_UNIT} from '@docknetwork/wallet-sdk-wasm/src/core/format-utils';
 import BigNumber from 'bignumber.js';
@@ -6,7 +5,6 @@ import {Accounts} from '@docknetwork/wallet-sdk-wasm/src/modules/accounts';
 import {Account} from '@docknetwork/wallet-sdk-wasm/src/modules/account';
 import {substrateService} from '@docknetwork/wallet-sdk-wasm/src/services/substrate';
 import {NetworkManager} from '@docknetwork/wallet-sdk-wasm/src/modules/network-manager';
-import {getRealm} from '@docknetwork/wallet-sdk-wasm/src/core/realm';
 import {getRpcEventEmitter} from '@docknetwork/wallet-sdk-wasm/src/events';
 import {TransactionDetails} from './transaction';
 import {fetchTransactions} from '@docknetwork/wallet-sdk-wasm/src/core/subscan';
@@ -15,6 +13,7 @@ import {
   isNumberValid,
 } from '@docknetwork/wallet-sdk-wasm/src/core/validation';
 import {Wallet} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
+import { getLocalStorage } from '@docknetwork/wallet-sdk-data-store/src';
 
 export const TransactionStatus = {
   InProgress: 'pending',
@@ -79,13 +78,9 @@ export class AccountTransactions {
   }
 
   async getTransactions(): Promise<TransactionDetails[]> {
-    return getRealm()
-      .objects('Transaction')
-      .filtered(
-        'fromAddress = $0 or recipientAddress = $0',
-        this.account.address,
-      )
-      .toJSON();
+    const items = await getAllTransactions();
+
+    return items.filter(item => item.fromAddress === this.account.address || item.recipientAddress === this.account.address);
   }
 }
 
@@ -93,6 +88,41 @@ export const TransactionEvents = {
   added: 'transaction-added',
   updated: 'transaction-updated',
 };
+
+
+async function getAllTransactions() {
+  try {
+    const data = await getLocalStorage().getItem('transactions');
+    return JSON.parse(data);
+  } catch (err) {
+    return [];
+  }
+}
+
+async function addTransaction(transaction) {
+  try {
+    const data = await getAllTransactions();
+    data.push(transaction);
+    await getLocalStorage().setItem('transactions', JSON.stringify(data));
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function upsertTransaction(transaction) {
+  try {
+    const data = await getAllTransactions();
+    const index = data.findIndex(item => item.id === transaction.id);
+    if (index > -1) {
+      data[index] = transaction;
+    } else {
+      data.push(transaction);
+    }
+    await getLocalStorage().setItem('transactions', JSON.stringify(data));
+  } catch (err) {
+    console.error(err);
+  }
+}
 
 /** Transactions */
 export class Transactions {
@@ -129,23 +159,21 @@ export class Transactions {
   getByHash(hash): Promise<TransactionDetails> {
     assert(!!hash, 'hash is required');
 
-    return getRealm()
+    return getLocalStorage()
       .objects('Transaction')
       .filtered('hash = $0', hash)
       .toJSON()[0];
   }
 
-  getByAccount(address): Promise<TransactionDetails> {
+  async getByAccount(address): Promise<TransactionDetails> {
     assert(isAddressValid(address), 'invalid account address');
+    const items = await getAllTransactions()
 
-    return getRealm()
-      .objects('Transaction')
-      .filtered('fromAddress = $0 or recipientAddress = $0', address)
-      .toJSON();
+    return items.filter(item => item.fromAddress === address || item.recipientAddress === address);
   }
 
   getAll(): Promise<TransactionDetails> {
-    return getRealm().objects('Transaction').toJSON();
+    return getAllTransactions();
   }
 
   /**
@@ -162,8 +190,8 @@ export class Transactions {
       return;
     }
 
-    const realm = getRealm();
-    const dbTransactions = realm.objects('Transaction');
+
+    const dbTransactions = await getAllTransactions();
 
     const handleTransaction = tx => {
       if (tx.from !== address && tx.to !== address) {
@@ -183,9 +211,7 @@ export class Transactions {
         status: 'complete',
         date: new Date(parseInt(tx.block_timestamp + '000', 10)),
       };
-      realm.write(() => {
-        realm.create('Transaction', newTx, 'modified');
-      });
+      addTransaction(newTx);
     };
     let data;
     let page = 0;
@@ -210,18 +236,11 @@ export class Transactions {
    * @returns transactions
    */
   async loadTransactions(address: string) {
-    const realm = getRealm();
+    const items = await getAllTransactions();
 
-    return realm
-      .objects('Transaction')
-      .filtered(
-        `(status == "${TransactionStatus.Complete}" AND hash !="") OR (status !="${TransactionStatus.Complete}")`,
-      )
-      .filtered(
-        `fromAddress == "${address}" OR recipientAddress == "${address}"`,
-      )
-      .sorted('date', true)
-      .toJSON();
+    return items.filter(item => {
+      return item.fromAddress === address || item.recipientAddress === address
+    });
   }
 
   /**
@@ -232,11 +251,7 @@ export class Transactions {
   updateTransaction(transaction) {
     assert(!!transaction, 'transaction is required');
 
-    const realm = getRealm();
-
-    realm.write(() => {
-      realm.create('Transaction', transaction, 'modified');
-    });
+    return upsertTransaction(transaction);
   }
 
   /**
@@ -287,7 +302,6 @@ export class Transactions {
       keyPair,
     });
 
-    const realm = getRealm();
     const emitter = getRpcEventEmitter();
 
     const transaction = {
@@ -301,34 +315,20 @@ export class Transactions {
       network: NetworkManager.getInstance().networkId,
     };
 
-    realm.write(() => {
-      realm.create('Transaction', transaction, 'modified');
-    });
+    await upsertTransaction(transaction);
 
     emitter.on(`${hash}-complete`, () => {
-      realm.write(() => {
-        realm.create(
-          'Transaction',
-          {
-            ...transaction,
-            status: TransactionStatus.Complete,
-          },
-          'modified',
-        );
-      });
+      upsertTransaction({
+        ...transaction,
+        status: TransactionStatus.Complete,
+      })
     });
 
     emitter.on(`${hash}-failed`, error => {
-      realm.write(() => {
-        realm.create(
-          'Transaction',
-          {
-            ...transaction,
-            status: TransactionStatus.Failed,
-            error,
-          },
-          'modified',
-        );
+      upsertTransaction({
+        ...transaction,
+        status: TransactionStatus.Failed,
+        error,
       });
     });
 
