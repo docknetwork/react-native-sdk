@@ -183,27 +183,30 @@ export function useGetCredentialStatus({ credential }) {
   }, [status]);
 }
 
-export function useEcosystems({issuer, credentialId}) {
-  const {testMode} = useWallet();
+export async function getIssuerEcosystems(issuer, credentialId ) {
+
+  let apiUrl;
+
+  if (credentialId && credentialId.indexOf('.dock.io')) {
+    const origin = /^(https?:\/\/[^\/]+)/.exec(credentialId);
+    if (origin && origin[0]) {
+      apiUrl = origin[0].replace('creds-', 'api-');
+    }
+  }
+
+  //TODO: Temporary implementation - Replace API fetch with sdk when sdk implementation
+  const response = axios.get(`${apiUrl}/dids/${issuer}/ecosystems`)
+  return (await response).data?.list
+}
+
+export function useEcosystems({ issuer, credentialId }) {
   const [ecosystems, setEcosystems] = useState([]);
 
   useEffect(() => {
-    let apiUrl = testMode
-      ? 'https://api-testnet.dock.io'
-      : 'https://api.dock.io';
+    getIssuerEcosystems(issuer, credentialId).then(result => {
+      setEcosystems(result || []);
+    })
+  }, [issuer, credentialId]);
 
-    if (credentialId && credentialId.indexOf('.dock.io')) {
-      const origin = /^(https?:\/\/[^\/]+)/.exec(credentialId);
-      if (origin && origin[0]) {
-        apiUrl = origin[0].replace('creds-', 'api-');
-      }
-    }
-
-    //TODO: Temporary implementation - Replace API fetch with sdk when sdk implementation
-    axios.get(`${apiUrl}/dids/${issuer}/ecosystems`).then(result => {
-      setEcosystems(result.data?.list || []);
-    });
-  }, [issuer, credentialId, testMode]);
-
-  return {ecosystems};
+  return { ecosystems };
 }
