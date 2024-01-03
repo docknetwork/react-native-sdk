@@ -7,16 +7,8 @@ jest.mock('esm', () => {
 
 import {NetworkManager} from './packages/wasm/src/modules/network-manager';
 import {getStorage} from './packages/wasm/src/core/storage';
-import './packages/transactions/lib/schema';
-import Realm from 'realm';
-import {
-  initRealm,
-  setRealmInstance,
-} from '@docknetwork/wallet-sdk-wasm/src/core/realm';
 import {mockDockService} from '@docknetwork/wallet-sdk-wasm/src/services/test-utils';
 
-setRealmInstance(Realm);
-initRealm();
 NetworkManager.getInstance().setNetworkId('testnet');
 
 mockDockService();
