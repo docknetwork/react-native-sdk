@@ -6,6 +6,10 @@ import {logger} from './logger';
 import {DataSource} from './typeorm';
 import assert from 'assert';
 import {getWallet, updateWallet} from './entities/wallet.entity';
+import { getV1LocalStorage } from './migration/migration1/v1-data-store';
+
+
+export const getLocalStorage = getV1LocalStorage;
 
 export async function updateNetwork({
   dataStore,
