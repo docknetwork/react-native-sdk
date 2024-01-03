@@ -1,7 +1,6 @@
 // @ts-nocheck
 import assert from 'assert';
 import {v4 as uuid} from 'uuid';
-import {clearCacheData, getRealm} from '../core/realm';
 import {getStorage} from '../core/storage';
 import {dockService} from '../services/dock';
 import {keyringService} from '../services/keyring';
@@ -170,7 +169,6 @@ class Wallet {
    * Close wallet
    */
   async close() {
-    getRealm().close();
     await dockService.disconnect();
     this.setStatus('closed');
   }
@@ -187,7 +185,8 @@ class Wallet {
    */
   async deleteWallet() {
     this.eventManager.emit(WalletEvents.walletDeleted);
-    clearCacheData();
+    await getStorage().removeItem('logs');
+    await getStorage().removeItem('transactions');
     await getStorage().removeItem(this.walletId);
     await walletService.create({
       walletId: this.walletId,
