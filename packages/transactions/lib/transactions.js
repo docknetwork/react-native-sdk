@@ -124,6 +124,19 @@ async function upsertTransaction(transaction) {
   }
 }
 
+async function removeTransaction(transactionId) {
+  try {
+    const data = await getAllTransactions();
+    const index = data.findIndex(item => item.id === transactionId);
+    if (index > -1) {
+      data.splice(index, 1);
+    }
+    await getLocalStorage().setItem('transactions', JSON.stringify(data));
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 /** Transactions */
 export class Transactions {
   constructor(accounts: Accounts) {
@@ -154,6 +167,10 @@ export class Transactions {
     }
 
     return AccountTransactions.create(account);
+  }
+
+  remove(transactionId) {
+    return removeTransaction(transactionId);
   }
 
   getByHash(hash): Promise<TransactionDetails> {
