@@ -41,10 +41,6 @@ export async function createDataStore(
     options.defaultNetwork = options.networks[0].id;
   }
 
-  logger.debug(
-    `Initializing data store with configs: ${JSON.stringify(options)}`,
-  );
-
   const dataSource: DataSource = await initializeTypeORM(options);
   const dataStore: DataStore = {
     db: dataSource,
