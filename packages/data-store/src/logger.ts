@@ -13,8 +13,6 @@ const ConsoleTransport = {
   },
 };
 
-// const TypeORMTransport = {};
-
 export let logger = ConsoleTransport;
 
 export function setLogger(impl: any) {
