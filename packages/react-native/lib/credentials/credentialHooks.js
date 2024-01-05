@@ -141,7 +141,11 @@ export async function getCredentialStatus(credential) {
     return buildStatusResponse(CREDENTIAL_STATUS.VERIFIED);
   }
 
-  return buildStatusResponse(CREDENTIAL_STATUS.INVALID, error);
+  if(error?.name === "VerificationError") {
+    return buildStatusResponse(CREDENTIAL_STATUS.INVALID, error);
+  }
+
+  return buildStatusResponse(CREDENTIAL_STATUS.PENDING, error);
 }
 
 function isCredentialExpired(credential) {
