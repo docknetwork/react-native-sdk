@@ -27,11 +27,14 @@ export async function migrate({dataStore}: ContextProps) {
   // dataStore.version = 'v1';
   // If no configs exist, create a new one
   if (!existingConfigs) {
+    logger.debug('Wallet not found in the database, creating a new wallet...');
     const isV1DataStore = await isRunningOnV1DataStore({dataStore});
+    logger.debug(`Is v1 data store: ${isV1DataStore}`);
     dataStore.version = isV1DataStore ? 'v1' : CURRENT_DATA_STORE_VERSION;
     await createWallet({
       dataStore,
     });
+    logger.debug('universal wallet created');
   }
 
   for (const migrate of migrations) {

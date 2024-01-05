@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid';
 import { DocumentEntity } from './document.entity';
 import { getOrCreateDocumentTypes, saveOptions } from './helpers';
 import { getDocumentById } from './get-document-by-id';
+import { logger } from '../../logger';
 
 /**
  * Create document
@@ -15,6 +16,8 @@ export async function createDocument({
 }: ContextProps & {
   json: any;
 }): Promise<WalletDocument> {
+  logger.debug(`Creating document with id ${json.id}...`);
+
   return dataStore.db.transaction(async transactionalEntityManager => {
     if (json.id) {
       const existingDocument = await getDocumentById({
@@ -23,6 +26,7 @@ export async function createDocument({
       });
 
       if (existingDocument) {
+        logger.debug('Document already exists');
         throw new Error(`Document with id ${json.id} already exists`);
       }
     }
@@ -61,6 +65,10 @@ export async function createDocument({
 
     const repository = transactionalEntityManager.getRepository(DocumentEntity);
 
-    return repository.save(entity, saveOptions);
+    const result = await repository.save(entity, saveOptions);
+
+    logger.debug(`Document added to the wallet`);
+
+    return result;
   });
 }
