@@ -1,6 +1,7 @@
 import assert from 'assert';
 import {ContextProps} from '../../types';
 import {DocumentEntity} from './document.entity';
+import { logger } from '../../logger';
 
 /**
  * Remove document
@@ -13,6 +14,7 @@ export async function removeDocument({
 }: ContextProps & {id: string}): Promise<void> {
   assert(!!id, 'Document id is required');
 
+  logger.debug(`Removing document with id ${id}`);
   return dataStore.db.transaction(async transactionalEntityManager => {
     const repository = transactionalEntityManager.getRepository(DocumentEntity);
     await repository.delete({
