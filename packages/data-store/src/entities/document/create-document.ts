@@ -26,7 +26,7 @@ export async function createDocument({
       });
 
       if (existingDocument) {
-        logger.debug('Document already exists');
+        logger.debug(`Document with id ${json.id} already exists`);
         throw new Error(`Document with id ${json.id} already exists`);
       }
     }
