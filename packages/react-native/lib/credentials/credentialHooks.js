@@ -56,7 +56,7 @@ export function waitFor(condition, timeout) {
 
 async function getCredentialValidityStatus(credential) {
   try {
-    await waitFor(() => dockService.isApiConnected(), 8000);
+    await waitFor(() => dockService.isApiConnected(), 90000);
     const result = await credentialServiceRPC.verifyCredential({ credential });
     return result;
   } catch (error) {
@@ -141,7 +141,11 @@ export async function getCredentialStatus(credential) {
     return buildStatusResponse(CREDENTIAL_STATUS.VERIFIED);
   }
 
-  return buildStatusResponse(CREDENTIAL_STATUS.INVALID, error);
+  if(error?.name === "VerificationError") {
+    return buildStatusResponse(CREDENTIAL_STATUS.INVALID, error);
+  }
+
+  return buildStatusResponse(CREDENTIAL_STATUS.PENDING, error);
 }
 
 function isCredentialExpired(credential) {
