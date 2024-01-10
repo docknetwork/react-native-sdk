@@ -24,27 +24,30 @@ export async function getOrCreateDocumentTypes({
     types = [types];
   }
 
-  const typeRepository = dataStore.db.getRepository(DocumentTypeEntity);
-  const typeEntityList = [];
-  for (const type of types) {
-    let typeEntity = await typeRepository.findOne({
-      where: {
-        id: type,
-      },
-    });
+  return dataStore.db.transaction(async transactionalEntityManager => {
+    const typeRepository = transactionalEntityManager.getRepository(DocumentTypeEntity);
+    const typeEntityList = [];
 
-    if (!typeEntity) {
-      typeEntity = typeRepository.create({
-        id: type,
+    for (const type of types) {
+      let typeEntity = await typeRepository.findOne({
+        where: {
+          id: type,
+        },
       });
 
-      await typeRepository.save(typeEntity);
+      if (!typeEntity) {
+        typeEntity = typeRepository.create({
+          id: type,
+        });
+
+        await typeRepository.save(typeEntity);
+      }
+
+      typeEntityList.push(typeEntity);
     }
 
-    typeEntityList.push(typeEntity);
-  }
-
-  return typeEntityList;
+    return typeEntityList;
+  });
 }
 
 export async function findDocumentEntitiesById({

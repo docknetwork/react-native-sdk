@@ -13,9 +13,11 @@ const ConsoleTransport = {
   },
 };
 
-// const TypeORMTransport = {};
+export let logger = ConsoleTransport;
 
-export const logger = ConsoleTransport;
+export function setLogger(impl: any) {
+  logger = impl;
+}
 
 export const createLogger = (prefix: string) => {
   return {

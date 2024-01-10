@@ -6,6 +6,7 @@ import {
   TableForeignKey,
   TableIndex,
 } from 'typeorm';
+import { logger } from '../logger';
 
 export class Bootstrap1691498362273 implements MigrationInterface {
   name = 'Bootstrap1691498362273';
@@ -14,11 +15,11 @@ export class Bootstrap1691498362273 implements MigrationInterface {
     const hasNetworkEntityTable = await queryRunner.hasTable('network_entity');
 
     if (hasNetworkEntityTable) {
-      console.log('Table already bootstrapped');
+      logger.debug('Table already bootstrapped');
       return;
     }
 
-    console.log('Running table bootstrap migration');
+    logger.debug('Running table bootstrap migration');
 
     await queryRunner.createTable(
       new Table({
@@ -111,9 +112,12 @@ export class Bootstrap1691498362273 implements MigrationInterface {
         columnNames: ['documentTypeEntityId'],
       }),
     );
+
+    logger.debug('Table bootstrap migration completed');
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    logger.debug('Running table bootstrap migration revert');
     await queryRunner.dropTable(
       'document_entity__type_rel_document_type_entity',
     );
@@ -121,5 +125,6 @@ export class Bootstrap1691498362273 implements MigrationInterface {
     await queryRunner.dropTable('document_entity');
     await queryRunner.dropTable('document_type_entity');
     await queryRunner.dropTable('network_entity');
+    logger.debug('Revert completed');
   }
 }
