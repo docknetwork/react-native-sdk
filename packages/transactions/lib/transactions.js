@@ -93,7 +93,7 @@ export const TransactionEvents = {
 async function getAllTransactions() {
   try {
     const data = await getLocalStorage().getItem('transactions');
-    return JSON.parse(data);
+    return JSON.parse(data) || [];
   } catch (err) {
     return [];
   }
@@ -207,8 +207,11 @@ export class Transactions {
       return;
     }
 
+    let dbTransactions = await getAllTransactions();
 
-    const dbTransactions = await getAllTransactions();
+    if (!dbTransactions) {
+      dbTransactions = [];
+    }
 
     const handleTransaction = tx => {
       if (tx.from !== address && tx.to !== address) {
