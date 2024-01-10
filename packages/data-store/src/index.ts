@@ -6,6 +6,11 @@ import {logger} from './logger';
 import {DataSource} from './typeorm';
 import assert from 'assert';
 import {getWallet, updateWallet} from './entities/wallet.entity';
+import { getV1LocalStorage } from './migration/migration1/v1-data-store';
+import { getAllDocuments } from './entities/document';
+
+
+export const getLocalStorage = getV1LocalStorage;
 
 export async function updateNetwork({
   dataStore,
@@ -36,10 +41,6 @@ export async function createDataStore(
     options.defaultNetwork = options.networks[0].id;
   }
 
-  logger.debug(
-    `Initializing data store with configs: ${JSON.stringify(options)}`,
-  );
-
   const dataSource: DataSource = await initializeTypeORM(options);
   const dataStore: DataStore = {
     db: dataSource,
@@ -51,9 +52,12 @@ export async function createDataStore(
     networks: options.networks,
     resolveDocumentNetwork: options.documentNetworkResolver,
     setNetwork: (networkId: string) => {
+      logger.debug(`Setting network to ${networkId}`);
       return updateNetwork({dataStore, networkId});
     },
   };
+
+  logger.debug('Data store initialized');
 
   await migrate({dataStore});
 
@@ -63,7 +67,9 @@ export async function createDataStore(
     item => item.id === wallet.networkId,
   );
 
-  console.log('current saved wallet on db', wallet);
+  getAllDocuments({dataStore}).then(documents => {
+    logger.debug(`Wallet loaded with ${documents.length} documents`);
+  });
 
   return dataStore;
 }
