@@ -26,7 +26,7 @@ describe('MessageProvider', () => {
     relayService = {
       sendMessage: jest.fn(),
       getMessages: jest.fn().mockResolvedValue(didCommMessages),
-      resolveDidcommMessage: jest.fn().mockImplementation(({ encryptedMessage }) => encryptedMessage),
+      resolveDidcommMessage: jest.fn().mockImplementation(({ message }) => message),
     };
 
     wallet = await createWallet({
@@ -35,6 +35,7 @@ describe('MessageProvider', () => {
     didProvider = createDIDProvider({
       wallet,
     });
+    didProvider.getDIDKeyPairs = jest.fn().mockResolvedValue([{controller: "someDid"}])
     messageProvider = createMessageProvider({
       wallet,
       didProvider,
@@ -59,7 +60,7 @@ describe('MessageProvider', () => {
     await messageProvider.processDIDCommMessages();
 
     expect(wallet.eventManager.emit).toHaveBeenCalledWith('didcomm-messages-received', didCommMessages);
-    expect(wallet.eventManager.emit).toHaveBeenCalledWith('didcomm-message-decrypted', didCommMessages[0]);
+    expect(wallet.eventManager.emit).toHaveBeenCalledWith('didcomm-message-decrypted', {"decryptedMessage": didCommMessages[0], "messageId": didCommMessages[0]._id});
   });
 
 
@@ -81,15 +82,34 @@ describe('MessageProvider', () => {
     ).rejects.toThrow('Failed to send message: Sending failed');
   });
 
-  it('should handle errors when processing DIDComm messages', async () => {
-    relayService.resolveDidcommMessage.mockRejectedValue(new Error('Decryption failed'));
+  // it('should handle errors when processing DIDComm messages', async () => {
+  //   relayService.resolveDidcommMessage.mockRejectedValue(new Error('Decryption failed'));
     
-    await expect(messageProvider.processDIDCommMessages()).rejects.toThrow('Failed to process DIDComm messages: Decryption failed');
+  //   await expect(messageProvider.processDIDCommMessages()).rejects.toThrow('Failed to process DIDComm messages: Decryption failed');
+  // });
+
+  it('should skip did that fail lookup when processing DIDComm messages', async () => {
+    jest.spyOn(wallet.eventManager, 'emit').mockReset();
+    const messageProvider2 = createMessageProvider({
+      wallet,
+      didProvider,
+      relayService: {
+        ...relayService,
+        resolveDidcommMessage: jest.fn().mockRejectedValueOnce(new Error('A DID document lookup was successful, but the DID in question does not exist. This is different from a network error.')).mockImplementation(({ message }) => message),
+      },
+    });
+
+    await messageProvider2.fetchMessages()
+    await messageProvider2.processDIDCommMessages();
+
+    expect(wallet.eventManager.emit).toHaveBeenCalledWith('didcomm-messages-received', didCommMessages);
+    expect(wallet.eventManager.emit).toHaveBeenCalledWith('didcomm-message-decrypted', {"decryptedMessage": didCommMessages[1], "messageId": didCommMessages[1]._id});
   });
 
   it('should handle errors when marking messages as read', async () => {
+    await messageProvider.fetchMessages();
     wallet.removeDocument = jest.fn().mockRejectedValue(new Error('Removal failed'));
     
-    await expect(messageProvider.markMessageAsRead('someId')).rejects.toThrow('Failed to mark message as read: Removal failed');
+    await expect(messageProvider.markMessageAsRead('651e965410fc3fcfffdd17f1')).rejects.toThrow('Failed to mark message as read: Removal failed');
   });
 });

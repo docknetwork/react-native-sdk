@@ -3,6 +3,7 @@ import {useWallet} from '../index';
 import assert from 'assert';
 import {credentialServiceRPC} from '@docknetwork/wallet-sdk-wasm/src/services/credential';
 import {dockService} from '@docknetwork/wallet-sdk-wasm/src/services/dock';
+import axios from 'axios';
 
 export const CREDENTIAL_STATUS = {
   INVALID: 'invalid',
@@ -55,8 +56,8 @@ export function waitFor(condition, timeout) {
 
 async function getCredentialValidityStatus(credential) {
   try {
-    await waitFor(() => dockService.isApiConnected(), 8000);
-    const result = await credentialServiceRPC.verifyCredential({credential});
+    await waitFor(() => dockService.isApiConnected(), 90000);
+    const result = await credentialServiceRPC.verifyCredential({ credential });
     return result;
   } catch (error) {
     return {
@@ -67,7 +68,7 @@ async function getCredentialValidityStatus(credential) {
 }
 
 export function useCredentialUtils() {
-  const {documents, wallet} = useWallet();
+  const { documents, wallet } = useWallet();
 
   const credentials = useMemo(() => {
     if (Array.isArray(documents)) {
@@ -130,7 +131,7 @@ export async function getCredentialStatus(credential) {
     return buildStatusResponse(CREDENTIAL_STATUS.EXPIRED);
   }
 
-  const {verified, error} = await getCredentialValidityStatus(credential);
+  const { verified, error } = await getCredentialValidityStatus(credential);
 
   if (isCredentialRevoked(error)) {
     return buildStatusResponse(CREDENTIAL_STATUS.REVOKED, error);
@@ -140,7 +141,11 @@ export async function getCredentialStatus(credential) {
     return buildStatusResponse(CREDENTIAL_STATUS.VERIFIED);
   }
 
-  return buildStatusResponse(CREDENTIAL_STATUS.INVALID, error);
+  if(error?.name === "VerificationError") {
+    return buildStatusResponse(CREDENTIAL_STATUS.INVALID, error);
+  }
+
+  return buildStatusResponse(CREDENTIAL_STATUS.PENDING, error);
 }
 
 function isCredentialExpired(credential) {
@@ -164,10 +169,10 @@ function buildStatusResponse(status, error = null) {
 
 export let cachedCredentialStatus = {};
 
-export function useGetCredentialStatus({credential}) {
+export function useGetCredentialStatus({ credential }) {
   const [status, setStatus] = useState(
     cachedCredentialStatus[credential.id] ||
-      buildStatusResponse(CREDENTIAL_STATUS.PENDING),
+    buildStatusResponse(CREDENTIAL_STATUS.PENDING),
   );
 
   useEffect(() => {
@@ -180,4 +185,32 @@ export function useGetCredentialStatus({credential}) {
   return useMemo(() => {
     return status;
   }, [status]);
+}
+
+export async function getIssuerEcosystems(issuer, credentialId ) {
+
+  let apiUrl;
+
+  if (credentialId && credentialId.indexOf('.dock.io')) {
+    const origin = /^(https?:\/\/[^\/]+)/.exec(credentialId);
+    if (origin && origin[0]) {
+      apiUrl = origin[0].replace('creds-', 'api-');
+    }
+  }
+
+  //TODO: Temporary implementation - Replace API fetch with sdk when sdk implementation
+  const response = axios.get(`${apiUrl}/dids/${issuer}/ecosystems`)
+  return (await response).data?.list
+}
+
+export function useEcosystems({ issuer, credentialId }) {
+  const [ecosystems, setEcosystems] = useState([]);
+
+  useEffect(() => {
+    getIssuerEcosystems(issuer, credentialId).then(result => {
+      setEcosystems(result || []);
+    })
+  }, [issuer, credentialId]);
+
+  return { ecosystems };
 }

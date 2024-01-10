@@ -5,12 +5,9 @@ import {dockService} from '../services/dock';
 import {mockDockService} from '../services/test-utils';
 import promiseMemoize from 'promise-memoize';
 import {setStorage} from '../core/storage';
-import {initRealm} from '../core/realm';
 
 export const getTestWallet: Wallet = promiseMemoize(async () => {
   setStorage(global.localStorage);
-
-  initRealm();
 
   await mockDockService();
   const wallet = Wallet.getInstance();

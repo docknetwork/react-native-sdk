@@ -10,7 +10,7 @@
   "resolutions": {
     "@polkadot/wasm-crypto": "6.3.1",
     "@polkadot/rpc-core": "9.7.1",
-    "@docknetwork/sdk": "6.6.0",
+    "@docknetwork/sdk": "6.8.1",
     "@polkadot/api": "9.7.1",
     "@polkadot/keyring": "10.1.11",
     "@polkadot/rpc-provider": "9.7.1",
@@ -143,7 +143,6 @@
     "process": "^0.11.10",
     "promise-memoize": "^1.2.1",
     "react-native-keychain": "^8.0.0",
-    "realm": "10.20.0-alpha.2",
     "regenerator-runtime": "^0.13.9",
     "rollup": "^2.65.0",
     "rollup-plugin-flow": "^1.1.1",

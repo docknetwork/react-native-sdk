@@ -1,26 +1,46 @@
-import {getRealm} from '@docknetwork/wallet-sdk-wasm/src/core/realm';
+// import {getRealm} from '@docknetwork/wallet-sdk-wasm/src/core/realm';
+
 import assert from 'assert';
 import {v4 as uuidv4} from 'uuid';
-export const RequestLogger = (function () {
-  const exportLog = () => {
-    const realm = getRealm();
-    return realm.objects('RequestLog').toJSON();
-  };
-  const subtractMonths = (numOfMonths, date = new Date()) => {
-    date.setMonth(date.getMonth() - numOfMonths);
-    return date;
-  };
-  const deleteOldLogs = () => {
-    const realm = getRealm();
-    const oneMonthAgo = subtractMonths(1);
+import { getLocalStorage } from '@docknetwork/wallet-sdk-data-store/src';
 
-    realm.write(() => {
-      const oldLogsToClear = realm
-        .objects('RequestLog')
-        .filtered('createdAt <= $0', oneMonthAgo);
-      realm.delete(oldLogsToClear);
-    });
+
+async function getAllLogs() {
+  try {
+    const data = await getLocalStorage().getItem('logs');
+    return JSON.parse(data);
+  } catch(err) {
+    return [];
+  }
+}
+
+async function appendLog(log) {
+  try {
+    const data = await getAllLogs();
+    data.push(log);
+    await getLocalStorage().setItem('logs', JSON.stringify(data));
+  } catch(err) {
+    console.error(err);
+  }
+}
+
+export const RequestLogger = (function () {
+  const exportLog = async () => {
+    return getAllLogs();
   };
+  // Revisit this logic as part of https://dock-team.atlassian.net/browse/DCKM-313
+  // const subtractMonths = (numOfMonths, date = new Date()) => {
+  //   date.setMonth(date.getMonth() - numOfMonths);
+  //   return date;
+  // };
+  // const deleteOldLogs = () => {
+    // realm.write(() => {
+    //   const oldLogsToClear = realm
+    //     .objects('RequestLog')
+    //     .filtered('createdAt <= $0', oneMonthAgo);
+    //   realm.delete(oldLogsToClear);
+    // });
+  // };
   const logRequest = ({
     status,
     url,
@@ -31,9 +51,9 @@ export const RequestLogger = (function () {
   }) => {
     assert(typeof url === 'string', 'invalid url');
     assert(typeof method === 'string', 'invalid method');
-    deleteOldLogs();
+    // Revisit this logic as part of https://dock-team.atlassian.net/browse/DCKM-313
+    // deleteOldLogs();
     const id = uuidv4();
-    const realm = getRealm();
 
     const log = {
       id,
@@ -46,16 +66,12 @@ export const RequestLogger = (function () {
       createdAt: new Date().toISOString(),
     };
 
-    realm.write(() => {
-      realm.create('RequestLog', log);
-    });
+    appendLog(log);
+
     return id;
   };
   const clearLogs = () => {
-    const realm = getRealm();
-    realm.write(() => {
-      realm.delete(realm.objects('RequestLog'));
-    });
+    getLocalStorage().removeItem('logs');
   };
   return {
     exportLog,

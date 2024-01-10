@@ -66,11 +66,16 @@ export function createMessageProvider({
               decryptedMessage,
               messageId: message.id
             });
+            count++;
             // the wallet app will call markMessageAsRead after the message is processed
           } catch(err) {
+            if(err.message?.includes('the DID in question does not exist')) {
+              // the DID lookup failed (a testnet credential was issued to a mainnet did), so we can't 
+              // decrypt the message remove the message from the wallet
+              await wallet.removeDocument(message.id);
+            }
             captureException(err);
           }
-          count++;
         }
       } catch (error) {
         captureException(error);
