@@ -232,7 +232,12 @@ export async function resolveDidcommMessage({keyPairDocs, message}) {
       didCommRecipients.find(did => did.indexOf(doc.controller) > -1),
     );
 
-    assert(!!keyPairDoc, `keyPairDoc not found for did ${message.to}`);
+    assert(
+      !!keyPairDoc,
+      `keyPairDoc not found for recipients ${JSON.stringify(
+        didCommRecipients,
+      )}`,
+    );
     const keyAgreementKey = await getDerivedAgreementKey(keyPairDoc);
     result = await didcommDecrypt(jwe, keyAgreementKey);
   }
