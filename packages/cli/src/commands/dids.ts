@@ -3,6 +3,7 @@ import inquirer from 'inquirer';
 import axios from 'axios';
 import {IWallet} from '@docknetwork/wallet-sdk-core/lib/types';
 import {createDIDProvider} from '@docknetwork/wallet-sdk-core/src/did-provider';
+import {relayService} from '@docknetwork/wallet-sdk-wasm/lib/services/relay-service';
 import {getWallet} from '../helpers';
 
 const didsCommand = new Command('dids').description('list, create');
@@ -38,6 +39,27 @@ didsCommand
     });
 
     console.log(did);
+  });
+
+/**
+ * Resolve a DIDComm message
+ * Ex.: didcomm://https://relay.dock.io/read/659ed4b1655cf81a6a35e140'
+ */
+didsCommand
+  .command('resolve-message')
+  .option('-m, --message <message>', 'Message to be resolved')
+  .description('Resolve didcomm message')
+  .action(async ({ message }) => {
+    const wallet: IWallet = await getWallet();
+    const didProvider = createDIDProvider({wallet});
+    const keyPairDocs = await didProvider.getDIDKeyPairs();
+
+    const messsage = await relayService.resolveDidcommMessage({
+      message,
+      keyPairDocs,
+    });
+
+    console.log(messsage);
   });
 
 export {didsCommand};
