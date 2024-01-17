@@ -6,7 +6,7 @@ import {CredentialServiceRPC} from './service-rpc';
 import {getTestWallet} from '../../test/setup-test-state';
 import BbsPlusPresentation from '@docknetwork/sdk/presentation';
 
-describe('DID Service', () => {
+describe('Credential Service', () => {
   beforeAll(async () => {
     await getTestWallet();
   });
@@ -321,5 +321,34 @@ describe('DID Service', () => {
       'credentialSubject.givenName',
     ]);
     expect(bbsPresentation.deriveCredentials).toBeCalledWith({});
+  });
+
+  describe('BBS+ revocation', () => {
+    it('should get revocation id', async () => {
+      expect(
+        await service.getAccumulatorId({
+          credential: {
+            id: 'https://creds.dock.io/ba6740d0a8db6ff8fc9ce68c402a8c14f9b541b1a52fb895008452227c88e37d',
+            type: ['VerifiableCredential', 'PersonalData'],
+          },
+        }),
+      ).toBe(null);
+      expect(
+        await service.getAccumulatorId({
+          credential: {
+            id: 'https://creds.dock.io/ba6740d0a8db6ff8fc9ce68c402a8c14f9b541b1a52fb895008452227c88e37d',
+            type: ['VerifiableCredential', 'PersonalData'],
+            credentialStatus: {
+              id: 'dock:accumulator:0xa632a41f2fbdb681c14b33daae4fcc46af41661b90b35c4ac1545c9bebf0d7cc',
+              type: 'DockVBAccumulator2022',
+              revocationCheck: 'membership',
+              revocationId: '7',
+            },
+          },
+        }),
+      ).toBe(
+        '0xa632a41f2fbdb681c14b33daae4fcc46af41661b90b35c4ac1545c9bebf0d7cc',
+      );
+    });
   });
 });
