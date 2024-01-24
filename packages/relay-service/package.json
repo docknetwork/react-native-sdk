@@ -7,7 +7,7 @@
     "dependencies": {
         "uuid": "^9.0.0",
         "@docknetwork/minimal-cipher": "^5.2.1",
-        "@docknetwork/sdk": "7.0.0",
+        "@docknetwork/sdk": "7.2.0",
         "@docknetwork/wallet-sdk-wasm": "0.4.3"
     },
     "devDependencies": {
