@@ -1466,19 +1466,19 @@
     base58-universal "^1.0.0"
     base64url-universal "^1.1.0"
 
-"@docknetwork/node-types@^0.16.0":
-  version "0.16.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/node-types/-/node-types-0.16.0.tgz#23570042c823a6320654ee2c5b8c0da5d7c43d21"
-  integrity sha512-VUZB8guX9161hDIEVn/UKJEUlXjIDE6vH5flx6uDHVc0QOhBy1bq6AGLayG4ZH19dCN39ta2sKGIFq9wLO4H2A==
+"@docknetwork/node-types@^0.17.0":
+  version "0.17.0"
+  resolved "https://registry.yarnpkg.com/@docknetwork/node-types/-/node-types-0.17.0.tgz#ca0ddb5b819e012e8f2f112353008325de4f3e33"
+  integrity sha512-aSRFtCwLhdhcY1wqX3WfhPpY2QXVqaB9kNB3e5+ajCWXtc0wuKJePpnSZEO4RqUEUKV5Y3LcsQ52ZB+aJ1PpFw==
 
-"@docknetwork/sdk@7.0.0":
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/sdk/-/sdk-7.0.0.tgz#0db217d812325b7597c5f5b8a0e08935594fa0d3"
-  integrity sha512-rJ6UyMLLyZT30DBM2C4MK9p+6l4swm+vJaB6p9z+VJ2lSK5DijJglyk28JcycOccpDOoF7KNVHBjMzmVEn4Zqg==
+"@docknetwork/sdk@7.2.0":
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/@docknetwork/sdk/-/sdk-7.2.0.tgz#0ad0d2f882f1799a7f676c7d666b7b3f9af527fd"
+  integrity sha512-HgCff2t0hAY9G0DcqhibMCdT5zf6dA7zis7SJPaYM63bNzzHQbxwa8h2s7HlR3NJP3JJB533TjSD/qFF4fr9Yg==
   dependencies:
     "@digitalbazaar/vc-status-list" "^4.0.0"
     "@docknetwork/crypto-wasm-ts" "0.48.0"
-    "@docknetwork/node-types" "^0.16.0"
+    "@docknetwork/node-types" "^0.17.0"
     "@juanelas/base64" "^1.0.5"
     "@polkadot/api" "9.7.1"
     "@transmute/json-web-signature" "^0.7.0-unstable.80"
