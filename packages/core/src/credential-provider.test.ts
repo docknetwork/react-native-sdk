@@ -26,9 +26,9 @@ describe('CredentialProvider', () => {
 
       expect(cred.id).toBe(biometricsBBSRevocation.id);
 
-      const witness = await wallet.getDocumentById(`${biometricsBBSRevocation.id}#witness`);
+      const witness = await provider.getMembershipWitness(cred.id);
 
-      expect(witness.value).toBe(biometricsBBSRevocation[ACUMM_WITNESS_PROP_KEY]);
+      expect(witness).toBe(biometricsBBSRevocation[ACUMM_WITNESS_PROP_KEY]);
     });
   });
 });

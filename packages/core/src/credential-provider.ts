@@ -5,6 +5,7 @@ export type Credential = any;
 export interface ICredentialProvider {
   getCredentials(type?: string): Credential[];
   getById(id: string): Credential;
+  getMembershipWitness(credential: any): Promise<any>;
   isBBSPlusCredential(credential: any): boolean;
   addCredential(credential: any): Promise<Credential>;
 }
@@ -36,7 +37,8 @@ export async function addCredential({ wallet, credential }) {
       type: 'AccumulatorWitness',
       id: `${credential.id}#witness`,
       value: acummWitness,
-    })
+      initialWitness: acummWitness,
+    });
   }
 
   return response;
@@ -53,6 +55,10 @@ export function createCredentialProvider({
 
   return {
     getCredentials,
+    getMembershipWitness: async (credentialId: string) => {
+      const document = await wallet.getDocumentById(`${credentialId}#witness`);
+      return document?.value;
+    },
     getById: (id: string) => wallet.getDocumentById(id),
     isBBSPlusCredential,
     addCredential:(credential) => addCredential({ wallet, credential }),
