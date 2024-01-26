@@ -88,16 +88,6 @@ export function useCredentialUtils() {
     return !!allCredentials.find(item => item.id === credentialToAdd.id);
   }, []);
 
-  const saveCredential = useCallback(
-    async jsonData => {
-      validateCredential(jsonData);
-      if (doesCredentialExist(credentials, jsonData)) {
-        throw new Error('This credential already exists in the wallet');
-      }
-      await wallet.addDocument(jsonData);
-    },
-    [credentials, doesCredentialExist, wallet],
-  );
   const deleteCredential = useCallback(
     async credentialId => {
       assert(
@@ -113,10 +103,9 @@ export function useCredentialUtils() {
     return {
       credentials,
       doesCredentialExist,
-      saveCredential,
       deleteCredential,
     };
-  }, [credentials, doesCredentialExist, saveCredential, deleteCredential]);
+  }, [credentials, doesCredentialExist, deleteCredential]);
 }
 export function isInThePast(date) {
   const today = new Date();
