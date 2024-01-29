@@ -1,3 +1,7 @@
+import {
+  createCredentialProvider,
+  ICredentialProvider,
+} from '@docknetwork/wallet-sdk-core/src/credential-provider';
 import {EventEmitter} from 'events';
 import {createWallet, IWallet} from '@docknetwork/wallet-sdk-core/src/wallet';
 import {dockDocumentNetworkResolver} from '@docknetwork/wallet-sdk-core/src/network-resolver';
@@ -14,6 +18,7 @@ import {
 let wallet: IWallet;
 let didProvider: IDIDProvider;
 let messageProvider: IMessageProvider;
+let credentialProvider: ICredentialProvider;
 
 export const WalletEvents = {
   walletInitialized: 'walletInitialized',
@@ -45,6 +50,14 @@ export function getDIDProvider() {
   return didProvider;
 }
 
+export function getCredentialProvider(): ICredentialProvider {
+  if (!credentialProvider) {
+    throw new Error('Credential provider not initialized');
+  }
+
+  return credentialProvider;
+}
+
 export function setWallet(_wallet: IWallet) {
   wallet = _wallet;
 }
@@ -55,6 +68,12 @@ export function setDIDProvider(_didProvider: IDIDProvider) {
 
 export function setMessageProvider(_messageProvider: IMessageProvider) {
   messageProvider = _messageProvider;
+}
+
+export function setCredentialProvider(
+  _credentialProvider: ICredentialProvider,
+) {
+  credentialProvider = _credentialProvider;
 }
 
 export async function getOrCreateWallet(params: DataStoreConfigs = {} as any) {
@@ -88,6 +107,12 @@ export async function initializeWallet(params: DataStoreConfigs = {} as any) {
   });
 
   setMessageProvider(_messageProvider);
+
+  const _credentialProvider = createCredentialProvider({
+    wallet: _wallet,
+  });
+
+  setCredentialProvider(_credentialProvider);
 
   walletEventEmitter.emit(WalletEvents.walletInitialized);
 
