@@ -26,4 +26,7 @@ export class CredentialServiceRPC extends RpcService {
   async isBBSPlusCredential(params) {
     return this.call('isBBSPlusCredential', params);
   }
+  async getAccumulatorId(params) {
+    return this.call('getAccumulatorId', params);
+  }
 }
