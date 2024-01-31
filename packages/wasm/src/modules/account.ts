@@ -2,6 +2,7 @@
 import assert from 'assert';
 import {isAddressValid} from '../core/validation';
 import {Accounts} from './accounts';
+import { KeypairType } from '../types';
 
 export type AccountDetails = {
   id: string,
@@ -9,6 +10,14 @@ export type AccountDetails = {
   type: KeypairType,
   address: string,
   correlations: any[],
+  balance?: number,
+  readonly?: boolean,
+  meta?: {
+    keypairNotFoundWarning: boolean,
+    name: string,
+    keypairType: KeypairType,
+    derivationPath: string,
+  }
 };
 
 /**

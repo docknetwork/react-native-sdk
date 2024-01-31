@@ -261,7 +261,7 @@ class CredentialService {
     }
 
     let idx = 0;
-    for (const {attributesToReveal} of credentials) {
+    for (const {attributesToReveal, witness} of credentials) {
       const attributesToSkip = descriptorBounds[idx] ? descriptorBounds[idx].map((bound) => bound.attributeName) : [];
       const filteredAttributes = attributesToReveal.filter((attribute) => !attributesToSkip.includes(attribute));
 
@@ -273,7 +273,6 @@ class CredentialService {
 
       if (accumulatorId) {
         const accumulator = await this.getAccumulatorData({ credential: credentials[0].credential });
-        const witness = params.membershipWitness || await this.fetchMembershipWitness({ credential: credentials[0].credential });
         if (witness) {
           const accumulator3Pk = new Uint8Array(accumulator.publicKey);
           bbsPlusPresentation.presBuilder.addAccumInfoForCredStatus(idx, witness, accumulator.accumulated, accumulator3Pk);

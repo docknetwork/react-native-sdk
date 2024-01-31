@@ -10,6 +10,7 @@ import {EventEmitter} from 'events';
 import axios from 'axios';
 import assert from 'assert';
 import {createDIDProvider, IDIDProvider} from './did-provider';
+import { getWallet } from '@docknetwork/wallet-sdk-data-store/src/entities/wallet.entity';
 
 export enum VerificationStatus {
   Started = 'Started',
@@ -168,14 +169,15 @@ export function createVerificationController({
       if (!isBBS) {
         credentials.push(credentialSelection.credential);
       } else {
-        console.log('Creating derived credential');
         // derive BBS credential
         const derivedCredentials =
           await credentialServiceRPC.deriveVCFromBBSPresentation({
             proofRequest: templateJSON,
+            
             credentials: [
               {
                 credential: credentialSelection.credential,
+                witness: await credentialProvider.getMembershipWitness(credentialSelection.credential.id),
                 attributesToReveal: [
                   ...(credentialSelection.attributesToReveal || []),
                   'id',
