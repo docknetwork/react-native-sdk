@@ -26,6 +26,7 @@
       "module": "CommonJS"
     }
   },
+  "include": ["lib/**/*.ts", "lib/**/*.tsx", "lib/**/*.js", "lib/**/*.jsx"],
   "exclude": [
     "**/__tests__/**/*",
     "**/build/**/*"
