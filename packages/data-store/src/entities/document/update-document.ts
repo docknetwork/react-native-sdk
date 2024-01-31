@@ -12,16 +12,14 @@ export async function updateDocument({
   dataStore,
   document,
 }: ContextProps & {document: WalletDocument}): Promise<WalletDocument> {
-  return dataStore.db.transaction(async transactionalEntityManager => {
-    logger.debug(`Updating document with id ${document.id}`);
+  logger.debug(`Updating document with id ${document.id}`);
 
-    const repository = transactionalEntityManager.getRepository(DocumentEntity);
-    const entity = await toDocumentEntity({
-      dataStore,
-      document,
-    });
-    await repository.save(entity, saveOptions);
-
-    return document;
+  const repository = dataStore.db.getRepository(DocumentEntity);
+  const entity = await toDocumentEntity({
+    dataStore,
+    document,
   });
+  await repository.save(entity, saveOptions);
+
+  return document;
 }
