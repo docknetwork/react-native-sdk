@@ -96,12 +96,14 @@ export function getAccount(address, documents): AccountDetails | null {
 export function useAccount(address) {
   const {documents, wallet} = useWallet();
   const account = getAccount(address, documents);
+  const onDelete = () => wallet.remove(address);
 
   return {
     account,
     fetchBalance: () => {
       wallet?.accounts.fetchBalance(address);
     },
+    onDelete,
   };
 }
 
