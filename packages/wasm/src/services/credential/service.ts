@@ -120,7 +120,7 @@ class CredentialService {
 
         if (isRevoked) {
           result.verified = false;
-          result.error = 'Revoked';
+          result.error = 'revocation check: the credential is revoked';
         }
       } catch(err) {
         console.log('Unable to get revocation status');
@@ -187,7 +187,7 @@ class CredentialService {
     const accumulatorId = await this.getAccumulatorId({ credential });
 
     if (!accumulatorId) {
-      return null
+      return null;
     }
 
     return getDock().accumulatorModule.getAccumulator(accumulatorId, false);
