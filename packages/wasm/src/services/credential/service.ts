@@ -175,12 +175,21 @@ class CredentialService {
 
   getAccumulatorId({ credential }) {
     assert(!!credential, `credential is required`);
-    return credential.credentialStatus.id.replace('dock:accumulator:', '');
+    if (!credential?.credentialStatus) {
+      return null;
+    }
+
+    return credential?.credentialStatus.id.replace('dock:accumulator:', '');
   }
 
   async getAccumulatorData({ credential }) {
     assert(!!credential, `credential is required`);
     const accumulatorId = await this.getAccumulatorId({ credential });
+
+    if (!accumulatorId) {
+      return null
+    }
+
     return getDock().accumulatorModule.getAccumulator(accumulatorId, false);
   }
 

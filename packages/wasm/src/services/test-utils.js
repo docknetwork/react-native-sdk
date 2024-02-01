@@ -69,6 +69,9 @@ export async function mockDockService() {
           })),
         },
       },
+      revocation: {
+        getIsRevoked: jest.fn().mockImplementation(() => false),
+      },
       tx: {
         balances: {
           transfer: jest.fn().mockImplementation(() => ({
