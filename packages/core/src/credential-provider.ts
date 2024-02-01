@@ -30,18 +30,12 @@ export function isBBSPlusCredential(credential) {
  */
 export async function isValid(credential: Credential, forceFetch?: boolean) {
   try {
-    // get status from localStorage cache
-    // if its valid, then return cached data
-
-    // if invalid or not found in cache, then fetch and save cache
     const result = await credentialServiceRPC.verifyCredential({
       credential,
     });
 
-    debugger;
     return result;
   } catch (err) {
-    debugger;
     console.error(err);
     return false;
   }
