@@ -81,35 +81,30 @@ credentialsCommand
 
     let credential;
    
-    const nonBBS =  'https://***REMOVED***/be07d3c9fa70be2de328696bab09d07f13df68952463eb11de91bbf7cb10b8a2';
-    const bbsPlus = 'https://***REMOVED***/da4c17a909417135b2cf118aa45e1ee45fa419427fa1d6347a0485300b54d909';
-    const bbsPlusWithRev = 'https://***REMOVED***/8a90038a13e801c7994d9f314abdb83e70797fbd2ecf571acb9af158ca4ae57c';
-
-    let url = bbsPlus;
-    
-    // let {url} = await inquirer.prompt([
-    //   {
-    //     type: 'input',
-    //     name: 'url',
-    //     message: 'Enter the credential URL (leave it empty to copy a JSON from clipboard)',
-    //   },
-    // ]);
+    let {url} = await inquirer.prompt([
+      {
+        type: 'input',
+        name: 'url',
+        message: 'Enter the credential URL (leave it empty to copy a JSON from clipboard)',
+      },
+    ]);
 
     if (url) {
-      // const {password} = await inquirer.prompt([
-      //   {
-      //     type: 'input',
-      //     name: 'password',
-      //     message: 'Enter the credential password',
-      //   },
-      // ]);
-      const password = 'test';
+      const {password} = await inquirer.prompt([
+        {
+          type: 'input',
+          name: 'password',
+          message: 'Enter the credential password',
+        },
+      ]);
 
       const {data} = await axios.get(`${url}?p=${btoa(password)}`);
       credential = data;
     } else {
         credential = JSON.parse(await clipboardy.read());
     }
+
+    delete credential['$$accum__witness$$'];
 
     const result = await getCredentialProvider().isValid(credential);
 

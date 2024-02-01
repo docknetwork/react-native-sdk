@@ -8,6 +8,9 @@ import {
   WitnessUpdatePublicInfo,
   MembershipWitness,
 } from '@docknetwork/crypto-wasm-ts';
+import {
+  getDockRevIdFromCredential,
+} from '@docknetwork/sdk/utils/revocation';
 import VerifiableCredential from '@docknetwork/sdk/verifiable-credential';
 import {getKeypairFromDoc} from '@docknetwork/universal-wallet/methods/keypairs';
 import {getSuiteFromKeyDoc} from '@docknetwork/sdk/utils/vc/helpers';
@@ -98,13 +101,33 @@ class CredentialService {
     keyDoc.keypair = keyDocToKeypair(keyDoc, getDock());
     return vp.sign(keyDoc, challenge, domain, dockService.resolver);
   }
-  verifyCredential(params) {
+  async verifyCredential(params) {
     validation.verifyCredential(params);
     const {credential} = params;
-    return verifyCredential(credential, {
+    const result = await verifyCredential(credential, {
       resolver: dockService.resolver,
       revocationApi: {dock: getDock()},
     });
+
+    const {credentialStatus} = credential;
+
+    if (result.verified && credentialStatus?.id) {
+      const regId = credentialStatus?.id.replace('dock:accumulator:', '');
+      const revId = await getDockRevIdFromCredential({
+        '@id': credential.id,
+      });
+      const isRevoked = await getDock().revocation.getIsRevoked(
+        regId,
+        revId,
+      )
+
+      if (isRevoked) {
+        result.verified = false;
+        result.error = 'Revoked';
+      }
+    }
+    
+    return result;
   }
 
   filterCredentials(params) {
