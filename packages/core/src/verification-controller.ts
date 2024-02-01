@@ -154,7 +154,6 @@ export function createVerificationController({
   async function createPresentation() {
     assert(!!selectedDID, 'No DID selected');
     assert(!!selectedCredentials.size, 'No credentials selected');
-    // assert(!!filteredCredentials.length, 'No filtered credentials found');
 
     if (isRangeProofTemplate(templateJSON)) {
       // TODO: Implement proving key usage for range-proofs
