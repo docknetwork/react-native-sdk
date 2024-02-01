@@ -4,6 +4,7 @@ import assert from 'assert';
 import {credentialServiceRPC} from '@docknetwork/wallet-sdk-wasm/src/services/credential';
 import {dockService} from '@docknetwork/wallet-sdk-wasm/src/services/dock';
 import axios from 'axios';
+import { getCredentialProvider } from '../wallet';
 
 export const CREDENTIAL_STATUS = {
   INVALID: 'invalid',
@@ -57,7 +58,7 @@ export function waitFor(condition, timeout) {
 async function getCredentialValidityStatus(credential) {
   try {
     await waitFor(() => dockService.isApiConnected(), 90000);
-    const result = await credentialServiceRPC.verifyCredential({ credential });
+    const result = await getCredentialProvider().isValid(credential);
     return result;
   } catch (error) {
     return {
