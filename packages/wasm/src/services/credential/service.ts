@@ -8,6 +8,9 @@ import {
   WitnessUpdatePublicInfo,
   MembershipWitness,
 } from '@docknetwork/crypto-wasm-ts';
+import {
+  getDockRevIdFromCredential,
+} from '@docknetwork/sdk/utils/revocation';
 import VerifiableCredential from '@docknetwork/sdk/verifiable-credential';
 import {getKeypairFromDoc} from '@docknetwork/universal-wallet/methods/keypairs';
 import {getSuiteFromKeyDoc} from '@docknetwork/sdk/utils/vc/helpers';
@@ -24,6 +27,7 @@ import {
 } from './bound-check';
 import assert from 'assert';
 import axios from 'axios';
+import { getIsRevoked } from './bbs-revocation';
 
 const pex: PEX = new PEX();
 
@@ -98,13 +102,33 @@ class CredentialService {
     keyDoc.keypair = keyDocToKeypair(keyDoc, getDock());
     return vp.sign(keyDoc, challenge, domain, dockService.resolver);
   }
-  verifyCredential(params) {
+  async verifyCredential(params) {
     validation.verifyCredential(params);
-    const {credential} = params;
-    return verifyCredential(credential, {
+    const {credential, membershipWitness} = params;
+    const result = await verifyCredential(credential, {
       resolver: dockService.resolver,
       revocationApi: {dock: getDock()},
     });
+
+    const {credentialStatus} = credential;
+
+    if (result.verified && credentialStatus?.id) {
+      const regId = credentialStatus?.id.replace('dock:accumulator:', '');
+
+      try {
+        const isRevoked = await getIsRevoked(regId, credentialStatus.revocationId, membershipWitness);
+
+        if (isRevoked) {
+          result.verified = false;
+          result.error = 'revocation check: the credential is revoked';
+        }
+      } catch(err) {
+        console.log('Unable to get revocation status');
+        console.error(err);
+      }
+    }
+    
+    return result;
   }
 
   filterCredentials(params) {
@@ -151,12 +175,21 @@ class CredentialService {
 
   getAccumulatorId({ credential }) {
     assert(!!credential, `credential is required`);
-    return credential.credentialStatus.id.replace('dock:accumulator:', '');
+    if (!credential?.credentialStatus) {
+      return null;
+    }
+
+    return credential?.credentialStatus.id.replace('dock:accumulator:', '');
   }
 
   async getAccumulatorData({ credential }) {
     assert(!!credential, `credential is required`);
     const accumulatorId = await this.getAccumulatorId({ credential });
+
+    if (!accumulatorId) {
+      return null;
+    }
+
     return getDock().accumulatorModule.getAccumulator(accumulatorId, false);
   }
 
