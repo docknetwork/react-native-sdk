@@ -28,10 +28,26 @@ export function isBBSPlusCredential(credential) {
  * @param credential
  * @returns
  */
-export async function isValid(credential: Credential, forceFetch?: boolean) {
+export async function isValid({
+  credential,
+  forceFetch,
+  wallet,
+}: {
+  credential: Credential;
+  forceFetch?: boolean;
+  wallet: IWallet;
+}) {
   try {
+    const membershipWitness = credential[ACUMM_WITNESS_PROP_KEY] || await getMembershipWitness({
+      credentialId: credential.id,
+      wallet,
+    });
+
+    delete credential[ACUMM_WITNESS_PROP_KEY];
+
     const result = await credentialServiceRPC.verifyCredential({
       credential,
+      membershipWitness,
     });
 
     return result;
@@ -43,14 +59,14 @@ export async function isValid(credential: Credential, forceFetch?: boolean) {
 
 export const ACUMM_WITNESS_PROP_KEY = '$$accum__witness$$';
 
-export async function addCredential({ wallet, credential }) {
+export async function addCredential({wallet, credential}) {
   const acummWitness = credential[ACUMM_WITNESS_PROP_KEY];
 
   if (acummWitness) {
     delete credential[ACUMM_WITNESS_PROP_KEY];
   }
 
-  const response = await wallet.addDocument(credential);;
+  const response = await wallet.addDocument(credential);
 
   if (acummWitness) {
     await wallet.addDocument({
@@ -64,6 +80,11 @@ export async function addCredential({ wallet, credential }) {
   return response;
 }
 
+async function getMembershipWitness({credentialId, wallet}) {
+  const document = await wallet.getDocumentById(`${credentialId}#witness`);
+  return document?.value;
+}
+
 export function createCredentialProvider({
   wallet,
 }: {
@@ -75,14 +96,16 @@ export function createCredentialProvider({
 
   return {
     getCredentials,
-    getMembershipWitness: async (credentialId: string) => {
-      const document = await wallet.getDocumentById(`${credentialId}#witness`);
-      return document?.value;
-    },
+    getMembershipWitness: async (credentialId: string) =>
+      getMembershipWitness({credentialId, wallet}),
     getById: (id: string) => wallet.getDocumentById(id),
     isBBSPlusCredential,
-    isValid,
-    addCredential:(credential) => addCredential({ wallet, credential }),
+    isValid: async credential =>
+      isValid({
+        credential,
+        wallet,
+      }),
+    addCredential: credential => addCredential({wallet, credential}),
     // TODO: move import credential from json or URL to this provider
   };
 }
