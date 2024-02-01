@@ -27,6 +27,7 @@ import {
 } from './bound-check';
 import assert from 'assert';
 import axios from 'axios';
+import { getIsRevoked } from './bbs-revocation';
 
 const pex: PEX = new PEX();
 
@@ -103,7 +104,7 @@ class CredentialService {
   }
   async verifyCredential(params) {
     validation.verifyCredential(params);
-    const {credential} = params;
+    const {credential, membershipWitness} = params;
     const result = await verifyCredential(credential, {
       resolver: dockService.resolver,
       revocationApi: {dock: getDock()},
@@ -113,17 +114,17 @@ class CredentialService {
 
     if (result.verified && credentialStatus?.id) {
       const regId = credentialStatus?.id.replace('dock:accumulator:', '');
-      const revId = await getDockRevIdFromCredential({
-        '@id': credential.id,
-      });
-      const isRevoked = await getDock().revocation.getIsRevoked(
-        regId,
-        revId,
-      )
 
-      if (isRevoked) {
-        result.verified = false;
-        result.error = 'Revoked';
+      try {
+        const isRevoked = await getIsRevoked(regId, credentialStatus.revocationId, membershipWitness);
+
+        if (isRevoked) {
+          result.verified = false;
+          result.error = 'Revoked';
+        }
+      } catch(err) {
+        console.log('Unable to get revocation status');
+        console.error(err);
       }
     }
     
