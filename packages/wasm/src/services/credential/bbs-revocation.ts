@@ -17,11 +17,14 @@ const trimHexID = id => {
   return id.substr(2);
 };
 
-export const getIsRevoked = async (
-  registryId,
-  revocationIndex,
-  membershipWitness,
+export const getWitnessDetails = async (
+  credential,
+  _membershipWitness,
 ) => {
+  const {credentialStatus} = credential;
+  const registryId = credentialStatus?.id.replace('dock:accumulator:', '');
+  const revocationIndex = credentialStatus.revocationId;
+
   const queriedAccumulator = await dock.accumulatorModule.getAccumulator(
     registryId,
     false,
@@ -47,10 +50,30 @@ export const getIsRevoked = async (
   const params = dockAccumulatorParams();
   const pk = new AccumulatorPublicKey(hexToU8a(publicKey.bytes));
 
+  const membershipWitness = new MembershipWitness(hexToU8a(_membershipWitness));
+
+  return {
+    encodedRevId,
+    membershipWitness,
+    pk,
+    params,
+    accumulator,
+  };
+};
+
+export const getIsRevoked = async (
+  credential,
+  _membershipWitness,
+) => {
+  const {encodedRevId, membershipWitness, pk, params, accumulator} = await getWitnessDetails(
+    credential,
+    _membershipWitness,
+  );
+
   try {
     return !accumulator.verifyMembershipWitness(
       encodedRevId,
-      new MembershipWitness(hexToU8a(membershipWitness)),
+      membershipWitness,
       pk,
       params,
     );

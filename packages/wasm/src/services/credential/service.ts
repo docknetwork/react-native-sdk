@@ -27,7 +27,7 @@ import {
 } from './bound-check';
 import assert from 'assert';
 import axios from 'axios';
-import { getIsRevoked } from './bbs-revocation';
+import { getIsRevoked, getWitnessDetails } from './bbs-revocation';
 
 const pex: PEX = new PEX();
 
@@ -113,10 +113,8 @@ class CredentialService {
     const {credentialStatus} = credential;
 
     if (result.verified && credentialStatus?.id) {
-      const regId = credentialStatus?.id.replace('dock:accumulator:', '');
-
       try {
-        const isRevoked = await getIsRevoked(regId, credentialStatus.revocationId, membershipWitness);
+        const isRevoked = await getIsRevoked(credential, membershipWitness);
 
         if (isRevoked) {
           result.verified = false;
@@ -263,7 +261,7 @@ class CredentialService {
     }
 
     let idx = 0;
-    for (const {attributesToReveal, witness} of credentials) {
+    for (const {attributesToReveal, witness, credential} of credentials) {
       const attributesToSkip = descriptorBounds[idx] ? descriptorBounds[idx].map((bound) => bound.attributeName) : [];
       const filteredAttributes = attributesToReveal.filter((attribute) => !attributesToSkip.includes(attribute));
 
@@ -271,14 +269,9 @@ class CredentialService {
         bbsPlusPresentation.addAttributeToReveal(idx, filteredAttributes);
       }
 
-      const accumulatorId = this.getAccumulatorId({ credential: credentials[0].credential });
-
-      if (accumulatorId) {
-        const accumulator = await this.getAccumulatorData({ credential: credentials[0].credential });
-        if (witness) {
-          const accumulator3Pk = new Uint8Array(accumulator.publicKey);
-          bbsPlusPresentation.presBuilder.addAccumInfoForCredStatus(idx, witness, accumulator.accumulated, accumulator3Pk);
-        } 
+      if (witness) {
+        const details = await getWitnessDetails(credential, witness);
+        bbsPlusPresentation.presBuilder.addAccumInfoForCredStatus(idx, details.membershipWitness, details.accumulator.accumulated, details.pk, details.params);
       }
 
       idx++;
