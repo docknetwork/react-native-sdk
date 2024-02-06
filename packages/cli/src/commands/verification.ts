@@ -206,12 +206,14 @@ verificationCommands
       'credentialSubject.name'
     ];
 
-    try {
-      await getCredentialProvider().addCredential(bbsPlusRevocationCredential);
-    } catch(err) {
-      throw new Error('Failed to add credential');
-    }
+    const existingDocument = await wallet.getDocumentById(bbsPlusRevocationCredential.id)
 
+    if (!existingDocument) {
+      await getCredentialProvider().addCredential(bbsPlusRevocationCredential);
+    } else {
+      console.log('Credential already exists in the wallet');
+    }
+    
     delete bbsPlusRevocationCredential['$$accum__witness$$'];
 
     controller.selectedCredentials.set(bbsPlusRevocationCredential.id, {
