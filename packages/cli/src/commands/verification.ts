@@ -209,7 +209,7 @@ verificationCommands
     try {
       await getCredentialProvider().addCredential(bbsPlusRevocationCredential);
     } catch(err) {
-
+      throw new Error('Failed to add credential');
     }
 
     delete bbsPlusRevocationCredential['$$accum__witness$$'];
