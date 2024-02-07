@@ -1,7 +1,7 @@
 import {setStorage} from '@docknetwork/wallet-sdk-wasm/src/core/storage';
 import {
-  Wallet,
   WalletEvents,
+  WalletStatus,
 } from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
 import React, {
   useCallback,
@@ -16,9 +16,9 @@ import WebView from 'react-native-webview';
 import {WebviewEventHandler} from './message-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {AccountDetails} from '@docknetwork/wallet-sdk-wasm/src/modules/account';
-import {DocumentType} from '@docknetwork/wallet-sdk-wasm/src/types';
+import {DocumentType, WalletDocument} from '@docknetwork/wallet-sdk-wasm/src/types';
 import './rn-rpc-server';
-import {useDIDManagement, useDIDUtils} from './didHooks';
+import {useDIDManagement} from './didHooks';
 import {useAccounts} from './accountsHooks';
 import {
   useCredentialUtils,
@@ -29,20 +29,30 @@ import {
 import {getOrCreateWallet} from './wallet';
 import debounce from 'lodash.debounce';
 import {setV1LocalStorage} from '@docknetwork/wallet-sdk-data-store/src/migration/migration1/v1-data-store';
+import {IWallet} from '@docknetwork/wallet-sdk-core/src/types';
 export type WalletSDKContextProps = {
-  wallet: Wallet,
-  status: string,
+  wallet?: IWallet;
+  documents: WalletDocument[];
+  status: WalletStatus;
+  createWallet: () => Promise<void>;
+  toggleTestMode: () => Promise<void>;
+  testMode?: boolean;
+  refetch: ({fetchBalances}?: {fetchBalances: boolean}) => Promise<void>;
 };
 
 setV1LocalStorage(AsyncStorage);
 
-export const WalletSDKContext = React.createContext({
-  wallet: null,
+export const WalletSDKContext = React.createContext<WalletSDKContextProps>({
+  documents: [],
+  status: 'loading',
+  createWallet: async () => {},
+  toggleTestMode: async () => {},
+  refetch: async () => {},
 });
 
 setStorage(AsyncStorage);
 export {useAccounts};
-export {useDIDManagement, useDIDUtils};
+export {useDIDManagement};
 export {
   useCredentialUtils,
   getCredentialStatus,
@@ -63,7 +73,7 @@ export const findRelatedDocs = (document, documentList) =>
     ? documentList.filter(doc => document.correlation.find(id => id === doc.id))
     : [];
 
-export function getAccount(address, documents): AccountDetails {
+export function getAccount(address, documents): AccountDetails | null {
   const addressDoc = findDocument(address, documents);
 
   if (!addressDoc) {
@@ -86,12 +96,14 @@ export function getAccount(address, documents): AccountDetails {
 export function useAccount(address) {
   const {documents, wallet} = useWallet();
   const account = getAccount(address, documents);
+  const onDelete = () => wallet.remove(address);
 
   return {
     account,
     fetchBalance: () => {
-      wallet.accounts.fetchBalance(address);
+      wallet?.accounts.fetchBalance(address);
     },
+    onDelete,
   };
 }
 
@@ -100,15 +112,17 @@ export function useWallet() {
 }
 
 export function _useWalletController() {
-  const [wallet, setWallet] = useState();
-  const [status, setStatus] = useState('loading');
-  const [documents, setDocuments] = useState([]);
-  const [firstFetch, setFirstFetch] = useState();
-  const [networkId, setNetworkId] = useState();
+  const [wallet, setWallet] = useState<IWallet>();
+  const [status, setStatus] = useState<WalletStatus>('loading');
+  const [documents, setDocuments] = useState<WalletDocument[]>([]);
+  const [firstFetch, setFirstFetch] = useState(false);
+  const [networkId, setNetworkId] = useState<string>();
 
   const testMode = networkId === wallet?.dataStore?.testNetworkId;
 
   const toggleTestMode = async () => {
+    if (!wallet) return;
+
     await wallet.setNetwork(
       testMode
         ? wallet.dataStore.mainNetworkId
@@ -130,7 +144,9 @@ export function _useWalletController() {
     wallet.getAllDocuments().then(setDocuments);
   }, [documents, wallet, firstFetch]);
 
-  const refetch = useCallback(async ({fetchBalances} = {fetchBalances: true}) => {
+  const refetch = useCallback(
+    async ({fetchBalances} = {fetchBalances: true}) => {
+      if (!wallet) return;
       try {
         const allDocs = await wallet.query({});
         if (fetchBalances) {
@@ -147,7 +163,9 @@ export function _useWalletController() {
       } catch (err) {
         console.error(err);
       }
-  }, [wallet, setDocuments]);
+    },
+    [wallet, setDocuments],
+  );
 
   useEffect(() => {
     if (!wallet) {
@@ -156,7 +174,6 @@ export function _useWalletController() {
 
     const _refetch = debounce(refetch, 100);
 
-    setStatus(wallet.status);
     setNetworkId(wallet.getNetworkId());
 
     wallet.eventManager.on(WalletEvents.statusUpdated, setStatus);
