@@ -5,7 +5,7 @@ import axios from 'axios';
 import {IWallet} from '@docknetwork/wallet-sdk-core/lib/types';
 import {RelayService} from '@docknetwork/wallet-sdk-relay-service/src';
 import testCredential from '../fixtures/customer-credential.json';
-import {getDIDProvider, getWallet, selectCredential} from '../helpers';
+import {getDIDProvider, getMessageProvider, getWallet, selectCredential} from '../helpers';
 
 const messagesCommand = new Command('messages').description(
   'fetch didcomm messages, send didcomm message',
@@ -15,16 +15,16 @@ messagesCommand
   .command('fetch')
   .description('Fetch DIDComm messages')
   .action(async () => {
-    await getWallet();
-    const didProvider = getDIDProvider();
-    const keyPairDocs = await didProvider.getDIDKeyPairs();
+    const wallet = await getWallet();
+    const messageProvider = getMessageProvider();
+    await messageProvider.fetchMessages();
 
-    const messages = await RelayService.getMessages({
-      keyPairDocs: keyPairDocs,
-      limit: 10,
+    wallet.eventManager.on('didcomm-message-decrypted', ({decryptedMessage, messageId}) => {
+      console.log('message received', decryptedMessage);
+      messageProvider.markMessageAsRead(messageId);
     });
 
-    console.log(JSON.stringify(messages, null, 2));
+    await messageProvider.processDIDCommMessages();
   });
 
 messagesCommand
