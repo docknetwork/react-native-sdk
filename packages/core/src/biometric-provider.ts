@@ -32,7 +32,7 @@ export function createBiometricBindingProvider({
       const matchConfirmationCredential = await onMatch(
         enrollmentCredentials[0],
       );
-      await credentialProvider.addCredential(matchConfirmationCredential);
+
       return matchConfirmationCredential;
     },
     checkIsBiometryRequired: onCheckBiometryRequired,
