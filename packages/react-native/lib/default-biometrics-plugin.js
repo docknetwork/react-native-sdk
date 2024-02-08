@@ -1,54 +1,120 @@
 import axios from 'axios';
+import {
+  isBiometrySupported,
+  getTimestamp,
+  saveBiometricData,
+  getBiometricData,
+} from './biometric-binding/helpers';
 
+const BIOMETRIC_KEY = 'placeholder-id';
+const BIOMETRIC_PROPERTIES = 'ua7iM2XgYQnjnKqVAr3F';
+
+const BIOMETRIC_CREDENTIAL_TYPE = 'BiometricsCredential';
+const BIOMETRIC_ENROLLMENT_CREDENTIAL_TYPE = 'BiometricEnrollment';
+
+const initiateBiometricCheck = async () => {
+  const biometrySupported = await isBiometrySupported();
+
+  if (biometrySupported) {
+    await saveBiometricData(BIOMETRIC_KEY, BIOMETRIC_PROPERTIES);
+
+    const biometricData = await getBiometricData();
+    if (biometricData?.password) {
+      return biometricData.password;
+    } else {
+      throw Error('Biometric data not found.');
+    }
+  } else {
+    console.log('Biometry not supported on this device.');
+    // Will fallback to mock biometrics
+    return 'mocked-biometric-id';
+  }
+};
 
 function hasProofOfBiometrics(proofRequest) {
-  // need to define which property will define that
-  // it should be handled by certs maybe
+  const fields = proofRequest.input_descriptors
+    ?.map(input => input.constraints?.fields)
+    .flat();
+  return (
+    fields.findIndex(
+      field =>
+        field.path?.includes('$.type[*]') &&
+        field.filter?.const === BIOMETRIC_CREDENTIAL_TYPE,
+    ) !== -1
+  );
 }
 
-// example key, TODO: move this to env variables
-const DOCK_API_KEY = '<some-api-key>';
 
-async function issueBiometricsVC() {
-  // vcData
-  const vcSubject = {
-      timestamp: Date.now(),
-      biometricsIdentifier: '123', // useSomeDeviceIdentifierhere() // use a device identifier
-  }
-
-
-  const options = {
-  method: 'POST',
-    url: 'https://***REMOVED***/credentials',
-    headers: {
-        'Content-Type': 'application/json',
-        'DOCK-API-TOKEN': 
+async function issueBiometricsVC(type, data) {
+  // We will be using a temporary staging-testnet API key, we should be able to switch it later and start using env variables
+  // supporting mainnet and testnet
+  const DOCK_API_KEY = process.env.DOCK_API_KEY || '***REMOVED***';
+  const body = {
+    anchor: false,
+    persist: false,
+    credential: {
+      name: type,
+      type: ['VerifiableCredential', type],
+      issuer: 'did:dock:5GJeBeStWSxqyPGUJnERMFhm3wKcfCZP6nhqtoKyRAmq9FeU',
+      issuanceDate: getTimestamp(),
+      subject: data,
     },
-    data: {
-        anchor: false,
-        persist: false,
-        credential: {
-        name: 'Biometrics Credential',
-        type: ['VerifiableCredential', 'BiometricsCredential'],
-        issuer: 'did:dock:5GJeBeStWSxqyPGUJnERMFhm3wKcfCZP6nhqtoKyRAmq9FeU',
-        issuanceDate: '2024-01-09T19:14:04.108Z',
-        subject: vcSubject,
-        },
-        algorithm: 'dockbbs+',
-    },
+    algorithm: 'dockbbs+',
   };
 
-  const vc = await axios.request(options).then(function (response) {
-    return response.data;
+  const response = await axios.post('https://***REMOVED***/credentials', body, {
+    headers: {
+      'Content-Type': 'application/json',
+      'DOCK-API-TOKEN': DOCK_API_KEY,
+    }
   });
 
-
-  // mock-biometric check, use react-native
-
-  return vc;
+  return response.data;
 }
+
+const issueEnrollmentCredential = async () => {
+  const biometricId = await initiateBiometricCheck();
+
+  if (!biometricId) {
+    throw new Error('biometrics-not-supported');
+  }
+
+  try {
+    const credential = await issueBiometricsVC(BIOMETRIC_ENROLLMENT_CREDENTIAL_TYPE, {
+      biometricProperties: JSON.stringify({ id: BIOMETRIC_PROPERTIES }),
+      biometricId,
+    });
+
+    return credential;
+  } catch(err) {
+    console.error(err);
+    throw new Error('Unable to issue enrollment credential');
+  }
+};
+
+const issueBiometricMatchCredential = async enrollmentCredential => {
+  const biometricData = await getBiometricData();
+  if (!biometricData) {
+    throw new Error('Biometrics check failed');
+  }
+
+  // Will disable real biometric check for now
+  // const biometricId = biometricData.password;
+  const biometricId = enrollmentCredential.credentialSubject.biometricId;
+
+  if (biometricId === enrollmentCredential.credentialSubject.biometricId) {
+    const currentTime = getTimestamp();
+    return await issueBiometricsVC(BIOMETRIC_CREDENTIAL_TYPE, {
+      timestamp: currentTime,
+      biometricId,
+    });
+  }
+
+  throw new Error('Enrollment credential not found');
+};
 
 export const defaultBiometricsPlugin = {
   hasProofOfBiometrics,
-  issueBiometricsVC,
+  enrollBiometrics: issueEnrollmentCredential,
+  matchBiometrics: issueBiometricMatchCredential,
 };
