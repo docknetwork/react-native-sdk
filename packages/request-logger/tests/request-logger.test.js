@@ -1,7 +1,11 @@
 import {getLocalStorage} from '@docknetwork/wallet-sdk-data-store/src';
 import {RequestLogger} from '../lib/request-logger';
+import {setV1LocalStorage} from '@docknetwork/wallet-sdk-data-store/src/migration/migration1/v1-data-store';
 
 describe('Request logger', () => {
+  beforeAll(() => {
+    setV1LocalStorage(global.localStorage);
+  });
   // it('expect to delete old logs before adding new log', () => {
   //   const realm = getRealm();
   //   const mockLog = {
