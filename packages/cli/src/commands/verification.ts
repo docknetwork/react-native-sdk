@@ -11,7 +11,11 @@ import rangeProofsTemplate from '../fixtures/range-proofs-template.json';
 import rangeProofsCredential from '../fixtures/range-proofs-credential.json';
 import bbsPlusRevocationCredential from '../fixtures/bbs-plus-revocation-credential.json';
 import bbsTemplate from '../fixtures/bbs-template.json';
+import compoundProofTemplate from '../fixtures/compound-proof-template.json';
 import bbsCredential from '../fixtures/bbs-credential.json';
+import basicCredential from '../fixtures/basic-credential.json';
+import universityDegreeCredential from '../fixtures/university-degree-credential.json';
+
 
 const verificationCommands = new Command('verification');
 
@@ -216,6 +220,40 @@ verificationCommands
     });
 
     console.log('Generating presentation...');
+
+    const presentation = await controller.createPresentation();
+
+    clipboardy.write(JSON.stringify(presentation, null, 2));
+    console.log('Presentation generated:');
+    console.log(JSON.stringify(presentation, null, 2));
+    console.log('Verifying presentation...');
+  });
+
+
+verificationCommands
+  .command('test-compound-verification')
+  .action(async options => {
+    const wallet: IWallet = await getWallet();
+
+    await wallet.waitForEvent(WalletEvents.networkConnected);
+
+    const controller = createVerificationController({
+      wallet,
+    });
+
+    console.log('Starting verification flow...');
+
+    await controller.start({
+      template: compoundProofTemplate,
+    });
+
+    controller.selectedCredentials.set(bbsCredential.id, {
+      credential: basicCredential,
+    });
+
+    controller.selectedCredentials.set(rangeProofsCredential.id, {
+      credential: universityDegreeCredential,
+    });
 
     const presentation = await controller.createPresentation();
 
