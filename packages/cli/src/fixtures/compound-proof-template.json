@@ -1,0 +1,55 @@
+{
+  "signature": null,
+  "qr": "https://creds-staging.dock.io/proof/95bda257-e410-4bd7-af1b-c45087e88cd0",
+  "id": "95bda257-e410-4bd7-af1b-c45087e88cd0",
+  "name": "Compound verification",
+  "nonce": "ebac16d9d40ff0baf9e77226a8a1acd4",
+  "created": "2024-02-15T13:47:27.829Z",
+  "response_url": "https://api-staging.dock.io/proof-requests/95bda257-e410-4bd7-af1b-c45087e88cd0/send-presentation",
+  "request": {
+    "id": "95bda257-e410-4bd7-af1b-c45087e88cd0",
+    "input_descriptors": [
+      {
+        "id": "Credential 1",
+        "name": "Compound verification",
+        "group": ["A"],
+        "purpose": "Compound verification",
+        "constraints": {
+          "fields": [
+            {
+              "path": ["$.type[*]"],
+              "filter": {
+                "const": "BasicCredential"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "id": "Credential 2",
+        "name": "Compound verification",
+        "group": ["A"],
+        "purpose": "Compound verification",
+        "constraints": {
+          "fields": [
+            {
+              "path": ["$.type[*]"],
+              "filter": {
+                "const": "UniversityDegree"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "submission_requirements": [
+      {
+        "from": "A",
+        "name": "Multi Credential Request",
+        "rule": "pick",
+        "count": 1
+      }
+    ]
+  },
+  "type": "proof-request"
+}
