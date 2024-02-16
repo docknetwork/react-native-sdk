@@ -153,7 +153,6 @@
     "ts-jest": "29.1.0",
     "ts-loader": "^9.4.4",
     "uuid": "^8.3.2",
-    "wasm-loader": "1.3.0",
     "winston": "^3.3.3"
   }
 }
