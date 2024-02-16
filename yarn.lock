@@ -1471,16 +1471,16 @@
   resolved "https://registry.yarnpkg.com/@docknetwork/node-types/-/node-types-0.17.0.tgz#ca0ddb5b819e012e8f2f112353008325de4f3e33"
   integrity sha512-aSRFtCwLhdhcY1wqX3WfhPpY2QXVqaB9kNB3e5+ajCWXtc0wuKJePpnSZEO4RqUEUKV5Y3LcsQ52ZB+aJ1PpFw==
 
-"@docknetwork/sdk@7.2.0":
-  version "7.2.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/sdk/-/sdk-7.2.0.tgz#0ad0d2f882f1799a7f676c7d666b7b3f9af527fd"
-  integrity sha512-HgCff2t0hAY9G0DcqhibMCdT5zf6dA7zis7SJPaYM63bNzzHQbxwa8h2s7HlR3NJP3JJB533TjSD/qFF4fr9Yg==
+"@docknetwork/sdk@7.4.0":
+  version "7.4.0"
+  resolved "https://registry.yarnpkg.com/@docknetwork/sdk/-/sdk-7.4.0.tgz#56da802d7c750fd7325fa32fd921603ae288da0b"
+  integrity sha512-h8TBITfrUTrWCp/W7QjJ2fRYpaloZIfaNW5iwBKsIpi6LEcu/E7/WlwhsQeGgzQqjWGoedw0Xnpw8IBT8/7Myg==
   dependencies:
     "@digitalbazaar/vc-status-list" "^4.0.0"
     "@docknetwork/crypto-wasm-ts" "0.48.0"
     "@docknetwork/node-types" "^0.17.0"
     "@juanelas/base64" "^1.0.5"
-    "@polkadot/api" "9.7.1"
+    "@polkadot/api" "9.11.1"
     "@transmute/json-web-signature" "^0.7.0-unstable.80"
     base64url "3.0.1"
     blake2b "2.1.4"
@@ -2289,7 +2289,7 @@
     "@polkadot/util-crypto" "^10.1.11"
     rxjs "^7.5.7"
 
-"@polkadot/api@9.7.1":
+"@polkadot/api@9.11.1", "@polkadot/api@9.7.1":
   version "9.7.1"
   resolved "https://registry.yarnpkg.com/@polkadot/api/-/api-9.7.1.tgz#b374b89f8f6f19c4c084f9450433cdfd6f72c388"
   integrity sha512-hTOJqG5bAv8b276SuK22tJAJATg/DnaB25AiImQt365EHObQDWlaG9mC/U0SY6RQi1tAS9orRrEA1lOhHybbZA==
