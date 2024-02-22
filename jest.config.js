@@ -3,7 +3,7 @@ module.exports = {
   testEnvironment: 'node',
   testTimeout: 30000,
   maxConcurrency: 2,
-  testMatch: ["<rootDir>/packages/!(react-native)/**/!(*.e2e).test.[j]s"],
+  testMatch: ["<rootDir>/packages/**/!(*.e2e).test.[j]s"],
   coverageThreshold: {
     global: {
       branches: 10,
