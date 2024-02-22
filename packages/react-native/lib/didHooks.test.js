@@ -99,7 +99,7 @@ jest.mock('@docknetwork/wallet-sdk-wasm/src/services/dids', () => {
 // and use the real wallet sdk instead
 // Additionally we should consider moving the logic from hooks, and expose it as regular js functions
 // easier to maintain and to test
-jest.mock('./index.js', () => {
+jest.mock('./index', () => {
   const didDocument = {
     '@context': [
       'https://www.w3.org/ns/did/v1',
