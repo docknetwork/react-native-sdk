@@ -77,10 +77,19 @@ const issueEnrollmentCredential = async () => {
     throw new Error('Biometrics check failed');
   }
 
-  return await issueBiometricsVC(BIOMETRIC_ENROLLMENT_CREDENTIAL_TYPE, {
-    biometricProperties: JSON.stringify({ id: BIOMETRIC_PROPERTIES }),
-    biometricId,
-  });
+  try {
+    const credential = await issueBiometricsVC(BIOMETRIC_ENROLLMENT_CREDENTIAL_TYPE, {
+      biometric: {
+        id: biometricId,
+        properties: JSON.stringify({ id: BIOMETRIC_PROPERTIES })
+      }
+    });
+
+    return credential;
+  } catch(err) {
+    console.error(err);
+    throw new Error('Unable to issue enrollment credential');
+  }
 };
 
 const issueBiometricMatchCredential = async enrollmentCredential => {
@@ -94,8 +103,10 @@ const issueBiometricMatchCredential = async enrollmentCredential => {
   if (biometricId === enrollmentCredential.credentialSubject.biometricId) {
     const currentTime = getTimestamp();
     return await issueBiometricsVC(BIOMETRIC_CREDENTIAL_TYPE, {
-      timestamp: currentTime,
-      biometricId,
+      biometric: {
+        id: biometricId,
+        created: currentTime,
+      }
     });
   }
 
