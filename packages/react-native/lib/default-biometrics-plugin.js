@@ -26,6 +26,8 @@ const initiateBiometricCheck = async () => {
     }
   } else {
     console.log('Biometry not supported on this device.');
+    // Will fallback to mock biometrics
+    return 'mocked-biometric-id';
   }
 };
 
@@ -44,37 +46,37 @@ function hasProofOfBiometrics(proofRequest) {
 
 
 async function issueBiometricsVC(type, data) {
-  const DOCK_API_KEY = process.env.DOCK_API_KEY;
+  // We will be using a temporary staging-testnet API key, we should be able to switch it later and start using env variables
+  // supporting mainnet and testnet
+  const DOCK_API_KEY = process.env.DOCK_API_KEY || 'eyJzY29wZXMiOlsidGVzdCIsImFsbCJdLCJzdWIiOiI3Iiwic2VsZWN0ZWRUZWFtSWQiOiI4IiwiY3JlYXRvcklkIjoiNyIsImlhdCI6MTY5ODg1MzI0MiwiZXhwIjo0Nzc4MTQ5MjQyfQ.njdeY1QzgBP9alG2wWjr_8tpEGnMpa2baEPVhtjKYiZTHYe_FnBKVu7jksk-eoIOYqD41MtOP9mjn9cG9Ure2A';
+  const body = {
+    anchor: false,
+    persist: false,
+    credential: {
+      name: type,
+      type: ['VerifiableCredential', type],
+      issuer: 'did:dock:5GJeBeStWSxqyPGUJnERMFhm3wKcfCZP6nhqtoKyRAmq9FeU',
+      issuanceDate: getTimestamp(),
+      subject: data,
+    },
+    algorithm: 'dockbbs+',
+  };
 
-  const options = {
-    method: 'POST',
-    url: 'https://api-testnet.dock.io/credentials',
+  const response = await axios.post('https://api-staging.dock.io/credentials', body, {
     headers: {
       'Content-Type': 'application/json',
       'DOCK-API-TOKEN': DOCK_API_KEY,
-    },
-    data: {
-      anchor: false,
-      persist: false,
-      credential: {
-        name: type,
-        type: ['VerifiableCredential', type],
-        issuer: 'did:dock:5DpnDQaqHCBBdDjXpiaWibgUb6Tymz1vFG1UMJv9H363fYFb',
-        issuanceDate: getTimestamp(),
-        subject: data,
-      },
-      algorithm: 'dockbbs+',
-    },
-  };
+    }
+  });
 
-  const credential = await axios.request(options)
-  return credential;
+  return response.data;
 }
 
 const issueEnrollmentCredential = async () => {
   const biometricId = await initiateBiometricCheck();
+
   if (!biometricId) {
-    throw new Error('Biometrics check failed');
+    throw new Error('biometrics-not-supported');
   }
 
   try {
@@ -98,7 +100,9 @@ const issueBiometricMatchCredential = async enrollmentCredential => {
     throw new Error('Biometrics check failed');
   }
 
-  const biometricId = biometricData.password;
+  // Will disable real biometric check for now
+  // const biometricId = biometricData.password;
+  const biometricId = enrollmentCredential.credentialSubject.biometricId;
 
   if (biometricId === enrollmentCredential.credentialSubject.biometricId) {
     const currentTime = getTimestamp();

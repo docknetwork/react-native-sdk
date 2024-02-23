@@ -52,10 +52,6 @@ export type WalletStatus = 'closed' | 'loading' | 'ready' | 'error';
 // require('../setup-nodejs');
 // }
 
-if (!global.walletInstances) {
-  global.walletInstances = 0;
-}
-
 /**
  * Wallet
  */
