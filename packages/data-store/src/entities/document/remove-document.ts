@@ -15,12 +15,10 @@ export async function removeDocument({
   assert(!!id, 'Document id is required');
 
   logger.debug(`Removing document with id ${id}`);
-  return dataStore.db.transaction(async transactionalEntityManager => {
-    const repository = transactionalEntityManager.getRepository(DocumentEntity);
-    await repository.delete({
-      id,
-      networkId: dataStore.networkId,
-    });
+  const repository = dataStore.db.getRepository(DocumentEntity);
+  await repository.delete({
+    id,
+    networkId: dataStore.networkId,
   });
 }
 
@@ -31,8 +29,6 @@ export async function removeDocument({
 export async function removeAllDocuments({
   dataStore,
 }: ContextProps): Promise<void> {
-  return dataStore.db.transaction(async transactionalEntityManager => {
-    const repository = transactionalEntityManager.getRepository(DocumentEntity);
-    await repository.delete({});
-  });
+  const repository = dataStore.db.getRepository(DocumentEntity);
+  await repository.delete({});
 }
