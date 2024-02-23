@@ -37,6 +37,7 @@ export const universalResolverUrl = 'https://uniresolver.io';
  *
  */
 export class DockService {
+  dock;
   isDockReady = false;
   static Events = {
     DOCK_READY: 'dock-ready',
@@ -83,6 +84,7 @@ export class DockService {
    */
   async init(params: InitParams) {
     validation.init(params);
+    
 
     if (this.dock.isConnected) {
       await this.dock.disconnect();
