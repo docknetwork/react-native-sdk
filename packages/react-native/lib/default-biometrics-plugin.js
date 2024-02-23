@@ -37,9 +37,10 @@ function hasProofOfBiometrics(proofRequest) {
     .flat();
   return (
     fields.findIndex(
-      field =>
-        field.path?.includes('$.type[*]') &&
-        field.filter?.const === BIOMETRIC_CREDENTIAL_TYPE,
+      field =>{
+        const biometricAttributeMatch = new RegExp(/^\$.credentialSubject.biometric/);
+        return field.path?.some(path => biometricAttributeMatch.test(path))
+      }
     ) !== -1
   );
 }
@@ -83,7 +84,7 @@ const issueEnrollmentCredential = async () => {
     const credential = await issueBiometricsVC(BIOMETRIC_ENROLLMENT_CREDENTIAL_TYPE, {
       biometric: {
         id: biometricId,
-        properties: JSON.stringify({ id: BIOMETRIC_PROPERTIES })
+        data: JSON.stringify({ id: BIOMETRIC_PROPERTIES })
       }
     });
 
@@ -102,9 +103,9 @@ const issueBiometricMatchCredential = async enrollmentCredential => {
 
   // Will disable real biometric check for now
   // const biometricId = biometricData.password;
-  const biometricId = enrollmentCredential.credentialSubject.biometricId;
+  const biometricId = enrollmentCredential.credentialSubject.biometric.id;
 
-  if (biometricId === enrollmentCredential.credentialSubject.biometricId) {
+  if (biometricId === enrollmentCredential.credentialSubject.biometric.id) {
     const currentTime = getTimestamp();
     return await issueBiometricsVC(BIOMETRIC_CREDENTIAL_TYPE, {
       biometric: {
