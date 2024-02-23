@@ -10,7 +10,7 @@
   "resolutions": {
     "@polkadot/wasm-crypto": "6.3.1",
     "@polkadot/rpc-core": "9.7.1",
-    "@docknetwork/sdk": "7.2.0",
+    "@docknetwork/sdk": "7.5.1",
     "@polkadot/api": "9.7.1",
     "@polkadot/keyring": "10.1.11",
     "@polkadot/rpc-provider": "9.7.1",
@@ -24,7 +24,7 @@
   "devDependencies": {
     "@babel/core": "^7.16.0",
     "@babel/preset-env": "^7.22.10",
-    "@docknetwork/sdk": "7.2.0",
+    "@docknetwork/sdk": "7.5.1",
     "@docknetwork/universal-wallet": "^2.0.1",
     "@polkadot/api": "9.7.1",
     "@polkadot/keyring": "10.1.11",
@@ -80,7 +80,7 @@
     "build-and-copy": "node  ./packages/react-native/bundler/build-and-copy.js",
     "build-packages": "yarn workspace @docknetwork/wallet-sdk-dids build",
     "test": "export NODE_OPTIONS=\"--max_old_space_size=4096\";node ./node_modules/jest/bin/jest.js --forceExit",
-    "test:ci": "sh ./scripts/test-ci.sh",
+    "test:ci": "yarn test",
     "test:integration": "jest --config jest.config.e2e.js",
     "examples:all": "nodemon --exec NODE_ENV=development npx babel-node ./examples/index.js",
     "lint": "eslint './packages/**/*.js' --max-warnings=0 --ignore-path=.prettierignore",
@@ -153,7 +153,6 @@
     "ts-jest": "29.1.0",
     "ts-loader": "^9.4.4",
     "uuid": "^8.3.2",
-    "wasm-loader": "1.3.0",
     "winston": "^3.3.3"
   }
 }

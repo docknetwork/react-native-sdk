@@ -6,7 +6,7 @@ directories=$(find ./packages/ -maxdepth 1 -type d)
 
 # Iterate over each directory and run the test command
 for dir in $directories; do
-  yarn test --testMatch "<rootDir>/$dir/**/!(*.e2e).test.[jt]s"
+  yarn test --testMatch "<rootDir>/$dir/**/!(*.e2e).test.[j]s"
 done
 
 # There is a memory leak in the integration tests, will be fixed in separate jira

@@ -1,7 +1,7 @@
 import {renderHook} from '@testing-library/react-hooks';
 import {useAccounts} from './accountsHooks';
 
-jest.mock('./index.js', () => {
+jest.mock('./index', () => {
   let documents = [
     {
       '@context': ['https://w3id.org/wallet/v1'],
