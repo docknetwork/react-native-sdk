@@ -48,14 +48,8 @@ const expectEnforceBoundsToHaveBeenCalledWithDate = (
   expect(builder.enforceBounds).toHaveBeenCalledWith(
     credIdx,
     attributeName,
-    expect.objectContaining({
-      getTime: expect.any(Function),
-      valueOf: expect.any(Function),
-    }),
-    expect.objectContaining({
-      getTime: expect.any(Function),
-      valueOf: expect.any(Function),
-    }),
+    expect.any(Date),
+    expect.any(Date),
     provingKeyId,
     provingKey
   );
