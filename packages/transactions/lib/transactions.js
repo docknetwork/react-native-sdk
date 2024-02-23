@@ -260,6 +260,8 @@ export class Transactions {
 
     return items.filter(item => {
       return item.fromAddress === address || item.recipientAddress === address
+    }).sort((a, b) => {
+      return new Date(b.date) - new Date(a.date);
     });
   }
 
