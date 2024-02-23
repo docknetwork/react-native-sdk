@@ -5,6 +5,7 @@ import {documentsCommand} from './commands/documents';
 import {verificationCommands} from './commands/verification';
 import {messagesCommand} from './commands/messages';
 import { accountsCommands } from './commands/accounts';
+import { ecosystemCommands } from './commands/ecosystem';
 
 const program = new Command();
 
@@ -14,6 +15,7 @@ program.addCommand(documentsCommand);
 program.addCommand(verificationCommands);
 program.addCommand(messagesCommand);
 program.addCommand(accountsCommands);
+program.addCommand(ecosystemCommands);
 
 
 program.parse();
