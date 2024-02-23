@@ -81,8 +81,10 @@ const issueEnrollmentCredential = async () => {
 
   try {
     const credential = await issueBiometricsVC(BIOMETRIC_ENROLLMENT_CREDENTIAL_TYPE, {
-      biometricProperties: JSON.stringify({ id: BIOMETRIC_PROPERTIES }),
-      biometricId,
+      biometric: {
+        id: biometricId,
+        properties: JSON.stringify({ id: BIOMETRIC_PROPERTIES })
+      }
     });
 
     return credential;
@@ -105,8 +107,10 @@ const issueBiometricMatchCredential = async enrollmentCredential => {
   if (biometricId === enrollmentCredential.credentialSubject.biometricId) {
     const currentTime = getTimestamp();
     return await issueBiometricsVC(BIOMETRIC_CREDENTIAL_TYPE, {
-      timestamp: currentTime,
-      biometricId,
+      biometric: {
+        id: biometricId,
+        created: currentTime,
+      }
     });
   }
 
