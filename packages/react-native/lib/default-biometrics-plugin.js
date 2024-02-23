@@ -35,14 +35,8 @@ function hasProofOfBiometrics(proofRequest) {
   const fields = proofRequest.input_descriptors
     ?.map(input => input.constraints?.fields)
     .flat();
-  return (
-    fields.findIndex(
-      field =>{
-        const biometricAttributeMatch = new RegExp(/^\$.credentialSubject.biometric/);
-        return field.path?.some(path => biometricAttributeMatch.test(path))
-      }
-    ) !== -1
-  );
+  const paths = fields.map(field=> field.path).flat();
+  return paths?.includes('$.credentialSubject.biometric.id') && paths?.includes('$.credentialSubject.biometric.created');
 }
 
 
