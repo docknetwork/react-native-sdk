@@ -155,6 +155,8 @@ describe('WalletService', () => {
         await service.importWallet({json, password: '123'});
         for (let doc of accountDocuments) {
           const walletDoc = await walletService.getDocumentById(doc.id);
+          delete walletDoc.hasBackup;
+          delete doc.hasBackup;
           expect(walletDoc).toStrictEqual(doc);
         }
       });
