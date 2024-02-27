@@ -1516,14 +1516,6 @@
     babel-polyfill "^6.26.0"
     base58-universal "1.0.0"
 
-"@docknetwork/wallet-sdk-dids@^0.2.4":
-  version "0.2.6"
-  resolved "https://registry.yarnpkg.com/@docknetwork/wallet-sdk-dids/-/wallet-sdk-dids-0.2.6.tgz#d89304280ff9f096b96f8c3278324e84d3931276"
-  integrity sha512-Sf6EYern2ckRHPwXZxFD69iDWvke3M2zL5TWwg1Xq7KiBa2Fh6J+R0LjkqC473u0zNC0E9iZnG8uRSupa3I1hg==
-  dependencies:
-    "@digitalbazaar/did-method-key" "^2.0.0"
-    uuid "^8.3.2"
-
 "@eslint/eslintrc@^0.4.3":
   version "0.4.3"
   resolved "https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-0.4.3.tgz#9e42981ef035beb3dd49add17acb96e8ff6f394c"
