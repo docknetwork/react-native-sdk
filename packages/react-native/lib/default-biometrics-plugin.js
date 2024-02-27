@@ -10,7 +10,7 @@ import {v4 as uuid} from 'uuid';
 const BIOMETRIC_KEY = uuid();
 const BIOMETRIC_PROPERTIES = 'ua7iM2XgYQnjnKqVAr3F';
 
-const BIOMETRIC_CREDENTIAL_TYPE = 'BiometricsCredential';
+const BIOMETRIC_CREDENTIAL_TYPE = 'ForSurBiometric';
 const BIOMETRIC_ENROLLMENT_CREDENTIAL_TYPE = 'BiometricEnrollment';
 
 const initiateBiometricCheck = async () => {
@@ -52,7 +52,9 @@ async function issueBiometricsVC(type, data) {
       issuanceDate: getTimestamp(),
       subject: data,
     },
-    algorithm: 'dockbbs+',
+    // All BBS+ verifications stoped working after SDK 7.5.1 upgrade
+    // It will be disabled to unblock our testing
+    // algorithm: 'dockbbs+',
   };
 
   const response = await axios.post('https://api-staging.dock.io/credentials', body, {
