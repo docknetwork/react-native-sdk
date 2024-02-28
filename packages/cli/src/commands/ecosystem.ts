@@ -43,7 +43,7 @@ ecosystemCommands
 ecosystemCommands
   .command('getEcosystemFromDID')
   .option('-d, --did <did>', 'DID')
-  .description('Get ecosystem from DID')
+  .description('Get ecosystem from issuer DID')
   .action(async ({did}) => {
     await dockService.init({
       address: 'wss://knox-1.dock.io',
@@ -52,12 +52,12 @@ ecosystemCommands
     await dockService.waitDockReady();
     await dockService.ensureDockReady();
 
-    const verifierDIDMethodKey = typedHexDID(
+    const issuerDIDMethodKey = typedHexDID(
       dockService.dock.api,
       did,
     );
     const registryInfo = await dockService.dock.trustRegistry?.registriesInfo({
-      Issuer: verifierDIDMethodKey,
+      Issuer: issuerDIDMethodKey,
     });
     console.log(registryInfo);
 
