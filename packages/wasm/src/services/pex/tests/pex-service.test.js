@@ -1,4 +1,4 @@
-import {pexService} from '../service.js';
+import {pexService} from '../service';
 
 describe('Pex Examples', () => {
   it('expect to filter credentials based on a minimum value numeric filter', () => {
