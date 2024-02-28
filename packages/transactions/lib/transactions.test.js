@@ -132,7 +132,7 @@ describe('TransactionsModule', () => {
         accountAddress,
       );
 
-      expect(transactions.length).toEqual(8);
+      expect(transactions.length).toEqual(9);
     });
 
     it('Is history filtered (received transactions with null/undefined hash)', async () => {
@@ -141,7 +141,7 @@ describe('TransactionsModule', () => {
         accountAddress,
       );
 
-      expect(transactions.length).toEqual(8);
+      expect(transactions.length).toEqual(9);
     });
 
     it('Is history sorted in desc', async () => {
