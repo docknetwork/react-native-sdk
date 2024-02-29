@@ -6,6 +6,7 @@ import {
   getBiometricData,
 } from './biometric-binding/helpers';
 import {v4 as uuid} from 'uuid';
+import { getDIDProvider } from './wallet';
 
 const BIOMETRIC_KEY = uuid();
 const BIOMETRIC_PROPERTIES = 'ua7iM2XgYQnjnKqVAr3F';
@@ -70,7 +71,7 @@ const issueEnrollmentCredential = async () => {
 
   try {
     const credential = await issueBiometricsVC(BIOMETRIC_ENROLLMENT_CREDENTIAL_TYPE, {
-      id: uuid(),
+      id: await getDIDProvider().getDefaultDID(),
       biometric: {
         id: biometricId,
         data: JSON.stringify({ id: BIOMETRIC_PROPERTIES }),
@@ -79,7 +80,7 @@ const issueEnrollmentCredential = async () => {
     });
 
     return credential;
-  } catch(err) {
+  } catch (err) {
     console.error(err);
     throw new Error('Unable to issue enrollment credential');
   }
@@ -90,7 +91,7 @@ const issueBiometricMatchCredential = async enrollmentCredential => {
   const biometricId = enrollmentCredential.credentialSubject.biometric.id;
 
   return await issueBiometricsVC(BIOMETRIC_CREDENTIAL_TYPE, {
-    id: uuid(),
+    id: await getDIDProvider().getDefaultDID(),
     biometric: {
       id: biometricId,
       created: getTimestamp(),
