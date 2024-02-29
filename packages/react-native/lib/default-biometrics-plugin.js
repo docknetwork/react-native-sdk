@@ -52,9 +52,7 @@ async function issueBiometricsVC(type, data) {
       issuanceDate: getTimestamp(),
       subject: data,
     },
-    // All BBS+ verifications stoped working after SDK 7.5.1 upgrade
-    // It will be disabled to unblock our testing
-    // algorithm: 'dockbbs+',
+    algorithm: 'dockbbs+',
   };
 
   const response = await axios.post('https://***REMOVED***/credentials', body, {
