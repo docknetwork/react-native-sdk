@@ -279,10 +279,7 @@ class CredentialService {
 
     const credentialsFromPresentation =
       await bbsPlusPresentation.deriveCredentials(options);
-    return credentialsFromPresentation.map(credentialJSON => {
-      credentialJSON['@context'].push('https://ld.dock.io/security/bbs/v1');
-      return VerifiableCredential.fromJSON(credentialJSON);
-    });
+    return credentialsFromPresentation;
   }
 
   async testRangeProof() {
