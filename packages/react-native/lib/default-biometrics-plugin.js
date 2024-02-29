@@ -10,7 +10,7 @@ import {v4 as uuid} from 'uuid';
 const BIOMETRIC_KEY = uuid();
 const BIOMETRIC_PROPERTIES = 'ua7iM2XgYQnjnKqVAr3F';
 
-const BIOMETRIC_CREDENTIAL_TYPE = 'BiometricsCredential';
+const BIOMETRIC_CREDENTIAL_TYPE = 'ForSurBiometric';
 const BIOMETRIC_ENROLLMENT_CREDENTIAL_TYPE = 'BiometricEnrollment';
 
 const initiateBiometricCheck = async () => {
