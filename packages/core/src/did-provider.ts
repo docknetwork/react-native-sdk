@@ -186,6 +186,12 @@ export async function getAll({wallet}) {
   return dids;
 }
 
+export async function getDefaultDID({wallet}) {
+  assert(!!wallet, 'wallet is required');
+  const allDids = await getAll({ wallet });
+  return allDids[0]?.didDocument.id;
+}
+
 export async function getDIDKeyPairs({wallet}) {
   assert(!!wallet, 'wallet is required');
   const didDocs = await getAll({wallet});
@@ -218,6 +224,7 @@ export interface IDIDProvider {
   getAll(): Promise<any>;
   getDIDKeyPairs(): Promise<any>;
   ensureDID(): Promise<any>;
+  getDefaultDID(): Promise<string>;
 }
 
 export function createDIDProvider({wallet}): IDIDProvider {
@@ -249,5 +256,8 @@ export function createDIDProvider({wallet}): IDIDProvider {
     async ensureDID() {
       return ensureDID({wallet});
     },
+    async getDefaultDID() {
+      return getDefaultDID({wallet});
+    }
   };
 }
