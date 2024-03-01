@@ -120,6 +120,9 @@ async function verifyCredential() {
 
   delete credential[WITNESS_KEY];
 
+  const isRevoked = await getIsRevoked(credential, witness);
+  console.log('Is Revoked:', isRevoked);
+
   const bbsPlusPresentation = new BbsPlusPresentation();
 
   await bbsPlusPresentation.addCredentialToPresent(credential, {
@@ -246,13 +249,16 @@ export const getIsRevoked = async (credential, _membershipWitness) => {
     await getWitnessDetails(credential, _membershipWitness);
 
   try {
-    return !accumulator.verifyMembershipWitness(
+    const result = accumulator.verifyMembershipWitness(
       encodedRevId,
       membershipWitness,
       pk,
       params,
     );
+    debugger;
+    return !!result;
   } catch (err) {
+    debugger;
     console.error(err);
     return false;
   }
