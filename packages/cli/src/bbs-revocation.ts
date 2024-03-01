@@ -255,8 +255,8 @@ export const getIsRevoked = async (credential, _membershipWitness) => {
       pk,
       params,
     );
-    debugger;
-    return !!result;
+
+    return !result;
   } catch (err) {
     debugger;
     console.error(err);
