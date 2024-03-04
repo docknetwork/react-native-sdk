@@ -17,6 +17,7 @@ import {
   AccumulatorPublicKey,
   dockAccumulatorParams,
   MembershipWitness,
+  Encoder,
 } from '@docknetwork/crypto-wasm-ts';
 import {hexToU8a} from '@polkadot/util';
 import axios from 'axios';
@@ -221,9 +222,7 @@ export const getWitnessDetails = async (credential, _membershipWitness) => {
     hexToU8a(queriedAccumulator.accumulated),
   );
 
-  const encodedRevId = Accumulator.encodePositiveNumberAsAccumulatorMember(
-    Number(revocationIndex),
-  );
+  const encodedRevId = Encoder.defaultEncodeFunc()(revocationIndex.toString());
 
   const publicKey = await dock.accumulatorModule.getPublicKeyByHexDid(
     queriedAccumulator.keyRef[0],
