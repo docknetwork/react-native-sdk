@@ -183,6 +183,11 @@ verificationCommands
     clipboardy.write(JSON.stringify(presentation, null, 2));
     console.log('Presentation generated:');
     console.log(JSON.stringify(presentation, null, 2));
+
+
+    const result = await controller.submitPresentation(presentation);
+
+    console.log(JSON.stringify(result, null, 2));
     console.log('Verifying presentation...');
   });
 
