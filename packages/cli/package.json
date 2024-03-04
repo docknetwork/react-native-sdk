@@ -2,7 +2,10 @@
     "version": "0.0.1",
     "name": "@docknetwork/wallet-sdk-cli",
     "scripts": {
-        "cli": "ts-node src/index.ts"
+        "cli": "ts-node src/index.ts",
+        "test:bbs": "ts-node src/bbs-verification.ts",
+        "test:revocation": "ts-node src/bbs-revocation.ts"
+
     },
     "dependencies": {
         "@docknetwork/wallet-sdk-core": "^0.4.3",
