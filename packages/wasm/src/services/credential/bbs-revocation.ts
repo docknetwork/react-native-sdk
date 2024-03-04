@@ -4,6 +4,7 @@ import {
   AccumulatorPublicKey,
   dockAccumulatorParams,
   MembershipWitness,
+  Encoder,
 } from '@docknetwork/crypto-wasm-ts';
 import dock from '@docknetwork/sdk';
 
@@ -38,9 +39,7 @@ export const getWitnessDetails = async (
     hexToU8a(queriedAccumulator.accumulated),
   );
 
-  const encodedRevId = Accumulator.encodePositiveNumberAsAccumulatorMember(
-    Number(revocationIndex),
-  );
+  const encodedRevId = Encoder.defaultEncodeFunc()(revocationIndex.toString());
 
   const publicKey = await dock.accumulatorModule.getPublicKeyByHexDid(
     queriedAccumulator.keyRef[0],
