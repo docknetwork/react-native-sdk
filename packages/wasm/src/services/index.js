@@ -9,6 +9,7 @@ import {didService} from './dids/service';
 import {credentialService} from './credential/service';
 import {relayService} from './relay-service/service';
 import {pexService} from './pex/service';
+import {trustRegistryService} from './trust-registry/service';
 export default [
   keyringService,
   dockService,
@@ -21,4 +22,5 @@ export default [
   credentialService,
   relayService,
   pexService,
+  trustRegistryService
 ];
