@@ -22,5 +22,5 @@ export default [
   credentialService,
   relayService,
   pexService,
-  trustRegistryService
+  trustRegistryService,
 ];
