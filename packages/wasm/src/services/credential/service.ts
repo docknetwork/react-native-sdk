@@ -100,6 +100,11 @@ class CredentialService {
     }
 
     keyDoc.keypair = keyDocToKeypair(keyDoc, getDock());
+    
+    if (isBBS) {
+      return vp.toJSON();
+    }
+
     return vp.sign(keyDoc, challenge, domain, dockService.resolver);
   }
   async verifyCredential(params) {
