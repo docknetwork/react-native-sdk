@@ -176,31 +176,3 @@ export function useGetCredentialStatus({ credential }) {
     return status;
   }, [status]);
 }
-
-export async function getIssuerEcosystems(issuer, credentialId ) {
-
-  let apiUrl;
-
-  if (credentialId && credentialId.indexOf('.dock.io')) {
-    const origin = /^(https?:\/\/[^\/]+)/.exec(credentialId);
-    if (origin && origin[0]) {
-      apiUrl = origin[0].replace('creds-', 'api-');
-    }
-  }
-
-  //TODO: Temporary implementation - Replace API fetch with sdk when sdk implementation
-  const response = axios.get(`${apiUrl}/dids/${issuer}/ecosystems`)
-  return (await response).data?.list
-}
-
-export function useEcosystems({ issuer, credentialId }) {
-  const [ecosystems, setEcosystems] = useState([]);
-
-  useEffect(() => {
-    getIssuerEcosystems(issuer, credentialId).then(result => {
-      setEcosystems(result || []);
-    })
-  }, [issuer, credentialId]);
-
-  return { ecosystems };
-}
