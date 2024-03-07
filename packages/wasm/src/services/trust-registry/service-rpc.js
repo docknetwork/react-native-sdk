@@ -5,7 +5,7 @@ export class TrustRegistryServiceRpc extends RpcService {
   constructor() {
     super(serviceName);
   }
-  
+
   async getTrustRegistries(params) {
     return this.call('getTrustRegistries', params);
   }
