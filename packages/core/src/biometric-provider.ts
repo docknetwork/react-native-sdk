@@ -33,6 +33,15 @@ export function createBiometricBindingProvider({
         enrollmentCredentials[0],
       );
 
+      if (matchConfirmationCredential) {
+        const biometricMatchCredentials = await wallet.getDocumentsByType('ForSurBiometric');
+        for (let i = 0; i < biometricMatchCredentials.length; i++) {
+          await wallet.removeDocument(biometricMatchCredentials[0].id);
+        }
+
+        await wallet.addDocument(matchConfirmationCredential);
+      }
+
       return matchConfirmationCredential;
     },
     checkIsBiometryRequired: onCheckBiometryRequired,
