@@ -5,11 +5,13 @@ import {
   saveBiometricData,
   getBiometricData,
 } from './biometric-binding/helpers';
+import {v4 as uuid} from 'uuid';
+import { getDIDProvider } from './wallet';
 
-const BIOMETRIC_KEY = 'placeholder-id';
+const BIOMETRIC_KEY = uuid();
 const BIOMETRIC_PROPERTIES = 'ua7iM2XgYQnjnKqVAr3F';
 
-const BIOMETRIC_CREDENTIAL_TYPE = 'BiometricsCredential';
+const BIOMETRIC_CREDENTIAL_TYPE = 'ForSurBiometric';
 const BIOMETRIC_ENROLLMENT_CREDENTIAL_TYPE = 'BiometricEnrollment';
 
 const initiateBiometricCheck = async () => {
@@ -19,29 +21,21 @@ const initiateBiometricCheck = async () => {
     await saveBiometricData(BIOMETRIC_KEY, BIOMETRIC_PROPERTIES);
 
     const biometricData = await getBiometricData();
+
     if (biometricData?.password) {
       return biometricData.password;
-    } else {
-      throw Error('Biometric data not found.');
     }
-  } else {
-    console.log('Biometry not supported on this device.');
-    // Will fallback to mock biometrics
-    return 'mocked-biometric-id';
   }
+
+  return uuid();
 };
 
 function hasProofOfBiometrics(proofRequest) {
   const fields = proofRequest.input_descriptors
     ?.map(input => input.constraints?.fields)
     .flat();
-  return (
-    fields.findIndex(
-      field =>
-        field.path?.includes('$.type[*]') &&
-        field.filter?.const === BIOMETRIC_CREDENTIAL_TYPE,
-    ) !== -1
-  );
+  const paths = fields.map(field=> field.path).flat();
+  return paths?.includes('$.credentialSubject.biometric.id') && paths?.includes('$.credentialSubject.biometric.created');
 }
 
 
@@ -75,18 +69,18 @@ async function issueBiometricsVC(type, data) {
 const issueEnrollmentCredential = async () => {
   const biometricId = await initiateBiometricCheck();
 
-  if (!biometricId) {
-    throw new Error('biometrics-not-supported');
-  }
-
   try {
     const credential = await issueBiometricsVC(BIOMETRIC_ENROLLMENT_CREDENTIAL_TYPE, {
-      biometricProperties: JSON.stringify({ id: BIOMETRIC_PROPERTIES }),
-      biometricId,
+      id: await getDIDProvider().getDefaultDID(),
+      biometric: {
+        id: biometricId,
+        data: JSON.stringify({ id: BIOMETRIC_PROPERTIES }),
+        created: getTimestamp(),
+      },
     });
 
     return credential;
-  } catch(err) {
+  } catch (err) {
     console.error(err);
     throw new Error('Unable to issue enrollment credential');
   }
@@ -94,23 +88,16 @@ const issueEnrollmentCredential = async () => {
 
 const issueBiometricMatchCredential = async enrollmentCredential => {
   const biometricData = await getBiometricData();
-  if (!biometricData) {
-    throw new Error('Biometrics check failed');
-  }
+  const biometricId = enrollmentCredential.credentialSubject.biometric.id;
 
-  // Will disable real biometric check for now
-  // const biometricId = biometricData.password;
-  const biometricId = enrollmentCredential.credentialSubject.biometricId;
-
-  if (biometricId === enrollmentCredential.credentialSubject.biometricId) {
-    const currentTime = getTimestamp();
-    return await issueBiometricsVC(BIOMETRIC_CREDENTIAL_TYPE, {
-      timestamp: currentTime,
-      biometricId,
-    });
-  }
-
-  throw new Error('Enrollment credential not found');
+  return await issueBiometricsVC(BIOMETRIC_CREDENTIAL_TYPE, {
+    id: await getDIDProvider().getDefaultDID(),
+    biometric: {
+      id: biometricId,
+      created: getTimestamp(),
+      data: biometricData,
+    },
+  });
 };
 
 export const defaultBiometricsPlugin = {

@@ -179,6 +179,60 @@ describe('Credential Service', () => {
     expect(presentation).toHaveProperty('proof');
     expect(presentation.type).toContain('VerifiablePresentation');
   });
+
+  it('should create unsigned presentation for bbs+ vc', async () => {
+    const credentials = [
+      {
+        '@context': [
+          'https://www.w3.org/2018/credentials/v1',
+          'https://ld.dock.io/security/bbs/v1',
+          {
+            dk: 'https://ld.dock.io/credentials#',
+            BasicCredential: 'dk:BasicCredential',
+            name: 'dk:name',
+          },
+          'https://ld.dock.io/credentials/prettyvc',
+        ],
+        id: 'http://example.edu/credentials/2803',
+        type: ['VerifiableCredential', 'DockAuthCredential'],
+        credentialSubject: {
+          state: 'dockstagingtestHsBR-jkCCPl4sBOh3f3_n66r9X1uIKgW',
+        },
+        issuanceDate: '2022-08-26T09:12:15.530Z',
+        issuer: 'did:key:z6MkhN7PBjWgSMQ24Bebdpvvw8fVRv7m6MHDqiwTKozzBgrJ',
+        proof: {
+          type: 'Bls12381BBS+SignatureDock2022',
+          created: '2022-08-26T09:12:15Z',
+          verificationMethod:
+            'did:key:z6MkhN7PBjWgSMQ24Bebdpvvw8fVRv7m6MHDqiwTKozzBgrJ#z6MkhN7PBjWgSMQ24Bebdpvvw8fVRv7m6MHDqiwTKozzBgrJ',
+          proofPurpose: 'assertionMethod',
+          proofValue:
+            'z2DjngsHeuSUNZgfEZ3Vw8TRw3H2g8jobzzWeQU3P2fQcN4RMy9h7vHZCi63yR2iQnPTHnsfaG8MCcKnooXVx2zFz',
+        },
+      },
+    ];
+    const keyDoc = {
+      id: 'did:key:z6MkhN7PBjWgSMQ24Bebdpvvw8fVRv7m6MHDqiwTKozzBgrJ#z6MkhN7PBjWgSMQ24Bebdpvvw8fVRv7m6MHDqiwTKozzBgrJ',
+      controller: 'did:key:z6MkhN7PBjWgSMQ24Bebdpvvw8fVRv7m6MHDqiwTKozzBgrJ',
+      type: 'Ed25519VerificationKey2018',
+      publicKeyBase58: '3urLbVGF6ouYwgotxFy6637VcLqugU2s9i2XVY2yGU4v',
+      privateKeyBase58:
+        '3rF4Jhp7vF6tavGZCSgkdMM3ANLB7YpmzfRcB5FTs1Q7EgN6u5cCwzCaHCDYcestRSEHzjF82TvJUaj3mdqcbGnS',
+      publicKeyMultibase: 'z3urLbVGF6ouYwgotxFy6637VcLqugU2s9i2XVY2yGU4v',
+      privateKeyMultibase:
+        'z3rF4Jhp7vF6tavGZCSgkdMM3ANLB7YpmzfRcB5FTs1Q7EgN6u5cCwzCaHCDYcestRSEHzjF82TvJUaj3mdqcbGnS',
+    };
+    const presentation = await service.createPresentation({
+      credentials,
+      keyDoc,
+      challenge: 'Test',
+      id: 'http://example.edu/credentials/1986',
+    });
+
+    expect(presentation.proof).toBeNull();
+    expect(presentation.type).toContain('VerifiablePresentation');
+  });
+
   it('expect to create bbs+ presentation', async () => {
     const error1 = await getPromiseError(() =>
       service.createBBSPresentation({
