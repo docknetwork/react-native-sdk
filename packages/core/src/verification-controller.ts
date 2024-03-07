@@ -196,9 +196,6 @@ export function createVerificationController({
 
     assert(keyDoc, `No key pair found for the selected DID ${selectedDID}`);
 
-    // TODO: Figure out why this context is being created
-    delete credentials[0].proof.context;
-
     const presentation = await credentialServiceRPC.createPresentation({
       credentials,
       challenge: templateJSON.nonce,
