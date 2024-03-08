@@ -1,6 +1,7 @@
 import {credentialServiceRPC} from '@docknetwork/wallet-sdk-wasm/src/services/credential';
 import {IWallet} from './types';
 import assert from 'assert';
+import { dockService } from '@docknetwork/wallet-sdk-wasm/src/services/dock';
 
 export type Credential = any;
 
@@ -61,7 +62,7 @@ export async function isValid({
   try {
     if (isCredentialExpired(credential)) {
       return {
-        status: CREDENTIAL_STATUS.Expired,
+        status: CredentialStatus.Expired,
       };
     }
 
@@ -82,25 +83,25 @@ export async function isValid({
     if (!verified) {
       if (isCredentialRevoked(error)) {
         return {
-          status: CREDENTIAL_STATUS.Revoked,
+          status: CredentialStatus.Revoked,
           error,
         };
       }
 
       return {
-        status: CREDENTIAL_STATUS.Invalid,
+        status: CredentialStatus.Invalid,
         error: error,
       };
     }
 
     return {
-      status: CREDENTIAL_STATUS.Verified,
+      status: CredentialStatus.Verified,
     };
   } catch (err) {
     console.error(err);
 
     return {
-      status: CREDENTIAL_STATUS.Invalid,
+      status: CredentialStatus.Invalid,
       error: err.toString(),
     };
   }
@@ -135,7 +136,7 @@ async function getMembershipWitness({credentialId, wallet}) {
 }
 
 
-export const CREDENTIAL_STATUS = {
+export const CredentialStatus = {
   Invalid: 'invalid',
   Expired: 'expired',
   Verified: 'verified',
@@ -182,6 +183,8 @@ async function syncCredentialStatus({ wallet, credentialIds, forceFetch }: SyncC
 
   let statusDocs = [];
 
+  let isApiConnected;
+  
   for (const credential of credentials) {
     let shouldFetch = !!forceFetch;
     let statusDoc = await wallet.getDocumentById(`${credential.id}#status`);
@@ -201,6 +204,9 @@ async function syncCredentialStatus({ wallet, credentialIds, forceFetch }: SyncC
 
     statusDocs.push(statusDoc);
 
+    if (!statusDoc.status || statusDoc.status === CredentialStatus.Pending) {
+      shouldFetch = true;
+    }
 
     if (!shouldFetch) {
       // check if latest fetch was more than 24 hours ago
@@ -216,10 +222,15 @@ async function syncCredentialStatus({ wallet, credentialIds, forceFetch }: SyncC
       continue;
     }
 
-    statusDoc.status = CREDENTIAL_STATUS.Pending;
+    statusDoc.status = CredentialStatus.Pending;
     statusDoc.updatedAt = new Date().toISOString();
 
     await wallet.updateDocument(statusDoc);
+
+    if (!isApiConnected) {
+      await dockService.ensureDockReady();
+      isApiConnected = true;
+    }    
 
     const result = await isValid({ credential, wallet });
     statusDoc.status = result?.status
@@ -253,16 +264,18 @@ export function createCredentialProvider({
         wallet,
       }) as any,
     getCredentialStatus: async (credential: Credential) => {
+      assert(!!credential, 'credential is required');
+
       if (isCredentialExpired(credential)) {
         return {
-          status: CREDENTIAL_STATUS.Expired,
+          status: CredentialStatus.Expired,
         };
       }
 
       const statusDoc = await wallet.getDocumentById(`${credential.id}#status`);
 
       return {
-        status: statusDoc?.status || CREDENTIAL_STATUS.Pending,
+        status: statusDoc?.status || CredentialStatus.Pending,
         error: statusDoc?.error,
       }
     },
