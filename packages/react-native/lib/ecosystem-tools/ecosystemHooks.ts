@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getEcosystems } from "./helpers";
+import { getEcosystems } from "@docknetwork/wallet-sdk-core/src/ecosystem-tools";
 
 export function useEcosystems({issuer, credential}) {
   const [ecosystems, setEcosystems] = useState([]);
