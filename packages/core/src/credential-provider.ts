@@ -28,21 +28,13 @@ export function isBBSPlusCredential(credential) {
 }
 
 function isCredentialExpired(credential) {
-  return credential.expirationDate
-    ? isInThePast(new Date(credential.expirationDate))
-    : false;
+  return !!credential.expirationDate && new Date(credential.expirationDate) < new Date();
 }
 
 function isCredentialRevoked(error) {
   return (
     typeof error === 'string' && error.toLowerCase().includes('revocation')
   );
-}
-
-export function isInThePast(date) {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  return date < today;
 }
 
 /**
