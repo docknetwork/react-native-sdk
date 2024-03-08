@@ -1,6 +1,6 @@
 import {
   ACUMM_WITNESS_PROP_KEY,
-  CREDENTIAL_STATUS,
+  CredentialStatus,
   ICredentialProvider,
   createCredentialProvider,
 } from './credential-provider';
@@ -62,7 +62,7 @@ describe('CredentialProvider', () => {
       expect(statusDocs.length).toBe(2);
 
       for (const statusDoc of statusDocs) {
-        expect(statusDoc.status).toBe(CREDENTIAL_STATUS.Verified);
+        expect(statusDoc.status).toBe(CredentialStatus.Verified);
       }
     });
 
@@ -81,7 +81,7 @@ describe('CredentialProvider', () => {
       expect(statusDocs.length).toBe(2);
 
       for (const statusDoc of statusDocs) {
-        expect(statusDoc.status).toBe(CREDENTIAL_STATUS.Revoked);
+        expect(statusDoc.status).toBe(CredentialStatus.Revoked);
       }
     });
 
@@ -103,7 +103,7 @@ describe('CredentialProvider', () => {
       expect(credentialServiceRPC.verifyCredential).toHaveBeenCalledTimes(2);
 
       for (const statusDoc of statusDocs) {
-        expect(statusDoc.status).toBe(CREDENTIAL_STATUS.Verified);
+        expect(statusDoc.status).toBe(CredentialStatus.Verified);
       }
     });
 
@@ -132,7 +132,7 @@ describe('CredentialProvider', () => {
       expect(credentialServiceRPC.verifyCredential).toHaveBeenCalledTimes(3);
 
       for (const statusDoc of statusDocs) {
-        expect(statusDoc.status).toBe(CREDENTIAL_STATUS.Verified);
+        expect(statusDoc.status).toBe(CredentialStatus.Verified);
       }
     });
 
