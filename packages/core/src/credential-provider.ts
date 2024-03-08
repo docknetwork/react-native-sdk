@@ -12,6 +12,7 @@ export interface ICredentialProvider {
   isValid(credential: any, forceFetch?: boolean): Promise<boolean>;
   addCredential(credential: any): Promise<Credential>;
   syncCredentialStatus(params: SyncCredentialStatusParams): Promise<CredentialStatusDocument[]>;
+  getCredentialStatus(credential: Credential): Promise<{status: string, error?: string}>;
 }
 
 export function isBBSPlusCredential(credential) {
@@ -156,9 +157,10 @@ type CredentialStatusDocument = {
 }
 
 /**
- * Fetch credential statuses from the chain and update the wallet
+ * Fetch credential status from the chain and update the wallet
  * Store a new document <credentialId>#status in the wallet
  * Returns a list of CredentialStatusDocument
+ * 
  * @param param0
  * @returns CredentialStatusDocument[]
  */
@@ -250,6 +252,20 @@ export function createCredentialProvider({
         credential,
         wallet,
       }) as any,
+    getCredentialStatus: async (credential: Credential) => {
+      if (isCredentialExpired(credential)) {
+        return {
+          status: CREDENTIAL_STATUS.Expired,
+        };
+      }
+
+      const statusDoc = await wallet.getDocumentById(`${credential.id}#status`);
+
+      return {
+        status: statusDoc?.status || CREDENTIAL_STATUS.Pending,
+        error: statusDoc?.error,
+      }
+    },
     syncCredentialStatus: async (props: SyncCredentialStatusParams) => {
       return syncCredentialStatus({ wallet, ...props });
     },
