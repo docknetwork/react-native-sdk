@@ -27,14 +27,8 @@ export function isBBSPlusCredential(credential) {
   );
 }
 
-function isCredentialExpired(credential) {
+export function isCredentialExpired(credential) {
   return !!credential.expirationDate && new Date(credential.expirationDate) < new Date();
-}
-
-function isCredentialRevoked(error) {
-  return (
-    typeof error === 'string' && error.toLowerCase().includes('revocation')
-  );
 }
 
 /**
@@ -69,11 +63,11 @@ export async function isValid({
       credential,
       membershipWitness,
     });
-    
+
     const { verified, error }  = verificationResult;
   
     if (!verified) {
-      if (isCredentialRevoked(error)) {
+      if (typeof error === 'string' && error.toLowerCase().includes('revocation')) {
         return {
           status: CredentialStatus.Revoked,
           error,
