@@ -157,12 +157,7 @@ async function syncCredentialStatus({ wallet, credentialIds, forceFetch }: SyncC
   let credentials;
 
   if (credentialIds && credentialIds.length) {
-    for (const credentialId of credentialIds) {
-      const credential = await wallet.getDocumentById(credentialId);
-      if (credential) {
-        credentials.push(credential);
-      }
-    }
+    credentials = await wallet.getDocumentsById(credentialIds);
   } else {
     credentials = await wallet.getDocumentsByType('VerifiableCredential');
   }
