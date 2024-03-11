@@ -136,6 +136,27 @@ describe('CredentialProvider', () => {
       }
     });
 
+    it('should create status only for selected credential', async () => {
+      const mockFn = jest
+        .spyOn(credentialServiceRPC, 'verifyCredential')
+        .mockImplementation(async () => {
+          return {
+            verified: true,
+          };
+        });
+
+      const statusDocs = await provider.syncCredentialStatus({
+        credentialIds: [customerCredential.id],
+      });
+
+      expect(statusDocs.length).toBe(1);
+
+      for (const statusDoc of statusDocs) {
+        expect(statusDoc.status).toBe(CredentialStatus.Verified);
+      }
+    });
+
+
     afterEach(() => {
       (credentialServiceRPC.verifyCredential as any).mockReset();
     });
