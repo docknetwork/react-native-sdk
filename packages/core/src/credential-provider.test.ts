@@ -48,7 +48,7 @@ describe('CredentialProvider', () => {
       });
     });
 
-    it('should create credential status doc with for all credentials', async () => {
+    it('should create credential status doc with verified status', async () => {
       const mockFn = jest
         .spyOn(credentialServiceRPC, 'verifyCredential')
         .mockImplementation(async () => {
