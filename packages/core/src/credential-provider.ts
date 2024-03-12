@@ -1,5 +1,7 @@
 import {credentialServiceRPC} from '@docknetwork/wallet-sdk-wasm/src/services/credential';
 import {IWallet} from './types';
+import assert from 'assert';
+import { dockService } from '@docknetwork/wallet-sdk-wasm/src/services/dock';
 
 export type Credential = any;
 
@@ -10,6 +12,8 @@ export interface ICredentialProvider {
   isBBSPlusCredential(credential: any): boolean;
   isValid(credential: any, forceFetch?: boolean): Promise<boolean>;
   addCredential(credential: any): Promise<Credential>;
+  syncCredentialStatus(params: SyncCredentialStatusParams): Promise<CredentialStatusDocument[]>;
+  getCredentialStatus(credential: Credential): Promise<{status: string, error?: string}>;
 }
 
 export function isBBSPlusCredential(credential) {
@@ -23,6 +27,10 @@ export function isBBSPlusCredential(credential) {
   );
 }
 
+export function isCredentialExpired(credential) {
+  return !!credential.expirationDate && new Date(credential.expirationDate) < new Date();
+}
+
 /**
  * Uses Dock SDK to verify a credential
  * @param credential
@@ -30,14 +38,20 @@ export function isBBSPlusCredential(credential) {
  */
 export async function isValid({
   credential,
-  forceFetch,
   wallet,
 }: {
   credential: Credential;
-  forceFetch?: boolean;
   wallet: IWallet;
 }) {
+  assert(!!credential, 'credential is required');
+
   try {
+    if (isCredentialExpired(credential)) {
+      return {
+        status: CredentialStatus.Expired,
+      };
+    }
+
     const membershipWitness = credential[ACUMM_WITNESS_PROP_KEY] || await getMembershipWitness({
       credentialId: credential.id,
       wallet,
@@ -45,15 +59,37 @@ export async function isValid({
 
     delete credential[ACUMM_WITNESS_PROP_KEY];
 
-    const result = await credentialServiceRPC.verifyCredential({
+    const verificationResult = await credentialServiceRPC.verifyCredential({
       credential,
       membershipWitness,
     });
 
-    return result;
+    const { verified, error }  = verificationResult;
+  
+    if (!verified) {
+      if (typeof error === 'string' && error.toLowerCase().includes('revocation')) {
+        return {
+          status: CredentialStatus.Revoked,
+          error,
+        };
+      }
+
+      return {
+        status: CredentialStatus.Invalid,
+        error: error,
+      };
+    }
+
+    return {
+      status: CredentialStatus.Verified,
+    };
   } catch (err) {
     console.error(err);
-    return false;
+
+    return {
+      status: CredentialStatus.Invalid,
+      error: err.toString(),
+    };
   }
 }
 
@@ -85,6 +121,109 @@ async function getMembershipWitness({credentialId, wallet}) {
   return document?.value;
 }
 
+
+export const CredentialStatus = {
+  Invalid: 'invalid',
+  Expired: 'expired',
+  Verified: 'verified',
+  Revoked: 'revoked',
+  Pending: 'pending',
+};
+
+type SyncCredentialStatusParams = {
+  // Optional credential IDs to sync
+  credentialIds?: string[],
+  // Skip the cache and re-fetch from the chain
+  forceFetch?: boolean,
+};
+
+type CredentialStatusDocument = {
+  id: string;
+  status: string;
+  error: string;
+}
+
+/**
+ * Fetch credential status from the chain and update the wallet
+ * Store a new document <credentialId>#status in the wallet
+ * Returns a list of CredentialStatusDocument
+ * 
+ * @param param0
+ * @returns CredentialStatusDocument[]
+ */
+async function syncCredentialStatus({ wallet, credentialIds, forceFetch }: SyncCredentialStatusParams & {
+  wallet: IWallet;
+} ): Promise<CredentialStatusDocument[]> {
+  let credentials;
+
+  if (credentialIds && credentialIds.length) {
+    credentials = await wallet.getDocumentsById(credentialIds);
+  } else {
+    credentials = await wallet.getDocumentsByType('VerifiableCredential');
+  }
+
+  let statusDocs = [];
+
+  let isApiConnected;
+  
+  for (const credential of credentials) {
+    let shouldFetch = !!forceFetch;
+    let statusDoc = await wallet.getDocumentById(`${credential.id}#status`);
+
+    if (!statusDoc) {
+      shouldFetch = true;
+      statusDoc = {
+        type: 'CredentialStatus',
+        id: `${credential.id}#status`,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        status: null,
+      };
+
+      await wallet.addDocument(statusDoc);
+    }
+
+    statusDocs.push(statusDoc);
+
+    if (!statusDoc.status || statusDoc.status === CredentialStatus.Pending) {
+      shouldFetch = true;
+    }
+
+    if (!shouldFetch) {
+      // check if latest fetch was more than 24 hours ago
+      const updatedAt = new Date(statusDoc.updatedAt);
+      const diff = new Date().getTime() - updatedAt.getTime();
+      const hours = Math.floor(diff / 1000 / 60 / 60);
+      if (hours > 24) {
+        shouldFetch = true;
+      }
+    }
+
+    if (!shouldFetch) {
+      continue;
+    }
+
+    statusDoc.status = CredentialStatus.Pending;
+    statusDoc.updatedAt = new Date().toISOString();
+
+    await wallet.updateDocument(statusDoc);
+
+    if (!isApiConnected) {
+      await dockService.ensureDockReady();
+      isApiConnected = true;
+    }    
+
+    const result = await isValid({ credential, wallet });
+    statusDoc.status = result?.status
+    statusDoc.error = result?.error;
+    statusDoc.updatedAt = new Date().toISOString();
+
+    await wallet.updateDocument(statusDoc);
+  }
+
+  return statusDocs;
+}
+
 export function createCredentialProvider({
   wallet,
 }: {
@@ -104,7 +243,26 @@ export function createCredentialProvider({
       isValid({
         credential,
         wallet,
-      }),
+      }) as any,
+    getCredentialStatus: async (credential: Credential) => {
+      assert(!!credential, 'credential is required');
+
+      if (isCredentialExpired(credential)) {
+        return {
+          status: CredentialStatus.Expired,
+        };
+      }
+
+      const statusDoc = await wallet.getDocumentById(`${credential.id}#status`);
+
+      return {
+        status: statusDoc?.status || CredentialStatus.Pending,
+        error: statusDoc?.error,
+      }
+    },
+    syncCredentialStatus: async (props: SyncCredentialStatusParams) => {
+      return syncCredentialStatus({ wallet, ...props });
+    },
     addCredential: credential => addCredential({wallet, credential}),
     // TODO: move import credential from json or URL to this provider
   };
