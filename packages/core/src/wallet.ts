@@ -13,6 +13,7 @@ import {
   getAllDocuments,
   updateDocument,
   removeAllDocuments,
+  getDocumentsById,
 } from '@docknetwork/wallet-sdk-data-store/src/entities/document';
 import {CreateWalletProps, IWallet} from './types';
 import {toV1Wallet} from './v1-helpers';
@@ -94,6 +95,11 @@ export async function createWallet(
         dataStore,
       });
     },
+    getDocumentsById: idList =>
+      getDocumentsById({
+        dataStore,
+        idList,
+      }),
     getDocumentsByType: type =>
       getDocumentsByType({
         dataStore,
