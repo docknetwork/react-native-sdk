@@ -1,5 +1,11 @@
 name: Lint and test
 on: push
+
+# Auto cancels previous running jobs on each new commit
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name }}
+  cancel-in-progress: true
+
 jobs:
   lintAndTest:
     runs-on: ubuntu-latest
