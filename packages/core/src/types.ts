@@ -34,6 +34,7 @@ export interface IV1Wallet {
 
 export type IWallet = {
   getDocumentById: (id: string) => Promise<WalletDocument>;
+  getDocumentsById: (idList: string[]) => Promise<WalletDocument[]>;
   getDocumentsByType: (type: string) => Promise<WalletDocument[]>;
   getAllDocuments: () => Promise<WalletDocument[]>;
   addDocument: (json: any) => Promise<WalletDocument>;
