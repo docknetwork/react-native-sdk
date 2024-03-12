@@ -22,9 +22,7 @@ import {useDIDManagement} from './didHooks';
 import {useAccounts} from './accountsHooks';
 import {
   useCredentialUtils,
-  getCredentialStatus,
-  useGetCredentialStatus,
-  CREDENTIAL_STATUS,
+  useCredentialStatus,
 } from './credentials/credentialHooks';
 import {getOrCreateWallet} from './wallet';
 import debounce from 'lodash.debounce';
@@ -55,9 +53,7 @@ export {useAccounts};
 export {useDIDManagement};
 export {
   useCredentialUtils,
-  getCredentialStatus,
-  useGetCredentialStatus,
-  CREDENTIAL_STATUS,
+  useCredentialStatus,
 };
 export function getStorage() {
   return AsyncStorage;
@@ -106,6 +102,35 @@ export function useAccount(address) {
     onDelete,
   };
 }
+
+export function useDocument(id) {
+  const {wallet} = useWallet();
+  const [document, setDocument] = useState(null);
+
+  useEffect(() => {
+    console.log('useDocument', id, wallet);
+    async function refetchDocument(updatedDoc) {
+      if (updatedDoc.id !== id) return;
+      const _doc = await wallet.getDocumentById(id);
+      setDocument(_doc);
+    }
+
+    setDocument(wallet.getDocumentById(id))
+
+    wallet.eventManager.on(WalletEvents.documentAdded, refetchDocument);
+    wallet.eventManager.on(WalletEvents.documentRemoved, refetchDocument);
+    wallet.eventManager.on(WalletEvents.documentUpdated, refetchDocument);
+
+    return () => {
+      wallet.eventManager.removeListener(WalletEvents.documentAdded, refetchDocument);
+      wallet.eventManager.removeListener(WalletEvents.documentRemoved, refetchDocument);
+      wallet.eventManager.removeListener(WalletEvents.documentUpdated, refetchDocument);
+    }
+  }, [id, wallet]);
+  
+  return document;
+}
+
 
 export function useWallet() {
   return useContext(WalletSDKContext);
