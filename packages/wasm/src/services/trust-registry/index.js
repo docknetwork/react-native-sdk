@@ -1,0 +1,1 @@
+export {trustRegistryService} from './service';
