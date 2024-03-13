@@ -1,6 +1,7 @@
 import {ContextProps, WalletDocument} from '../../types';
 import {toWalletDocument} from './helpers';
 import {DocumentEntity} from './document.entity';
+import {In} from 'typeorm';
 
 /**
  * Get document by id
@@ -23,4 +24,22 @@ export async function getDocumentById({
   });
 
   return toWalletDocument(entity);
+}
+
+export async function getDocumentsById({
+  dataStore,
+  idList,
+}: ContextProps & {
+  idList: string[];
+}): Promise<WalletDocument> {
+  const repository = dataStore.db.getRepository(DocumentEntity);
+
+  const entities = await repository.find({
+    where: {
+      id: In(idList),
+      networkId: dataStore.networkId,
+    },
+  });
+
+  return entities.map(toWalletDocument);
 }
