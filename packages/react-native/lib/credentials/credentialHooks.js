@@ -1,31 +1,9 @@
 import {useMemo, useCallback, useState, useEffect} from 'react';
-import {useWallet} from '../index';
+import {useDocument, useWallet} from '../index';
 import assert from 'assert';
-import {credentialServiceRPC} from '@docknetwork/wallet-sdk-wasm/src/services/credential';
-import {dockService} from '@docknetwork/wallet-sdk-wasm/src/services/dock';
 import axios from 'axios';
 import { getCredentialProvider } from '../wallet';
 
-export const CREDENTIAL_STATUS = {
-  INVALID: 'invalid',
-  EXPIRED: 'expired',
-  VERIFIED: 'verified',
-  REVOKED: 'revoked',
-  PENDING: 'pending',
-};
-
-const validateCredential = credential => {
-  assert(typeof credential !== 'undefined', 'Invalid Credential');
-  assert(typeof credential?.id === 'string', 'Credential has no ID');
-  assert(
-    credential.hasOwnProperty('@context') === true,
-    'Credential has no context',
-  );
-  assert(
-    credential.type?.includes('VerifiableCredential'),
-    'Credential has an invalid type',
-  );
-};
 export const sortByIssuanceDate = (a, b) =>
   getCredentialTimestamp(b) - getCredentialTimestamp(a);
 
@@ -53,19 +31,6 @@ export function waitFor(condition, timeout) {
       reject(new Error('Timed out'));
     }, timeout);
   });
-}
-
-async function getCredentialValidityStatus(credential) {
-  try {
-    await waitFor(() => dockService.isApiConnected(), 90000);
-    const result = await getCredentialProvider().isValid(credential);
-    return result;
-  } catch (error) {
-    return {
-      verified: false,
-      error,
-    };
-  }
 }
 
 export function useCredentialUtils() {
@@ -108,71 +73,17 @@ export function useCredentialUtils() {
     };
   }, [credentials, doesCredentialExist, deleteCredential]);
 }
-export function isInThePast(date) {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  return date < today;
-}
 
-export async function getCredentialStatus(credential) {
-  assert(typeof credential !== 'undefined', 'Invalid Credential');
-
-  if (isCredentialExpired(credential)) {
-    return buildStatusResponse(CREDENTIAL_STATUS.EXPIRED);
-  }
-
-  const { verified, error } = await getCredentialValidityStatus(credential);
-
-  if (isCredentialRevoked(error)) {
-    return buildStatusResponse(CREDENTIAL_STATUS.REVOKED, error);
-  }
-
-  if (verified) {
-    return buildStatusResponse(CREDENTIAL_STATUS.VERIFIED);
-  }
-
-  if(error?.name === "VerificationError") {
-    return buildStatusResponse(CREDENTIAL_STATUS.INVALID, error);
-  }
-
-  return buildStatusResponse(CREDENTIAL_STATUS.PENDING, error);
-}
-
-function isCredentialExpired(credential) {
-  return credential.expirationDate
-    ? isInThePast(new Date(credential.expirationDate))
-    : false;
-}
-
-function isCredentialRevoked(error) {
-  return (
-    typeof error === 'string' && error.toLowerCase().includes('revocation')
-  );
-}
-
-function buildStatusResponse(status, error = null) {
-  return {
-    status,
-    error,
-  };
-}
-
-export let cachedCredentialStatus = {};
-
-export function useGetCredentialStatus({ credential }) {
-  const [status, setStatus] = useState(
-    cachedCredentialStatus[credential.id] ||
-    buildStatusResponse(CREDENTIAL_STATUS.PENDING),
-  );
+export function useCredentialStatus({ credential }: any) {
+  const [status, setStatus] = useState();
+  const statusDoc = useDocument(`${credential.id}#status`);
 
   useEffect(() => {
-    getCredentialStatus(credential).then(response => {
-      cachedCredentialStatus[credential.id] = response;
-      setStatus(response);
-    });
-  }, [credential]);
+    getCredentialProvider().getCredentialStatus(credential).then(setStatus);
+  }, [credential, statusDoc]);
 
   return useMemo(() => {
     return status;
   }, [status]);
 }
+
