@@ -113,6 +113,8 @@ export async function addCredential({wallet, credential}) {
     });
   }
 
+  syncCredentialStatus({ wallet, credentialIds: [credential.id] });
+
   return response;
 }
 
@@ -203,10 +205,11 @@ async function syncCredentialStatus({ wallet, credentialIds, forceFetch }: SyncC
       continue;
     }
 
-    statusDoc.status = CredentialStatus.Pending;
-    statusDoc.updatedAt = new Date().toISOString();
-
-    await wallet.updateDocument(statusDoc);
+    if (!statusDoc.status) {
+      statusDoc.status = CredentialStatus.Pending;
+      statusDoc.updatedAt = new Date().toISOString();
+      await wallet.updateDocument(statusDoc);
+    }
 
     if (!isApiConnected) {
       await dockService.ensureDockReady();
