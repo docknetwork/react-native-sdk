@@ -16,7 +16,10 @@ import WebView from 'react-native-webview';
 import {WebviewEventHandler} from './message-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {AccountDetails} from '@docknetwork/wallet-sdk-wasm/src/modules/account';
-import {DocumentType, WalletDocument} from '@docknetwork/wallet-sdk-wasm/src/types';
+import {
+  DocumentType,
+  WalletDocument,
+} from '@docknetwork/wallet-sdk-wasm/src/types';
 import './rn-rpc-server';
 import {useDIDManagement} from './didHooks';
 import {useAccounts} from './accountsHooks';
@@ -24,7 +27,7 @@ import {
   useCredentialUtils,
   useCredentialStatus,
 } from './credentials/credentialHooks';
-import {getOrCreateWallet} from './wallet';
+import {getOrCreateWallet, getWallet} from './wallet';
 import debounce from 'lodash.debounce';
 import {setV1LocalStorage} from '@docknetwork/wallet-sdk-data-store/src/migration/migration1/v1-data-store';
 import {IWallet} from '@docknetwork/wallet-sdk-core/src/types';
@@ -51,10 +54,7 @@ export const WalletSDKContext = React.createContext<WalletSDKContextProps>({
 setStorage(AsyncStorage);
 export {useAccounts};
 export {useDIDManagement};
-export {
-  useCredentialUtils,
-  useCredentialStatus,
-};
+export {useCredentialUtils, useCredentialStatus};
 export function getStorage() {
   return AsyncStorage;
 }
@@ -103,34 +103,78 @@ export function useAccount(address) {
   };
 }
 
+const useEventListener = (eventManager, eventNames, listener) => {
+  useEffect(() => {
+    eventNames.forEach(eventName => eventManager.on(eventName, listener));
+    return () =>
+      eventNames.forEach(eventName =>
+        eventManager.removeListener(eventName, listener),
+      );
+  }, [eventManager, eventNames, listener]);
+};
+
 export function useDocument(id) {
-  const {wallet} = useWallet();
   const [document, setDocument] = useState(null);
 
-  useEffect(() => {
-    console.log('useDocument', id, wallet);
-    async function refetchDocument(updatedDoc) {
+  const refetchDocument = useCallback(
+    debounce(async updatedDoc => {
       if (updatedDoc.id !== id) return;
-      const _doc = await wallet.getDocumentById(id);
-      setDocument(_doc);
-    }
+      const doc = await getWallet().getDocumentById(id);
+      setDocument(doc);
+    }, 500),
+    [id],
+  );
 
-    setDocument(wallet.getDocumentById(id))
+  useEffect(() => {
+    getWallet().getDocumentById(id).then(setDocument);
+  }, [id]);
 
-    wallet.eventManager.on(WalletEvents.documentAdded, refetchDocument);
-    wallet.eventManager.on(WalletEvents.documentRemoved, refetchDocument);
-    wallet.eventManager.on(WalletEvents.documentUpdated, refetchDocument);
+  useEventListener(
+    getWallet().eventManager,
+    [
+      WalletEvents.documentAdded,
+      WalletEvents.documentRemoved,
+      WalletEvents.documentUpdated,
+    ],
+    refetchDocument,
+  );
 
-    return () => {
-      wallet.eventManager.removeListener(WalletEvents.documentAdded, refetchDocument);
-      wallet.eventManager.removeListener(WalletEvents.documentRemoved, refetchDocument);
-      wallet.eventManager.removeListener(WalletEvents.documentUpdated, refetchDocument);
-    }
-  }, [id, wallet]);
-  
   return document;
 }
 
+export function useDocuments({type, onData}) {
+  const [documents, setDocuments] = useState([]);
+
+  const fetchDocuments = useCallback(
+    debounce(async (updatedDoc, forceFetch = false) => {
+      if (
+        forceFetch ||
+        updatedDoc?.type === type ||
+        updatedDoc?.type?.includes(type)
+      ) {
+        const docs = await getWallet().getDocumentsByType(type);
+        setDocuments(onData(docs));
+      }
+    }, 500),
+    [type, onData],
+  );
+
+  useEffect(() => {
+    fetchDocuments(null, true);
+  }, [fetchDocuments]);
+
+  useEventListener(
+    getWallet().eventManager,
+    [
+      WalletEvents.documentAdded,
+      WalletEvents.documentRemoved,
+      WalletEvents.documentUpdated,
+    ],
+    fetchDocuments,
+  );
+
+  return documents;
+}
 
 export function useWallet() {
   return useContext(WalletSDKContext);
