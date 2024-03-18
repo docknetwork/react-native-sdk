@@ -113,6 +113,8 @@ export async function addCredential({wallet, credential}) {
     });
   }
 
+  syncCredentialStatus({ wallet, credentialIds: [credential.id] });
+
   return response;
 }
 
