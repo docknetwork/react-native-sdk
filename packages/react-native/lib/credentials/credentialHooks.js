@@ -34,10 +34,15 @@ export function waitFor(condition, timeout) {
 }
 
 export function useCredentialUtils() {
-  const credentials = useDocuments({
+  const {documents, loading} = useDocuments({
     type: 'VerifiableCredential',
-    onData: data => data.sort(sortByIssuanceDate),
   });
+
+  const credentials = useMemo(() => {
+    return documents
+      .filter(doc => !!doc.id)
+      .sort(sortByIssuanceDate);
+  }, [documents]);
 
   const doesCredentialExist = useCallback((allCredentials, credentialToAdd) => {
     return !!allCredentials.find(item => item.id === credentialToAdd.id);
@@ -59,8 +64,9 @@ export function useCredentialUtils() {
       credentials,
       doesCredentialExist,
       deleteCredential,
+      loading,
     };
-  }, [credentials, doesCredentialExist, deleteCredential]);
+  }, [credentials, doesCredentialExist, deleteCredential, loading]);
 }
 
 export function useCredentialStatus({ credential }: any) {
