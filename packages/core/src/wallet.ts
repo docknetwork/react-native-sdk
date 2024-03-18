@@ -123,12 +123,14 @@ export async function createWallet(
         return result;
       });
     },
-    removeDocument: (id: string) => {
+    removeDocument: async (id: string) => {
+      const document = await wallet.getDocumentById(id);
+
       return removeDocument({
         dataStore,
         id,
       }).then(result => {
-        eventEmitter.emit(WalletEvents.documentRemoved, result);
+        eventEmitter.emit(WalletEvents.documentRemoved, document);
         return result;
       });
     },
