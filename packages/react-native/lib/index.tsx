@@ -123,11 +123,11 @@ export function useDocument(id) {
   const [document, setDocument] = useState(null);
 
   const refetchDocument = useCallback(
-    debounce(async updatedDoc => {
+    async updatedDoc => {
       if (updatedDoc.id !== id) return;
       const doc = await getWallet().getDocumentById(id);
       setDocument(doc);
-    }, 500),
+    },
     [id],
   );
 
@@ -145,7 +145,7 @@ export function useDocuments({type}) {
   const [loading, setLoading] = useState(true);
 
   const fetchDocuments = useCallback(
-    debounce(async (updatedDoc, forceFetch = false) => {
+    async (updatedDoc, forceFetch = false) => {
       if (
         forceFetch ||
         updatedDoc?.type === type ||
@@ -155,7 +155,7 @@ export function useDocuments({type}) {
         setDocuments(docs);
         setLoading(false);
       }
-    }, 500),
+    },
     [type],
   );
 
