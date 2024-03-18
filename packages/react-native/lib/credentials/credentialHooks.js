@@ -1,7 +1,6 @@
 import {useMemo, useCallback, useState, useEffect} from 'react';
-import {useDocument, useDocuments, useWallet} from '../index';
+import {useDocument, useDocuments} from '../index';
 import assert from 'assert';
-import axios from 'axios';
 import { getCredentialProvider, getWallet } from '../wallet';
 
 export const sortByIssuanceDate = (a, b) =>
