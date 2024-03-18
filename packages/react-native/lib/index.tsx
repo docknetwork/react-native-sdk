@@ -113,6 +113,12 @@ const useEventListener = (eventManager, eventNames, listener) => {
   }, [eventManager, eventNames, listener]);
 };
 
+const events = [
+  WalletEvents.documentAdded,
+  WalletEvents.documentRemoved,
+  WalletEvents.documentUpdated,
+];
+
 export function useDocument(id) {
   const [document, setDocument] = useState(null);
 
@@ -129,21 +135,14 @@ export function useDocument(id) {
     getWallet().getDocumentById(id).then(setDocument);
   }, [id]);
 
-  useEventListener(
-    getWallet().eventManager,
-    [
-      WalletEvents.documentAdded,
-      WalletEvents.documentRemoved,
-      WalletEvents.documentUpdated,
-    ],
-    refetchDocument,
-  );
+  useEventListener(getWallet().eventManager, events, refetchDocument);
 
   return document;
 }
 
-export function useDocuments({type, onData}) {
+export function useDocuments({type}) {
   const [documents, setDocuments] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const fetchDocuments = useCallback(
     debounce(async (updatedDoc, forceFetch = false) => {
@@ -153,27 +152,23 @@ export function useDocuments({type, onData}) {
         updatedDoc?.type?.includes(type)
       ) {
         const docs = await getWallet().getDocumentsByType(type);
-        setDocuments(onData(docs));
+        setDocuments(docs);
+        setLoading(false);
       }
     }, 500),
-    [type, onData],
+    [type],
   );
 
   useEffect(() => {
     fetchDocuments(null, true);
-  }, [fetchDocuments]);
+  }, [fetchDocuments, setLoading]);
 
-  useEventListener(
-    getWallet().eventManager,
-    [
-      WalletEvents.documentAdded,
-      WalletEvents.documentRemoved,
-      WalletEvents.documentUpdated,
-    ],
-    fetchDocuments,
-  );
+  useEventListener(getWallet().eventManager, events, fetchDocuments);
 
-  return documents;
+  return {
+    documents,
+    loading,
+  };
 }
 
 export function useWallet() {
