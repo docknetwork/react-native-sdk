@@ -3,7 +3,13 @@ import {createBiometricBindingProvider} from '@docknetwork/wallet-sdk-core/src/b
 import {defaultBiometricsPlugin} from '../default-biometrics-plugin';
 import {useWallet} from '../';
 
-export const initializeBiometricsPlugin = defaultBiometricsPlugin.initialize;
+export function initializeBiometricsPlugin(configs: any) {
+  return defaultBiometricsPlugin.initialize(configs);
+}
+
+export function isBiomericsPluginEnabled(): boolean {
+  return defaultBiometricsPlugin.isEnabled();
+}
 
 export const useBiometricBinding = () => {
   const {wallet} = useWallet();
