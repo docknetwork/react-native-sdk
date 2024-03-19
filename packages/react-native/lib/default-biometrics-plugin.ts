@@ -57,6 +57,11 @@ const initiateBiometricCheck = async () => {
   return uuid();
 };
 
+function getIssuerConfigsForNetwork(): BiometricsPluginIssuerConfig {
+  const wallet = getWallet().getNetworkId();
+  return configs?.issuerConfigs.find(config => config.networkId === wallet);
+}
+
 function hasProofOfBiometrics(proofRequest) {
   const fields = proofRequest.input_descriptors
     ?.map(input => input.constraints?.fields)
@@ -69,10 +74,9 @@ function hasProofOfBiometrics(proofRequest) {
 async function issueBiometricsVC(type, data) {
   assertConfigs();
 
-  const networkId = getWallet().getNetworkId();
-  const networkConfig = configs.issuerConfigs.find(config => config.networkId === networkId);
+  const networkConfig = getIssuerConfigsForNetwork();
 
-  assert(!!networkConfig, `No issuer config found for network ${networkId}`);
+  assert(!!networkConfig, `No issuer config found for network ${getWallet().getNetworkId()}`);
 
   const body = {
     anchor: false,
@@ -134,7 +138,13 @@ const issueBiometricMatchCredential = async enrollmentCredential => {
   });
 };
 
+function isEnabled() {
+  const networkConfigs = getIssuerConfigsForNetwork();
+  return !!networkConfigs;
+}
+
 export const defaultBiometricsPlugin = {
+  isEnabled,
   initialize,
   hasProofOfBiometrics,
   enrollBiometrics: issueEnrollmentCredential,
