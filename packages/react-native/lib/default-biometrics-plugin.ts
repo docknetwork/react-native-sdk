@@ -16,14 +16,14 @@ const BIOMETRIC_CREDENTIAL_TYPE = 'ForSurBiometric';
 const BIOMETRIC_ENROLLMENT_CREDENTIAL_TYPE = 'BiometricEnrollment';
 
 
-type BiometricsPluginIssuerConfig = {
+export type BiometricsPluginIssuerConfig = {
   networkId: string;
   did: string;
   apiKey: string;
   apiUrl: string;
 }
 
-type BiometricsPluginConfigs = {
+export type BiometricsPluginConfigs = {
   enrollmentCredentialType: string;
   biometricMatchCredentialType: string;
   issuerConfigs:BiometricsPluginIssuerConfig[];
@@ -32,8 +32,8 @@ type BiometricsPluginConfigs = {
 let configs: BiometricsPluginConfigs = null;
 
 
-function initialize(newConfigs: BiometricsPluginConfigs) {
-  configs = newConfigs;
+function initialize(_configs: BiometricsPluginConfigs) {
+  configs = _configs;
 };
 
 function assertConfigs() {
