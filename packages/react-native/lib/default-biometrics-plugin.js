@@ -6,13 +6,40 @@ import {
   getBiometricData,
 } from './biometric-binding/helpers';
 import {v4 as uuid} from 'uuid';
-import { getDIDProvider } from './wallet';
+import { getDIDProvider, getWallet } from './wallet';
+import assert from 'assert';
 
 const BIOMETRIC_KEY = uuid();
 const BIOMETRIC_PROPERTIES = 'ua7iM2XgYQnjnKqVAr3F';
 
 const BIOMETRIC_CREDENTIAL_TYPE = 'ForSurBiometric';
 const BIOMETRIC_ENROLLMENT_CREDENTIAL_TYPE = 'BiometricEnrollment';
+
+
+type BiometricsPluginIssuerConfig = {
+  networkId: string;
+  did: string;
+  apiKey: string;
+  apiUrl: string;
+}
+
+type BiometricsPluginConfigs = {
+  enrollmentCredentialType: string;
+  biometricMatchCredentialType: string;
+  issuerConfigs:BiometricsPluginIssuerConfig[];
+}
+
+let configs: BiometricsPluginConfigs = null;
+
+
+function initialize(newConfigs: BiometricsPluginConfigs) {
+  configs = newConfigs;
+};
+
+function assertConfigs() {
+  assert(!!configs, 'Biometrics plugin not configured');
+}
+
 
 const initiateBiometricCheck = async () => {
   const biometrySupported = await isBiometrySupported();
@@ -40,37 +67,43 @@ function hasProofOfBiometrics(proofRequest) {
 
 
 async function issueBiometricsVC(type, data) {
-  // We will be using a temporary staging-testnet API key, we should be able to switch it later and start using env variables
-  // supporting mainnet and testnet
-  const DOCK_API_KEY = process.env.DOCK_API_KEY || '***REMOVED***';
+  assertConfigs();
+
+  const networkId = getWallet().getNetworkId();
+  const networkConfig = configs.issuerConfigs.find(config => config.networkId === networkId);
+
+  assert(!!networkConfig, `No issuer config found for network ${networkId}`);
+
   const body = {
     anchor: false,
     persist: false,
     credential: {
       name: type,
       type: ['VerifiableCredential', type],
-      issuer: 'did:dock:5GJeBeStWSxqyPGUJnERMFhm3wKcfCZP6nhqtoKyRAmq9FeU',
+      issuer: networkConfig.did,
       issuanceDate: getTimestamp(),
       subject: data,
     },
     algorithm: 'dockbbs+',
   };
 
-  const response = await axios.post('https://***REMOVED***/credentials', body, {
+  const response = await axios.post(`${networkConfig.apiUrl}/credentials`, body, {
     headers: {
       'Content-Type': 'application/json',
-      'DOCK-API-TOKEN': DOCK_API_KEY,
-    }
+      'DOCK-API-TOKEN': networkConfig.apiKey,
+    },
   });
 
   return response.data;
 }
 
 const issueEnrollmentCredential = async () => {
+  assertConfigs();
+
   const biometricId = await initiateBiometricCheck();
 
   try {
-    const credential = await issueBiometricsVC(BIOMETRIC_ENROLLMENT_CREDENTIAL_TYPE, {
+    const credential = await issueBiometricsVC(configs.enrollmentCredentialType, {
       id: await getDIDProvider().getDefaultDID(),
       biometric: {
         id: biometricId,
@@ -87,20 +120,22 @@ const issueEnrollmentCredential = async () => {
 };
 
 const issueBiometricMatchCredential = async enrollmentCredential => {
+  assertConfigs();
+
   const biometricData = await getBiometricData();
   const biometricId = enrollmentCredential.credentialSubject.biometric.id;
 
-  return await issueBiometricsVC(BIOMETRIC_CREDENTIAL_TYPE, {
+  return await issueBiometricsVC(configs.biometricMatchCredentialType, {
     id: await getDIDProvider().getDefaultDID(),
     biometric: {
       id: biometricId,
       created: getTimestamp(),
-      data: biometricData,
     },
   });
 };
 
 export const defaultBiometricsPlugin = {
+  initialize,
   hasProofOfBiometrics,
   enrollBiometrics: issueEnrollmentCredential,
   matchBiometrics: issueBiometricMatchCredential,
