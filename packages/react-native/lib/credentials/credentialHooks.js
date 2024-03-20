@@ -1,8 +1,7 @@
 import {useMemo, useCallback, useState, useEffect} from 'react';
-import {useDocument, useWallet} from '../index';
+import {useDocument, useDocuments} from '../index';
 import assert from 'assert';
-import axios from 'axios';
-import { getCredentialProvider } from '../wallet';
+import { getCredentialProvider, getWallet } from '../wallet';
 
 export const sortByIssuanceDate = (a, b) =>
   getCredentialTimestamp(b) - getCredentialTimestamp(a);
@@ -34,20 +33,14 @@ export function waitFor(condition, timeout) {
 }
 
 export function useCredentialUtils() {
-  const { documents, wallet } = useWallet();
+  const {documents, loading} = useDocuments({
+    type: 'VerifiableCredential',
+  });
 
   const credentials = useMemo(() => {
-    if (Array.isArray(documents)) {
-      return documents
-        .filter(doc => {
-          return (
-            doc.type === 'VerifiableCredential' ||
-            doc.type?.includes('VerifiableCredential')
-          );
-        })
-        .sort(sortByIssuanceDate);
-    }
-    return [];
+    return documents
+      .filter(doc => !!doc.id)
+      .sort(sortByIssuanceDate);
   }, [documents]);
 
   const doesCredentialExist = useCallback((allCredentials, credentialToAdd) => {
@@ -60,9 +53,9 @@ export function useCredentialUtils() {
         typeof credentialId === 'string' && credentialId.length > 0,
         'Credential ID is not set',
       );
-      return await wallet.remove(credentialId);
+      return await getWallet().remove(credentialId);
     },
-    [wallet],
+    [],
   );
 
   return useMemo(() => {
@@ -70,8 +63,9 @@ export function useCredentialUtils() {
       credentials,
       doesCredentialExist,
       deleteCredential,
+      loading,
     };
-  }, [credentials, doesCredentialExist, deleteCredential]);
+  }, [credentials, doesCredentialExist, deleteCredential, loading]);
 }
 
 export function useCredentialStatus({ credential }: any) {
