@@ -2,6 +2,15 @@ import {useMemo} from 'react';
 import {createBiometricBindingProvider} from '@docknetwork/wallet-sdk-core/src/biometric-provider';
 import {defaultBiometricsPlugin} from '../default-biometrics-plugin';
 import {useWallet} from '../';
+
+export function initializeBiometricsPlugin(configs: any) {
+  return defaultBiometricsPlugin.initialize(configs);
+}
+
+export function isBiomericsPluginEnabled(): boolean {
+  return defaultBiometricsPlugin.isEnabled();
+}
+
 export const useBiometricBinding = () => {
   const {wallet} = useWallet();
   const biometricBindingProvider = useMemo(() => {
