@@ -12,10 +12,6 @@ import assert from 'assert';
 const BIOMETRIC_KEY = uuid();
 const BIOMETRIC_PROPERTIES = 'ua7iM2XgYQnjnKqVAr3F';
 
-const BIOMETRIC_CREDENTIAL_TYPE = 'ForSurBiometric';
-const BIOMETRIC_ENROLLMENT_CREDENTIAL_TYPE = 'BiometricEnrollment';
-
-
 export type BiometricsPluginIssuerConfig = {
   networkId: string;
   did: string;
