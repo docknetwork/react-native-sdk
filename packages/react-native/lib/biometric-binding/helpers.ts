@@ -1,6 +1,6 @@
 import * as Keychain from 'react-native-keychain';
 
-export const getTimestamp = () => {
+export const getIssuanceDate = () => {
   const timestamp = Date.now();
   const dateObject = new Date(timestamp);
 
