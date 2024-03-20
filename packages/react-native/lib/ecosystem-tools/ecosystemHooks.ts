@@ -47,6 +47,7 @@ export function useEcosystems({issuer, schemaId}) {
           setEcosystems(ecosystemData);
         } catch (e) {
           captureException(e);
+          setIsError(true)
           console.log('Error formatting ecosystem data', e);
         }
       })
