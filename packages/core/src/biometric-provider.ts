@@ -1,6 +1,39 @@
 import {WalletDocument} from '@docknetwork/wallet-sdk-wasm/src/types';
 import {IWallet} from './types';
 import {createCredentialProvider} from './credential-provider';
+import assert from 'assert';
+
+export type BiometricsPluginIssuerConfig = {
+  networkId: string;
+  did: string;
+  apiKey: string;
+  apiUrl: string;
+}
+
+export type BiometricsPluginConfigs = {
+  enrollmentCredentialType: string;
+  biometricMatchCredentialType: string;
+  biometricMatchExpirationMinutes: number;
+  issuerConfigs:BiometricsPluginIssuerConfig[];
+}
+
+let configs: BiometricsPluginConfigs = null;
+
+export function setBiometricConfigs(_configs: BiometricsPluginConfigs) {
+  configs = _configs;
+};
+
+export function assertConfigs() {
+  assert(!!configs, 'Biometrics plugin not configured');
+}
+
+export function getBiometricConfigs() {
+  return configs;
+}
+
+export function getIssuerConfigsForNetwork(networkId): BiometricsPluginIssuerConfig {
+  return getBiometricConfigs()?.issuerConfigs.find(config => config.networkId === networkId);
+}
 
 export function createBiometricBindingProvider({
   wallet,
@@ -20,7 +53,7 @@ export function createBiometricBindingProvider({
       return await credentialProvider.addCredential(enrollmentCredential);
     },
     matchBiometry: async () => {
-      const CREDENTIAL_TYPE = 'BiometricEnrollment';
+      const CREDENTIAL_TYPE = configs.enrollmentCredentialType;
       const enrollmentCredentials = await wallet.getDocumentsByType(
         CREDENTIAL_TYPE,
       );
@@ -34,7 +67,7 @@ export function createBiometricBindingProvider({
       );
 
       if (matchConfirmationCredential) {
-        const biometricMatchCredentials = await wallet.getDocumentsByType('ForSurBiometric');
+        const biometricMatchCredentials = await wallet.getDocumentsByType(configs.biometricMatchCredentialType);
         for (let i = 0; i < biometricMatchCredentials.length; i++) {
           await wallet.removeDocument(biometricMatchCredentials[0].id);
         }

@@ -1,41 +1,21 @@
 import axios from 'axios';
 import {
   isBiometrySupported,
-  getTimestamp,
+  getIssuanceDate,
   saveBiometricData,
   getBiometricData,
 } from './biometric-binding/helpers';
 import {v4 as uuid} from 'uuid';
-import { getDIDProvider, getWallet } from './wallet';
+import {getDIDProvider, getWallet} from './wallet';
 import assert from 'assert';
+import {
+  assertConfigs,
+  getBiometricConfigs,
+  getIssuerConfigsForNetwork,
+} from '@docknetwork/wallet-sdk-core/src/biometric-provider';
 
 const BIOMETRIC_KEY = uuid();
 const BIOMETRIC_PROPERTIES = 'ua7iM2XgYQnjnKqVAr3F';
-
-export type BiometricsPluginIssuerConfig = {
-  networkId: string;
-  did: string;
-  apiKey: string;
-  apiUrl: string;
-}
-
-export type BiometricsPluginConfigs = {
-  enrollmentCredentialType: string;
-  biometricMatchCredentialType: string;
-  issuerConfigs:BiometricsPluginIssuerConfig[];
-}
-
-let configs: BiometricsPluginConfigs = null;
-
-
-function initialize(_configs: BiometricsPluginConfigs) {
-  configs = _configs;
-};
-
-function assertConfigs() {
-  assert(!!configs, 'Biometrics plugin not configured');
-}
-
 
 const initiateBiometricCheck = async () => {
   const biometrySupported = await isBiometrySupported();
@@ -53,26 +33,26 @@ const initiateBiometricCheck = async () => {
   return uuid();
 };
 
-function getIssuerConfigsForNetwork(): BiometricsPluginIssuerConfig {
-  const wallet = getWallet().getNetworkId();
-  return configs?.issuerConfigs.find(config => config.networkId === wallet);
-}
-
 function hasProofOfBiometrics(proofRequest) {
   const fields = proofRequest.input_descriptors
     ?.map(input => input.constraints?.fields)
     .flat();
-  const paths = fields.map(field=> field.path).flat();
-  return paths?.includes('$.credentialSubject.biometric.id') && paths?.includes('$.credentialSubject.biometric.created');
+  const paths = fields.map(field => field.path).flat();
+  return (
+    paths?.includes('$.credentialSubject.biometric.id') &&
+    paths?.includes('$.credentialSubject.biometric.created')
+  );
 }
 
-
-async function issueBiometricsVC(type, data) {
+async function issueBiometricsVC({type, subject, expirationDate}: any) {
   assertConfigs();
 
-  const networkConfig = getIssuerConfigsForNetwork();
+  const networkConfig = getIssuerConfigsForNetwork(getWallet().getNetworkId());
 
-  assert(!!networkConfig, `No issuer config found for network ${getWallet().getNetworkId()}`);
+  assert(
+    !!networkConfig,
+    `No issuer config found for network ${getWallet().getNetworkId()}`,
+  );
 
   const body = {
     anchor: false,
@@ -81,34 +61,40 @@ async function issueBiometricsVC(type, data) {
       name: type,
       type: ['VerifiableCredential', type],
       issuer: networkConfig.did,
-      issuanceDate: getTimestamp(),
-      subject: data,
+      issuanceDate: getIssuanceDate(),
+      expirationDate: expirationDate,
+      subject,
     },
     algorithm: 'dockbbs+',
   };
 
-  const response = await axios.post(`${networkConfig.apiUrl}/credentials`, body, {
-    headers: {
-      'Content-Type': 'application/json',
-      'DOCK-API-TOKEN': networkConfig.apiKey,
+  const response = await axios.post(
+    `${networkConfig.apiUrl}/credentials`,
+    body,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        'DOCK-API-TOKEN': networkConfig.apiKey,
+      },
     },
-  });
+  );
 
   return response.data;
 }
 
 const issueEnrollmentCredential = async () => {
-  assertConfigs();
-
   const biometricId = await initiateBiometricCheck();
 
   try {
-    const credential = await issueBiometricsVC(configs.enrollmentCredentialType, {
-      id: await getDIDProvider().getDefaultDID(),
-      biometric: {
-        id: biometricId,
-        data: JSON.stringify({ id: BIOMETRIC_PROPERTIES }),
-        created: getTimestamp(),
+    const credential = await issueBiometricsVC({
+      type: getBiometricConfigs().enrollmentCredentialType,
+      subject: {
+        id: await getDIDProvider().getDefaultDID(),
+        biometric: {
+          id: biometricId,
+          data: JSON.stringify({id: BIOMETRIC_PROPERTIES}),
+          created: getIssuanceDate(),
+        },
       },
     });
 
@@ -120,28 +106,35 @@ const issueEnrollmentCredential = async () => {
 };
 
 const issueBiometricMatchCredential = async enrollmentCredential => {
-  assertConfigs();
-
   const biometricData = await getBiometricData();
   const biometricId = enrollmentCredential.credentialSubject.biometric.id;
 
-  return await issueBiometricsVC(configs.biometricMatchCredentialType, {
-    id: await getDIDProvider().getDefaultDID(),
-    biometric: {
-      id: biometricId,
-      created: getTimestamp(),
+  // Default will be 2 minutes
+  const expirationMinutes =
+    getBiometricConfigs().biometricMatchExpirationMinutes || 2;
+
+  const expirationDate = new Date(
+    Date.now() + 1000 * 60 * expirationMinutes,
+  ).toISOString();
+
+  return await issueBiometricsVC({
+    type: getBiometricConfigs().biometricMatchCredentialType,
+    expirationDate,
+    subject: {
+      id: await getDIDProvider().getDefaultDID(),
+      biometric: {
+        id: biometricId,
+        created: getIssuanceDate(),
+        // TODO: Certs template conditions needs to be updated to not require the data object
+        // Workaround is to define that as tru
+        // We can remove this line once the template is updated
+        data: true,
+      },
     },
   });
 };
 
-function isEnabled() {
-  const networkConfigs = getIssuerConfigsForNetwork();
-  return !!networkConfigs;
-}
-
 export const defaultBiometricsPlugin = {
-  isEnabled,
-  initialize,
   hasProofOfBiometrics,
   enrollBiometrics: issueEnrollmentCredential,
   matchBiometrics: issueBiometricMatchCredential,
