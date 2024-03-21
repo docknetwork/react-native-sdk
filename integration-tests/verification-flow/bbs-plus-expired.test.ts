@@ -59,7 +59,7 @@ const expiredCredential = {
 };
 
 describe('BBS+ with expired credential', () => {
-  it('should fail to verify', async () => {
+  it('should include expirationDate in the presentation', async () => {
     const wallet: IWallet = await getWallet();
     const controller = await createVerificationController({
       wallet,
