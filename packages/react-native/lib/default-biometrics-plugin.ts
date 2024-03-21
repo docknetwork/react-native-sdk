@@ -44,7 +44,7 @@ function hasProofOfBiometrics(proofRequest) {
   );
 }
 
-async function issueBiometricsVC({type, subject}: any) {
+async function issueBiometricsVC({type, subject, expirationDate}: any) {
   assertConfigs();
 
   const networkConfig = getIssuerConfigsForNetwork(getWallet().getNetworkId());
@@ -62,6 +62,7 @@ async function issueBiometricsVC({type, subject}: any) {
       type: ['VerifiableCredential', type],
       issuer: networkConfig.did,
       issuanceDate: getIssuanceDate(),
+      expirationDate: expirationDate,
       subject,
     },
     algorithm: 'dockbbs+',
@@ -108,8 +109,17 @@ const issueBiometricMatchCredential = async enrollmentCredential => {
   const biometricData = await getBiometricData();
   const biometricId = enrollmentCredential.credentialSubject.biometric.id;
 
+  // Default will be 2 minutes
+  const expirationMinutes =
+    getBiometricConfigs().biometricMatchExpirationMinutes || 2;
+
+  const expirationDate = new Date(
+    Date.now() + 1000 * 60 * expirationMinutes,
+  ).toISOString();
+
   return await issueBiometricsVC({
     type: getBiometricConfigs().biometricMatchCredentialType,
+    expirationDate,
     subject: {
       id: await getDIDProvider().getDefaultDID(),
       biometric: {
