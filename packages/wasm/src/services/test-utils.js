@@ -19,7 +19,7 @@ export async function initializeWalletService() {
 }
 
 export const TEST_FEE_AMOUNT = 2.48;
-export const API_MOCK_DISABLED = false;
+export const API_MOCK_DISABLED = process.env.API_MOCK_DISABLED === 'true';
 export const TEST_TRUST_REGISTRIES = {
   '0xc255301bad77eab2a86760a80dfac734d85f1378b95671b169e3a519aa7eadd2': {
     name: 'Github',
