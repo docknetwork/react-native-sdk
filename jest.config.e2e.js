@@ -1,8 +1,9 @@
 module.exports = {
+  preset: "ts-jest",
   testEnvironment: 'node',
-  testTimeout: 30000,
+  testTimeout: 60000,
   maxConcurrency: 1,
-  testMatch: ['<rootDir>/integration-tests/*.test.ts'],
+  testMatch: ['<rootDir>/integration-tests/**/*.test.ts'],
   coverageThreshold: {
     global: {
       branches: 10,
@@ -13,7 +14,7 @@ module.exports = {
   },
   transform: {
     '^.+\\.(ts|tsx)?$': 'ts-jest',
-    '^.+\\.(js|jsx)$': [
+    '^.+\\.(js|jsx|cjs)$': [
       'babel-jest',
       {
         configFile: require.resolve('./babel.config.js'),
@@ -21,7 +22,7 @@ module.exports = {
     ],
   },
   resetMocks: false,
-  setupFilesAfterEnv: ['<rootDir>/setup-tests.js'],
+  setupFilesAfterEnv: ['<rootDir>/setup-integration-tests.js'],
   globalTeardown: './scripts/test-teardown-globals.js',
   setupFiles: ['jest-localstorage-mock'],
   moduleNameMapper: {
@@ -33,8 +34,11 @@ module.exports = {
       '@digitalbazaar/ed25519-verification-key-2018/src/Ed25519VerificationKey2018',
     '@digitalbazaar/minimal-cipher': '@digitalbazaar/minimal-cipher/Cipher',
     '@digitalbazaar/did-method-key': '@digitalbazaar/did-method-key/lib/main',
+    '@docknetwork/wallet-sdk-wasm/lib/(.*)': '@docknetwork/wallet-sdk-wasm/src/$1',
+    '@docknetwork/wallet-sdk-data-store/lib/(.*)': '@docknetwork/wallet-sdk-data-store/src/$1',
+    '@docknetwork/wallet-sdk-data-store/lib': '@docknetwork/wallet-sdk-data-store/src',
   },
   transformIgnorePatterns: [
-    '/node_modules/(?!@polkadot|@babel|@docknetwork|@digitalbazaar)',
+    '/node_modules/(?!@polkadot|@babel|@docknetwork|@digitalbazaar|base58-universal)',
   ],
 };
