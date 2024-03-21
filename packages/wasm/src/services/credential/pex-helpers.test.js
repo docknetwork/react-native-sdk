@@ -54,7 +54,7 @@ describe('pex helpers', () => {
                       type: 'range',
                       max: 100,
                       min: 0,
-                    }
+                    },
                   },
                 ],
               },
