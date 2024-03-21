@@ -13,6 +13,7 @@ export type BiometricsPluginIssuerConfig = {
 export type BiometricsPluginConfigs = {
   enrollmentCredentialType: string;
   biometricMatchCredentialType: string;
+  biometricMatchExpirationMinutes: number;
   issuerConfigs:BiometricsPluginIssuerConfig[];
 }
 
