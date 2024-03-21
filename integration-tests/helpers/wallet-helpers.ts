@@ -7,27 +7,62 @@ import {DataStoreSnapshotV1} from '../data/data-store';
 import {WalletBackupJSON, WalletBackupPasssword} from '../data/wallet-backup';
 import {IWallet} from '@docknetwork/wallet-sdk-core/lib/types';
 import {createWallet} from '@docknetwork/wallet-sdk-core/lib/wallet';
-import {Wallet} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
+import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
 import {setV1LocalStorage} from '@docknetwork/wallet-sdk-data-store/src/migration/migration1/v1-data-store';
+import {
+  IMessageProvider,
+  createMessageProvider,
+} from '@docknetwork/wallet-sdk-core/src/message-provider';
+import {
+  IDIDProvider,
+  createDIDProvider,
+} from '@docknetwork/wallet-sdk-core/src/did-provider';
+import {
+  ICredentialProvider,
+  createCredentialProvider,
+} from '@docknetwork/wallet-sdk-core/src/credential-provider';
 
 let wallet: IWallet;
+let didProvider: IDIDProvider;
+let credentialProvider: ICredentialProvider;
+let messageProvider: IMessageProvider;
 
-export function getWallet(): IWallet {
-  return wallet;
-}
-
-export async function createNewWallet() {
+export async function createNewWallet(): Promise<IWallet> {
   wallet = await createWallet({
     databasePath: ':memory:',
     dbType: 'sqlite',
     defaultNetwork: 'testnet',
   });
 
-  Wallet.getInstance = () => wallet;
+  didProvider = createDIDProvider({wallet});
+  credentialProvider = createCredentialProvider({wallet});
+  messageProvider = createMessageProvider({wallet, didProvider});
 
-  await wallet.ensureNetwork();
+  console.log('Waiting for network connection');
+  await wallet.waitForEvent(WalletEvents.networkConnected);
+  console.log('Network connected');
 
   return wallet;
+}
+
+export async function getWallet(): Promise<IWallet> {
+  if (!wallet) {
+    await createNewWallet();
+  }
+  
+  return wallet;
+}
+
+export function getMessageProvider(): IMessageProvider {
+  return messageProvider;
+}
+
+export function getDIDProvider(): IDIDProvider {
+  return didProvider;
+}
+
+export function getCredentialProvider(): ICredentialProvider {
+  return credentialProvider;
 }
 
 export async function setNetwork(networkId) {
@@ -58,8 +93,8 @@ export async function createWalletFromBackup() {
   return wallet;
 }
 
-export function getAllDocuments() {
-  return getWallet().query({} as any);
+export async function getAllDocuments() {
+  return wallet.query({} as any);
 }
 
 export async function getDocumentsByType(type) {
