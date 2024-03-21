@@ -28,6 +28,7 @@ import {
 import assert from 'assert';
 import axios from 'axios';
 import { getIsRevoked, getWitnessDetails } from './bbs-revocation';
+import { getPexRequiredAttributes } from './pex-helpers';
 
 const pex: PEX = new PEX();
 
@@ -265,10 +266,19 @@ class CredentialService {
       });
     }
 
+    const pexRequiredAttributes = getPexRequiredAttributes(proofRequest.request, selectedCredentials);
+
     let idx = 0;
     for (const {attributesToReveal, witness, credential} of credentials) {
       const attributesToSkip = descriptorBounds[idx] ? descriptorBounds[idx].map((bound) => bound.attributeName) : [];
       const filteredAttributes = attributesToReveal.filter((attribute) => !attributesToSkip.includes(attribute));
+      const _pexRequiredAttributes = pexRequiredAttributes[idx] || [];
+
+      _pexRequiredAttributes.forEach((attr) => {
+        if (!filteredAttributes.includes(attr)) {
+          filteredAttributes.push(attr);
+        }
+      });
 
       if (Array.isArray(filteredAttributes) && filteredAttributes.length > 0) {
         bbsPlusPresentation.addAttributeToReveal(idx, filteredAttributes);
@@ -284,6 +294,7 @@ class CredentialService {
 
     const credentialsFromPresentation =
       await bbsPlusPresentation.deriveCredentials(options);
+
     return credentialsFromPresentation;
   }
 
