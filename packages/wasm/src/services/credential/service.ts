@@ -266,7 +266,10 @@ class CredentialService {
       });
     }
 
-    const pexRequiredAttributes = getPexRequiredAttributes(proofRequest.request, selectedCredentials);
+    let pexRequiredAttributes = [];
+    if (proofRequest?.request) {
+      pexRequiredAttributes = getPexRequiredAttributes(proofRequest.request, selectedCredentials);
+    }
 
     let idx = 0;
     for (const {attributesToReveal, witness, credential} of credentials) {
