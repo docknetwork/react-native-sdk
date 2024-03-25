@@ -90,19 +90,19 @@ export class DockService {
       await this.dock.disconnect();
     }
 
+    Logger.info(`Attempt to initialized substrate at: ${params.address}`);
+
     await getDock().init(params);
 
     this.address = params.address;
 
-    Logger.info(`Attempt to initialized substrate at: ${params.address}`);
-
     this.resolver = this.createDIDResolver();
 
-    if (process.env.NODE_ENV !== 'test') {
+    if (process.env.NODE_ENV !== 'test' || process.env.API_MOCK_DISABLED === 'true') {
       await initializeWasm();
     }
 
-    Logger.debug(`Substrate initialized at: ${params.address}`);
+    Logger.info(`Substrate initialized at: ${params.address}`);
 
     this._setDockReady(true);
 
