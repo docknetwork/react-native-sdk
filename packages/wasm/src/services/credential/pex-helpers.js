@@ -21,6 +21,34 @@ function correctFieldPath(path) {
   return path.replace('$.', '');
 }
 
+function getAttributeName({field, selectedCredentials, index}) {
+  let attributeName;
+  if (Array.isArray(field.path) && field.path.length > 1) {
+    const selectedCredential = selectedCredentials[index];
+    if (!selectedCredential) {
+      throw new Error(`Expected selected credential at index ${index}`);
+    }
+
+    // Must find a path that matches in selectedcredential, and choose that for bounds
+    const pathCount = field.path.length;
+    for (let i = 0; i < pathCount; i++) {
+      const path = field.path[i];
+      const paths = JSONPath.paths(selectedCredential, path);
+      if (paths.length) {
+        // First come first served
+        attributeName = correctFieldPath(JSONPath.stringify(paths[0]));
+        break;
+      }
+    }
+  } else {
+    attributeName = correctFieldPath(
+      Array.isArray(field.path) ? field.path[0] : field.path,
+    );
+  }
+
+  return attributeName;
+}
+
 export function pexToBounds(pexRequest, selectedCredentials = []) {
   const descriptorBounds = [];
 
@@ -93,29 +121,11 @@ export function pexToBounds(pexRequest, selectedCredentials = []) {
         );
       }
 
-      let attributeName;
-      if (Array.isArray(field.path) && field.path.length > 1) {
-        const selectedCredential = selectedCredentials[index];
-        if (!selectedCredential) {
-          throw new Error(`Expected selected credential at index ${index}`);
-        }
-
-        // Must find a path that matches in selectedcredential, and choose that for bounds
-        const pathCount = field.path.length;
-        for (let i = 0; i < pathCount; i++) {
-          const path = field.path[i];
-          const paths = JSONPath.paths(selectedCredential, path);
-          if (paths.length) {
-            // First come first served
-            attributeName = correctFieldPath(JSONPath.stringify(paths[0]));
-            break;
-          }
-        }
-      } else {
-        attributeName = correctFieldPath(
-          Array.isArray(field.path) ? field.path[0] : field.path,
-        );
-      }
+      const attributeName = getAttributeName({
+        field,
+        selectedCredentials,
+        index,
+      });
 
       bounds.push({
         attributeName,
@@ -128,4 +138,25 @@ export function pexToBounds(pexRequest, selectedCredentials = []) {
   });
 
   return descriptorBounds;
+}
+
+export function getPexRequiredAttributes(pexRequest, selectedCredentials = []) {
+  return pexRequest.input_descriptors.map(inputDescriptor => {
+    const revealedAttributes = [];
+    inputDescriptor.constraints.fields.forEach(field => {
+      if (field.filter) {
+        return;
+      }
+
+      const attributeName = getAttributeName({
+        field,
+        selectedCredentials: [],
+        index: 0,
+      });
+
+      revealedAttributes.push(attributeName);
+    });
+
+    return revealedAttributes;
+  });
 }
