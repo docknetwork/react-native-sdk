@@ -7,7 +7,7 @@ import {
 import {PresentationBuilder} from '@docknetwork/crypto-wasm-ts/lib';
 import {isBase64} from '@polkadot/util-crypto';
 import base64url from 'base64url';
-import {pexToBounds} from './pex-to-bounds';
+import {pexToBounds} from './pex-helpers';
 
 interface Filter {
   type: string;
