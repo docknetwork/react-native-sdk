@@ -32,15 +32,16 @@ const formatEcosystemData = async ecosystems => {
   return formattedEcosystems;
 };
 
-export function useEcosystems({issuer, schemaId}) {
+export function useEcosystems({issuer, verifier, schemaId}) {
   const [ecosystems, setEcosystems] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
 
   useEffect(() => {
+    if(isLoading) return;
     setIsLoading(true);
     setIsError(false);
-    getEcosystems({issuerDID: issuer, schemaId: schemaId})
+    getEcosystems({issuerDID: issuer, verifierDID: verifier, schemaId: schemaId})
       .then(async result => {
         try {
           const ecosystemData = await formatEcosystemData(result);
