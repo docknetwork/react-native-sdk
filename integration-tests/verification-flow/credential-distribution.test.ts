@@ -36,24 +36,28 @@ function issueCredential({subjectDID}) {
   );
 }
 describe('Credential Distribution', () => {
-  it('should issue a credential and recieve it via relay service', async () => {
+  it('should receive a credential using did distribution', async () => {
     const wallet = await getWallet();
     const currentDID = await getDIDProvider().getDefaultDID();
+
+    let time = new Date().getTime();
     console.log('Issue credential using certs');
     const result = await issueCredential({
       subjectDID: currentDID,
     });
 
-    console.log('Credential issued with certs');
+    console.log(`Credential issued in ${new Date().getTime() - time} ms`);
 
+    time = new Date().getTime();
     console.log('Waiting for distribution message....');
 
     getMessageProvider().startAutoFetch();
 
     const message = await getMessageProvider().waitForMessage();
 
-    console.log('Message received:');
-    console.log(message);
+    console.log(`Credential received in ${new Date().getTime() - time} ms`);
+    expect(message.type).toBe(
+      'https://didcomm.org/issue-credential/2.0/issue-credential',
+    );
   });
 });
-
