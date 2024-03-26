@@ -29,8 +29,7 @@ function issueCredential({subjectDID}) {
     },
     {
       headers: {
-        'DOCK-API-TOKEN':
-          '***REMOVED***',
+        'DOCK-API-TOKEN': process.env.CERTS_API_KEY,
         'Content-Type': 'application/json',
       },
     },
