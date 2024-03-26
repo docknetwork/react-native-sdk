@@ -29,8 +29,7 @@ function issueCredential({subjectDID}) {
     },
     {
       headers: {
-        'DOCK-API-TOKEN':
-          'eyJzY29wZXMiOlsidGVzdCIsImFsbCJdLCJzdWIiOiI3Iiwic2VsZWN0ZWRUZWFtSWQiOiI4IiwiY3JlYXRvcklkIjoiNyIsImlhdCI6MTY5ODg1MzI0MiwiZXhwIjo0Nzc4MTQ5MjQyfQ.njdeY1QzgBP9alG2wWjr_8tpEGnMpa2baEPVhtjKYiZTHYe_FnBKVu7jksk-eoIOYqD41MtOP9mjn9cG9Ure2A',
+        'DOCK-API-TOKEN': process.env.CERTS_API_KEY,
         'Content-Type': 'application/json',
       },
     },
