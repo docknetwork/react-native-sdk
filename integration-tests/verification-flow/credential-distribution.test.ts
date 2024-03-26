@@ -48,9 +48,12 @@ describe('Credential Distribution', () => {
 
     console.log('Waiting for distribution message....');
 
+    getMessageProvider().startAutoFetch();
+
     const message = await getMessageProvider().waitForMessage();
 
     console.log('Message received:');
     console.log(message);
   });
 });
+
