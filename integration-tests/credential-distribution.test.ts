@@ -3,7 +3,7 @@ import {
   getWallet,
   getDIDProvider,
   getMessageProvider,
-} from '../helpers/wallet-helpers';
+} from './helpers/wallet-helpers';
 
 function issueCredential({subjectDID}) {
   return axios.post(
