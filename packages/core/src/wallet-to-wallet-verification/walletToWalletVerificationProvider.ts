@@ -139,6 +139,7 @@ export function createWalletToWalletVerificationProvider({
         return true;
       }
 
+      // The holder received a proof request from the verifier
       if (message.type === MessageTypes.RequestPresentation) {
         logger.debug('Received proof request from the verifier');
 
@@ -166,6 +167,7 @@ export function createWalletToWalletVerificationProvider({
         return true;
       }
 
+      // The verifier received a presentation from the holder
       if (message.type === MessageTypes.Presentation) {
         logger.debug('Received presentation from the holder');
 
@@ -197,6 +199,7 @@ export function createWalletToWalletVerificationProvider({
         return true;
       }
 
+      // The holder received a presentation ack from the verifier
       if (
         message.type === MessageTypes.Ack &&
         message.body.goal_code === Goals.PresentationAckFromVerifier
