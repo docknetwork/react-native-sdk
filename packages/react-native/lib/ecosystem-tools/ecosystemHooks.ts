@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react';
 import {getEcosystems} from '@docknetwork/wallet-sdk-core/src/ecosystem-tools';
 import {hexToString} from '@polkadot/util';
 import axios from 'axios';
+import { captureException } from '@docknetwork/wallet-sdk-core/src/helpers';
 
 const getMetadata = async govFramework => {
   const metadataURL = await hexToString(govFramework);
@@ -31,28 +32,35 @@ const formatEcosystemData = async ecosystems => {
   return formattedEcosystems;
 };
 
-export function useEcosystems({issuer, schemaId}) {
+export function useEcosystems({issuer, verifier, schemaId}) {
   const [ecosystems, setEcosystems] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
+    if(isLoading) return;
     setIsLoading(true);
-    getEcosystems({issuerDID: issuer, schemaId: schemaId})
+    setIsError(false);
+    getEcosystems({issuerDID: issuer, verifierDID: verifier, schemaId: schemaId})
       .then(async result => {
         try {
           const ecosystemData = await formatEcosystemData(result);
           setEcosystems(ecosystemData);
         } catch (e) {
+          captureException(e);
+          setIsError(true)
           console.log('Error formatting ecosystem data', e);
         }
       })
       .catch(e => {
         console.log('error fetching ecosystem', e);
+        captureException(e);
+        setIsError(true)
       })
       .finally(() => {
         setIsLoading(false);
       });
   }, [issuer, schemaId]);
 
-  return {ecosystems, isLoading};
+  return {ecosystems, isLoading, isError};
 }
