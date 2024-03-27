@@ -11,8 +11,25 @@ import {
 } from '../messages/message-helpers';
 import {IWallet} from '../types';
 import {IMessageProvider} from '../message-provider';
+import {logger} from '@docknetwork/wallet-sdk-data-store/src/logger';
 
 const ProofRequestTemplateType = 'ProofRequestTemplate';
+
+export interface IWalletToWalletVerificationProvider {
+  getInvitationOOBMessage: ({templateId}: {templateId: string}) => Promise<any>;
+  setProofRequestHandler: (
+    handler: (proofRequest: any) => any,
+  ) => Promise<void>;
+  setPresentationHandler: (
+    handler: (presentation: any, proofRequest: any) => any,
+  ) => Promise<void>;
+  setPresentationAckHandler: (
+    handler: (proofRequest: any) => any,
+  ) => Promise<void>;
+  addProofRequestTemplate: (proofRequestTemplate: any) => Promise<any>;
+  getProofRequestTemplates: () => Promise<any[]>;
+  handleMessage: (message: any) => Promise<boolean>;
+}
 
 export function createWalletToWalletVerificationProvider({
   wallet,
@@ -22,7 +39,7 @@ export function createWalletToWalletVerificationProvider({
   wallet: IWallet;
   didProvider: IDIDProvider;
   messageProvider: IMessageProvider;
-}) {
+}): IWalletToWalletVerificationProvider {
   // Should be used by the HOLDER to create a presentation for the verifier
   let proofRequestHandler;
   // Should be used by the VERIFIER verify a presentation received by the holder
@@ -45,7 +62,7 @@ export function createWalletToWalletVerificationProvider({
     setProofRequestHandler: async (handler: (proofRequest: any) => any) => {
       proofRequestHandler = handler;
     },
-    setPresentationHandler: async (handler: (proofRequest: any) => any) => {
+    setPresentationHandler: async (handler: (presentation: any, proofRequest: any) => any) => {
       presentationHandler = handler;
     },
     setPresentationAckHandler: async (handler: (proofRequest: any) => any) => {
@@ -65,6 +82,8 @@ export function createWalletToWalletVerificationProvider({
       return wallet.getDocumentsByType(ProofRequestTemplateType);
     },
     handleMessage: async (message: any) => {
+      logger.debug('Received message');
+      logger.debug(message);
       if (
         message.type === MessageTypes.Invitation &&
         message?.body?.goal_code === Goals.WalletToWalletVerification
@@ -72,8 +91,8 @@ export function createWalletToWalletVerificationProvider({
         // Received a verification invitation from the verifier
         // Sends back an ack message to the verifier
         const defaultDID = await didProvider.getDefaultDID();
-        console.log('Received invitation');
-        console.log('Sending ack message to the verifier');
+        logger.debug('Received invitation');
+        logger.debug('Sending ack message to the verifier');
         messageProvider.sendMessage(
           buildAckWalletToWalletVerificationMessage({
             holderDID: defaultDID,
@@ -90,78 +109,101 @@ export function createWalletToWalletVerificationProvider({
         message.type === MessageTypes.Ack &&
         message?.body?.goal_code === Goals.WalletToWalletVerification
       ) {
-        console.log(message);
-        const templateId = message.body.proofRequestId;
-        assert(!!templateId, 'Template ID not found in ack message');
-        const defaultDID = await didProvider.getDefaultDID();
-        const proofRequestTemplate = await wallet.getDocumentById(templateId);
+        async function process() {
+          logger.debug(message);
+          const templateId = message.body.proofRequestId;
+          assert(!!templateId, 'Template ID not found in ack message');
+          const defaultDID = await didProvider.getDefaultDID();
+          const proofRequestTemplate = await wallet.getDocumentById(templateId);
 
-        console.log('Sending proof request to the holder');
-        messageProvider.sendMessage(
-          buildRequestVerifiablePresentationMessage({
-            proofRequestId: templateId,
-            proofRequest: proofRequestTemplate.template,
-            holderDID: message.from,
-            verifierDID: defaultDID,
-          }),
-        );
+          assert(!!proofRequestTemplate, 'Proof request template not found');
+
+          logger.debug('Sending proof request to the holder');
+
+          const proofRequest = proofRequestTemplate.template;
+
+          assert(!!proofRequest, 'Proof request not found');
+
+          messageProvider.sendMessage(
+            buildRequestVerifiablePresentationMessage({
+              proofRequestId: templateId,
+              proofRequest: proofRequestTemplate.template,
+              holderDID: message.from,
+              verifierDID: defaultDID,
+            }),
+          );
+        }
+
+        process();
 
         return true;
       }
 
       if (message.type === MessageTypes.RequestPresentation) {
-        console.log('Received proof request from the verifier');
+        logger.debug('Received proof request from the verifier');
 
         assert(!!proofRequestHandler, 'No proof request handler set');
 
-        console.log(
+        logger.debug(
           'Waiting for proofRequest handler to return a presentation',
         );
-        const presentation = await proofRequestHandler(
-          message.body.proofRequest,
+        Promise.resolve(proofRequestHandler(message.body.proofRequest)).then(
+          async presentation => {
+            logger.debug('Presentation received from handler');
+            const defaultDID = await didProvider.getDefaultDID();
+            logger.debug('Sending presentation to the verifier');
+            messageProvider.sendMessage(
+              buildVerifiablePresentationMessage({
+                holderDID: defaultDID,
+                presentation,
+                proofRequestId: message.body.proofRequestId,
+                verifierDID: message.from,
+              }),
+            );
+          },
         );
-        console.log('Presentation received from handler');
-        const defaultDID = await didProvider.getDefaultDID();
-        console.log('Sending presentation to the verifier');
-        messageProvider.sendMessage(
-          buildVerifiablePresentationMessage({
-            holderDID: defaultDID,
-            presentation,
-            proofRequestId: message.body.proofRequestId,
-            verifierDID: message.from,
-          }),
-        );
+
         return true;
       }
 
       if (message.type === MessageTypes.Presentation) {
-        console.log('Received presentation from the holder');
-        assert(!!presentationHandler, 'No presentation handler set');
-        console.log(
+        logger.debug('Received presentation from the holder');
+
+        const proofRequestTemplate = await wallet.getDocumentById(message.body.proofRequestId);
+        const proofRequest = proofRequestTemplate?.template;
+
+        assert(!!proofRequest, 'Proof request template not found');
+
+        logger.debug(
           'Waiting for presentation handler to return a presentation',
         );
-        const presentationResult = await presentationHandler(
-          message.body.presentation,
+        assert(!!presentationHandler, 'No presentation handler set');
+        
+        Promise.resolve(presentationHandler(message.body.presentation, proofRequest)).then(
+          async presentationResult => {
+            logger.debug('Presentation received from handler');
+            const defaultDID = await didProvider.getDefaultDID();
+            logger.debug('Sending presentation to the holder');
+            messageProvider.sendMessage(
+              buildVerifiablePresentationAckMessage({
+                holderDID: message.from,
+                presentationResult,
+                proofRequestId: message.body.proofRequestId,
+                verifierDID: defaultDID,
+              }),
+            );
+          },
         );
-        console.log('Presentation received from handler');
-        const defaultDID = await didProvider.getDefaultDID();
-        console.log('Sending presentation to the holder');
-        messageProvider.sendMessage(
-          buildVerifiablePresentationAckMessage({
-            holderDID: message.from,
-            presentationResult,
-            proofRequestId: message.body.proofRequestId,
-            verifierDID: defaultDID,
-          }),
-        );
+
+        return true;
       }
 
       if (
         message.type === MessageTypes.Ack &&
         message.body.goal_code === Goals.PresentationAckFromVerifier
       ) {
-        console.log('Received presentation ack from the verifier');
-        console.log('Presentation ack received');
+        logger.debug('Received presentation ack from the verifier');
+        logger.debug('Presentation ack received');
         if (presentationAckHandler) {
           presentationAckHandler(message.body.presentationResult);
         }
