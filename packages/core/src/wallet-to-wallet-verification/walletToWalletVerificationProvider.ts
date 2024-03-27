@@ -181,9 +181,8 @@ export function createWalletToWalletVerificationProvider({
         
         Promise.resolve(presentationHandler(message.body.presentation, proofRequest)).then(
           async presentationResult => {
-            logger.debug('Presentation received from handler');
             const defaultDID = await didProvider.getDefaultDID();
-            logger.debug('Sending presentation to the holder');
+            logger.debug('Sending presentation ack to the holder');
             messageProvider.sendMessage(
               buildVerifiablePresentationAckMessage({
                 holderDID: message.from,
