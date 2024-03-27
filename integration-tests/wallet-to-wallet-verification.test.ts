@@ -138,8 +138,16 @@ describe('Wallet to Wallet Verification', () => {
       Goals.PresentationAckFromVerifier,
     );
     console.log('Holder: Ack received');
-
     console.log(ackPresentationMessage);
+
+    const presAckHandler = jest.fn();
+    verificationProvider.setPresentationAckHandler(presAckHandler);
+
+
+    verificationProvider.handleMessage(ackPresentationMessage);
+
+    expect(presAckHandler).toBeCalled();
+    expect(presAckHandler.mock.calls[0][0]).toEqual(ackPresentationMessage.body.presentationResult);
 
     cancelAutoFetch();
 
