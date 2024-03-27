@@ -111,6 +111,9 @@ export function createWalletToWalletVerificationProvider({
 
       if (message.type === MessageTypes.RequestPresentation) {
         console.log('Received proof request from the verifier');
+
+        assert(!!proofRequestHandler, 'No proof request handler set');
+
         console.log(
           'Waiting for proofRequest handler to return a presentation',
         );
@@ -120,36 +123,48 @@ export function createWalletToWalletVerificationProvider({
         console.log('Presentation received from handler');
         const defaultDID = await didProvider.getDefaultDID();
         console.log('Sending presentation to the verifier');
-        messageProvider.sendMessage(buildVerifiablePresentationMessage({
-          holderDID: defaultDID,
-          presentation,
-          proofRequestId: message.body.proofRequestId,
-          verifierDID: message.from,
-        }));
+        messageProvider.sendMessage(
+          buildVerifiablePresentationMessage({
+            holderDID: defaultDID,
+            presentation,
+            proofRequestId: message.body.proofRequestId,
+            verifierDID: message.from,
+          }),
+        );
         return true;
       }
 
       if (message.type === MessageTypes.Presentation) {
         console.log('Received presentation from the holder');
+        assert(!!presentationHandler, 'No presentation handler set');
         console.log(
           'Waiting for presentation handler to return a presentation',
         );
-        const presentationResult = await presentationHandler(message.body.presentation);
+        const presentationResult = await presentationHandler(
+          message.body.presentation,
+        );
         console.log('Presentation received from handler');
         const defaultDID = await didProvider.getDefaultDID();
         console.log('Sending presentation to the holder');
-        messageProvider.sendMessage(buildVerifiablePresentationAckMessage({
-          holderDID: message.from,
-          presentationResult,
-          proofRequestId: message.body.proofRequestId,
-          verifierDID: defaultDID,
-        }));
+        messageProvider.sendMessage(
+          buildVerifiablePresentationAckMessage({
+            holderDID: message.from,
+            presentationResult,
+            proofRequestId: message.body.proofRequestId,
+            verifierDID: defaultDID,
+          }),
+        );
       }
 
-      if (message.type === MessageTypes.Ack && message.body.goal_code === Goals.PresentationAckFromVerifier) {
+      if (
+        message.type === MessageTypes.Ack &&
+        message.body.goal_code === Goals.PresentationAckFromVerifier
+      ) {
         console.log('Received presentation ack from the verifier');
         console.log('Presentation ack received');
-        presentationAckHandler(message.body.presentationResult);
+        if (presentationAckHandler) {
+          presentationAckHandler(message.body.presentationResult);
+        }
         return true;
       }
     },
