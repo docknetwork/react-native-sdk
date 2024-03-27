@@ -9,10 +9,11 @@ export interface IMessageProvider {
   sendMessage: (message: any) => Promise<void>;
   fetchMessages: () => Promise<void>;
   processDIDCommMessages: () => Promise<void>;
-  startAutoFetch: (timeout?: number) => void;
+  startAutoFetch: (timeout?: number) => () => void;
   addMessageListener: (handler: () => void) => () => void;
   waitForMessage: () => Promise<any>;
   markMessageAsRead: (messageId: string) => Promise<void>;
+  clearCache: () => Promise<void>;
 }
 
 async function getKeyPairDocs(didProvider: IDIDProvider, did?: string) {
@@ -105,6 +106,10 @@ export function createMessageProvider({
         skipMessageResolution: true,
       });
 
+      if (encryptedMessages.length) {
+        console.log(`Fetched ${encryptedMessages.length} messages`);
+      }
+
       for (const message of encryptedMessages) {
         try {
           await wallet.addDocument({
@@ -158,6 +163,7 @@ export function createMessageProvider({
       from,
       to,
       body,
+      type,
     }) {
 
       // TODO: rename relay service parameters to make it easier to understand
@@ -178,23 +184,34 @@ export function createMessageProvider({
         if (!keyPairDoc) {
           throw new Error(`${did} not found in didDocs`);
         }
-        await relayService.sendMessage({keyPairDoc, message, recipientDid});
+        await relayService.sendMessage({keyPairDoc, message, recipientDid, type});
       } catch (error) {
         captureException(error);
         throw new Error(`Failed to send message: ${error.message}`);
       }
     },
     waitForMessage() {
-      return new Promise(resolve => {
-        addMessageListener(resolve)
+      return new Promise((resolve: any) => {
+        let removeListener = addMessageListener(async (message) => {
+          removeListener();
+          await resolve(message);
+        })
       });
     },
     startAutoFetch(timeout = 2000) {
       clearInterval(listnerIntervalId);
-      listnerIntervalId = setTimeout(async () => {
+      listnerIntervalId = setInterval(async () => {
         await fetchMessages();
         await processDIDCommMessages();
       }, timeout);
+
+      return () => clearInterval(listnerIntervalId);
+    },
+    clearCache: async () => {
+      return Promise.all((await wallet.getDocumentsByType(WalletDocumentTypes.DIDCommMessage)).map(document => {
+        markMessageAsRead(document.id);
+        return wallet.removeDocument(document.id);
+      }));
     },
     fetchMessages,
     processDIDCommMessages,
