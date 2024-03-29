@@ -30,7 +30,7 @@ export async function getWallet(): Promise<IWallet> {
 
     didProvider = createDIDProvider({wallet});
     credentialProvider = createCredentialProvider({wallet});
-    messageProvider = createMessageProvider({wallet, didProvider});
+    messageProvider = createMessageProvider({wallet, didProvider}) as any;
     await didProvider.ensureDID();
   }
 
