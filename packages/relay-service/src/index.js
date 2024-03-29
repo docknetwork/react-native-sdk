@@ -25,7 +25,7 @@ export const didcomm = {
   decrypt: didcommDecrypt,
 };
 
-const sendMessage = async ({keyPairDoc, recipientDid, message}) => {
+const sendMessage = async ({keyPairDoc, recipientDid, message, type}) => {
   assert(!!keyPairDoc, 'keyPairDoc is required');
   assert(!!recipientDid, 'recipientDid is required');
   assert(!!message, 'message is required');
@@ -33,7 +33,7 @@ const sendMessage = async ({keyPairDoc, recipientDid, message}) => {
   const keyAgreementKey = await getDerivedAgreementKey(keyPairDoc);
   const jweMessage = await didcomm.encrypt({
     recipientDids: [recipientDid],
-    type: DIDCOMM_TYPE_ISSUE_DIRECT,
+    type: type || DIDCOMM_TYPE_ISSUE_DIRECT,
     senderDid: keyPairDoc.controller,
     payload: message,
     keyAgreementKey,
