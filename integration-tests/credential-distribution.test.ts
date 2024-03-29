@@ -6,6 +6,8 @@ import {
 } from './helpers/wallet-helpers';
 
 function issueCredential({subjectDID}) {
+  console.log('Issuing credential for DID', subjectDID);
+
   return axios.post(
     'https://api-staging.dock.io/credentials',
     {
@@ -36,28 +38,69 @@ function issueCredential({subjectDID}) {
   );
 }
 describe('Credential Distribution', () => {
-  it('should receive a credential using did distribution', async () => {
-    const wallet = await getWallet();
-    const currentDID = await getDIDProvider().getDefaultDID();
+  // it('should receive a credential using did distribution', async () => {
+  //   const wallet = await getWallet();
+  //   const currentDID = await getDIDProvider().getDefaultDID();
 
-    let time = new Date().getTime();
-    console.log('Issue credential using certs');
-    const result = await issueCredential({
-      subjectDID: currentDID,
+  //   let time = new Date().getTime();
+  //   console.log('Issue credential using certs');
+  //   const result = await issueCredential({
+  //     subjectDID: currentDID,
+  //   });
+
+  //   console.log(`Credential issued in ${new Date().getTime() - time} ms`);
+
+  //   time = new Date().getTime();
+  //   console.log('Waiting for distribution message....');
+
+  //   getMessageProvider().startAutoFetch();
+
+  //   const message = await getMessageProvider().waitForMessage();
+
+  //   console.log(`Credential received in ${new Date().getTime() - time} ms`);
+  //   expect(message.type).toBe(
+  //     'https://didcomm.org/issue-credential/2.0/issue-credential',
+  //   );
+  // });
+
+  it('should receive multiple credentials using multiple DIDS', async () => {
+    const wallet = await getWallet();
+    const didProvider = getDIDProvider();
+    const messageProvider = getMessageProvider();
+    await messageProvider.clearCache();
+
+    await didProvider.createDIDKey({
+      name: 'Another DID'
     });
 
-    console.log(`Credential issued in ${new Date().getTime() - time} ms`);
+    const dids = await didProvider.getAll();
 
-    time = new Date().getTime();
-    console.log('Waiting for distribution message....');
+    expect(dids.length).toBe(2);
 
-    getMessageProvider().startAutoFetch();
+    const credentialsCount = 1;
+    await Promise.all(dids.map(async (did) => {
+      console.log(did);
+      for (let i = 0; i < credentialsCount; i++) {
+        await issueCredential({
+          subjectDID: did.didDocument.id,
+        });
+      }
+    }));
 
-    const message = await getMessageProvider().waitForMessage();
+    const stopAutoFetch = messageProvider.startAutoFetch();
+    const message1 = await getMessageProvider().waitForMessage();
 
-    console.log(`Credential received in ${new Date().getTime() - time} ms`);
-    expect(message.type).toBe(
+    console.log('Message 1 received', message1);
+    const message2 = await getMessageProvider().waitForMessage();
+
+    console.log('Message 2 received', message2);
+
+    expect(message1.type).toBe(
       'https://didcomm.org/issue-credential/2.0/issue-credential',
     );
+    expect(message2.type).toBe(
+      'https://didcomm.org/issue-credential/2.0/issue-credential',
+    );
+    stopAutoFetch();
   });
 });
