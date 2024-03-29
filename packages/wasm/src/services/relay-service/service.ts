@@ -29,7 +29,7 @@ export class RelayService {
 
   sendMessage(params: SendMessageParams) {
     validation.sendMessage(params);
-    return relayServiceClient.sendMessage(params);
+    return relayServiceClient.sendMessage(params as any);
   }
 
   resolveDidcommMessage(params: ResolveDidcommMessageParams) {
