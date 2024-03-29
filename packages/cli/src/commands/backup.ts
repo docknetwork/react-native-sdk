@@ -36,7 +36,6 @@ const createLocalStorageMock = () => {
   return api;
 };
 
-// To make it available globally in Node.js environment
 global.localStorage = createLocalStorageMock();
 
 backupCommands
@@ -46,24 +45,16 @@ backupCommands
   .description('Decrypt wallet backup')
   .action(async ({file, password}) => {
     const wallet: IWallet = await getWallet();
-
-    
     const json = fs.readFileSync(file, 'utf8');
     const encryptedData = JSON.parse(json);
-    // await walletService.getDocumentsFromEncryptedWallet({
-    //     encryptedJSONWallet: json,
-    //     password,
-    //   });
+
     const documents = await walletService.getDocumentsFromEncryptedWallet({
         encryptedJSONWallet: encryptedData,
         password,
     });
 
-
-
     const decryptedFilePath = file.replace('.json', '-decrypted.json');
     fs.writeFileSync(decryptedFilePath, JSON.stringify(documents, null, 2));
-
 
     console.log(documents);
   });
