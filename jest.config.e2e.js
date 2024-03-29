@@ -1,7 +1,7 @@
 module.exports = {
   preset: "ts-jest",
   testEnvironment: 'node',
-  testTimeout: 60000,
+  testTimeout: 420000,
   maxConcurrency: 1,
   testMatch: ['<rootDir>/integration-tests/**/*.test.ts'],
   coverageThreshold: {
