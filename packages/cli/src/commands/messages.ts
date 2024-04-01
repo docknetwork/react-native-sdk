@@ -49,7 +49,7 @@ messagesCommand
       keyPairDoc: keyPairDocs[0],
       recipientDid,
       message,
-    });
+    } as any);
 
     console.log('Message sent!');
     console.log(result);

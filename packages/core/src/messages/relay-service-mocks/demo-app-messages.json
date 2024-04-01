@@ -1,0 +1,450 @@
+[
+  {
+    "_id": "64bfbb4ba1cc2185f375ac5e",
+    "to": ["did:key:z6MkrPYjMKYwULkGYMJvarQGdFKM3gsLKWjX6uw47i8R3Yso"],
+    "from": "did:dock:5CgR1iELH33Qm8CN7LLXiEdTnrPTFKHgdxZgTuDwxgiyokjB",
+    "msg": {
+      "domain": "api.dock.io",
+      "credentials": [
+        {
+          "@context": [
+            "https://www.w3.org/2018/credentials/v1",
+            {
+              "dk": "https://ld.dock.io/credentials#",
+              "ProofOfAddress": "dk:ProofOfAddress",
+              "address": "dk:address",
+              "name": "dk:name",
+              "description": "dk:description",
+              "logo": "dk:logo"
+            }
+          ],
+          "id": "https://creds-testnet.dock.io/88aa22a8fbbff4c1197804180e4798397962c61a7cb352bbcad6a0c3de4d57e6",
+          "type": ["VerifiableCredential", "ProofOfAddress"],
+          "credentialSubject": {
+            "id": "did:key:z6MkrPYjMKYwULkGYMJvarQGdFKM3gsLKWjX6uw47i8R3Yso",
+            "address": "123 Main St"
+          },
+          "issuanceDate": "2021-01-01T14:15:22Z",
+          "issuer": {
+            "name": "Test123",
+            "description": "",
+            "logo": "",
+            "id": "did:dock:5CgR1iELH33Qm8CN7LLXiEdTnrPTFKHgdxZgTuDwxgiyokjB"
+          },
+          "name": "Proof of Address",
+          "proof": {
+            "type": "Ed25519Signature2018",
+            "created": "2023-07-25T12:08:42Z",
+            "verificationMethod": "did:dock:5CgR1iELH33Qm8CN7LLXiEdTnrPTFKHgdxZgTuDwxgiyokjB#keys-1",
+            "proofPurpose": "assertionMethod",
+            "jws": "eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..tx5EhtRNwo-JdZTRZKfwCs1Q0C2X_nzVOStaGEJkJL7TJN5FFwe3kOEi89fi93HJY8G2I3NWnRjBIkvsYWOwDg"
+          }
+        }
+      ]
+    },
+    "id": "ff8f2ca0-2ae3-11ee-aaa6-99ebf3bb7975",
+    "type": "https://didcomm.org/issue-credential/2.0/issue-credential",
+    "created_time": 1690286922,
+    "body": {
+      "domain": "api.dock.io",
+      "credentials": [
+        {
+          "@context": [
+            "https://www.w3.org/2018/credentials/v1",
+            {
+              "dk": "https://ld.dock.io/credentials#",
+              "ProofOfAddress": "dk:ProofOfAddress",
+              "address": "dk:address",
+              "name": "dk:name",
+              "description": "dk:description",
+              "logo": "dk:logo"
+            }
+          ],
+          "id": "https://creds-testnet.dock.io/88aa22a8fbbff4c1197804180e4798397962c61a7cb352bbcad6a0c3de4d57e6",
+          "type": ["VerifiableCredential", "ProofOfAddress"],
+          "credentialSubject": {
+            "id": "did:key:z6MkrPYjMKYwULkGYMJvarQGdFKM3gsLKWjX6uw47i8R3Yso",
+            "address": "123 Main St"
+          },
+          "issuanceDate": "2021-01-01T14:15:22Z",
+          "issuer": {
+            "name": "Test123",
+            "description": "",
+            "logo": "",
+            "id": "did:dock:5CgR1iELH33Qm8CN7LLXiEdTnrPTFKHgdxZgTuDwxgiyokjB"
+          },
+          "name": "Proof of Address",
+          "proof": {
+            "type": "Ed25519Signature2018",
+            "created": "2023-07-25T12:08:42Z",
+            "verificationMethod": "did:dock:5CgR1iELH33Qm8CN7LLXiEdTnrPTFKHgdxZgTuDwxgiyokjB#keys-1",
+            "proofPurpose": "assertionMethod",
+            "jws": "eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..tx5EhtRNwo-JdZTRZKfwCs1Q0C2X_nzVOStaGEJkJL7TJN5FFwe3kOEi89fi93HJY8G2I3NWnRjBIkvsYWOwDg"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "_id": "64bfbb4b04f520307c03afba",
+    "to": ["did:key:z6MkrPYjMKYwULkGYMJvarQGdFKM3gsLKWjX6uw47i8R3Yso"],
+    "from": "did:dock:5CgR1iELH33Qm8CN7LLXiEdTnrPTFKHgdxZgTuDwxgiyokjB",
+    "msg": {
+      "domain": "api.dock.io",
+      "credentials": [
+        {
+          "@context": [
+            "https://www.w3.org/2018/credentials/v1",
+            {
+              "dk": "https://ld.dock.io/credentials#",
+              "BankAccountDetails": "dk:BankAccountDetails",
+              "checkingAccount": "dk:checkingAccount",
+              "routingNumber": "dk:routingNumber",
+              "name": "dk:name",
+              "description": "dk:description",
+              "logo": "dk:logo"
+            }
+          ],
+          "id": "https://creds-testnet.dock.io/025c84d76f8400572530a008e3ee401cfb820246bc1f87dc11639a879fcd125b",
+          "type": ["VerifiableCredential", "BankAccountDetails"],
+          "credentialSubject": {
+            "id": "did:key:z6MkrPYjMKYwULkGYMJvarQGdFKM3gsLKWjX6uw47i8R3Yso",
+            "checkingAccount": "**1234",
+            "routingNumber": "123456789"
+          },
+          "issuanceDate": "2023-07-25T12:08:42.833Z",
+          "issuer": {
+            "name": "Test123",
+            "description": "",
+            "logo": "",
+            "id": "did:dock:5CgR1iELH33Qm8CN7LLXiEdTnrPTFKHgdxZgTuDwxgiyokjB"
+          },
+          "name": "Bank Account Details",
+          "proof": {
+            "type": "Ed25519Signature2018",
+            "created": "2023-07-25T12:08:42Z",
+            "verificationMethod": "did:dock:5CgR1iELH33Qm8CN7LLXiEdTnrPTFKHgdxZgTuDwxgiyokjB#keys-1",
+            "proofPurpose": "assertionMethod",
+            "jws": "eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..Ytv-4agLoWHdzLPZaPwrAyb5_TrSKt8RDt10vbbRGtX88p4Eosjs3Uvh9RtPUQPZv5pT25YIMimETAoDBMQhCw"
+          }
+        }
+      ]
+    },
+    "id": "ff901700-2ae3-11ee-aaa6-99ebf3bb7975",
+    "type": "https://didcomm.org/issue-credential/2.0/issue-credential",
+    "created_time": 1690286922,
+    "body": {
+      "domain": "api.dock.io",
+      "credentials": [
+        {
+          "@context": [
+            "https://www.w3.org/2018/credentials/v1",
+            {
+              "dk": "https://ld.dock.io/credentials#",
+              "BankAccountDetails": "dk:BankAccountDetails",
+              "checkingAccount": "dk:checkingAccount",
+              "routingNumber": "dk:routingNumber",
+              "name": "dk:name",
+              "description": "dk:description",
+              "logo": "dk:logo"
+            }
+          ],
+          "id": "https://creds-testnet.dock.io/025c84d76f8400572530a008e3ee401cfb820246bc1f87dc11639a879fcd125b",
+          "type": ["VerifiableCredential", "BankAccountDetails"],
+          "credentialSubject": {
+            "id": "did:key:z6MkrPYjMKYwULkGYMJvarQGdFKM3gsLKWjX6uw47i8R3Yso",
+            "checkingAccount": "**1234",
+            "routingNumber": "123456789"
+          },
+          "issuanceDate": "2023-07-25T12:08:42.833Z",
+          "issuer": {
+            "name": "Test123",
+            "description": "",
+            "logo": "",
+            "id": "did:dock:5CgR1iELH33Qm8CN7LLXiEdTnrPTFKHgdxZgTuDwxgiyokjB"
+          },
+          "name": "Bank Account Details",
+          "proof": {
+            "type": "Ed25519Signature2018",
+            "created": "2023-07-25T12:08:42Z",
+            "verificationMethod": "did:dock:5CgR1iELH33Qm8CN7LLXiEdTnrPTFKHgdxZgTuDwxgiyokjB#keys-1",
+            "proofPurpose": "assertionMethod",
+            "jws": "eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..Ytv-4agLoWHdzLPZaPwrAyb5_TrSKt8RDt10vbbRGtX88p4Eosjs3Uvh9RtPUQPZv5pT25YIMimETAoDBMQhCw"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "_id": "64bfbb4bce66d2aeed5795bf",
+    "to": ["did:key:z6MkrPYjMKYwULkGYMJvarQGdFKM3gsLKWjX6uw47i8R3Yso"],
+    "from": "did:dock:5CgR1iELH33Qm8CN7LLXiEdTnrPTFKHgdxZgTuDwxgiyokjB",
+    "msg": {
+      "domain": "api.dock.io",
+      "credentials": [
+        {
+          "@context": [
+            "https://www.w3.org/2018/credentials/v1",
+            {
+              "dk": "https://ld.dock.io/credentials#",
+              "CustomerCredential": "dk:CustomerCredential",
+              "name": "dk:name",
+              "email": "dk:email",
+              "dateOfBirth": "dk:dateOfBirth",
+              "phone": "dk:phone",
+              "description": "dk:description",
+              "logo": "dk:logo"
+            }
+          ],
+          "id": "https://creds-testnet.dock.io/bb4f0b52167cb33ae1c418b4961c0db830e99f0d38add5ac8f2a8570cb15a667",
+          "type": ["VerifiableCredential", "CustomerCredential"],
+          "credentialSubject": {
+            "id": "did:key:z6MkrPYjMKYwULkGYMJvarQGdFKM3gsLKWjX6uw47i8R3Yso",
+            "name": "Alice Doe",
+            "email": "alice@dock.io",
+            "dateOfBirth": "1990-01-01",
+            "phone": "555-555-5555"
+          },
+          "issuanceDate": "2023-07-25T12:08:42.836Z",
+          "issuer": {
+            "name": "Test123",
+            "description": "",
+            "logo": "",
+            "id": "did:dock:5CgR1iELH33Qm8CN7LLXiEdTnrPTFKHgdxZgTuDwxgiyokjB"
+          },
+          "name": "Customer Credential",
+          "proof": {
+            "type": "Ed25519Signature2018",
+            "created": "2023-07-25T12:08:42Z",
+            "verificationMethod": "did:dock:5CgR1iELH33Qm8CN7LLXiEdTnrPTFKHgdxZgTuDwxgiyokjB#keys-1",
+            "proofPurpose": "assertionMethod",
+            "jws": "eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..NJZg4TpLM75op2aA__jwLivKF1y377hybbAh9p10Ubxrz5jr-oD6IUrkd1rO4guk_Vi4RKk4umNTwPzAJ1OkAA"
+          }
+        }
+      ]
+    },
+    "id": "ff9212d0-2ae3-11ee-864e-fb65d9c37c90",
+    "type": "https://didcomm.org/issue-credential/2.0/issue-credential",
+    "created_time": 1690286922,
+    "body": {
+      "domain": "api.dock.io",
+      "credentials": [
+        {
+          "@context": [
+            "https://www.w3.org/2018/credentials/v1",
+            {
+              "dk": "https://ld.dock.io/credentials#",
+              "CustomerCredential": "dk:CustomerCredential",
+              "name": "dk:name",
+              "email": "dk:email",
+              "dateOfBirth": "dk:dateOfBirth",
+              "phone": "dk:phone",
+              "description": "dk:description",
+              "logo": "dk:logo"
+            }
+          ],
+          "id": "https://creds-testnet.dock.io/bb4f0b52167cb33ae1c418b4961c0db830e99f0d38add5ac8f2a8570cb15a667",
+          "type": ["VerifiableCredential", "CustomerCredential"],
+          "credentialSubject": {
+            "id": "did:key:z6MkrPYjMKYwULkGYMJvarQGdFKM3gsLKWjX6uw47i8R3Yso",
+            "name": "Alice Doe",
+            "email": "alice@dock.io",
+            "dateOfBirth": "1990-01-01",
+            "phone": "555-555-5555"
+          },
+          "issuanceDate": "2023-07-25T12:08:42.836Z",
+          "issuer": {
+            "name": "Test123",
+            "description": "",
+            "logo": "",
+            "id": "did:dock:5CgR1iELH33Qm8CN7LLXiEdTnrPTFKHgdxZgTuDwxgiyokjB"
+          },
+          "name": "Customer Credential",
+          "proof": {
+            "type": "Ed25519Signature2018",
+            "created": "2023-07-25T12:08:42Z",
+            "verificationMethod": "did:dock:5CgR1iELH33Qm8CN7LLXiEdTnrPTFKHgdxZgTuDwxgiyokjB#keys-1",
+            "proofPurpose": "assertionMethod",
+            "jws": "eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..NJZg4TpLM75op2aA__jwLivKF1y377hybbAh9p10Ubxrz5jr-oD6IUrkd1rO4guk_Vi4RKk4umNTwPzAJ1OkAA"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "_id": "64bfbb4bf6879647579d2b11",
+    "to": ["did:key:z6MkrPYjMKYwULkGYMJvarQGdFKM3gsLKWjX6uw47i8R3Yso"],
+    "from": "did:dock:5CgR1iELH33Qm8CN7LLXiEdTnrPTFKHgdxZgTuDwxgiyokjB",
+    "msg": {
+      "domain": "api.dock.io",
+      "credentials": [
+        {
+          "@context": [
+            "https://www.w3.org/2018/credentials/v1",
+            {
+              "dk": "https://ld.dock.io/credentials#",
+              "KYCCredential": "dk:KYCCredential",
+              "verifiedBy": "dk:verifiedBy",
+              "name": "dk:name",
+              "description": "dk:description",
+              "logo": "dk:logo"
+            }
+          ],
+          "id": "https://creds-testnet.dock.io/dea6ad7ab60c42d821a9b0ba5e8168df385e133cf23dfec29fc69de3df50baf8",
+          "type": ["VerifiableCredential", "KYCCredential"],
+          "credentialSubject": {
+            "id": "did:key:z6MkrPYjMKYwULkGYMJvarQGdFKM3gsLKWjX6uw47i8R3Yso",
+            "verifiedBy": "IDV Provider"
+          },
+          "issuanceDate": "2023-01-01T14:15:22Z",
+          "issuer": {
+            "name": "Test123",
+            "description": "",
+            "logo": "",
+            "id": "did:dock:5CgR1iELH33Qm8CN7LLXiEdTnrPTFKHgdxZgTuDwxgiyokjB"
+          },
+          "name": "KYC Credentials",
+          "proof": {
+            "type": "Ed25519Signature2018",
+            "created": "2023-07-25T12:08:42Z",
+            "verificationMethod": "did:dock:5CgR1iELH33Qm8CN7LLXiEdTnrPTFKHgdxZgTuDwxgiyokjB#keys-1",
+            "proofPurpose": "assertionMethod",
+            "jws": "eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..IdV0-aqRJfBZEinFcapoTax6ULI54r1roBgBDB1Y_RAwPKrUuBRlGQCEQJ6JaScmHo6zVOlD7q4rEC3nMy0_Cg"
+          }
+        }
+      ]
+    },
+    "id": "ff910160-2ae3-11ee-864e-fb65d9c37c90",
+    "type": "https://didcomm.org/issue-credential/2.0/issue-credential",
+    "created_time": 1690286922,
+    "body": {
+      "domain": "api.dock.io",
+      "credentials": [
+        {
+          "@context": [
+            "https://www.w3.org/2018/credentials/v1",
+            {
+              "dk": "https://ld.dock.io/credentials#",
+              "KYCCredential": "dk:KYCCredential",
+              "verifiedBy": "dk:verifiedBy",
+              "name": "dk:name",
+              "description": "dk:description",
+              "logo": "dk:logo"
+            }
+          ],
+          "id": "https://creds-testnet.dock.io/dea6ad7ab60c42d821a9b0ba5e8168df385e133cf23dfec29fc69de3df50baf8",
+          "type": ["VerifiableCredential", "KYCCredential"],
+          "credentialSubject": {
+            "id": "did:key:z6MkrPYjMKYwULkGYMJvarQGdFKM3gsLKWjX6uw47i8R3Yso",
+            "verifiedBy": "IDV Provider"
+          },
+          "issuanceDate": "2023-01-01T14:15:22Z",
+          "issuer": {
+            "name": "Test123",
+            "description": "",
+            "logo": "",
+            "id": "did:dock:5CgR1iELH33Qm8CN7LLXiEdTnrPTFKHgdxZgTuDwxgiyokjB"
+          },
+          "name": "KYC Credentials",
+          "proof": {
+            "type": "Ed25519Signature2018",
+            "created": "2023-07-25T12:08:42Z",
+            "verificationMethod": "did:dock:5CgR1iELH33Qm8CN7LLXiEdTnrPTFKHgdxZgTuDwxgiyokjB#keys-1",
+            "proofPurpose": "assertionMethod",
+            "jws": "eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..IdV0-aqRJfBZEinFcapoTax6ULI54r1roBgBDB1Y_RAwPKrUuBRlGQCEQJ6JaScmHo6zVOlD7q4rEC3nMy0_Cg"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "_id": "64bfbb4b61fe4c5a231e39a8",
+    "to": ["did:key:z6MkrPYjMKYwULkGYMJvarQGdFKM3gsLKWjX6uw47i8R3Yso"],
+    "from": "did:dock:5CgR1iELH33Qm8CN7LLXiEdTnrPTFKHgdxZgTuDwxgiyokjB",
+    "msg": {
+      "domain": "api.dock.io",
+      "credentials": [
+        {
+          "@context": [
+            "https://www.w3.org/2018/credentials/v1",
+            {
+              "dk": "https://ld.dock.io/credentials#",
+              "RewardsProgram": "dk:RewardsProgram",
+              "eligibility": "dk:eligibility",
+              "rewardId": "dk:rewardId",
+              "name": "dk:name",
+              "description": "dk:description",
+              "logo": "dk:logo"
+            }
+          ],
+          "id": "https://creds-testnet.dock.io/442e270b052f5c4d8e7db4d116193e4e2cd367c94445abe9497b6a33cd8b7742",
+          "type": ["VerifiableCredential", "RewardsProgram"],
+          "credentialSubject": {
+            "id": "did:key:z6MkrPYjMKYwULkGYMJvarQGdFKM3gsLKWjX6uw47i8R3Yso",
+            "eligibility": true,
+            "rewardId": "123123123"
+          },
+          "issuanceDate": "2023-07-25T12:08:42.895Z",
+          "issuer": {
+            "name": "Test123",
+            "description": "",
+            "logo": "",
+            "id": "did:dock:5CgR1iELH33Qm8CN7LLXiEdTnrPTFKHgdxZgTuDwxgiyokjB"
+          },
+          "name": "Rewards Program",
+          "proof": {
+            "type": "Ed25519Signature2018",
+            "created": "2023-07-25T12:08:42Z",
+            "verificationMethod": "did:dock:5CgR1iELH33Qm8CN7LLXiEdTnrPTFKHgdxZgTuDwxgiyokjB#keys-1",
+            "proofPurpose": "assertionMethod",
+            "jws": "eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..y9JNA1nx7lPcdEPessW2MIuLKMmsqGGYvRs5tINIinun6fFaz5UgrmvKi56SLRDQrNNna2uthMtXOi-FPW3YCw"
+          }
+        }
+      ]
+    },
+    "id": "ff9917b0-2ae3-11ee-864e-fb65d9c37c90",
+    "type": "https://didcomm.org/issue-credential/2.0/issue-credential",
+    "created_time": 1690286922,
+    "body": {
+      "domain": "api.dock.io",
+      "credentials": [
+        {
+          "@context": [
+            "https://www.w3.org/2018/credentials/v1",
+            {
+              "dk": "https://ld.dock.io/credentials#",
+              "RewardsProgram": "dk:RewardsProgram",
+              "eligibility": "dk:eligibility",
+              "rewardId": "dk:rewardId",
+              "name": "dk:name",
+              "description": "dk:description",
+              "logo": "dk:logo"
+            }
+          ],
+          "id": "https://creds-testnet.dock.io/442e270b052f5c4d8e7db4d116193e4e2cd367c94445abe9497b6a33cd8b7742",
+          "type": ["VerifiableCredential", "RewardsProgram"],
+          "credentialSubject": {
+            "id": "did:key:z6MkrPYjMKYwULkGYMJvarQGdFKM3gsLKWjX6uw47i8R3Yso",
+            "eligibility": true,
+            "rewardId": "123123123"
+          },
+          "issuanceDate": "2023-07-25T12:08:42.895Z",
+          "issuer": {
+            "name": "Test123",
+            "description": "",
+            "logo": "",
+            "id": "did:dock:5CgR1iELH33Qm8CN7LLXiEdTnrPTFKHgdxZgTuDwxgiyokjB"
+          },
+          "name": "Rewards Program",
+          "proof": {
+            "type": "Ed25519Signature2018",
+            "created": "2023-07-25T12:08:42Z",
+            "verificationMethod": "did:dock:5CgR1iELH33Qm8CN7LLXiEdTnrPTFKHgdxZgTuDwxgiyokjB#keys-1",
+            "proofPurpose": "assertionMethod",
+            "jws": "eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..y9JNA1nx7lPcdEPessW2MIuLKMmsqGGYvRs5tINIinun6fFaz5UgrmvKi56SLRDQrNNna2uthMtXOi-FPW3YCw"
+          }
+        }
+      ]
+    }
+  }
+]

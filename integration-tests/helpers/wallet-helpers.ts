@@ -36,7 +36,7 @@ export async function createNewWallet(): Promise<IWallet> {
 
   didProvider = createDIDProvider({wallet});
   credentialProvider = createCredentialProvider({wallet});
-  messageProvider = createMessageProvider({wallet, didProvider});
+  messageProvider = createMessageProvider({wallet, didProvider}) as any;
 
   console.log('Waiting for network connection');
   await wallet.waitForEvent(WalletEvents.networkConnected);
