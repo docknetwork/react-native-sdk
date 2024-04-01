@@ -141,7 +141,7 @@ export function pexToBounds(pexRequest, selectedCredentials = []) {
 }
 
 export function getPexRequiredAttributes(pexRequest, selectedCredentials = []) {
-  return pexRequest.input_descriptors.map(inputDescriptor => {
+  return pexRequest.input_descriptors.map((inputDescriptor, index) => {
     const revealedAttributes = [];
     inputDescriptor.constraints.fields.forEach(field => {
       if (field.filter) {
@@ -150,8 +150,8 @@ export function getPexRequiredAttributes(pexRequest, selectedCredentials = []) {
 
       const attributeName = getAttributeName({
         field,
-        selectedCredentials: [],
-        index: 0,
+        selectedCredentials,
+        index,
       });
 
       revealedAttributes.push(attributeName);

@@ -214,6 +214,7 @@ export function createMessageProvider({
       }));
     },
     fetchMessages,
+    addMessageListener,
     processDIDCommMessages,
     markMessageAsRead,
   };

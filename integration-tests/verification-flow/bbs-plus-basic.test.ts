@@ -58,8 +58,8 @@ const expiredCredential = {
   },
 };
 
-describe('BBS+ with expired credential', () => {
-  it('should include expirationDate in the presentation', async () => {
+describe('BBS+ presentations', () => {
+  it('should add required attributes to the presentation', async () => {
     const wallet: IWallet = await getWallet();
     const controller = await createVerificationController({
       wallet,
@@ -86,10 +86,19 @@ describe('BBS+ with expired credential', () => {
               constraints: {
                 fields: [
                   {
-                    path: ['$.credentialSubject.id'],
+                    path: ['$.expirationDate'],
                   },
                   {
-                    path: ['$.expirationDate'],
+                    path: ['$.type'],
+                  },
+                  {
+                    path: [
+                      "$.issuer.id",
+                      "$.issuer",
+                      "$.vc.issuer.id",
+                      "$.vc.issuer",
+                      "$.iss"
+                    ],
                   },
                 ],
               },
@@ -100,9 +109,7 @@ describe('BBS+ with expired credential', () => {
       },
     });
 
-    let attributesToReveal = [
-      'credentialSubject.name'
-    ];
+    let attributesToReveal = ['credentialSubject.name'];
 
     controller.selectedCredentials.set(expiredCredential.id, {
       credential: expiredCredential,
@@ -111,6 +118,15 @@ describe('BBS+ with expired credential', () => {
 
     const presentation = await controller.createPresentation();
 
-    expect(presentation.verifiableCredential[0].expirationDate).toBe(expiredCredential.expirationDate);
+    console.log(presentation);
+    expect(presentation.verifiableCredential[0].expirationDate).toBe(
+      expiredCredential.expirationDate,
+    );
+    expect(presentation.verifiableCredential[0].issuer.id).toBe(
+      expiredCredential.issuer.id,
+    );
+    expect(presentation.verifiableCredential[0].type).toStrictEqual(
+      expiredCredential.type,
+    );
   });
 });
