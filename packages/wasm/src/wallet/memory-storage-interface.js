@@ -1,7 +1,5 @@
 import StorageInterface from '@docknetwork/universal-wallet/storage/storage-interface';
 
-const localStorage = global.localStorage;
-
 function generateDocumentId() {
   return `doc${Math.floor(Math.random() * 10000)}`;
 }
@@ -14,7 +12,7 @@ class MemoryStorageInterface extends StorageInterface {
     this.directory = directory;
 
     try {
-      this.documents = JSON.parse(localStorage.getItem(directory));
+      this.documents = JSON.parse(global.localStorage.getItem(directory));
 
       if (!this.documents) {
         this.documents = {};
@@ -26,7 +24,7 @@ class MemoryStorageInterface extends StorageInterface {
   }
 
   updateLocalStorage() {
-    localStorage.setItem(this.directory, JSON.stringify(this.documents));
+    global.localStorage.setItem(this.directory, JSON.stringify(this.documents));
   }
 
   async get({id}) {
