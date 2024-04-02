@@ -1,6 +1,7 @@
 import {IWallet} from '@docknetwork/wallet-sdk-core/lib/types';
 import {getWallet} from '../helpers/wallet-helpers';
 import {createVerificationController} from '@docknetwork/wallet-sdk-core/src/verification-controller';
+import {verifyPresentation} from '@docknetwork/sdk/utils/vc/presentations';
 
 const expiredCredential = {
   '@context': [
@@ -93,11 +94,11 @@ describe('BBS+ presentations', () => {
                   },
                   {
                     path: [
-                      "$.issuer.id",
-                      "$.issuer",
-                      "$.vc.issuer.id",
-                      "$.vc.issuer",
-                      "$.iss"
+                      '$.issuer.id',
+                      '$.issuer',
+                      '$.vc.issuer.id',
+                      '$.vc.issuer',
+                      '$.iss',
                     ],
                   },
                 ],
@@ -128,5 +129,14 @@ describe('BBS+ presentations', () => {
     expect(presentation.verifiableCredential[0].type).toStrictEqual(
       expiredCredential.type,
     );
+
+    const verificationResults = await verifyPresentation(
+      presentation.toJSON(),
+      {
+        compactProof: true,
+      },
+    );
+
+    expect(verificationResults.verified).toBe(true);
   });
 });
