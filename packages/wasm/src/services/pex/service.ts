@@ -9,6 +9,20 @@ import {PEX} from '@sphereon/pex';
 
 const pex: PEX = new PEX();
 
+
+function removeOptionalAttribute(presentationDefinition) {
+  presentationDefinition.input_descriptors.forEach(inputDescriptor => {
+    if (inputDescriptor.constraints && inputDescriptor.constraints.fields) {
+      inputDescriptor.constraints.fields = inputDescriptor.constraints.fields.map(field => {
+        const { optional, ...remainingAttributes } = field;
+        return remainingAttributes;
+      });
+    }
+  });
+
+  return presentationDefinition;
+}
+
 class PEXService {
   name: string;
 
@@ -25,7 +39,7 @@ class PEXService {
     validation.filterCredentials(params);
     const {credentials, presentationDefinition, holderDIDs} = params;
     const result = pex.selectFrom(
-      presentationDefinition,
+      removeOptionalAttribute(presentationDefinition),
       credentials,
       holderDIDs,
     );
@@ -37,7 +51,7 @@ class PEXService {
     validation.evaluatePresentation(params);
     const {presentation, presentationDefinition} = params;
     const result = pex.evaluatePresentation(
-      presentationDefinition,
+      removeOptionalAttribute(presentationDefinition),
       presentation,
     );
 
