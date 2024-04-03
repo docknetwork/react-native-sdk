@@ -13,10 +13,7 @@ const pex: PEX = new PEX();
 function removeOptionalAttribute(presentationDefinition) {
   presentationDefinition.input_descriptors.forEach(inputDescriptor => {
     if (inputDescriptor.constraints && inputDescriptor.constraints.fields) {
-      inputDescriptor.constraints.fields = inputDescriptor.constraints.fields.map(field => {
-        const { optional, ...remainingAttributes } = field;
-        return remainingAttributes;
-      });
+      inputDescriptor.constraints.fields = inputDescriptor.constraints.fields.filter(field => field.optional !== true);
     }
   });
 
