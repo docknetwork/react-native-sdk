@@ -39,6 +39,7 @@ export const universalResolverUrl = 'https://uniresolver.io';
 export class DockService {
   dock;
   isDockReady = false;
+  resolver: any;
   static Events = {
     DOCK_READY: 'dock-ready',
   };
