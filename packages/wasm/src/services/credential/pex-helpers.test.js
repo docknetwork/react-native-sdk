@@ -26,7 +26,10 @@ describe('pex helpers', () => {
         },
         [
           {
-            expiredDate: '2021-01-01',
+            expirationDate: '2021-01-01',
+            credentialSubject: {
+              id: '123',
+            },
           },
         ],
       )[0];
@@ -63,7 +66,10 @@ describe('pex helpers', () => {
         },
         [
           {
-            expiredDate: '2021-01-01',
+            expirationDate: '2021-01-01',
+            credentialSubject: {
+              id: '123',
+            },
           },
         ],
       )[0];
