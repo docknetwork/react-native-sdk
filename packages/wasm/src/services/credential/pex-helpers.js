@@ -140,23 +140,35 @@ export function pexToBounds(pexRequest, selectedCredentials = []) {
   return descriptorBounds;
 }
 
+const attributesToSkip = [
+  /^type/,
+  /^issuer/,
+  /^@context/,
+  /^proof/,
+  /^credentialSchema/,
+];
+
+// Utility function to check if an attribute should be skipped
+const shouldSkipAttribute = attributeName =>
+  attributesToSkip.some(regex => regex.test(attributeName));
+
 export function getPexRequiredAttributes(pexRequest, selectedCredentials = []) {
   return pexRequest.input_descriptors.map((inputDescriptor, index) => {
-    const revealedAttributes = [];
-    inputDescriptor.constraints.fields.forEach(field => {
-      if (field.filter) {
-        return;
-      }
+    return inputDescriptor.constraints.fields
+      .filter(field => {
+        if (field.filter) {
+          return false;
+        }
 
-      const attributeName = getAttributeName({
-        field,
-        selectedCredentials,
-        index,
-      });
+        const paths = Array.isArray(field.path)
+          ? field.path.flatMap(singlePath =>
+              JSONPath.paths(selectedCredentials[index], singlePath),
+            )
+          : JSONPath.paths(selectedCredentials[index], field.path);
 
-      revealedAttributes.push(attributeName);
-    });
-
-    return revealedAttributes;
+        return paths.length !== 0;
+      })
+      .map(field => getAttributeName({field, selectedCredentials, index}))
+      .filter(attributeName => !shouldSkipAttribute(attributeName)); // Filter out attributes to skip
   });
 }
