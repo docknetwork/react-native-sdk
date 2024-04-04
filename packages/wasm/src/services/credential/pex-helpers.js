@@ -148,7 +148,6 @@ const attributesToSkip = [
   /^credentialSchema/,
 ];
 
-// Utility function to check if an attribute should be skipped
 const shouldSkipAttribute = attributeName =>
   attributesToSkip.some(regex => regex.test(attributeName));
 
@@ -169,6 +168,6 @@ export function getPexRequiredAttributes(pexRequest, selectedCredentials = []) {
         return paths.length !== 0;
       })
       .map(field => getAttributeName({field, selectedCredentials, index}))
-      .filter(attributeName => !shouldSkipAttribute(attributeName)); // Filter out attributes to skip
+      .filter(attributeName => !shouldSkipAttribute(attributeName));
   });
 }
