@@ -6,7 +6,7 @@ import {
   WildcardMultiResolver,
   UniversalResolver,
 } from '@docknetwork/sdk/resolver';
-import {initializeWasm} from '@docknetwork/crypto-wasm/lib/index';
+import {initializeWasm} from '@docknetwork/crypto-wasm-ts/lib/index';
 import {EventEmitter} from 'events';
 import {Logger} from '../../core/logger';
 import {once} from '../../modules/event-manager';
