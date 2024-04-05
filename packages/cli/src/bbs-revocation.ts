@@ -8,7 +8,7 @@ import {
   UniversalResolver,
   WildcardMultiResolver,
 } from '@docknetwork/sdk/resolver';
-import {initializeWasm} from '@docknetwork/crypto-wasm/lib/index';
+import {initializeWasm} from '@docknetwork/crypto-wasm-ts/lib/index';
 import VerifiablePresentation from '@docknetwork/sdk/verifiable-presentation';
 import {keyDocToKeypair} from '@docknetwork/wallet-sdk-wasm/src/services/credential/utils';
 import {
