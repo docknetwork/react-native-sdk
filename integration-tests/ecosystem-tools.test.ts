@@ -71,7 +71,7 @@ const biometricCredential = {
 };
 
 describe('BBS+ presentations', () => {
-  it('should add required attributes to the presentation', async () => {
+  it('should fetch ecosystem tools for the given issuer', async () => {
     const wallet: IWallet = await getWallet();
 
     const result = await getEcosystems({
