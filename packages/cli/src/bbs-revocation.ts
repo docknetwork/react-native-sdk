@@ -16,7 +16,7 @@ import {
   PositiveAccumulator,
   AccumulatorPublicKey,
   dockAccumulatorParams,
-  MembershipWitness,
+  VBMembershipWitness,
   Encoder,
 } from '@docknetwork/crypto-wasm-ts';
 import {hexToU8a} from '@polkadot/util';
@@ -232,7 +232,7 @@ export const getWitnessDetails = async (credential, _membershipWitness) => {
   const params = dockAccumulatorParams();
   const pk = new AccumulatorPublicKey(hexToU8a(publicKey.bytes));
 
-  const membershipWitness = new MembershipWitness(hexToU8a(_membershipWitness));
+  const membershipWitness = new VBMembershipWitness(hexToU8a(_membershipWitness));
 
   return {
     encodedRevId,
