@@ -9,11 +9,20 @@ import {PEX} from '@sphereon/pex';
 
 const pex: PEX = new PEX();
 
-
-function removeOptionalAttribute(presentationDefinition) {
+/**
+ * @sphereon/pex is not able to handle optional attributes in the presentation definition
+ * https://github.com/Sphereon-Opensource/PEX/issues/150
+ * Any optional attribute in the presentation definition will cause the library to throw an error
+ * This function removes the optional attribute from the presentation definition
+ * This is a temporary workaround until the issue is fixed in the @sphereon/pex library
+ **/
+export function removeOptionalAttribute(presentationDefinition) {
   presentationDefinition.input_descriptors.forEach(inputDescriptor => {
     if (inputDescriptor.constraints && inputDescriptor.constraints.fields) {
-      inputDescriptor.constraints.fields = inputDescriptor.constraints.fields.filter(field => field.optional !== true);
+      inputDescriptor.constraints.fields =
+        inputDescriptor.constraints.fields.filter(
+          field => field.optional === undefined,
+        );
     }
   });
 
