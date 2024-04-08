@@ -1,4 +1,4 @@
-import {pexService} from '../service';
+import {pexService, removeOptionalAttribute} from '../service';
 
 describe('Pex Examples', () => {
   it('expect to filter credentials based on a minimum value numeric filter', () => {
@@ -265,7 +265,7 @@ describe('Pex Examples', () => {
     expect(results.verifiableCredential.length).toBe(1);
   });
 
-  it('expect to remove optional attribute', () => {
+  it('should fix PEX bug related to optional attributes', () => {
     const credentials = [
       {
         '@context': [
@@ -312,9 +312,9 @@ describe('Pex Examples', () => {
       id: 'income_test',
       input_descriptors: [
         {
-          id: 'ProofIncome-Merit-7',
-          name: 'Test - released between 1995 and 2005',
-          purpose: 'Filter credentials based released date',
+          id: 'Credential 1',
+          name: 'optional field',
+          purpose: 'optional field',
           constraints: {
             fields: [
               {
@@ -323,12 +323,13 @@ describe('Pex Examples', () => {
               {
                 path: ['$.type[*]'],
                 filter: {
-                  const: 'BasicCredential',
+                  const: '',
                 },
+                optional: true,
               },
               {
                 path: ['$.expirationDate'],
-                optional: true,
+                optional: false,
               },
             ],
           },
@@ -342,5 +343,102 @@ describe('Pex Examples', () => {
     });
 
     expect(results.verifiableCredential).toBeTruthy();
+  });
+
+  describe('removeOptionalAttribute', () => {
+    const getFieldsWithOptionalAttributes = template => {
+      return template.input_descriptors[0].constraints.fields.filter(
+        field => field.optional !== undefined,
+      ).length;
+    };
+
+    it('should remove optional attributes', () => {
+      let template = {
+        id: 'income_test',
+        input_descriptors: [
+          {
+            id: 'Credential 1',
+            name: 'optional field',
+            purpose: 'optional field',
+            constraints: {
+              fields: [
+                {
+                  path: ['$.credentialSubject.id'],
+                },
+                {
+                  path: ['$.type[*]'],
+                  filter: {
+                    const: '',
+                  },
+                  optional: true,
+                },
+                {
+                  path: ['$.expirationDate'],
+                  optional: false,
+                },
+              ],
+            },
+          },
+        ],
+      };
+
+      expect(getFieldsWithOptionalAttributes(template)).toBe(2);
+      expect(
+        getFieldsWithOptionalAttributes(removeOptionalAttribute(template)),
+      ).toBe(0);
+
+      template = {
+        id: 'income_test',
+        input_descriptors: [
+          {
+            id: 'Credential 1',
+            name: 'optional field',
+            purpose: 'optional field',
+            constraints: {
+              fields: [
+                {
+                  path: ['$.credentialSubject.id'],
+                },
+                {
+                  path: ['$.type[*]'],
+                  filter: {
+                    const: '',
+                  },
+                  optional: true,
+                },
+              ],
+            },
+          },
+        ],
+      };
+
+      expect(getFieldsWithOptionalAttributes(template)).toBe(1);
+      expect(
+        getFieldsWithOptionalAttributes(removeOptionalAttribute(template)),
+      ).toBe(0);
+
+      template = {
+        id: 'income_test',
+        input_descriptors: [
+          {
+            id: 'Credential 1',
+            name: 'optional field',
+            purpose: 'optional field',
+            constraints: {
+              fields: [
+                {
+                  path: ['$.credentialSubject.id'],
+                },
+              ],
+            },
+          },
+        ],
+      };
+
+      expect(getFieldsWithOptionalAttributes(template)).toBe(0);
+      expect(
+        getFieldsWithOptionalAttributes(removeOptionalAttribute(template)),
+      ).toBe(0);
+    });
   });
 });
