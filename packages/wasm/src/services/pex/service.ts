@@ -11,6 +11,7 @@ const pex: PEX = new PEX();
 
 /**
  * @sphereon/pex is not able to handle optional attributes in the presentation definition
+ * https://github.com/Sphereon-Opensource/PEX/issues/150
  * Any optional attribute in the presentation definition will cause the library to throw an error
  * This function removes the optional attribute from the presentation definition
  * This is a temporary workaround until the issue is fixed in the @sphereon/pex library
