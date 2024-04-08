@@ -312,9 +312,9 @@ describe('Pex Examples', () => {
       id: 'income_test',
       input_descriptors: [
         {
-          id: 'ProofIncome-Merit-7',
-          name: 'Test - released between 1995 and 2005',
-          purpose: 'Filter credentials based released date',
+          id: 'Credential 1',
+          name: 'optional field',
+          purpose: 'optional field',
           constraints: {
             fields: [
               {
@@ -323,12 +323,13 @@ describe('Pex Examples', () => {
               {
                 path: ['$.type[*]'],
                 filter: {
-                  const: 'BasicCredential',
+                  const: '',
                 },
+                optional: true,
               },
               {
                 path: ['$.expirationDate'],
-                optional: true,
+                optional: false,
               },
             ],
           },
