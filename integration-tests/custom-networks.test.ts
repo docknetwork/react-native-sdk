@@ -1,6 +1,7 @@
 import {createWallet, IWallet} from '@docknetwork/wallet-sdk-core/src/wallet';
 import {Network} from '@docknetwork/wallet-sdk-data-store/src/types';
 import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
+import {closeWallet} from './helpers/wallet-helpers';
 
 describe('Custom networks', () => {
   let wallet: IWallet;
@@ -74,12 +75,5 @@ describe('Custom networks', () => {
     expect(doc.value).toEqual(mockDocuments.mainnet.value);
   });
 
-  afterAll(async () => {
-    return new Promise(res => {
-      setTimeout(() => {
-        wallet.dataStore.db.destroy();
-        res(null);
-      }, 2000);
-    });
-  });
+  afterAll(() => closeWallet(wallet));
 });
