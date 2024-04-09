@@ -3,7 +3,7 @@ import {
   PositiveAccumulator,
   AccumulatorPublicKey,
   dockAccumulatorParams,
-  MembershipWitness,
+  VBMembershipWitness,
   Encoder,
 } from '@docknetwork/crypto-wasm-ts';
 import dock from '@docknetwork/sdk';
@@ -49,7 +49,7 @@ export const getWitnessDetails = async (
   const params = dockAccumulatorParams();
   const pk = new AccumulatorPublicKey(hexToU8a(publicKey.bytes));
 
-  const membershipWitness = new MembershipWitness(hexToU8a(_membershipWitness));
+  const membershipWitness = new VBMembershipWitness(hexToU8a(_membershipWitness));
 
   return {
     encodedRevId,
