@@ -100,3 +100,12 @@ export async function getAllDocuments() {
 export async function getDocumentsByType(type) {
   return wallet.getDocumentsByType(type);
 }
+
+export async function closeWallet(wallet: IWallet) {
+  return new Promise(res => {
+    setTimeout(() => {
+      wallet.dataStore.db.destroy();
+      res(null);
+    }, 2000);
+  });
+}
