@@ -7,7 +7,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lintAndTest:
+  integrationTests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -38,4 +38,4 @@ jobs:
         run: | 
           export NODE_OPTIONS="--max_old_space_size=12096"
           export CI=true
-          yarn test:ci
+          yarn test:integration -- credential-distribution.test.ts
