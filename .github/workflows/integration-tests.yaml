@@ -1,4 +1,4 @@
-name: Lint and test
+name: Integration Tests
 on: push
 
 # Auto cancels previous running jobs on each new commit
