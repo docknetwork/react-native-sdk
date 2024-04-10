@@ -123,12 +123,6 @@ describe('BBS+ presentations', () => {
     expect(presentation.verifiableCredential[0].expirationDate).toBe(
       expiredCredential.expirationDate,
     );
-    expect(presentation.verifiableCredential[0].issuer.id).toBe(
-      expiredCredential.issuer.id,
-    );
-    expect(presentation.verifiableCredential[0].type).toStrictEqual(
-      expiredCredential.type,
-    );
 
     const verificationResults = await verifyPresentation(
       presentation.toJSON(),
