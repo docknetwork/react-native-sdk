@@ -18,14 +18,16 @@ import {getDIDResolutions, getDIDKeyPairs} from './helpers/did-helpers';
 import {getVerificationTemplates} from './helpers/verification-helpers';
 
 describe('Wallet Snapshot V1', () => {
+  let wallet;
   beforeAll(async () => {
     await cleanup();
     await setupEnvironent();
     await createWalletFromSnapshot();
+    wallet = await getWallet();
   });
 
   it('expect to have load all documents', async () => {
-    const documents = await getWallet().query({});
+    const documents = await wallet.query({});
     expect(documents.length).toBe(9);
   });
 
