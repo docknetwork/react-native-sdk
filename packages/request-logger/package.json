@@ -1,13 +1,17 @@
 {
     "name": "@docknetwork/wallet-sdk-request-logger",
-    "version": "0.0.1",
+    "version": "0.4.19",
+    "license": "https://github.com/docknetwork/react-native-sdk/LICENSE",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/docknetwork/react-native-sdk.git",
+        "directory": "packages/request-logger"
+    },
     "scripts": {
         "build": "echo 'add build script when required'"
     },
     "dependencies": {
         "uuid": "^9.0.0"
     },
-    "devDependencies": {
-
-    }
+    "devDependencies": {}
 }
