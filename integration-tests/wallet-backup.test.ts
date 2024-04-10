@@ -12,7 +12,7 @@ describe('Wallet backups', () => {
 
     const documents = await wallet.getAllDocuments();
 
-    expect(documents.length).toBe(4);
+    expect(documents.length).toBe(6);
   });
 
   it('expect to export wallet backup', async () => {

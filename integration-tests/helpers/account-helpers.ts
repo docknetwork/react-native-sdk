@@ -11,11 +11,12 @@ import {createAccountProvider} from '@docknetwork/wallet-sdk-core/lib/account-pr
  * Create new accounts
  */
 export async function createAccounts() {
-  const account = await getWallet().accounts.create({
+  let wallet = await getWallet();
+  const account = await wallet.accounts.create({
     name: 'Account 1',
   } as any);
 
-  await getWallet().accounts.create({
+  await wallet.accounts.create({
     name: 'Account 2',
   } as any);
 }
@@ -24,9 +25,10 @@ export async function createAccounts() {
  * Import existing account from JSON
  */
 export async function importAccountJSON() {
-  return getWallet().accounts.create({
+  let wallet = await getWallet();
+  return wallet.accounts.create({
     name: 'Imported from JSON',
-    json: AccountJSON,
+    json: AccountJSON as any,
     password: AccountJSONPassword,
   });
 }
@@ -35,7 +37,8 @@ export async function importAccountJSON() {
  * Import existing account from mnemonic
  */
 export async function importAccountFromMnemonic() {
-  return getWallet().accounts.create({
+  const wallet = await getWallet();
+  return wallet.accounts.create({
     name: 'Account imported from mnemonic',
     mnemonic: Account2MnemonicDetails.mnemonic,
   } as any);
@@ -43,7 +46,7 @@ export async function importAccountFromMnemonic() {
 
 export async function getAccounts() {
   const accounts = createAccountProvider({
-    wallet: getWallet(),
+    wallet: await getWallet(),
   });
 
   await accounts.load();
@@ -52,8 +55,9 @@ export async function getAccounts() {
 }
 
 export async function assertAccountIsValid(address) {
-  const addressDocument = await getWallet().getDocumentById(address);
-  const correlations = await getWallet().resolveCorrelations(address);
+  const wallet = await getWallet();
+  const addressDocument = await wallet.getDocumentById(address);
+  const correlations = await wallet.resolveCorrelations(address);
 
   expect(addressDocument).toBeDefined();
 
