@@ -1,11 +1,16 @@
 {
-    "version": "0.0.1",
     "name": "@docknetwork/wallet-sdk-cli",
+    "version": "0.4.19",
+    "license": "https://github.com/docknetwork/react-native-sdk/LICENSE",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/docknetwork/react-native-sdk",
+        "directory": "packages/cli"
+    },
     "scripts": {
         "cli": "ts-node src/index.ts",
         "test:bbs": "ts-node src/bbs-verification.ts",
         "test:revocation": "ts-node src/bbs-revocation.ts"
-
     },
     "dependencies": {
         "@docknetwork/wallet-sdk-core": "^0.4.3",
@@ -17,7 +22,7 @@
         "clipboardy": "2.3.0",
         "inquirer": "8.0.0",
         "typescript": "^5.0.4"
-      },
+    },
     "devDependencies": {
         "jest": "29.6.1",
         "ts-jest": "29.1.0",
