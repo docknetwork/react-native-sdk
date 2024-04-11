@@ -35,6 +35,8 @@ jobs:
         run: yarn lint
 
       - name: Test
+        env:
+          CERTS_API_KEY: ${{ secrets.CERTS_API_KEY }}
         run: | 
           export NODE_OPTIONS="--max_old_space_size=12096"
           export CI=true
