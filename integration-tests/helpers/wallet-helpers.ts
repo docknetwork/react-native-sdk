@@ -21,6 +21,7 @@ import {
   ICredentialProvider,
   createCredentialProvider,
 } from '@docknetwork/wallet-sdk-core/src/credential-provider';
+import {dockService} from '@docknetwork/wallet-sdk-wasm/src/services/dock';
 
 let wallet: IWallet;
 let didProvider: IDIDProvider;
@@ -103,8 +104,9 @@ export async function getDocumentsByType(type) {
 
 export async function closeWallet(wallet: IWallet) {
   return new Promise(res => {
-    setTimeout(() => {
+    setTimeout(async () => {
       wallet.dataStore.db.destroy();
+      await dockService.disconnect();
       res(null);
     }, 2000);
   });
