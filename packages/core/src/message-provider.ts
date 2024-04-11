@@ -152,7 +152,7 @@ export function createMessageProvider({
       );
   };
 
-  let listnerIntervalId = null;
+  let listenerIntervalId = null;
 
   return {
     async sendMessage({
@@ -199,13 +199,13 @@ export function createMessageProvider({
       });
     },
     startAutoFetch(timeout = 2000) {
-      clearInterval(listnerIntervalId);
-      listnerIntervalId = setInterval(async () => {
+      clearInterval(listenerIntervalId);
+      listenerIntervalId = setInterval(async () => {
         await fetchMessages();
         await processDIDCommMessages();
       }, timeout);
 
-      return () => clearInterval(listnerIntervalId);
+      return () => clearInterval(listenerIntervalId);
     },
     clearCache: async () => {
       return Promise.all((await wallet.getDocumentsByType(WalletDocumentTypes.DIDCommMessage)).map(document => {

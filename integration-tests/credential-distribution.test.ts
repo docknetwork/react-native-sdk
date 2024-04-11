@@ -3,6 +3,7 @@ import {
   getWallet,
   getDIDProvider,
   getMessageProvider,
+  closeWallet,
 } from './helpers/wallet-helpers';
 
 function issueCredential({subjectDID}) {
@@ -38,8 +39,13 @@ function issueCredential({subjectDID}) {
   );
 }
 describe('Credential Distribution', () => {
+  let wallet;
+
+  beforeAll(async () => {
+    wallet = await getWallet();
+  });
+
   it('should receive a credential using did distribution', async () => {
-    const wallet = await getWallet();
     const currentDID = await getDIDProvider().getDefaultDID();
 
     let time = new Date().getTime();
@@ -103,4 +109,6 @@ describe('Credential Distribution', () => {
     );
     stopAutoFetch();
   });
+
+  afterAll(() => closeWallet(wallet));
 });
