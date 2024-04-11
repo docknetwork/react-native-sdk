@@ -1,6 +1,7 @@
 module.exports = {
-  preset: "ts-jest",
+  preset: 'ts-jest',
   testEnvironment: 'node',
+  reporters: ['<rootDir>/scripts/slack-reporter.js'],
   testTimeout: 420000,
   maxConcurrency: 1,
   testMatch: ['<rootDir>/integration-tests/**/*.test.ts'],
