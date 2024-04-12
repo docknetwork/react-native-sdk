@@ -47,8 +47,8 @@ class SlackReporter {
           type: 'plain_text',
           text:
             failedTests === 0
-              ? 'All tests passed! :tada:'
-              : `${failedTests} tests failed :x:`,
+              ? `All ${results.testResults.length} tests passed! :tada:`
+              : `${failedTests} of ${results.testResults.length} tests failed :x:`,
           emoji: true,
         },
       },
