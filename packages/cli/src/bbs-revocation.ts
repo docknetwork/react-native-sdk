@@ -175,14 +175,6 @@ async function verifyCredential() {
   });
   
   console.log(JSON.stringify(verificationResults, null, 2));
-
-  // const templateResponseURL = 'https://api-staging.dock.io/proof-requests/d3c0c23e-efb5-41fc-a8a9-6213507f419a/send-presentation';
-
-  // const result = await axios
-  //     .post(templateResponseURL, presentation)
-  //     .then(res => res.data);
-
-  // console.log(result);
 }
 
 dock
