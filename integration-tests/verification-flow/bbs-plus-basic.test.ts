@@ -15,7 +15,7 @@ const expiredCredential = {
       name: 'dk:name',
     },
   ],
-  id: 'https://***REMOVED***/9ef3ba452362eafe574f0dd5c439acb993eb8869173e7cb9ce18451c53bb655e',
+  id: 'https://creds-example.dock.io/9ef3ba452362eafe574f0dd5c439acb993eb8869173e7cb9ce18451c53bb655e',
   type: ['VerifiableCredential'],
   credentialSubject: {
     id: 'did:key:z6Mkv9oreVc641WshEzJDtnEc55yqh7w3oHeyhbRQz3mY4qm',
@@ -73,7 +73,7 @@ describe('BBS+ presentations', () => {
 
     await controller.start({
       template: {
-        qr: 'https://***REMOVED***/proof/d3c0c23e-efb5-41fc-a8a9-6213507f419a',
+        qr: 'https://creds-example.dock.io/proof/d3c0c23e-efb5-41fc-a8a9-6213507f419a',
         id: 'd3c0c23e-efb5-41fc-a8a9-6213507f419a',
         name: 'BasicCredential Template',
         nonce: '08ec5ca2e2446b50b25a55e1b6b21f2b',
