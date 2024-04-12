@@ -69,9 +69,11 @@ class SlackReporter {
       },
     ];
 
-    await axios.post(process.env.SLACK_WEBHOOK_URL, {
-      blocks: blocks,
-    });
+    if (process.env.SLACK_WEBHOOK_URL) {
+      await axios.post(process.env.SLACK_WEBHOOK_URL, {
+        blocks: blocks,
+      });
+    }
   }
 }
 
