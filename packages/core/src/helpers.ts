@@ -59,3 +59,13 @@ export function getJSON(jsonOrURL: string | any) {
 
   throw new Error(`Invalid data ${jsonOrURL}`);
 }
+
+export function replaceResponseURL(templateRequest){
+  assert(process.env.TESTING_API_URL, "Please configure the TESTING_API_URL env var.");
+
+  if (templateRequest?.response_url){
+    templateRequest.response_url = templateRequest.response_url.replace("${TESTING_API_URL}", process.env.TESTING_API_URL);
+  }
+
+  return templateRequest;
+}
