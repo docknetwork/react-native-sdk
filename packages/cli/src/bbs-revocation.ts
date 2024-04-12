@@ -39,7 +39,7 @@ const credential = {
     revocationCheck: 'membership',
     revocationId: '8',
   },
-  id: 'https://***REMOVED***/b07eefcfb03a9dcf7bda39cd0f2cd498eed309cfe6ca816c522bd2026da9f025',
+  id: 'https://creds-example.dock.io/b07eefcfb03a9dcf7bda39cd0f2cd498eed309cfe6ca816c522bd2026da9f025',
   type: [
     'VerifiableCredential',
     'BasicCredential',
