@@ -33,7 +33,7 @@ class SlackReporter {
         type: 'header',
         text: {
           type: 'plain_text',
-          text: 'Wallet SDK E2E Tests',
+          text: 'Wallet SDK Integration Tests',
           emoji: true,
         },
       },

@@ -45,7 +45,7 @@ describe('Credential Distribution', () => {
     wallet = await getWallet();
   });
 
-  it('should receive a credential using did distribution', async () => {
+  it('should receive a credential issued to the wallet DID', async () => {
     const currentDID = await getDIDProvider().getDefaultDID();
 
     let time = new Date().getTime();
@@ -69,7 +69,7 @@ describe('Credential Distribution', () => {
     );
   });
 
-  it('should receive multiple credentials using multiple DIDS', async () => {
+  it('should receive multiple credentials issued to multiple wallet DIDs', async () => {
     const wallet = await getWallet();
     const didProvider = getDIDProvider();
     const messageProvider = getMessageProvider();
