@@ -4,6 +4,7 @@ import {Transactions} from '@docknetwork/wallet-sdk-transactions/lib/transaction
 
 import {
   cleanup,
+  closeWallet,
   createAccounts,
   createNewWallet,
   getAccounts,
@@ -37,4 +38,6 @@ describe('Transactions', () => {
 
     expect(feeAmount > 0).toBeTruthy();
   });
+
+  afterAll(() => closeWallet());
 });

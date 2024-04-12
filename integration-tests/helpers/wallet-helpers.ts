@@ -102,7 +102,11 @@ export async function getDocumentsByType(type) {
   return wallet.getDocumentsByType(type);
 }
 
-export async function closeWallet(wallet: IWallet) {
+export async function closeWallet(wallet?: IWallet) {
+  if (!wallet) {
+    wallet = await getWallet();
+  }
+
   return new Promise(res => {
     setTimeout(async () => {
       wallet.dataStore.db.destroy();
