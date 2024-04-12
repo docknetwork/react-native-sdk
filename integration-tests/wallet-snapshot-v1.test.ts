@@ -8,6 +8,7 @@
 import {
   assertAccountIsValid,
   cleanup,
+  closeWallet,
   createWalletFromSnapshot,
   getAccounts,
   getWallet,
@@ -68,4 +69,6 @@ describe('Wallet Snapshot V1', () => {
     const templates = await getVerificationTemplates();
     expect(templates.length).toBe(1);
   });
+
+  afterAll(() => closeWallet(wallet));
 });
