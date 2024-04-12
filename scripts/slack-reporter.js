@@ -1,5 +1,7 @@
 const axios = require('axios');
 
+const showTests = false;
+
 class SlackReporter {
   async onRunComplete(contexts, results) {
     let failedTests = 0;
@@ -13,18 +15,20 @@ class SlackReporter {
           failedTests++;
         }
 
-        blocks.push({
-          type: 'context',
-          elements: [
-            {
-              type: 'mrkdwn',
-              text: `${symbol} *${result.fullName}*`,
-            },
-          ],
-        });
-        blocks.push({
-          type: 'divider',
-        });
+        if (showTests) {
+          blocks.push({
+            type: 'context',
+            elements: [
+              {
+                type: 'mrkdwn',
+                text: `${symbol} *${result.fullName}*`,
+              },
+            ],
+          });
+          blocks.push({
+            type: 'divider',
+          });
+        }
       });
     });
 
@@ -44,7 +48,7 @@ class SlackReporter {
           text:
             failedTests === 0
               ? 'All tests passed! :tada:'
-              : `${failedTests} tests failed`,
+              : `${failedTests} tests failed :x:`,
           emoji: true,
         },
       },
