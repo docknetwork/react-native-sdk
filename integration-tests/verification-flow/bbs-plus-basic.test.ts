@@ -1,5 +1,5 @@
 import {IWallet} from '@docknetwork/wallet-sdk-core/lib/types';
-import {getWallet} from '../helpers/wallet-helpers';
+import {closeWallet, getWallet} from '../helpers/wallet-helpers';
 import {createVerificationController} from '@docknetwork/wallet-sdk-core/src/verification-controller';
 import {verifyPresentation} from '@docknetwork/sdk/utils/vc/presentations';
 
@@ -133,4 +133,6 @@ describe('BBS+ presentations', () => {
 
     expect(verificationResults.verified).toBe(true);
   });
+
+  afterAll(() => closeWallet());
 });

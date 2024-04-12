@@ -1,4 +1,4 @@
-import {createNewWallet} from './helpers';
+import {closeWallet, createNewWallet} from './helpers';
 import {WalletBackupJSON, WalletBackupPasssword} from './data/wallet-backup';
 
 describe('Wallet backups', () => {
@@ -27,4 +27,6 @@ describe('Wallet backups', () => {
 
     expect(backup.credentialSubject).toBeDefined();
   });
+
+  afterAll(() => closeWallet());
 });
