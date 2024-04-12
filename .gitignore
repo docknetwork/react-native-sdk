@@ -33,3 +33,6 @@ bundle.js
 *.management
 *.js.LICENSE.txt
 *.db
+reports/
+.turbo
+packages/react-native/public/*.module.wasm
