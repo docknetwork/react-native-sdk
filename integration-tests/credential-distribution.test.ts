@@ -4,12 +4,15 @@ import {
   getDIDProvider,
   getMessageProvider,
 } from './helpers/wallet-helpers';
+import assert from 'assert';
+
+const testAPIURL = process.env.TESTING_API_URL || null;
 
 function issueCredential({subjectDID}) {
   console.log('Issuing credential for DID', subjectDID);
 
   return axios.post(
-    'https://api-staging.dock.io/credentials',
+    `${testAPIURL}/credentials`,
     {
       anchor: false,
       password: 'test',
@@ -38,6 +41,8 @@ function issueCredential({subjectDID}) {
   );
 }
 describe('Credential Distribution', () => {
+  assert(testAPIURL, "Please configure the TESTING_API_URL env var.");
+
   it('should receive a credential using did distribution', async () => {
     const wallet = await getWallet();
     const currentDID = await getDIDProvider().getDefaultDID();

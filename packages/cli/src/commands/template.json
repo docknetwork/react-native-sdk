@@ -7,7 +7,7 @@
 	"created": "2023-10-02T14:09:10.020Z",
 	"updated": "2023-10-02T14:09:10.020Z",
 	"verified": false,
-	"response_url": "https://api-staging.dock.io/proof-requests/26da030a-cc1d-48bc-9d9a-bda3cddbe9c7/send-presentation",
+	"response_url": "${TESTING_API_URL}/proof-requests/26da030a-cc1d-48bc-9d9a-bda3cddbe9c7/send-presentation",
 	"request": {
 		"id": "26da030a-cc1d-48bc-9d9a-bda3cddbe9c7",
 		"input_descriptors": [
@@ -32,16 +32,15 @@
 							"filter": {
 								"type": "string",
 								"oneOf": [
-                                    {
-                                       	"format": "date-time",
+									{
+										"format": "date-time",
 										"formatMaximum": "2005-10-02T03:00:00.000Z"
-                                    },
-                                    {
-                                        "format": "date",
-                                        "formatMaximum": "2005-10-02"
-                                    }
-                                ]
-								
+									},
+									{
+										"format": "date",
+										"formatMaximum": "2005-10-02"
+									}
+								]
 							},
 							"predicate": "required"
 						}
