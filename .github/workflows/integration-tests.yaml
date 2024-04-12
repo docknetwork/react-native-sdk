@@ -43,8 +43,8 @@ jobs:
         env:
           CERTS_API_KEY: ${{ secrets.CERTS_API_KEY }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          PR_LINK: ${env.GITHUB_SERVER_URL}/${env.GITHUB_REPOSITORY}/pull/${{ steps.pr.outputs.pull_request_number }}
-          GITHUB_ACTION_URL: ${env.GITHUB_SERVER_URL}/${env.GITHUB_REPOSITORY}/actions/runs/${env.GITHUB_RUN_ID}
+          PR_LINK: ${{ github.server_url }}/${{ github.repository }}/pull/${{ github.event.pull_request.number }}
+          GITHUB_ACTION_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: | 
           export NODE_OPTIONS="--max_old_space_size=12096"
           export CI=true
