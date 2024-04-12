@@ -2,6 +2,9 @@ import {IWallet} from '@docknetwork/wallet-sdk-core/lib/types';
 import {getWallet} from '../helpers/wallet-helpers';
 import {createVerificationController} from '@docknetwork/wallet-sdk-core/src/verification-controller';
 import {verifyPresentation} from '@docknetwork/sdk/utils/vc/presentations';
+import assert from 'assert';
+
+const testAPIURL = process.env.TESTING_API_URL || null;
 
 const expiredCredential = {
   '@context': [
@@ -61,6 +64,8 @@ const expiredCredential = {
 
 describe('BBS+ presentations', () => {
   it('should add required attributes to the presentation', async () => {
+    assert(testAPIURL, "Please configure the TESTING_API_URL env var.");
+
     const wallet: IWallet = await getWallet();
     const controller = await createVerificationController({
       wallet,
@@ -76,7 +81,7 @@ describe('BBS+ presentations', () => {
         updated: '2023-10-02T21:30:55.851Z',
         verified: false,
         response_url:
-          'https://***REMOVED***/proof-requests/d3c0c23e-efb5-41fc-a8a9-6213507f419a/send-presentation',
+          `${testAPIURL}/proof-requests/d3c0c23e-efb5-41fc-a8a9-6213507f419a/send-presentation`,
         request: {
           id: '1cf6a349-f1d3-42f7-b751-8de7fb5fde6c',
           input_descriptors: [

@@ -9,6 +9,9 @@ import {
 } from './bound-check';
 import {PresentationBuilder} from '@docknetwork/crypto-wasm-ts/lib';
 import proofRequest from './proof-request.json';
+import assert from 'assert';
+
+const testAPIURL = process.env.TESTING_API_URL || null;
 
 const createProofRequest = fields => ({
   qr: 'https://***REMOVED***/proof/7b66f17f-eac3-4d1f-9cee-40f2ab4baac8',
@@ -19,7 +22,7 @@ const createProofRequest = fields => ({
   updated: '2023-09-08T11:53:40.167Z',
   verified: false,
   response_url:
-    'https://***REMOVED***/proof-requests/7b66f17f-eac3-4d1f-9cee-40f2ab4baac8/send-presentation',
+    `${testAPIURL}/proof-requests/7b66f17f-eac3-4d1f-9cee-40f2ab4baac8/send-presentation`,
   request: {
     id: '7b66f17f-eac3-4d1f-9cee-40f2ab4baac8',
     input_descriptors: [
@@ -62,6 +65,8 @@ const expectEnforceBoundsToHaveBeenCalledWithDate = (
 
 
 describe('Bound check', () => {
+  assert(testAPIURL, "Please configure the TESTING_API_URL env var.");
+
   const provingKey = {} as any;
   const provingKeyId = 'provingKeyId';
   let builder: PresentationBuilder;

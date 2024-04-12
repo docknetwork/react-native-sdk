@@ -6,7 +6,7 @@
 	"created": "2023-10-02T21:30:55.851Z",
 	"updated": "2023-10-02T21:30:55.851Z",
 	"verified": false,
-	"response_url": "https://***REMOVED***/proof-requests/d3c0c23e-efb5-41fc-a8a9-6213507f419a/send-presentation",
+	"response_url": "${TESTING_API_URL}/proof-requests/d3c0c23e-efb5-41fc-a8a9-6213507f419a/send-presentation",
 	"request": {
 		"id": "d3c0c23e-efb5-41fc-a8a9-6213507f419a",
 		"input_descriptors": [
