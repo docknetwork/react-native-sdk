@@ -3,6 +3,7 @@ import {
   getWallet,
   getDIDProvider,
   getMessageProvider,
+  closeWallet,
 } from './helpers/wallet-helpers';
 import {createWalletToWalletVerificationProvider} from '@docknetwork/wallet-sdk-core/src/wallet-to-wallet-verification/walletToWalletVerificationProvider';
 
@@ -153,4 +154,8 @@ describe('Wallet to Wallet Verification', () => {
 
     await waitFor(3000);
   });
+
+  afterAll(() => {
+    return closeWallet();
+  })
 });
