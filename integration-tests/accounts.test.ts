@@ -1,5 +1,6 @@
 import {
   cleanup,
+  closeWallet,
   createAccounts,
   createNewWallet,
   getAllDocuments,
@@ -65,4 +66,6 @@ describe('Accounts', () => {
 
     expect(account.id).toBe(AccountJSON.address);
   });
+
+  afterAll(() => closeWallet(wallet));
 });
