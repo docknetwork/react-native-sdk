@@ -60,6 +60,13 @@ class SlackReporter {
           text: `<${process.env.GITHUB_ACTION_URL}|View Run in Github>`,
         },
       },
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: `<${process.env.PR_LINK}|Pull Request>`,
+        },
+      },
     ];
 
     await axios.post(process.env.SLACK_WEBHOOK_URL, {
