@@ -10,7 +10,7 @@ import {
   BasicCredentialMainnet,
   UniversityDegreeTestnet,
 } from './data/credentials';
-import {cleanup, createNewWallet, getWallet, setupEnvironent} from './helpers';
+import {cleanup, closeWallet, createNewWallet, getWallet, setupEnvironent} from './helpers';
 import {credentialService} from '@docknetwork/wallet-sdk-wasm/src/services/credential/service';
 import {IWallet} from '@docknetwork/wallet-sdk-core/src/types';
 import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
@@ -91,4 +91,6 @@ describe('Credentials', () => {
     //   expect(result.verified).toBeTruthy();
     // });
   });
+
+  afterAll(() => closeWallet());
 });

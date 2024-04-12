@@ -1,5 +1,5 @@
 import {IWallet} from '@docknetwork/wallet-sdk-core/lib/types';
-import {getWallet} from './helpers/wallet-helpers';
+import {closeWallet, getWallet} from './helpers/wallet-helpers';
 import {getEcosystems} from '@docknetwork/wallet-sdk-core/src/ecosystem-tools';
 
 const biometricCredential = {
@@ -96,4 +96,6 @@ describe('BBS+ presentations', () => {
       ].name,
     ).toBe('clarity partners');
   });
+
+  afterAll(() => closeWallet());
 });
