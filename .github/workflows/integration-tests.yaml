@@ -43,9 +43,11 @@ jobs:
         env:
           CERTS_API_KEY: ${{ secrets.CERTS_API_KEY }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          PR_LINK: "${env.GITHUB_SERVER_URL}/${env.GITHUB_REPOSITORY}/pull/${{ steps.pr.outputs.pull_request_number }}"
+          GITHUB_ACTION_URL: "${env.GITHUB_SERVER_URL}/${env.GITHUB_REPOSITORY}/actions/runs/${env.GITHUB_RUN_ID}"
         run: | 
           export NODE_OPTIONS="--max_old_space_size=12096"
-          export GITHUB_ACTION_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          export 
           export CI=true
           yarn test:integration
 
