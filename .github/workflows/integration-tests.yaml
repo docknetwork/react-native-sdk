@@ -47,7 +47,6 @@ jobs:
           GITHUB_ACTION_URL: "${env.GITHUB_SERVER_URL}/${env.GITHUB_REPOSITORY}/actions/runs/${env.GITHUB_RUN_ID}"
         run: | 
           export NODE_OPTIONS="--max_old_space_size=12096"
-          export 
           export CI=true
           yarn test:integration
 
