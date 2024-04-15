@@ -173,8 +173,7 @@ export function getPexRequiredAttributes(pexRequest, selectedCredentials = []) {
 
             return paths.length !== 0;
           } catch (error) {
-            console.log(field);
-            console.error(error);
+            console.error(`Error in field ${field.path}: ${error.message}`);
             return false;
           }
         })
