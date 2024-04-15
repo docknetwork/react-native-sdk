@@ -44,17 +44,18 @@ jobs:
           BRANCH: ${{ github.ref_name }}
           GH_TOKEN: ${{ github.token }}
         run: |
-          PR=$(gh pr list --base $BRANCH --state open --json number,title -q ".[0]")
-          PR_NUMBER=$(echo $PR | jq -r ".number")
-          PR_TITLE=$(echo $PR | jq -r ".title")
-          echo "PR Number: $PR_NUMBER"
-          echo "PR Title: $PR_TITLE"
-          echo "Branch: $BRANCH"
+          gh pr list --base $BRANCH --state open --json number,title
+          # PR=$(gh pr list --base $BRANCH --state open --json number,title -q ".[0]")
+          # PR_NUMBER=$(echo $PR | jq -r ".number")
+          # PR_TITLE=$(echo $PR | jq -r ".title")
+          # echo "PR Number: $PR_NUMBER"
+          # echo "PR Title: $PR_TITLE"
+          # echo "Branch: $BRANCH"
 
-      - name: Debug GitHub Context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
+      # - name: Debug GitHub Context
+      #   env:
+      #     GITHUB_CONTEXT: ${{ toJson(github) }}
+      #   run: echo "$GITHUB_CONTEXT"
       # - name: Cache dependencies
       #   uses: actions/cache@v2
       #   with:
