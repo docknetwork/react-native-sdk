@@ -13,8 +13,8 @@
     "dependencies": {
         "uuid": "^9.0.0",
         "@docknetwork/minimal-cipher": "^5.2.1",
-        "@docknetwork/sdk": "8.0.0",
-        "@docknetwork/wallet-sdk-wasm": "^0.4.19"
+        "@docknetwork/sdk": "8.1.1",
+        "@docknetwork/wallet-sdk-wasm": "0.4.19"
     },
     "devDependencies": {
         "jest": "29.1.0",
