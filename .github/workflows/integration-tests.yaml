@@ -40,8 +40,8 @@ jobs:
           echo "PR Number: $PR_NUMBER"
           echo "PR Title: $PR_TITLE"
           echo "Branch: $BRANCH"
-          echo "::set-output name=number::$PR_NUMBER"
-          echo "::set-output name=title::$PR_TITLE"
+          echo "number=$PR_NUMBER" >> $GITHUB_OUTPUT
+          echo "title=$PR_TITLE" >> $GITHUB_OUTPUT
 
       - name: Debug GitHub Context
         env:
