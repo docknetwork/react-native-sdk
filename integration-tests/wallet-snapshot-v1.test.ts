@@ -58,7 +58,7 @@ describe('Wallet Snapshot V1', () => {
       'PrettyVerifiableCredential',
     ]);
     expect(credential.id).toEqual(
-      'https://creds-staging.dock.io/cca99aae610dc3e0c2c6c60ac9a1866211022499d36cf1c72bb7889316ee6fd0',
+      'https://creds-example.dock.io/cca99aae610dc3e0c2c6c60ac9a1866211022499d36cf1c72bb7889316ee6fd0',
     );
   });
 

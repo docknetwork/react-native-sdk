@@ -35,6 +35,8 @@ jobs:
         run: yarn lint
 
       - name: Test
+        env:
+          TESTING_API_URL: ${{secrets.TESTING_API_URL}}
         run: | 
           export NODE_OPTIONS="--max_old_space_size=12096"
           export CI=true
