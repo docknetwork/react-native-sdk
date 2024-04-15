@@ -64,7 +64,7 @@ jobs:
 
       - name: Integration Tests
         env:
-           CERTS_API_KEY: ${{ secrets.CERTS_API_KEY }}
+          CERTS_API_KEY: ${{ secrets.CERTS_API_KEY }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           PR_LINK: ${{ github.server_url }}/${{ github.repository }}/pull/${{ steps.pr_info.outputs.number }}
           PR_NUMBER: ${{ steps.pr_info.outputs.number }}
