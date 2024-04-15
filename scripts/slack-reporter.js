@@ -64,7 +64,14 @@ class SlackReporter {
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: `<${process.env.PR_LINK}|Pull Request>`,
+          text: `PR Number: <${process.env.PR_LINK}|${process.env.PR_NUMBER}>`,
+        },
+      },
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: `PR Title: <${process.env.PR_LINK}|${process.env.PR_TITLE}>`,
         },
       },
     ];
