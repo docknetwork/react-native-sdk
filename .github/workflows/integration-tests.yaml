@@ -70,7 +70,7 @@ jobs:
           PR_LINK: ${{ github.server_url }}/${{ github.repository }}/pull/${{ steps.pr_info.outputs.number }}
           PR_NUMBER: ${{ steps.pr_info.outputs.number }}
           PR_TITLE: ${{ steps.pr_info.outputs.title }}
-          GITHUB_ACTION_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }
+          GITHUB_ACTION_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           export NODE_OPTIONS="--max_old_space_size=12096"
           export CI=true
