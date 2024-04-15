@@ -41,7 +41,8 @@ jobs:
           echo "PR Title: $PR_TITLE"
           echo "Branch $BRANCH"
         env:
-          PR_NUMBER: ${{ steps.pr.outputs.pull_request_number }}
+          # PR_NUMBER: ${{ steps.pr.outputs.pull_request_number }}
+          PR_NUMBER: ${{ github.event.number }}
           PR_TITLE: ${{ github.event.pull_request.title }}
           BRANCH: ${{ github.ref_name}}
 
