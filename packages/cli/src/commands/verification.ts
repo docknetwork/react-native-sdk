@@ -3,6 +3,7 @@ import select, {Separator} from '@inquirer/select';
 import checkbox from '@inquirer/checkbox';
 import input from '@inquirer/input';
 import {IWallet} from '@docknetwork/wallet-sdk-core/lib/types';
+import { replaceResponseURL } from '@docknetwork/wallet-sdk-core/src/helpers';
 import {getCredentialProvider, getWallet} from '../helpers';
 import {createVerificationController} from '@docknetwork/wallet-sdk-core/src/verification-controller';
 import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
@@ -125,8 +126,9 @@ verificationCommands
     });
 
     console.log('Starting verification flow...');
+    const updatedTemplate = replaceResponseURL(rangeProofsTemplate);
     await controller.start({
-      template: rangeProofsTemplate,
+      template: updatedTemplate,
     });
 
 
@@ -163,8 +165,9 @@ verificationCommands
     });
 
     console.log('Starting verification flow...');
+    const updatedTemplate = replaceResponseURL(bbsTemplate);
     await controller.start({
-      template: bbsTemplate,
+      template: updatedTemplate,
     });
 
     let attributesToReveal = [
