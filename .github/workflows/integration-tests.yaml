@@ -41,6 +41,7 @@ jobs:
       - name: Fetch Open PR for Branch
         env:
           BRANCH: ${{ github.ref_name }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           PR=$(gh pr list --base $BRANCH --state open --json number,title -q ".[0]")
           PR_NUMBER=$(echo $PR | jq -r ".number")
