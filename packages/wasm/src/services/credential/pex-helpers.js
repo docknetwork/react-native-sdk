@@ -152,22 +152,36 @@ const shouldSkipAttribute = attributeName =>
   attributesToSkip.some(regex => regex.test(attributeName));
 
 export function getPexRequiredAttributes(pexRequest, selectedCredentials = []) {
-  return pexRequest.input_descriptors.map((inputDescriptor, index) => {
-    return inputDescriptor.constraints.fields
-      .filter(field => {
-        if (field.filter) {
-          return false;
-        }
+  return pexRequest.input_descriptors
+    .map((inputDescriptor, index) => {
+      return inputDescriptor.constraints.fields
+        .filter(field => {
+          if (field.filter) {
+            return false;
+          }
 
-        const paths = Array.isArray(field.path)
-          ? field.path.flatMap(singlePath =>
-              JSONPath.paths(selectedCredentials[index], singlePath),
-            )
-          : JSONPath.paths(selectedCredentials[index], field.path);
+          try {
+            if (!selectedCredentials[index]) {
+              return false;
+            }
 
-        return paths.length !== 0;
-      })
-      .map(field => getAttributeName({field, selectedCredentials, index}))
-      .filter(attributeName => !shouldSkipAttribute(attributeName));
-  });
+            const paths = Array.isArray(field.path)
+              ? field.path.flatMap(singlePath =>
+                  JSONPath.paths(selectedCredentials[index], singlePath),
+                )
+              : JSONPath.paths(selectedCredentials[index], field.path);
+
+            return paths.length !== 0;
+          } catch (error) {
+            console.log(field);
+            console.error(error);
+            return false;
+          }
+        })
+        .map(field => getAttributeName({field, selectedCredentials, index}))
+        .filter(attributeName => {
+          return !shouldSkipAttribute(attributeName);
+        });
+    })
+    .filter(requiredAttributes => requiredAttributes.length > 0);
 }
