@@ -91,9 +91,16 @@ describe('Credentials module', () => {
       axios.get.mockImplementation(() => {
         throw {response: {status: 400}};
       });
-      const url = 'https://creds.dock.io/credential_id';
-      const result = await credentials.isDockCertsURL(url);
-      expect(result).toBeTruthy();
+      const validUrls = [
+        'https://creds.dock.io/credential_id',
+        'https://creds-testnet.dock.io/credential_id',
+        'https://creds-example.dock.io/credential_id',
+      ];
+      validUrls.map( async (url) => {
+        const result = await credentials.isDockCertsURL(url);
+        console.log(`url: ${url}   result:${result}`);
+        expect(result).toBeTruthy();
+      });
     });
 
     it('should check if url is not a valid certs url', async () => {
