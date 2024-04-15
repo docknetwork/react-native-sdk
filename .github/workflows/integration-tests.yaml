@@ -27,9 +27,11 @@ jobs:
         run: |
           echo "PR Number: $PR_NUMBER"
           echo "PR Title: $PR_TITLE"
+          echo "Branch $BRANCH"
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_TITLE: ${{ github.event.pull_request.title }}
+          BRANCH: ${{ github.event.ref_name}}
 
       - name: Debug GitHub Context
         env:
