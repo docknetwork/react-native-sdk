@@ -33,18 +33,13 @@ jobs:
         env:
           BRANCH: ${{ github.ref_name }}
           GH_TOKEN: ${{ github.token }}
-        run: echo "::set-output name=pull_request_number::$(gh pr view --json number -q .number || echo "")"
-
-      - name: Echo PR Info
         run: |
+          PR=$(gh pr list --head $BRANCH --state open --json number,title -q ".[0]")
+          PR_NUMBER=$(echo $PR | jq -r ".number")
+          PR_TITLE=$(echo $PR | jq -r ".title")
           echo "PR Number: $PR_NUMBER"
           echo "PR Title: $PR_TITLE"
-          echo "Branch $BRANCH"
-        env:
-          # PR_NUMBER: ${{ steps.pr.outputs.pull_request_number }}
-          PR_NUMBER: ${{ github.event.number }}
-          PR_TITLE: ${{ github.event.pull_request.title }}
-          BRANCH: ${{ github.ref_name}}
+          echo "Branch: $BRANCH"
 
       # - name: Debug GitHub Context
       #   env:
