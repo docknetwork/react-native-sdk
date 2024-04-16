@@ -2,7 +2,7 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   reporters: ['default', 'jest-junit', '<rootDir>/scripts/slack-reporter.js'],
-  testTimeout: 420000,
+  testTimeout: 120000,
   maxConcurrency: 1,
   testMatch: ['<rootDir>/integration-tests/**/*.test.ts'],
   coverageThreshold: {
