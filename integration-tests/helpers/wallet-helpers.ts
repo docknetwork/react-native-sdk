@@ -3,6 +3,7 @@
  *
  * Ensure that a new wallet can be created and will be functional
  */
+import dock from '@docknetwork/sdk';
 import {DataStoreSnapshotV1} from '../data/data-store';
 import {WalletBackupJSON, WalletBackupPasssword} from '../data/wallet-backup';
 import {IWallet} from '@docknetwork/wallet-sdk-core/lib/types';
@@ -21,6 +22,7 @@ import {
   ICredentialProvider,
   createCredentialProvider,
 } from '@docknetwork/wallet-sdk-core/src/credential-provider';
+import {dockService} from '@docknetwork/wallet-sdk-wasm/src/services/dock';
 
 let wallet: IWallet;
 let didProvider: IDIDProvider;
@@ -99,4 +101,22 @@ export async function getAllDocuments() {
 
 export async function getDocumentsByType(type) {
   return wallet.getDocumentsByType(type);
+}
+
+export async function closeWallet(wallet?: IWallet) {
+  if (!wallet) {
+    wallet = await getWallet();
+  }
+
+  return new Promise(res => {
+    setTimeout(async () => {
+      try {
+        wallet.dataStore.db.destroy();
+        await dockService.disconnect();
+      } catch(err) {
+        console.error(err);
+      }
+      res(null);
+    }, 2000);
+  });
 }
