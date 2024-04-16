@@ -50,7 +50,7 @@ export function createMessageProvider({
       await wallet.removeDocument(messageId);
     } catch (error) {
       captureException(error);
-      throw new Error(`Failed to mark message as read: ${error.message}`);
+      console.error(`Failed to mark message as read: ${error.message}`);
     }
   }
 
@@ -137,7 +137,6 @@ export function createMessageProvider({
     }
   }
 
-
   function addMessageListener(handler) {
     const listener = async message => {
       await Promise.resolve(handler(message.decryptedMessage));
@@ -146,11 +145,8 @@ export function createMessageProvider({
 
     wallet.eventManager.addListener('didcomm-message-decrypted', listener);
     return () =>
-      wallet.eventManager.removeListener(
-        'didcomm-message-decrypted',
-        listener,
-      );
-  };
+      wallet.eventManager.removeListener('didcomm-message-decrypted', listener);
+  }
 
   let listenerIntervalId = null;
 
@@ -165,7 +161,6 @@ export function createMessageProvider({
       body,
       type,
     }) {
-
       // TODO: rename relay service parameters to make it easier to understand
       if (from) {
         did = from;
