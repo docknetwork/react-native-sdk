@@ -32,7 +32,6 @@ jobs:
         id: pr_info
         env:
           BRANCH: ${{ github.ref_name }}
-          MERGED_PR_NUMBER: ${{ github.event.number }}
           GH_TOKEN: ${{ github.token }}
         run: |
           # Check if the workflow was triggered by a merge event and a PR number is available
