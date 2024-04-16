@@ -2,6 +2,9 @@ import {IWallet} from '@docknetwork/wallet-sdk-core/lib/types';
 import {closeWallet, getWallet} from '../helpers/wallet-helpers';
 import {createVerificationController} from '@docknetwork/wallet-sdk-core/src/verification-controller';
 import {verifyPresentation} from '@docknetwork/sdk/utils/vc/presentations';
+import assert from 'assert';
+
+const testAPIURL = process.env.TESTING_API_URL || null;
 
 const expiredCredential = {
   '@context': [
@@ -12,7 +15,7 @@ const expiredCredential = {
       name: 'dk:name',
     },
   ],
-  id: 'https://creds-staging.dock.io/9ef3ba452362eafe574f0dd5c439acb993eb8869173e7cb9ce18451c53bb655e',
+  id: 'https://creds-example.dock.io/9ef3ba452362eafe574f0dd5c439acb993eb8869173e7cb9ce18451c53bb655e',
   type: ['VerifiableCredential'],
   credentialSubject: {
     id: 'did:key:z6Mkv9oreVc641WshEzJDtnEc55yqh7w3oHeyhbRQz3mY4qm',
@@ -61,6 +64,8 @@ const expiredCredential = {
 
 describe('BBS+ presentations', () => {
   it('should add required attributes to the presentation', async () => {
+    assert(testAPIURL, "Please configure the TESTING_API_URL env var.");
+
     const wallet: IWallet = await getWallet();
     const controller = await createVerificationController({
       wallet,
@@ -68,7 +73,7 @@ describe('BBS+ presentations', () => {
 
     await controller.start({
       template: {
-        qr: 'https://creds-staging.dock.io/proof/d3c0c23e-efb5-41fc-a8a9-6213507f419a',
+        qr: 'https://creds-example.dock.io/proof/d3c0c23e-efb5-41fc-a8a9-6213507f419a',
         id: 'd3c0c23e-efb5-41fc-a8a9-6213507f419a',
         name: 'BasicCredential Template',
         nonce: '08ec5ca2e2446b50b25a55e1b6b21f2b',
@@ -76,7 +81,7 @@ describe('BBS+ presentations', () => {
         updated: '2023-10-02T21:30:55.851Z',
         verified: false,
         response_url:
-          'https://api-staging.dock.io/proof-requests/d3c0c23e-efb5-41fc-a8a9-6213507f419a/send-presentation',
+          `${testAPIURL}/proof-requests/d3c0c23e-efb5-41fc-a8a9-6213507f419a/send-presentation`,
         request: {
           id: '1cf6a349-f1d3-42f7-b751-8de7fb5fde6c',
           input_descriptors: [
