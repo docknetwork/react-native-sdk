@@ -1,4 +1,4 @@
-import {createNewWallet} from './helpers';
+import {closeWallet, createNewWallet} from './helpers';
 import {WalletBackupJSON, WalletBackupPasssword} from './data/wallet-backup';
 
 describe('Wallet backups', () => {
@@ -12,7 +12,7 @@ describe('Wallet backups', () => {
 
     const documents = await wallet.getAllDocuments();
 
-    expect(documents.length).toBe(4);
+    expect(documents.length).toBe(6);
   });
 
   it('expect to export wallet backup', async () => {
@@ -27,4 +27,6 @@ describe('Wallet backups', () => {
 
     expect(backup.credentialSubject).toBeDefined();
   });
+
+  afterAll(() => closeWallet());
 });

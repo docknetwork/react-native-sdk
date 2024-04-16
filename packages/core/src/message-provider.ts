@@ -50,7 +50,7 @@ export function createMessageProvider({
       await wallet.removeDocument(messageId);
     } catch (error) {
       captureException(error);
-      throw new Error(`Failed to mark message as read: ${error.message}`);
+      console.error(`Failed to mark message as read: ${error.message}`);
     }
   }
 
@@ -137,22 +137,18 @@ export function createMessageProvider({
     }
   }
 
-
   function addMessageListener(handler) {
     const listener = async message => {
       await Promise.resolve(handler(message.decryptedMessage));
-      await markMessageAsRead(message.messageId);
+      markMessageAsRead(message.messageId);
     };
 
     wallet.eventManager.addListener('didcomm-message-decrypted', listener);
     return () =>
-      wallet.eventManager.removeListener(
-        'didcomm-message-decrypted',
-        listener,
-      );
-  };
+      wallet.eventManager.removeListener('didcomm-message-decrypted', listener);
+  }
 
-  let listnerIntervalId = null;
+  let listenerIntervalId = null;
 
   return {
     async sendMessage({
@@ -165,7 +161,6 @@ export function createMessageProvider({
       body,
       type,
     }) {
-
       // TODO: rename relay service parameters to make it easier to understand
       if (from) {
         did = from;
@@ -184,7 +179,12 @@ export function createMessageProvider({
         if (!keyPairDoc) {
           throw new Error(`${did} not found in didDocs`);
         }
-        await relayService.sendMessage({keyPairDoc, message, recipientDid, type});
+        await relayService.sendMessage({
+          keyPairDoc,
+          message,
+          recipientDid,
+          type,
+        });
       } catch (error) {
         captureException(error);
         throw new Error(`Failed to send message: ${error.message}`);
@@ -192,26 +192,30 @@ export function createMessageProvider({
     },
     waitForMessage() {
       return new Promise((resolve: any) => {
-        let removeListener = addMessageListener(async (message) => {
+        let removeListener = addMessageListener(async message => {
           removeListener();
           await resolve(message);
-        })
+        });
       });
     },
     startAutoFetch(timeout = 2000) {
-      clearInterval(listnerIntervalId);
-      listnerIntervalId = setInterval(async () => {
+      clearInterval(listenerIntervalId);
+      listenerIntervalId = setInterval(async () => {
         await fetchMessages();
         await processDIDCommMessages();
       }, timeout);
 
-      return () => clearInterval(listnerIntervalId);
+      return () => clearInterval(listenerIntervalId);
     },
     clearCache: async () => {
-      return Promise.all((await wallet.getDocumentsByType(WalletDocumentTypes.DIDCommMessage)).map(document => {
-        markMessageAsRead(document.id);
-        return wallet.removeDocument(document.id);
-      }));
+      return Promise.all(
+        (
+          await wallet.getDocumentsByType(WalletDocumentTypes.DIDCommMessage)
+        ).map(document => {
+          markMessageAsRead(document.id);
+          return wallet.removeDocument(document.id);
+        }),
+      );
     },
     fetchMessages,
     addMessageListener,

@@ -64,7 +64,7 @@ export async function initWalletWasm(wallet: IWallet) {
     await setSubstrateNetwork(wallet);
 
     wallet.eventManager.on(WalletEvents.networkUpdated, async () => {
-      handleSubstrateNetworkChange(wallet);
+      handleSubstrateNetworkChange(wallet).catch(err => console.error(err));
     });
   }
 
