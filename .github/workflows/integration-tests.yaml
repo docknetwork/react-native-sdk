@@ -78,7 +78,7 @@ jobs:
           export CI=true
           echo "PR Number: $PR_NUMBER"
           echo "PR Title: $PR_TITLE"
-          yarn test:integration -- --detectOpenHandles
+          yarn test:integration
 
       - name: Test Report
         uses: dorny/test-reporter@v1
