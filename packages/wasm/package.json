@@ -1,10 +1,11 @@
 {
     "name": "@docknetwork/wallet-sdk-wasm",
-    "version": "0.4.3",
-    "license": "MIT",
+    "version": "0.4.19",
+    "license": "https://github.com/docknetwork/react-native-sdk/LICENSE",
     "repository": {
         "type": "git",
-        "url": "https://github.com/docknetwork/react-native-sdk"
+        "url": "git+https://github.com/docknetwork/react-native-sdk.git",
+        "directory": "packages/wasm"
     },
     "scripts": {
         "prepublishOnly": "npm run build",
@@ -14,7 +15,7 @@
     "resolutions": {
         "@polkadot/wasm-crypto": "6.3.1",
         "@polkadot/rpc-core": "9.7.1",
-        "@docknetwork/sdk": "8.0.0",
+        "@docknetwork/sdk": "8.1.1",
         "@polkadot/api": "9.7.1",
         "@polkadot/keyring": "10.1.11",
         "@polkadot/rpc-provider": "9.7.1",
@@ -35,7 +36,7 @@
         "@polkadot/util": "10.1.11",
         "@polkadot/util-crypto": "10.1.11",
         "@polkadot/wasm-crypto": "6.3.1",
-        "@docknetwork/sdk": "8.0.0",
+        "@docknetwork/sdk": "8.1.1",
         "axios": "^0.25.0",
         "babel-node": "^0.0.1-security",
         "bignumber.js": "^9.0.1",
