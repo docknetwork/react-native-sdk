@@ -110,9 +110,9 @@ export async function closeWallet(wallet?: IWallet) {
 
   return new Promise(res => {
     setTimeout(async () => {
-      wallet.dataStore.db.destroy();
       try {
-        await dock.disconnect();
+        wallet.dataStore.db.destroy();
+        await dockService.disconnect();
       } catch(err) {
         console.error(err);
       }
