@@ -140,7 +140,7 @@ export function createMessageProvider({
   function addMessageListener(handler) {
     const listener = async message => {
       await Promise.resolve(handler(message.decryptedMessage));
-      await markMessageAsRead(message.messageId);
+      markMessageAsRead(message.messageId);
     };
 
     wallet.eventManager.addListener('didcomm-message-decrypted', listener);
@@ -179,7 +179,12 @@ export function createMessageProvider({
         if (!keyPairDoc) {
           throw new Error(`${did} not found in didDocs`);
         }
-        await relayService.sendMessage({keyPairDoc, message, recipientDid, type});
+        await relayService.sendMessage({
+          keyPairDoc,
+          message,
+          recipientDid,
+          type,
+        });
       } catch (error) {
         captureException(error);
         throw new Error(`Failed to send message: ${error.message}`);
@@ -187,10 +192,10 @@ export function createMessageProvider({
     },
     waitForMessage() {
       return new Promise((resolve: any) => {
-        let removeListener = addMessageListener(async (message) => {
+        let removeListener = addMessageListener(async message => {
           removeListener();
           await resolve(message);
-        })
+        });
       });
     },
     startAutoFetch(timeout = 2000) {
@@ -203,10 +208,14 @@ export function createMessageProvider({
       return () => clearInterval(listenerIntervalId);
     },
     clearCache: async () => {
-      return Promise.all((await wallet.getDocumentsByType(WalletDocumentTypes.DIDCommMessage)).map(document => {
-        markMessageAsRead(document.id);
-        return wallet.removeDocument(document.id);
-      }));
+      return Promise.all(
+        (
+          await wallet.getDocumentsByType(WalletDocumentTypes.DIDCommMessage)
+        ).map(document => {
+          markMessageAsRead(document.id);
+          return wallet.removeDocument(document.id);
+        }),
+      );
     },
     fetchMessages,
     addMessageListener,
