@@ -5,12 +5,15 @@ import {
   getMessageProvider,
   closeWallet,
 } from './helpers/wallet-helpers';
+import assert from 'assert';
+
+const testAPIURL = process.env.TESTING_API_URL || null;
 
 function issueCredential({subjectDID}) {
   console.log('Issuing credential for DID', subjectDID);
 
   return axios.post(
-    'https://***REMOVED***/credentials',
+    `${testAPIURL}/credentials`,
     {
       anchor: false,
       password: 'test',
@@ -46,6 +49,8 @@ describe('Credential Distribution', () => {
   });
 
   it('should receive a credential issued to the wallet DID', async () => {
+    assert(testAPIURL, "Please configure the TESTING_API_URL env var.");
+    const wallet = await getWallet();
     const currentDID = await getDIDProvider().getDefaultDID();
 
     let time = new Date().getTime();
