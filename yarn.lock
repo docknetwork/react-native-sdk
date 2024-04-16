@@ -1692,10 +1692,10 @@
   resolved "https://registry.yarnpkg.com/@docknetwork/node-types/-/node-types-0.17.0.tgz#ca0ddb5b819e012e8f2f112353008325de4f3e33"
   integrity sha512-aSRFtCwLhdhcY1wqX3WfhPpY2QXVqaB9kNB3e5+ajCWXtc0wuKJePpnSZEO4RqUEUKV5Y3LcsQ52ZB+aJ1PpFw==
 
-"@docknetwork/sdk@8.0.0":
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/sdk/-/sdk-8.0.0.tgz#0a98da8bdb8282c726435134bccd455bdb12e4a6"
-  integrity sha512-nyPnkblbZWDQCPEJPJDAwiUdTdCMoRYPkrEGAdVhcS7sIklN5eSF0I+Pyrl7eoOZYcLk9FcxImnNU49qLYZU1A==
+"@docknetwork/sdk@8.1.1":
+  version "8.1.1"
+  resolved "https://registry.yarnpkg.com/@docknetwork/sdk/-/sdk-8.1.1.tgz#f9ab36282c316f02573c9430e9f1e32d6ccf8fbc"
+  integrity sha512-S9DPZ53hXUEqPrJ0Ze4nNoh227z3LGQEvNNDTvja2kCw7JYv1N7tMLY8mnC/1UyOAJS8+/eRn3rNqI6WhmMIzQ==
   dependencies:
     "@digitalcredentials/vc-status-list" "^8.0.0"
     "@docknetwork/crypto-wasm-ts" "0.58.0"
