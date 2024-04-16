@@ -1,5 +1,6 @@
 import {
   cleanup,
+  closeWallet,
   createAccounts,
   createNewWallet,
   getDocumentsByType,
@@ -55,4 +56,6 @@ describe('Switch wallet', () => {
   });
 
   it('expect switch to tesnet and have an empty wallet', () => {});
+
+  afterAll(() => closeWallet());
 });

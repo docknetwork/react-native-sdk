@@ -1,5 +1,6 @@
 import {
   cleanup,
+  closeWallet,
   createAccounts,
   createNewWallet,
   getAllDocuments,
@@ -11,11 +12,14 @@ import {
 import {Account2MnemonicDetails, AccountJSON} from './data/accounts';
 
 describe('Accounts', () => {
+  let wallet;
+
   beforeAll(async () => {
     await cleanup();
     await setupEnvironent();
     await createNewWallet();
     await createAccounts();
+    wallet = await getWallet();
   });
 
   it('expect to have created accounts', async () => {
@@ -30,7 +34,7 @@ describe('Accounts', () => {
     const addressList = documents.filter(doc => doc.type.includes('Address'));
 
     for (const document of addressList) {
-      const correlations = await getWallet().resolveCorrelations(document.id);
+      const correlations = await wallet.resolveCorrelations(document.id);
 
       const keyringPair = correlations.find(doc =>
         doc.type.includes('KeyringPair'),
@@ -40,13 +44,13 @@ describe('Accounts', () => {
   });
 
   it('expect to import account from mnemonic', async () => {
-    let account = await getWallet().getDocumentById(
+    let account = await wallet.getDocumentById(
       Account2MnemonicDetails.address,
     );
     expect(account).toBeNull();
 
     await importAccountFromMnemonic();
-    account = await getWallet().getDocumentById(
+    account = await wallet.getDocumentById(
       Account2MnemonicDetails.address,
     );
 
@@ -54,12 +58,14 @@ describe('Accounts', () => {
   });
 
   it('expect to import account from JSON', async () => {
-    let account = await getWallet().getDocumentById(AccountJSON.address);
+    let account = await wallet.getDocumentById(AccountJSON.address);
     expect(account).toBeNull();
 
     await importAccountJSON();
-    account = await getWallet().getDocumentById(AccountJSON.address);
+    account = await wallet.getDocumentById(AccountJSON.address);
 
     expect(account.id).toBe(AccountJSON.address);
   });
+
+  afterAll(() => closeWallet(wallet));
 });
