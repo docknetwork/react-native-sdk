@@ -12,6 +12,7 @@ import anyCredentialProofRequest from './fixtures/any-credential-proof-request.j
 import universityDegreeProofRequest from './fixtures/university-degree-proof-request.json';
 import {createDIDProvider, IDIDProvider} from './did-provider';
 import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
+import { replaceResponseURL } from './helpers';
 
 describe('Verification provider', () => {
   let wallet: IWallet;
@@ -93,8 +94,9 @@ describe('Verification provider', () => {
       didProvider,
     });
 
+    const updatedTemplate = replaceResponseURL(iiwTemplate);
     await controller.start({
-      template: iiwTemplate,
+      template: updatedTemplate,
     });
 
     const credentials = controller.getFilteredCredentials();
