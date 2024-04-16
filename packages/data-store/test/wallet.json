@@ -85,7 +85,7 @@
         },
         "https://ld.dock.io/credentials/prettyvc"
       ],
-      "id": "https://***REMOVED***/cca99aae610dc3e0c2c6c60ac9a1866211022499d36cf1c72bb7889316ee6fd0",
+      "id": "https://creds-example.dock.io/cca99aae610dc3e0c2c6c60ac9a1866211022499d36cf1c72bb7889316ee6fd0",
       "type": [
         "VerifiableCredential",
         "BasicCredential",

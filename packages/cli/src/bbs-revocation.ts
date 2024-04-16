@@ -39,7 +39,7 @@ const credential = {
     revocationCheck: 'membership',
     revocationId: '8',
   },
-  id: 'https://***REMOVED***/b07eefcfb03a9dcf7bda39cd0f2cd498eed309cfe6ca816c522bd2026da9f025',
+  id: 'https://creds-example.dock.io/b07eefcfb03a9dcf7bda39cd0f2cd498eed309cfe6ca816c522bd2026da9f025',
   type: [
     'VerifiableCredential',
     'BasicCredential',
@@ -175,14 +175,6 @@ async function verifyCredential() {
   });
   
   console.log(JSON.stringify(verificationResults, null, 2));
-
-  // const templateResponseURL = 'https://***REMOVED***/proof-requests/d3c0c23e-efb5-41fc-a8a9-6213507f419a/send-presentation';
-
-  // const result = await axios
-  //     .post(templateResponseURL, presentation)
-  //     .then(res => res.data);
-
-  // console.log(result);
 }
 
 dock
