@@ -67,11 +67,10 @@ export class Credentials {
    * @returns {Promise<boolean>}
    */
   isDockCertsURL(url) {
+    const urlRegex = new RegExp('^https:\/\/creds.*\.dock\.io\/*','i');
     return (
       url.indexOf('/proof/') === -1 &&
-      (url.startsWith('https://creds.dock.io/') ||
-        url.startsWith('https://creds-staging.dock.io/') ||
-        url.startsWith('https://creds-testnet.dock.io/'))
+      urlRegex.test(url)
     );
   }
   /**
