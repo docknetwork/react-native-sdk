@@ -1,0 +1,89 @@
+name: Integration Tests
+on: push
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  actions: read
+  checks: write
+  pull-requests: read
+
+jobs:
+  integrationTests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '18.17.1'
+
+      - name: Install GitHub CLI
+        run: |
+          sudo apt update
+          sudo apt install -y gh
+
+      - name: Fetch Open PR for Branch
+        id: pr_info
+        env:
+          BRANCH: ${{ github.ref_name }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PR=$(gh pr list --head $BRANCH --state open --json number,title -q ".[0]")
+          PR_NUMBER=$(echo $PR | jq -r ".number")
+          PR_TITLE=$(echo $PR | jq -r ".title")
+          echo "PR Number: $PR_NUMBER"
+          echo "PR Title: $PR_TITLE"
+          echo "Branch: $BRANCH"
+          echo "number=$PR_NUMBER" >> $GITHUB_OUTPUT
+          echo "title=$PR_TITLE" >> $GITHUB_OUTPUT
+
+      - name: Debug GitHub Context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build
+        run: yarn build
+
+      - name: Lint
+        run: yarn lint
+
+      - name: Integration Tests
+        env:
+          CERTS_API_KEY: ${{ secrets.CERTS_API_KEY }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          PR_LINK: ${{ github.server_url }}/${{ github.repository }}/pull/${{ steps.pr_info.outputs.number }}
+          PR_NUMBER: ${{ steps.pr_info.outputs.number }}
+          PR_TITLE: ${{ steps.pr_info.outputs.title }}
+          GITHUB_ACTION_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          TESTING_API_URL: ${{secrets.TESTING_API_URL}}
+        run: |
+          export NODE_OPTIONS="--max_old_space_size=12096"
+          export CI=true
+          echo "PR Number: $PR_NUMBER"
+          echo "PR Title: $PR_TITLE"
+          yarn test:integration
+
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: Integration Test Report
+          path: reports/jest-*.xml
+          reporter: jest-junit

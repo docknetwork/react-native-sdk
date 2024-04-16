@@ -26,13 +26,13 @@ export const AccountsEvents = {
 
 export type CreateAccountParams = {
   name: string,
-  type: KeypairType,
-  derivationPath: string,
-  mnemonic: string,
-  json: string,
-  password: string,
-  getIfExists: boolean,
-  hasBackup: boolean,
+  type?: KeypairType,
+  derivationPath?: string,
+  mnemonic?: string,
+  json?: string,
+  password?: string,
+  getIfExists?: boolean,
+  hasBackup?: boolean,
 };
 
 export class Accounts {

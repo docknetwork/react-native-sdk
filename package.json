@@ -81,7 +81,7 @@
     "build-packages": "yarn workspace @docknetwork/wallet-sdk-dids build",
     "test": "export NODE_OPTIONS=\"--max_old_space_size=4096\";node ./node_modules/jest/bin/jest.js --forceExit",
     "test:ci": "yarn test",
-    "test:integration": "export API_MOCK_DISABLED=true; jest --config jest.config.e2e.js",
+    "test:integration": "export API_MOCK_DISABLED=true; jest --config jest.config.e2e.js --ci --detectOpenHandles --forceExit",
     "examples:all": "nodemon --exec NODE_ENV=development npx babel-node ./examples/index.js",
     "lint": "eslint './packages/**/*.js' --max-warnings=0 --ignore-path=.prettierignore",
     "lint:fix": "eslint './src/**/*.js' --fix --ignore-path=.prettierignore",
@@ -89,6 +89,15 @@
     "exec": "BABEL_ENV=development; babel-node",
     "docs": "documentation build packages/core/lib/** -f html -o docs",
     "postinstall": "sh ./scripts/fix-deps.sh && node ./fixdeps && yarn build"
+  },
+  "jest-junit": {
+    "outputDirectory": "reports",
+    "outputName": "jest-junit.xml",
+    "ancestorSeparator": " › ",
+    "uniqueOutputName": "false",
+    "suiteNameTemplate": "{filepath}",
+    "classNameTemplate": "{classname}",
+    "titleTemplate": "{title}"
   },
   "dependencies": {
     "@astronautlabs/jsonpath": "^1.1.2",
@@ -132,6 +141,7 @@
     "documentation": "^13.2.5",
     "glob": "^7.2.0",
     "https-browserify": "^1.0.0",
+    "jest-junit": "^16.0.0",
     "jsdoc": "^3.6.7",
     "jsdoc-babel": "^0.5.0",
     "jsdom": "^19.0.0",

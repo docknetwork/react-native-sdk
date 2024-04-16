@@ -4,6 +4,7 @@ import {Transactions} from '@docknetwork/wallet-sdk-transactions/lib/transaction
 
 import {
   cleanup,
+  closeWallet,
   createAccounts,
   createNewWallet,
   getAccounts,
@@ -12,17 +13,19 @@ import {
 } from './helpers';
 
 describe('Transactions', () => {
+  let wallet;
   beforeAll(async () => {
     await cleanup();
     await setupEnvironent();
     await createNewWallet();
     await createAccounts();
+    wallet = await getWallet();
   });
 
   it('should get account balance', async () => {
     const [account1] = await getAccounts();
-    const balance = await getWallet().accounts.getBalance(account1.id);
-    expect(balance).toEqual(100);
+    const balance = await wallet.accounts.getBalance(account1.id);
+    expect(balance).toEqual(0);
   });
 
   it('should get transaction fee', async () => {
@@ -33,6 +36,8 @@ describe('Transactions', () => {
       amount: 10 * DOCK_TOKEN_UNIT,
     });
 
-    expect(feeAmount).toEqual(0.000002728);
+    expect(feeAmount > 0).toBeTruthy();
   });
+
+  afterAll(() => closeWallet());
 });

@@ -3,6 +3,7 @@ import {
   getWallet,
   getDIDProvider,
   getMessageProvider,
+  closeWallet,
 } from './helpers/wallet-helpers';
 import assert from 'assert';
 
@@ -41,9 +42,14 @@ function issueCredential({subjectDID}) {
   );
 }
 describe('Credential Distribution', () => {
-  assert(testAPIURL, "Please configure the TESTING_API_URL env var.");
+  let wallet;
 
-  it('should receive a credential using did distribution', async () => {
+  beforeAll(async () => {
+    wallet = await getWallet();
+  });
+
+  it('should receive a credential issued to the wallet DID', async () => {
+    assert(testAPIURL, "Please configure the TESTING_API_URL env var.");
     const wallet = await getWallet();
     const currentDID = await getDIDProvider().getDefaultDID();
 
@@ -68,7 +74,7 @@ describe('Credential Distribution', () => {
     );
   });
 
-  it('should receive multiple credentials using multiple DIDS', async () => {
+  it('should receive multiple credentials issued to multiple wallet DIDs', async () => {
     const wallet = await getWallet();
     const didProvider = getDIDProvider();
     const messageProvider = getMessageProvider();
@@ -108,4 +114,6 @@ describe('Credential Distribution', () => {
     );
     stopAutoFetch();
   });
+
+  afterAll(() => closeWallet(wallet));
 });
