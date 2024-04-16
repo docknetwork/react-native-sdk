@@ -24,7 +24,7 @@ module.exports = {
   },
   resetMocks: false,
   setupFilesAfterEnv: ['<rootDir>/setup-integration-tests.js'],
-  globalTeardown: './scripts/test-teardown-globals.js',
+  globalTeardown: './scripts/integration-test-teardown.js',
   setupFiles: ['jest-localstorage-mock'],
   moduleNameMapper: {
     '@digitalbazaar/x25519-key-agreement-key-2020':
