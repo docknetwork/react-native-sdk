@@ -1,9 +1,4 @@
-import {BoundCheckSnarkSetup} from '@docknetwork/crypto-wasm-ts/lib/bound-check';
-import {
-  LegoProvingKeyUncompressed,
-  LegoVerifyingKeyUncompressed,
-  LegoProvingKey,
-} from '@docknetwork/crypto-wasm-ts/lib/legosnark';
+import {LegoProvingKey} from '@docknetwork/crypto-wasm-ts/lib/legosnark';
 import {PresentationBuilder} from '@docknetwork/crypto-wasm-ts/lib';
 import {isBase64} from '@polkadot/util-crypto';
 import base64url from 'base64url';
