@@ -19,7 +19,7 @@ describe('Wallet', () => {
   it('resolveApiNetwork', () => {
     expect(
       resolveApiNetwork({
-        url: 'https://creds-staging.dock.io/proof/0bb39274-4ef1-4e7f-ab8d-d91d8926d9af',
+        url: 'https://creds-example.dock.io/proof/0bb39274-4ef1-4e7f-ab8d-d91d8926d9af',
         dataStore: wallet.dataStore,
       }),
     ).toBe('testnet');
@@ -104,7 +104,7 @@ describe('Wallet', () => {
     it('expect to resolve credential to testnet', async () => {
       const result = await credentialResolver({
         document: {
-          id: 'https://creds-staging.dock.io/d39b15fe997004db702c9faaf98f9fd619cdf40088549648fb288ea679b53e23?_ga=2.46968743.1402343540.1684360698-1482908456.1677577177',
+          id: 'https://creds-example.dock.io/d39b15fe997004db702c9faaf98f9fd619cdf40088549648fb288ea679b53e23?_ga=2.46968743.1402343540.1684360698-1482908456.1677577177',
           type: ['VerifiableCredential'],
         },
         dataStore: wallet.dataStore,
