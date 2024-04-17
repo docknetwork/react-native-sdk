@@ -16,10 +16,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: '18.17.1'
 
@@ -34,7 +34,16 @@ jobs:
           BRANCH: ${{ github.ref_name }}
           GH_TOKEN: ${{ github.token }}
         run: |
-          PR=$(gh pr list --head $BRANCH --state open --json number,title -q ".[0]")
+          # Check if the workflow was triggered by a merge event and a PR number is available
+          if [[ -n "${{ github.event.number }}" ]]; then
+            # Fetch PR details directly using the PR number from the merge event
+            PR=$(gh pr view ${{ github.event.number }} --json number,title)
+            echo "Fetching details for merged PR: ${{ github.event.number }}"
+          else
+            # Fetch PR details based on the branch name for non-merge scenarios
+            PR=$(gh pr list --head $BRANCH --state open --json number,title -q ".[0]")
+            echo "Fetching details for open PR from branch: $BRANCH"
+          fi
           PR_NUMBER=$(echo $PR | jq -r ".number")
           PR_TITLE=$(echo $PR | jq -r ".title")
           echo "PR Number: $PR_NUMBER"
