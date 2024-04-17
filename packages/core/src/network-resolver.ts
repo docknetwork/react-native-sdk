@@ -51,8 +51,14 @@ export function resolveApiNetwork({
 }) {
   for (const network of dataStore.networks) {
     for (const hostname of network.credentialHostnames) {
-      if (url.indexOf(hostname) > -1) {
-        return network.id;
+      if (hostname instanceof RegExp) {
+        if (hostname.test(url)) {
+          return network.id;
+        }
+      } else {
+        if (url.indexOf(hostname) > -1) {
+          return network.id;
+        }
       }
     }
   }
