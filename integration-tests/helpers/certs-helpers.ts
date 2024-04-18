@@ -4,8 +4,9 @@ import axios from 'axios';
 const certsApiURL = process.env.TESTING_API_URL || null;
 const certsApiToken = process.env.CERTS_API_KEY;
 
-export const ANY_CREDENTIAL_TEMPLATE_ID =
-  '61146961-e1b2-4c08-bbc9-2bc9fd815575';
+export const ProofTemplateIds = {
+  ANY_CREDENTIAL: process.env.PROOF_TEMPLATE_FOR_ANY_CREDENTIAL
+};
 
 export function getCertsApiURL() {
   assert(!!certsApiURL, 'Certs API URL is not set');
@@ -28,7 +29,6 @@ export async function createProofRequest(templateId: string) {
       },
     },
   );
-
 
   if (!data.request.id) {
     data.request.id = data.id;

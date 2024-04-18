@@ -8,7 +8,7 @@ import {createVerificationController} from '@docknetwork/wallet-sdk-core/src/ver
 import {verifyPresentation} from '@docknetwork/sdk/utils/vc/presentations';
 import axios from 'axios';
 import {
-  ANY_CREDENTIAL_TEMPLATE_ID,
+  ProofTemplateIds,
   createProofRequest,
 } from '../helpers/certs-helpers';
 
@@ -156,7 +156,7 @@ describe('BBS+ revocation', () => {
 
     getCredentialProvider().addCredential(credential);
 
-    const proofRequest = await createProofRequest(ANY_CREDENTIAL_TEMPLATE_ID);
+    const proofRequest = await createProofRequest(ProofTemplateIds.ANY_CREDENTIAL);
 
     const controller = await createVerificationController({
       wallet,
@@ -190,7 +190,7 @@ describe('BBS+ revocation', () => {
 
     getCredentialProvider().addCredential(revokedCredential);
 
-    const proofRequest = await createProofRequest(ANY_CREDENTIAL_TEMPLATE_ID);
+    const proofRequest = await createProofRequest(ProofTemplateIds.ANY_CREDENTIAL);
 
     const controller = await createVerificationController({
       wallet,
