@@ -77,6 +77,7 @@ jobs:
         env:
           CERTS_API_KEY: ${{ secrets.CERTS_API_KEY }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          PROOF_TEMPLATE_FOR_ANY_CREDENTIAL: ${{ vars.PROOF_TEMPLATE_FOR_ANY_CREDENTIAL }}
           PR_LINK: ${{ github.server_url }}/${{ github.repository }}/pull/${{ steps.pr_info.outputs.number }}
           PR_NUMBER: ${{ steps.pr_info.outputs.number }}
           PR_TITLE: ${{ steps.pr_info.outputs.title }}
