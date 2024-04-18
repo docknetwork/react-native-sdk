@@ -4,6 +4,8 @@ import axios from 'axios';
 const certsApiURL = process.env.TESTING_API_URL || null;
 const certsApiToken = process.env.CERTS_API_KEY;
 
+assert(!!process.env.PROOF_TEMPLATE_FOR_ANY_CREDENTIAL, 'PROOF_TEMPLATE_FOR_ANY_CREDENTIAL is not set');
+
 export const ProofTemplateIds = {
   ANY_CREDENTIAL: process.env.PROOF_TEMPLATE_FOR_ANY_CREDENTIAL
 };
