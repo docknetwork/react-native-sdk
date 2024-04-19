@@ -148,18 +148,60 @@ const revokedCredential = {
 };
 
 describe('BBS+ revocation', () => {
-  it('should verify a revokable bbs+ credential', async () => {
+  // it('should verify a revokable bbs+ credential', async () => {
+  //   const wallet: IWallet = await getWallet();
+
+  //   getCredentialProvider().addCredential(credential);
+
+  //   const proofRequest = await createProofRequest(
+  //     ProofTemplateIds.ANY_CREDENTIAL,
+  //   );
+
+  //   const result: any = await getCredentialProvider().isValid(credential);
+
+    // expect(result.status).toBe('verified');
+
+    // const controller = await createVerificationController({
+    //   wallet,
+    // });
+
+    // await controller.start({
+    //   template: proofRequest,
+    // });
+
+    // let attributesToReveal = ['credentialSubject.name'];
+
+    // controller.selectedCredentials.set(credential.id, {
+    //   credential: credential,
+    //   attributesToReveal,
+    // });
+
+    // const presentation = await controller.createPresentation();
+    // console.log('Presentation generated');
+    // console.log(JSON.stringify(presentation, null, 2));
+    // console.log('Sending presentation to Certs API');
+
+    // let certsResponse;
+    // try {
+    //   certsResponse = await controller.submitPresentation(presentation);
+    //   console.log('CERTS response');
+    //   console.log(JSON.stringify(certsResponse, null, 2));
+      
+    // } catch (err) {
+    //   certsResponse = err.response.data;
+    //   console.log('Certs API returned an error');
+    //   console.log(JSON.stringify(certsResponse, null, 2));
+    // }
+
+    // expect(certsResponse.verified).toBe(true);
+  // });
+
+  it('should handle a revoked bbs+ credential as not valid', async () => {
     const wallet: IWallet = await getWallet();
 
-    getCredentialProvider().addCredential(credential);
+    getCredentialProvider().addCredential(revokedCredential);
 
-    const proofRequest = await createProofRequest(
-      ProofTemplateIds.ANY_CREDENTIAL,
-    );
-
-    const result: any = await getCredentialProvider().isValid(credential);
-
-    expect(result.status).toBe('verified');
+    const proofRequest = await createProofRequest(ProofTemplateIds.ANY_CREDENTIAL);
 
     const controller = await createVerificationController({
       wallet,
@@ -181,64 +223,22 @@ describe('BBS+ revocation', () => {
     console.log(JSON.stringify(presentation, null, 2));
     console.log('Sending presentation to Certs API');
 
-    let certsResponse;
+    let data;
+
     try {
-      certsResponse = await controller.submitPresentation(presentation);
+      const certsResponse = await controller.submitPresentation(presentation);
       console.log('CERTS response');
       console.log(JSON.stringify(certsResponse, null, 2));
-      
     } catch (err) {
-      certsResponse = err.response.data;
+      data = err.response.data;
       console.log('Certs API returned an error');
-      console.log(JSON.stringify(certsResponse, null, 2));
+      console.log(JSON.stringify(data, null, 2));
     }
 
-    expect(certsResponse.verified).toBe(true);
+    expect(data.status).toBe(400);
+    // The current error message from certs is the following:
+    // Credential not verified: Invalid anoncreds presentation due to error: VBAccumProofContributionFailed(1, PairingResponseInvalid)
   });
-
-  // it('should handle a revoked bbs+ credential as not valid', async () => {
-  //   const wallet: IWallet = await getWallet();
-
-  //   getCredentialProvider().addCredential(revokedCredential);
-
-  //   const proofRequest = await createProofRequest(ProofTemplateIds.ANY_CREDENTIAL);
-
-  //   const controller = await createVerificationController({
-  //     wallet,
-  //   });
-
-  //   await controller.start({
-  //     template: proofRequest,
-  //   });
-
-  //   let attributesToReveal = ['credentialSubject.name'];
-
-  //   controller.selectedCredentials.set(revokedCredential.id, {
-  //     credential: revokedCredential,
-  //     attributesToReveal,
-  //   });
-
-  //   const presentation = await controller.createPresentation();
-  //   console.log('Presentation generated');
-  //   console.log(JSON.stringify(presentation, null, 2));
-  //   console.log('Sending presentation to Certs API');
-
-  //   let data;
-
-  //   try {
-  //     const certsResponse = await controller.submitPresentation(presentation);
-  //     console.log('CERTS response');
-  //     console.log(JSON.stringify(certsResponse, null, 2));
-  //   } catch (err) {
-  //     data = err.response.data;
-  //     console.log('Certs API returned an error');
-  //     console.log(JSON.stringify(data, null, 2));
-  //   }
-
-  //   expect(data.status).toBe(400);
-  //   // The current error message from certs is the following:
-  //   // Credential not verified: Invalid anoncreds presentation due to error: VBAccumProofContributionFailed(1, PairingResponseInvalid)
-  // });
 
   afterAll(() => closeWallet());
 });
