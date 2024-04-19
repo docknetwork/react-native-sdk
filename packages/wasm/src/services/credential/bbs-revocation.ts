@@ -4,6 +4,7 @@ import {
   AccumulatorPublicKey,
   dockAccumulatorParams,
   VBMembershipWitness,
+  VBWitnessUpdateInfo,
   Encoder,
 } from '@docknetwork/crypto-wasm-ts';
 import dock from '@docknetwork/sdk';
@@ -18,10 +19,63 @@ const trimHexID = id => {
   return id.substr(2);
 };
 
-export const getWitnessDetails = async (
+async function updateMembershipWitness({
   credential,
-  _membershipWitness,
-) => {
+  membershipWitness,
+  registryId,
+  accumulator,
+}) {
+  const revocationId = credential.credentialStatus.revocationId;
+  const member = Accumulator.encodePositiveNumberAsAccumulatorMember(
+    Number(revocationId),
+  );
+
+  let updates = [];
+  try {
+    updates = await dock.accumulatorModule.getUpdatesFromBlock(
+      registryId,
+      accumulator.lastModified,
+    );
+  } catch (err) {
+    if (err.code === -32000) {
+      console.error(err);
+      updates = [];
+    } else {
+      throw err;
+    }
+  }
+
+  const additions = [];
+  const removals = [];
+
+  if (updates.length && updates[0].additions !== null) {
+    for (const a of updates[0].additions) {
+      additions.push(hexToU8a(a));
+    }
+  }
+
+  if (updates.length && updates[0].removals !== null) {
+    for (const a of updates[0].removals) {
+      removals.push(hexToU8a(a));
+    }
+  }
+
+  const queriedWitnessInfo = new VBWitnessUpdateInfo(
+    hexToU8a(updates[0].witnessUpdateInfo),
+  );
+  const witness = new VBMembershipWitness(hexToU8a(membershipWitness));
+
+  witness.updateUsingPublicInfoPostBatchUpdate(
+    member,
+    additions,
+    removals,
+    queriedWitnessInfo,
+  );
+
+  return witness;
+}
+
+export const getWitnessDetails = async (credential, _membershipWitness) => {
   const {credentialStatus} = credential;
   const registryId = credentialStatus?.id.replace('dock:accumulator:', '');
   const revocationIndex = credentialStatus.revocationId;
@@ -49,7 +103,23 @@ export const getWitnessDetails = async (
   const params = dockAccumulatorParams();
   const pk = new AccumulatorPublicKey(hexToU8a(publicKey.bytes));
 
-  const membershipWitness = new VBMembershipWitness(hexToU8a(_membershipWitness));
+  let membershipWitness = new VBMembershipWitness(
+    hexToU8a(_membershipWitness),
+  );
+
+  // Currently working with Lovesh to fix this
+  // try {
+  //   const updatedWitness = await updateMembershipWitness({
+  //     credential,
+  //     membershipWitness: _membershipWitness,
+  //     registryId,
+  //     accumulator: queriedAccumulator,
+  //   });
+  //   membershipWitness = updatedWitness;
+
+  // } catch (err) {
+  //   console.error(err);
+  // }
 
   return {
     encodedRevId,
@@ -60,14 +130,9 @@ export const getWitnessDetails = async (
   };
 };
 
-export const getIsRevoked = async (
-  credential,
-  _membershipWitness,
-) => {
-  const {encodedRevId, membershipWitness, pk, params, accumulator} = await getWitnessDetails(
-    credential,
-    _membershipWitness,
-  );
+export const getIsRevoked = async (credential, _membershipWitness) => {
+  const {encodedRevId, membershipWitness, pk, params, accumulator} =
+    await getWitnessDetails(credential, _membershipWitness);
 
   try {
     return !accumulator.verifyMembershipWitness(
