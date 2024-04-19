@@ -7,10 +7,7 @@ import {
 import {createVerificationController} from '@docknetwork/wallet-sdk-core/src/verification-controller';
 import {verifyPresentation} from '@docknetwork/sdk/utils/vc/presentations';
 import axios from 'axios';
-import {
-  ProofTemplateIds,
-  createProofRequest,
-} from '../helpers/certs-helpers';
+import {ProofTemplateIds, createProofRequest} from '../helpers/certs-helpers';
 
 const credential = {
   '@context': [
@@ -28,15 +25,15 @@ const credential = {
     id: 'dock:accumulator:0xa987780d8b3146840048eaee2243359bfe7d9884d50c0e0012f1ba4171a6046e',
     type: 'DockVBAccumulator2022',
     revocationCheck: 'membership',
-    revocationId: '2',
+    revocationId: '4',
   },
-  id: 'https://creds-testnet.dock.io/e556f8d7cf4da14365d7bf90b06a2b0e09b8736d90cf3f987c4dab3e714a877c',
+  id: 'https://creds-testnet.dock.io/ea5cdb2bbce199957d31715532f6fd2c5597e8f6774d24dfa46b6651877f433e',
   type: ['VerifiableCredential', 'BasicCredential'],
   credentialSubject: {
-    id: 'did:key:z6Mkv9oreVc641WshEzJDtnEc55yqh7w3oHeyhbRQz3mY4qm',
-    name: 'Wallet Tests',
+    id: 'did:key:z6Mku9R8zdA8LD6hcFXkn47jLnfcKZNGmwaTrDnaCBkSb8Un',
+    name: 'Wallet CI - BBS+ not revoked',
   },
-  issuanceDate: '2024-04-18T18:04:51.281Z',
+  issuanceDate: '2024-04-19T16:44:58.828Z',
   issuer: {
     name: 'Dock Labs',
     description:
@@ -55,7 +52,7 @@ const credential = {
     },
     version: '0.3.0',
   },
-  name: 'Wallet Tests',
+  name: 'Wallet CI - BBS+ not revoked',
   cryptoVersion: '0.5.0',
   proof: {
     '@context': [
@@ -70,15 +67,15 @@ const credential = {
       'https://ld.dock.io/security/bbs/v1',
     ],
     type: 'Bls12381BBS+SignatureDock2022',
-    created: '2024-04-18T18:05:58Z',
+    created: '2024-04-19T16:46:09Z',
     verificationMethod:
       'did:dock:5CxMzC6TujZCLNHNgQWVUdCwnoct4jmdtGe3k5GArVcXvdw3#keys-2',
     proofPurpose: 'assertionMethod',
     proofValue:
-      'zVA5fmBy3rt2qs4DFHtWSsQ1i9roPn7CkUowKSfD3ogkcQFtuSK8aik9xKfZapwGV7pbLbC4g9B48BBugZEtiB6gW1ZsBixNRZvgrm5cQFTKN9uWSr1mLboydmEVtLYMcp1N4oAFuGYiYvkXxNLgrMHzno',
+      'zTtPPJAa7JXgT3AwQP51Bk5WGLpWNxTAzRTMTXGEPoxMMeSxW83pNasSjcUh9hbKgDD1MTC41JVJLysWXQDqYkJfs58Sucg7GfZH3t1ZiqJZmYvPeJ7PU59u4fNCCeu6K91n1PBcnLWeVpKGkes2z5nNcf',
   },
   $$accum__witness$$:
-    '0xadb5e573f618ac74af8726ddf0552fbf3d2dae34639b679ac0db3ad308bcebac047e475008e5e552d11ac148369000e2',
+    '0xa7ef89c25ad2248238aed686a108f2dff3744a64ecf510a64e04d35e5adc5e8a1b7589e969803491ece6b622863cb95d',
 };
 
 const revokedCredential = {
@@ -156,7 +153,9 @@ describe('BBS+ revocation', () => {
 
     getCredentialProvider().addCredential(credential);
 
-    const proofRequest = await createProofRequest(ProofTemplateIds.ANY_CREDENTIAL);
+    const proofRequest = await createProofRequest(
+      ProofTemplateIds.ANY_CREDENTIAL,
+    );
 
     const controller = await createVerificationController({
       wallet,
@@ -178,10 +177,18 @@ describe('BBS+ revocation', () => {
     console.log(JSON.stringify(presentation, null, 2));
     console.log('Sending presentation to Certs API');
 
-    const certsResponse = await controller.submitPresentation(presentation);
+    let certsResponse;
+    try {
+      certsResponse = await controller.submitPresentation(presentation);
+      console.log('CERTS response');
+      console.log(JSON.stringify(certsResponse, null, 2));
+      
+    } catch (err) {
+      certsResponse = err.response.data;
+      console.log('Certs API returned an error');
+      console.log(JSON.stringify(certsResponse, null, 2));
+    }
 
-    console.log('CERTS response');
-    console.log(JSON.stringify(certsResponse, null, 2));
     expect(certsResponse.verified).toBe(true);
   });
 
