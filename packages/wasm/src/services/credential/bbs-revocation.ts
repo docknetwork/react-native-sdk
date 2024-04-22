@@ -103,11 +103,12 @@ export const getWitnessDetails = async (credential, _membershipWitness) => {
   const params = dockAccumulatorParams();
   const pk = new AccumulatorPublicKey(hexToU8a(publicKey.bytes));
 
-  let membershipWitness = new VBMembershipWitness(
+  const membershipWitness = new VBMembershipWitness(
     hexToU8a(_membershipWitness),
   );
 
-  // Currently working with Lovesh to fix this
+  // TODO: Currently working with Lovesh to fix this
+  // https://dock-team.atlassian.net/browse/DCKM-453
   // try {
   //   const updatedWitness = await updateMembershipWitness({
   //     credential,
