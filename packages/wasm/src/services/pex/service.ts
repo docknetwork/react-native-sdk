@@ -43,7 +43,7 @@ export function removeOptionalAttribute(presentationDefinition) {
     // So, we add a placeholder field to avoid the error
     if (inputDescriptor.constraints.fields.length === 0) {
       inputDescriptor.constraints.fields.push({
-        path: '$.id',
+        path: ['$.id'],
       });
     }
   });
