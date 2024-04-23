@@ -308,7 +308,7 @@ describe('Pex Examples', () => {
       },
     ];
 
-    const presentationDefinition = {
+    let presentationDefinition = {
       id: 'income_test',
       input_descriptors: [
         {
@@ -337,7 +337,33 @@ describe('Pex Examples', () => {
       ],
     };
 
-    const results = pexService.filterCredentials({
+    let results = pexService.filterCredentials({
+      credentials,
+      presentationDefinition,
+    });
+
+    expect(results.verifiableCredential).toBeTruthy();
+
+    presentationDefinition = {
+      id: '4970377a-6283-46d8-b95e-db99b011e48c',
+      input_descriptors: [
+        {
+          id: 'Credential 1',
+          name: 'Credential type exists',
+          purpose: 'optional field',
+          constraints: {
+            fields: [
+              {
+                path: ['$.type[*]'],
+                optional: true,
+              },
+            ],
+          },
+        },
+      ],
+    };
+
+    results = pexService.filterCredentials({
       credentials,
       presentationDefinition,
     });
