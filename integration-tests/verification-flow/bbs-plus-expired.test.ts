@@ -3,6 +3,8 @@ import {closeWallet, getWallet} from '../helpers/wallet-helpers';
 import {createVerificationController} from '@docknetwork/wallet-sdk-core/src/verification-controller';
 import {verifyPresentation} from '@docknetwork/sdk/utils/vc/presentations';
 import assert from 'assert';
+import {initializeWasm} from '@docknetwork/crypto-wasm-ts/lib/index';
+import { dockService } from '@docknetwork/wallet-sdk-wasm/src/services/dock';
 
 const testAPIURL = process.env.TESTING_API_URL || null;
 
@@ -63,81 +65,82 @@ const expiredCredential = {
 };
 
 describe('BBS+ presentations', () => {
-  it('should add required attributes to the presentation', async () => {
-    assert(testAPIURL, "Please configure the TESTING_API_URL env var.");
+  it('should fail to verify expired credential', async () => {
+    assert(testAPIURL, 'Please configure the TESTING_API_URL env var.');
 
     const wallet: IWallet = await getWallet();
     const controller = await createVerificationController({
       wallet,
     });
 
-    await controller.start({
-      template: {
-        qr: 'https://creds-example.dock.io/proof/d3c0c23e-efb5-41fc-a8a9-6213507f419a',
-        id: 'd3c0c23e-efb5-41fc-a8a9-6213507f419a',
-        name: 'BasicCredential Template',
-        nonce: '08ec5ca2e2446b50b25a55e1b6b21f2b',
-        created: '2023-10-02T21:30:55.851Z',
-        updated: '2023-10-02T21:30:55.851Z',
-        verified: false,
-        response_url:
-          `${testAPIURL}/proof-requests/d3c0c23e-efb5-41fc-a8a9-6213507f419a/send-presentation`,
-        request: {
-          id: '1cf6a349-f1d3-42f7-b751-8de7fb5fde6c',
-          input_descriptors: [
-            {
-              id: 'Credential 1',
-              name: 'Basic Credential (Biometrics)',
-              purpose: 'Basic Credential with proof of biometrics',
-              constraints: {
-                fields: [
-                  {
-                    path: ['$.expirationDate'],
-                  },
-                  {
-                    path: ['$.type'],
-                  },
-                  {
-                    path: [
-                      '$.issuer.id',
-                      '$.issuer',
-                      '$.vc.issuer.id',
-                      '$.vc.issuer',
-                      '$.iss',
-                    ],
-                  },
-                ],
-              },
+    const proofRequest = {
+      qr: 'https://creds-example.dock.io/proof/d3c0c23e-efb5-41fc-a8a9-6213507f419a',
+      id: 'd3c0c23e-efb5-41fc-a8a9-6213507f419a',
+      name: 'BasicCredential Template',
+      nonce: '08ec5ca2e2446b50b25a55e1b6b21f2b',
+      created: '2023-10-02T21:30:55.851Z',
+      updated: '2023-10-02T21:30:55.851Z',
+      verified: false,
+      response_url: `${testAPIURL}/proof-requests/d3c0c23e-efb5-41fc-a8a9-6213507f419a/send-presentation`,
+      request: {
+        id: '1cf6a349-f1d3-42f7-b751-8de7fb5fde6c',
+        input_descriptors: [
+          {
+            id: 'Credential 1',
+            name: 'Basic Credential (Biometrics)',
+            purpose: 'Basic Credential with proof of biometrics',
+            constraints: {
+              fields: [
+                {
+                  path: ['$.expirationDate'],
+                },
+                {
+                  path: ['$.type'],
+                },
+                {
+                  path: [
+                    '$.issuer.id',
+                    '$.issuer',
+                    '$.vc.issuer.id',
+                    '$.vc.issuer',
+                    '$.iss',
+                  ],
+                },
+              ],
             },
-          ],
-        },
-        type: 'proof-request',
+          },
+        ],
       },
+      type: 'proof-request',
+    };
+
+    await controller.start({
+      template: proofRequest,
     });
 
-    let attributesToReveal = ['credentialSubject.name'];
+    const attributesToReveal = ['credentialSubject.name'];
 
     controller.selectedCredentials.set(expiredCredential.id, {
       credential: expiredCredential,
       attributesToReveal,
     });
 
-    // TODO: working to fix an issue related to the SDK v18 upgrade
-    // const presentation = await controller.createPresentation();
+    const presentation = await controller.createPresentation();
 
-    // console.log(presentation);
-    // expect(presentation.verifiableCredential[0].expirationDate).toBe(
-    //   expiredCredential.expirationDate,
-    // );
+    const verificationResults = await verifyPresentation(presentation, {
+      compactProof: true,
+      resolver: dockService.resolver,
+      challenge: proofRequest.nonce,
+      unsignedPresentation: true,
+      domain: 'dock.io',
+    });
 
-    // const verificationResults = await verifyPresentation(
-    //   presentation.toJSON(),
-    //   {
-    //     compactProof: true,
-    //   },
-    // );
-
-    // expect(verificationResults.verified).toBe(true);
+    expect(verificationResults.verified).toBe(false);
+    expect(
+      verificationResults.credentialResults[0].error.message.indexOf(
+        'Credential has expired',
+      ) > -1,
+    ).toBe(true);
   });
 
   afterAll(() => closeWallet());
