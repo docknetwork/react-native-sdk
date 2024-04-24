@@ -19,6 +19,10 @@ const trimHexID = id => {
   return id.substr(2);
 };
 
+// "-32000: Client error: UnknownBlock: State already discarded for BlockId::Hash(<hash>)"
+// This means that the node has discarded old blocks to preserve space. This should not happen with a full node
+const UnknownBlockErrorCode = -32000;
+
 async function updateMembershipWitness({
   credential,
   membershipWitness,
@@ -37,7 +41,7 @@ async function updateMembershipWitness({
       accumulator.lastModified,
     );
   } catch (err) {
-    if (err.code === -32000) {
+    if (err.code === UnknownBlockErrorCode) {
       console.error(err);
       updates = [];
     } else {
