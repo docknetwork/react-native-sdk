@@ -31,6 +31,7 @@ import {getOrCreateWallet, getWallet} from './wallet';
 import debounce from 'lodash.debounce';
 import {setV1LocalStorage} from '@docknetwork/wallet-sdk-data-store/src/migration/migration1/v1-data-store';
 import {IWallet} from '@docknetwork/wallet-sdk-core/src/types';
+import { DataStoreConfigs } from '@docknetwork/wallet-sdk-data-store/src/types';
 export type WalletSDKContextProps = {
   wallet?: IWallet;
   documents: WalletDocument[];
@@ -256,8 +257,8 @@ export function _useWalletController() {
     });
   }, [status, wallet, refetch]);
 
-  const createWallet = async () => {
-    const newWallet = await getOrCreateWallet();
+  const createWallet = async (configs?: DataStoreConfigs) => {
+    const newWallet = await getOrCreateWallet(configs);
     setWallet(newWallet);
   };
 
@@ -272,7 +273,7 @@ export function _useWalletController() {
   };
 }
 
-export function WalletSDKProvider({onError, customUri, children, onReady}) {
+export function WalletSDKProvider({onError, customUri, children, onReady, configs}) {
   const controller = _useWalletController();
   const webViewRef = useRef();
   const sandboxWebViewRef = useRef();
@@ -282,11 +283,11 @@ export function WalletSDKProvider({onError, customUri, children, onReady}) {
   const {createWallet} = controller;
 
   const handleReady = useCallback(async () => {
-    await createWallet();
+    await createWallet(configs);
     if (onReady) {
       onReady();
     }
-  }, [onReady, createWallet]);
+  }, [onReady, createWallet, configs]);
 
   const eventHandler: WebviewEventHandler = useMemo(
     () =>
