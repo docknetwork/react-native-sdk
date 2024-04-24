@@ -14,7 +14,7 @@ module.exports = {
   },
   transform: {
     '^.+\\.(ts|tsx)?$': 'ts-jest',
-    '^.+\\.(js|jsx|cjs)$': [
+    '^.+\\.(js|jsx|mjs|cjs|ts|tsx)?$': [
       'babel-jest',
       {
         configFile: require.resolve('./babel.config.js'),
@@ -34,6 +34,9 @@ module.exports = {
       '@digitalbazaar/ed25519-verification-key-2018/src/Ed25519VerificationKey2018',
     '@digitalbazaar/minimal-cipher': '@digitalbazaar/minimal-cipher/Cipher',
     '@digitalbazaar/did-method-key': '@digitalbazaar/did-method-key/lib/main',
+    '@digitalbazaar/http-client': require.resolve(
+      '@digitalbazaar/http-client/main.js',
+    ),
     '@docknetwork/wallet-sdk-wasm/lib/(.*)':
       '@docknetwork/wallet-sdk-wasm/src/$1',
     '@docknetwork/wallet-sdk-data-store/lib/(.*)':
@@ -42,6 +45,6 @@ module.exports = {
       '@docknetwork/wallet-sdk-data-store/src',
   },
   transformIgnorePatterns: [
-    '/node_modules/(?!@polkadot|@babel|@docknetwork|@digitalbazaar|base58-universal)',
+    '/node_modules/(?!@polkadot|@babel|@docknetwork|@digitalbazaar|base58-universal|multiformats)',
   ],
 };
