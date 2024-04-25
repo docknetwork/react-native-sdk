@@ -16,6 +16,10 @@ import {
 
 const waitFor = ms => new Promise(r => setTimeout(r, ms));
 
+// TODO: We are currently using the same wallet as the holder and verifier
+// We should create two separate wallets
+// This way we can ensure that each wallet is able to handle the messages correctly and sending those to the right destination
+// https://dock-team.atlassian.net/browse/DCKM-465
 describe('Wallet to Wallet Verification', () => {
   it('should get OOB message to be shared as QR code', async () => {
     const wallet: IWallet = await getWallet();
