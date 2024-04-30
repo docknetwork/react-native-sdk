@@ -147,6 +147,10 @@ async function removeTransaction(transactionId) {
   }
 }
 
+function isV1Transaction(tx) {
+  return typeof tx.amount === 'string';
+}
+
 /** Transactions */
 export class Transactions {
   constructor(accounts: Accounts) {
@@ -223,16 +227,26 @@ export class Transactions {
       dbTransactions = [];
     }
 
+    const v1Transactions = dbTransactions.filter(isV1Transaction);
+
+    if (v1Transactions.length) {
+      dbTransactions = [];
+      // Remove all transactions from cache in case v1 items are found
+      // It will force a re-fetch using v2 API
+      await getLocalStorage().setItem('transactions', JSON.stringify([]));
+    }
+
     const parseTransaction = tx => {
       if (tx.from !== address && tx.to !== address) {
         return;
       }
-      if (dbTransactions.find(item => item.hash === tx.hash)) {
+      const txExists = dbTransactions.find(item => item.hash === tx.hash);
+      if (txExists) {
         return;
       }
       const newTx = {
-        amount: tx.amount,
-        feeAmount: tx.fee,
+        amount: parseInt(tx.amount_v2 || tx.amount, 10) / 1000000,
+        feeAmount: parseInt(tx.fee, 10) / 1000000,
         recipientAddress: tx.to,
         fromAddress: tx.from,
         id: tx.hash,
