@@ -19,7 +19,7 @@ const SUBSCAN_URL = 'https://dock.api.subscan.io';
 const queue = new TaskQueue(global.Promise, 1);
 
 function doFetchTransactions({address, page = 0, itemsPerPage = 50}) {
-  const url = `${SUBSCAN_URL}/api/scan/transfers`;
+  const url = `${SUBSCAN_URL}/api/v2/scan/transfers`;
 
   assert(typeof address === 'string', 'address must be a string');
   assert(typeof page === 'number', 'page must be a number');
