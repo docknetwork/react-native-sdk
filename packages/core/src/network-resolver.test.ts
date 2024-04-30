@@ -3,6 +3,7 @@ import {
   accountResolver,
   credentialResolver,
   dockDocumentNetworkResolver,
+  proofRequestResolver,
   resolveApiNetwork,
 } from './network-resolver';
 
@@ -137,6 +138,72 @@ describe('Wallet', () => {
       });
 
       expect(result).toBe('mainnet');
+    });
+  });
+
+  describe('proofRequestResolver', () => {
+    it('should detect a testnet proof request', async () => {
+      let result = await dockDocumentNetworkResolver({
+        document: {
+          qr: 'https://creds-staging.dock.io/proof/4970377a-6283-46d8-b95e-db99b011e48c',
+          id: '4970377a-6283-46d8-b95e-db99b011e48c',
+          response_url:
+            'https://api-staging.dock.io/proof-requests/4970377a-6283-46d8-b95e-db99b011e48c/send-presentation',
+          type: 'proof-request',
+        },
+        dataStore: wallet.dataStore,
+      });
+
+      expect(result.networkId).toBe('testnet');
+      expect(result.resolver).toBe(proofRequestResolver);
+
+      result = await dockDocumentNetworkResolver({
+        document: {
+          qr: 'https://creds-testnet.dock.io/proof/4970377a-6283-46d8-b95e-db99b011e48c',
+          id: '4970377a-6283-46d8-b95e-db99b011e48c',
+          response_url:
+            'https://api-testnet.dock.io/proof-requests/4970377a-6283-46d8-b95e-db99b011e48c/send-presentation',
+          type: 'proof-request',
+        },
+        dataStore: wallet.dataStore,
+      });
+
+      expect(result.networkId).toBe('testnet');
+
+    });
+
+    it('should detect a mainnet proof request', async () => {
+      const result = await dockDocumentNetworkResolver({
+        document: {
+          qr: 'https://creds.dock.io/proof/4970377a-6283-46d8-b95e-db99b011e48c',
+          id: '4970377a-6283-46d8-b95e-db99b011e48c',
+          response_url:
+            'https://api-staging.dock.io/proof-requests/4970377a-6283-46d8-b95e-db99b011e48c/send-presentation',
+          type: 'proof-request',
+        },
+        dataStore: wallet.dataStore,
+      });
+
+      expect(result.networkId).toBe('mainnet');
+      expect(result.resolver).toBe(proofRequestResolver);
+    });
+
+    it('should fallback to current network', async () => {
+      await wallet.setNetwork('mainnet');
+
+      const result = await dockDocumentNetworkResolver({
+        document: {
+          qr: 'https://something.dock.io/proof/4970377a-6283-46d8-b95e-db99b011e48c',
+          id: '4970377a-6283-46d8-b95e-db99b011e48c',
+          response_url:
+            'https://something.dock.io/proof-requests/4970377a-6283-46d8-b95e-db99b011e48c/send-presentation',
+          type: 'proof-request',
+        },
+        dataStore: wallet.dataStore,
+      });
+
+      expect(result.networkId).toBe('mainnet');
+      expect(result.isFallback).toBe(true);
     });
   });
 });

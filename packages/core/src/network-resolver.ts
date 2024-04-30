@@ -15,10 +15,10 @@ export const dockDocumentNetworkResolver: DocumentNetworkResolver = async ({
 }: DocumentResolverProps): Promise<DocumentResolverResult> => {
   let networkId;
   let isFallback = false;
-
+  let currentResolver;
   for (const resolver of resolvers) {
     networkId = await resolver({document, dataStore});
-
+    currentResolver = resolver;
     if (networkId) {
       break;
     }
@@ -32,6 +32,7 @@ export const dockDocumentNetworkResolver: DocumentNetworkResolver = async ({
   return {
     networkId: networkId,
     isFallback,
+    resolver: currentResolver,
   };
 };
 
@@ -86,6 +87,27 @@ export async function credentialResolver({
   });
 }
 
+export async function proofRequestResolver({
+  document,
+  dataStore,
+}: DocumentResolverProps): Promise<ResolverResult> {
+  if (!document) {
+    return null;
+  }
+
+  const isProofRequest =
+    document.type === 'proof-request' && document.qr;
+
+  if (!isProofRequest) {
+    return null;
+  }
+
+  return resolveApiNetwork({
+    url: document.qr,
+    dataStore,
+  });
+}
+
 export async function didResolver({
   document,
   dataStore,
@@ -102,7 +124,9 @@ export async function accountResolver({
     return null;
   }
 
-  const isAddress = Array.isArray(document.type) ? document.type.includes('Address') : document.type === 'Address';
+  const isAddress = Array.isArray(document.type)
+    ? document.type.includes('Address')
+    : document.type === 'Address';
 
   if (!isAddress) {
     return null;
@@ -125,4 +149,9 @@ export async function accountResolver({
   return network?.id;
 }
 
-const resolvers = [credentialResolver, accountResolver, didResolver];
+const resolvers = [
+  credentialResolver,
+  accountResolver,
+  didResolver,
+  proofRequestResolver,
+];
