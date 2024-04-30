@@ -92,8 +92,8 @@ export function buildVerifiablePresentationMessage({
 }) {
   return {
     type: MessageTypes.Presentation,
-    from: verifierDID,
-    to: holderDID,
+    from: holderDID,
+    to: verifierDID,
     body: {
       proofRequestId,
       presentation,
