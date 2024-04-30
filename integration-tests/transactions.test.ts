@@ -49,6 +49,14 @@ describe('Transactions', () => {
     console.log(`${transactions.length} Transactions fetched`);
 
     expect(transactions.length >= 12).toBeTruthy();
+
+    const transaction = transactions.find(tx => tx.hash === '0x72bf313be160e6273a133ede20176e419af488d68826a478c02ff06b8db2888b');
+
+    expect(transaction).toBeDefined();
+    expect(transaction.amount).toBe(52981);
+    expect(transaction.feeAmount).toBe(2.085);
   });
+
+
   afterAll(() => closeWallet());
 });
