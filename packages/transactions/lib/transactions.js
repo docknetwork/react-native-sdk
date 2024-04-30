@@ -109,6 +109,16 @@ async function addTransaction(transaction) {
   }
 }
 
+async function addTransactions(transactions) {
+  try {
+    const data = await getAllTransactions();
+    data.push(...transactions);
+    await getLocalStorage().setItem('transactions', JSON.stringify(data));
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 async function upsertTransaction(transaction) {
   try {
     const data = await getAllTransactions();
@@ -213,7 +223,7 @@ export class Transactions {
       dbTransactions = [];
     }
 
-    const handleTransaction = tx => {
+    const parseTransaction = tx => {
       if (tx.from !== address && tx.to !== address) {
         return;
       }
@@ -231,14 +241,16 @@ export class Transactions {
         status: 'complete',
         date: new Date(parseInt(tx.block_timestamp + '000', 10)),
       };
-      addTransaction(newTx);
+
+      return newTx;
     };
     let data;
     let page = 0;
     do {
       try {
         data = await fetchTransactions({address, page});
-        data.items.forEach(handleTransaction);
+        const transactionsToAdd = data.items.map(parseTransaction).filter(Boolean);
+        await addTransactions(transactionsToAdd);
         Wallet.getInstance().eventManager.emit(
           TransactionEvents.added,
           address,
