@@ -98,7 +98,7 @@ export async function proofRequestResolver({
   const isProofRequest =
     document.type === 'proof-request' && document.qr;
 
-  if (document.type !== 'proof-request') {
+  if (!isProofRequest) {
     return null;
   }
 
