@@ -12,6 +12,7 @@ export type DocumentNetworkResolver = (
 export type DocumentResolverResult = {
   networkId: string;
   isFallback: boolean;
+  resolver?: Function;
 };
 
 export type Network = {
