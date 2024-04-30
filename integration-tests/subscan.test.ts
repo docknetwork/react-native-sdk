@@ -13,7 +13,7 @@ function validateSchema(item) {
 describe('subscan integration', () => {
   it('should fetch transactions using subscan APIs', async () => {
     const {items} = await fetchTransactions({
-      address: '3HM9DYxHe5tAwh2cuErNHiLxSMDJhetxaVGCDTYXiwyuuHN6',
+      address: accountAddress,
     });
 
     expect(items.length > 0).toBe(true);
