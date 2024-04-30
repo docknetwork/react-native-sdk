@@ -7,6 +7,7 @@ function validateSchema(item) {
   expect(item.to).toBeDefined();
   expect(item.hash).toBeDefined();
   expect(item.amount).toBeDefined();
+  expect(item.amount_v2).toBeDefined();
   expect(item.fee).toBeDefined();
 }
 
