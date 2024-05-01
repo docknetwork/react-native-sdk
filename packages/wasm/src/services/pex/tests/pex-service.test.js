@@ -308,7 +308,7 @@ describe('Pex Examples', () => {
       },
     ];
 
-    const presentationDefinition = {
+    let presentationDefinition = {
       id: 'income_test',
       input_descriptors: [
         {
@@ -337,7 +337,33 @@ describe('Pex Examples', () => {
       ],
     };
 
-    const results = pexService.filterCredentials({
+    let results = pexService.filterCredentials({
+      credentials,
+      presentationDefinition,
+    });
+
+    expect(results.verifiableCredential).toBeTruthy();
+
+    presentationDefinition = {
+      id: '4970377a-6283-46d8-b95e-db99b011e48c',
+      input_descriptors: [
+        {
+          id: 'Credential 1',
+          name: 'Credential type exists',
+          purpose: 'optional field',
+          constraints: {
+            fields: [
+              {
+                path: ['$.type[*]'],
+                optional: true,
+              },
+            ],
+          },
+        },
+      ],
+    };
+
+    results = pexService.filterCredentials({
       credentials,
       presentationDefinition,
     });
@@ -363,9 +389,6 @@ describe('Pex Examples', () => {
             constraints: {
               fields: [
                 {
-                  path: ['$.credentialSubject.id'],
-                },
-                {
                   path: ['$.type[*]'],
                   filter: {
                     const: '',
@@ -383,9 +406,10 @@ describe('Pex Examples', () => {
       };
 
       expect(getFieldsWithOptionalAttributes(template)).toBe(2);
-      expect(
-        getFieldsWithOptionalAttributes(removeOptionalAttribute(template)),
-      ).toBe(0);
+
+      let result = removeOptionalAttribute(template);
+      expect(getFieldsWithOptionalAttributes(result)).toBe(0);
+      expect(result.input_descriptors[0].constraints.fields.length).toBe(1);
 
       template = {
         id: 'income_test',
@@ -413,9 +437,10 @@ describe('Pex Examples', () => {
       };
 
       expect(getFieldsWithOptionalAttributes(template)).toBe(1);
-      expect(
-        getFieldsWithOptionalAttributes(removeOptionalAttribute(template)),
-      ).toBe(0);
+
+      result = removeOptionalAttribute(template);
+      expect(getFieldsWithOptionalAttributes(result)).toBe(0);
+      expect(result.input_descriptors[0].constraints.fields.length).toBe(1);
 
       template = {
         id: 'income_test',
@@ -436,9 +461,33 @@ describe('Pex Examples', () => {
       };
 
       expect(getFieldsWithOptionalAttributes(template)).toBe(0);
-      expect(
-        getFieldsWithOptionalAttributes(removeOptionalAttribute(template)),
-      ).toBe(0);
+      result = removeOptionalAttribute(template);
+      expect(getFieldsWithOptionalAttributes(result)).toBe(0);
+      expect(result.input_descriptors[0].constraints.fields.length).toBe(1);
+
+      template = {
+        id: 'income_test',
+        input_descriptors: [
+          {
+            id: 'Credential 1',
+            name: 'optional field',
+            purpose: 'optional field',
+            constraints: {
+              fields: [
+                {
+                  path: ['$.credentialSubject.id'],
+                  optional: true,
+                },
+              ],
+            },
+          },
+        ],
+      };
+
+      expect(getFieldsWithOptionalAttributes(template)).toBe(1);
+      result = removeOptionalAttribute(template);
+      expect(getFieldsWithOptionalAttributes(result)).toBe(0);
+      expect(result.input_descriptors[0].constraints.fields.length).toBe(1);
     });
   });
 });

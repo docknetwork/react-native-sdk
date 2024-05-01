@@ -12,6 +12,7 @@ import {
 import {IWallet} from '../types';
 import {IMessageProvider} from '../message-provider';
 import {logger} from '@docknetwork/wallet-sdk-data-store/src/logger';
+import { EventEmitter } from 'events';
 
 const ProofRequestTemplateType = 'ProofRequestTemplate';
 
@@ -29,6 +30,12 @@ export interface IWalletToWalletVerificationProvider {
   addProofRequestTemplate: (proofRequestTemplate: any) => Promise<any>;
   getProofRequestTemplates: () => Promise<any[]>;
   handleMessage: (message: any) => Promise<boolean>;
+  eventEmitter: EventEmitter;
+}
+
+export const Events = {
+  VerifierFlowStarted: 'VerifierFlowStarted',
+  HolderFlowStarted: 'HolderFlowStarted',
 }
 
 export function createWalletToWalletVerificationProvider({
@@ -47,7 +54,10 @@ export function createWalletToWalletVerificationProvider({
   // Can be used by the HOLDER to render the verification results sent by the verifier
   let presentationAckHandler;
 
+  const eventEmitter = new EventEmitter();
+
   return {
+    eventEmitter,
     getInvitationOOBMessage: async ({templateId}) => {
       const defaultDID = await didProvider.getDefaultDID();
       const template = await wallet.getDocumentById(templateId);
@@ -100,6 +110,9 @@ export function createWalletToWalletVerificationProvider({
             verifierDID: message.from,
           }),
         );
+
+        eventEmitter.emit(Events.HolderFlowStarted);
+
         return true;
       }
 
@@ -132,6 +145,8 @@ export function createWalletToWalletVerificationProvider({
               verifierDID: defaultDID,
             }),
           );
+
+          eventEmitter.emit(Events.VerifierFlowStarted);
         }
 
         process();
