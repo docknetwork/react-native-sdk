@@ -165,6 +165,7 @@ export function useDocuments({type}) {
   }, [fetchDocuments, setLoading]);
 
   useEventListener(getWallet().eventManager, events, fetchDocuments);
+  useEventListener(getWallet().eventManager, [WalletEvents.networkUpdated], ()=> fetchDocuments(null, true));
 
   return {
     documents,
