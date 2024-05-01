@@ -245,7 +245,7 @@ export class Transactions {
         return;
       }
       const newTx = {
-        amount: parseInt(tx.amount_v2 || tx.amount, 10) / 1000000,
+        amount: parseFloat(tx.amount),
         feeAmount: parseInt(tx.fee, 10) / 1000000,
         recipientAddress: tx.to,
         fromAddress: tx.from,
