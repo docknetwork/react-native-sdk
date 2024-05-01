@@ -83,13 +83,18 @@ export async function getOrCreateWallet(params: DataStoreConfigs = {} as any) {
 
   return wallet;
 }
+
+export const DEFAULT_WALLET_CONFIGS: any = {
+  databasePath: 'dock-wallet',
+  dbType: 'react-native',
+  testNetworkId: 'testnet',
+  mainNetworkId: 'mainnet',
+  documentNetworkResolver: dockDocumentNetworkResolver,
+};
+
 export async function initializeWallet(params: DataStoreConfigs = {} as any) {
   const _wallet = await createWallet({
-    databasePath: 'dock-wallet',
-    dbType: 'react-native',
-    testNetworkId: 'testnet',
-    mainNetworkId: 'mainnet',
-    documentNetworkResolver: dockDocumentNetworkResolver,
+    ...DEFAULT_WALLET_CONFIGS,
     ...params,
   });
 
