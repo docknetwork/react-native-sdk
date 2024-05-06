@@ -177,7 +177,7 @@ class CredentialService {
     validation.createBBSPresentation(params);
     const {credentials} = params;
 
-    const bbsPlusPresentation = new BbsPlusPresentation();
+    const bbsPlusPresentation = new Presentation();
     for (const {credential, attributesToReveal} of credentials) {
       const idx = await bbsPlusPresentation.addCredentialToPresent(credential, {
         resolver: dockService.resolver,
@@ -260,6 +260,7 @@ class CredentialService {
     const presentation = new Presentation();
     const selectedCredentials = credentials.map(({credential}) => credential);
     let descriptorBounds = [];
+    debugger;
 
     for (const {credential} of credentials) {
       await presentation.addCredentialToPresent(credential, {
