@@ -12,7 +12,7 @@ export type NetworkId = 'mainnet' | 'testnet' | 'local' | 'custom';
 export const SUBSTRATE_NETWORKS = {
   mainnet: {
     name: 'Dock PoS Mainnet',
-    substrateUrl: 'wss://mainnet-node.dock.io',
+    substrateUrl: ['wss://mainnet-node.dock.io', 'mainnet-node-2.dock.io'],
     addressPrefix: 22,
   },
   testnet: {
