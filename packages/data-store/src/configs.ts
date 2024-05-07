@@ -11,7 +11,7 @@ export const DEFAULT_CONFIGS: DataStoreConfigs = {
       id: 'mainnet',
       credentialHostnames: ['creds.dock.io'],
       configs: {
-        substrateUrl: 'wss://mainnet-node.dock.io',
+        substrateUrl: ['wss://mainnet-node.dock.io', 'wss://mainnet-node-2.dock.io'],
         addressPrefix: 22,
       },
     },
