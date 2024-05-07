@@ -1,3 +1,4 @@
+import {SUBSTRATE_NETWORKS} from '@docknetwork/wallet-sdk-wasm/src/modules/network-manager';
 import {DataStoreConfigs} from './types';
 import {genericDocumentNetworkResolver} from './document-network-resolver';
 
@@ -10,19 +11,13 @@ export const DEFAULT_CONFIGS: DataStoreConfigs = {
       name: 'Mainnet',
       id: 'mainnet',
       credentialHostnames: ['creds.dock.io'],
-      configs: {
-        substrateUrl: ['wss://mainnet-node.dock.io', 'wss://mainnet-node-2.dock.io'],
-        addressPrefix: 22,
-      },
+      configs: SUBSTRATE_NETWORKS.mainnet,
     },
     {
       name: 'Testnet',
       id: 'testnet',
       credentialHostnames: [/creds-.*\.dock\.io/],
-      configs: {
-        substrateUrl: 'wss://knox-1.dock.io',
-        addressPrefix: 21,
-      },
+      configs: SUBSTRATE_NETWORKS.testnet,
     },
   ],
 };
