@@ -11,6 +11,7 @@ import {
   getWallet,
   setupEnvironent,
 } from './helpers';
+import {NetworkManager} from '@docknetwork/wallet-sdk-wasm/src/modules/network-manager';
 
 describe('Transactions', () => {
   let wallet;
@@ -38,6 +39,24 @@ describe('Transactions', () => {
 
     expect(feeAmount > 0).toBeTruthy();
   });
+
+  it('should fetch transaction history', async () => {
+    NetworkManager.getInstance().setNetworkId('mainnet');
+    const txModule = Transactions.getInstance();
+    const accountAddress = '3HM9DYxHe5tAwh2cuErNHiLxSMDJhetxaVGCDTYXiwyuuHN6';
+    await txModule.loadExternalTransactions(accountAddress);
+    const transactions = await txModule.loadTransactions(accountAddress);
+    console.log(`${transactions.length} Transactions fetched`);
+
+    expect(transactions.length >= 12).toBeTruthy();
+
+    const transaction = transactions.find(tx => tx.hash === '0x72bf313be160e6273a133ede20176e419af488d68826a478c02ff06b8db2888b');
+
+    expect(transaction).toBeDefined();
+    expect(transaction.amount).toBe(52981);
+    expect(transaction.feeAmount).toBe(2.085);
+  });
+
 
   afterAll(() => closeWallet());
 });

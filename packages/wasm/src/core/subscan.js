@@ -15,12 +15,11 @@ axiosRetry(axios, {
 });
 
 const SUBSCAN_URL = 'https://dock.api.subscan.io';
+export const SUBSCAN_TRANSFER_URL = `${SUBSCAN_URL}/api/v2/scan/transfers`;
 
 const queue = new TaskQueue(global.Promise, 1);
 
 function doFetchTransactions({address, page = 0, itemsPerPage = 50}) {
-  const url = `${SUBSCAN_URL}/api/scan/transfers`;
-
   assert(typeof address === 'string', 'address must be a string');
   assert(typeof page === 'number', 'page must be a number');
   assert(typeof itemsPerPage === 'number', 'itemsPerPage must be a number');
@@ -32,13 +31,13 @@ function doFetchTransactions({address, page = 0, itemsPerPage = 50}) {
   };
 
   Logger.info(
-    `Fetching transactions from subscan ${url} with body ${JSON.stringify(
+    `Fetching transactions from subscan ${SUBSCAN_TRANSFER_URL} with body ${JSON.stringify(
       body,
     )}`,
   );
 
   return axios
-    .post(url, body, {})
+    .post(SUBSCAN_TRANSFER_URL, body, {})
     .then(res => {
       const {data, message} = res.data;
 

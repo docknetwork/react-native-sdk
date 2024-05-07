@@ -109,6 +109,16 @@ async function addTransaction(transaction) {
   }
 }
 
+async function addTransactions(transactions) {
+  try {
+    const data = await getAllTransactions();
+    data.push(...transactions);
+    await getLocalStorage().setItem('transactions', JSON.stringify(data));
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 async function upsertTransaction(transaction) {
   try {
     const data = await getAllTransactions();
@@ -135,6 +145,10 @@ async function removeTransaction(transactionId) {
   } catch (err) {
     console.error(err);
   }
+}
+
+function isV1Transaction(tx) {
+  return typeof tx.amount === 'string';
 }
 
 /** Transactions */
@@ -213,16 +227,26 @@ export class Transactions {
       dbTransactions = [];
     }
 
-    const handleTransaction = tx => {
+    const v1Transactions = dbTransactions.filter(isV1Transaction);
+
+    if (v1Transactions.length) {
+      dbTransactions = [];
+      // Remove all transactions from cache in case v1 items are found
+      // It will force a re-fetch using v2 API
+      await getLocalStorage().setItem('transactions', JSON.stringify([]));
+    }
+
+    const parseTransaction = tx => {
       if (tx.from !== address && tx.to !== address) {
         return;
       }
-      if (dbTransactions.find(item => item.hash === tx.hash)) {
+      const txExists = dbTransactions.find(item => item.hash === tx.hash);
+      if (txExists) {
         return;
       }
       const newTx = {
-        amount: tx.amount,
-        feeAmount: tx.fee,
+        amount: parseFloat(tx.amount),
+        feeAmount: parseInt(tx.fee, 10) / 1000000,
         recipientAddress: tx.to,
         fromAddress: tx.from,
         id: tx.hash,
@@ -231,14 +255,16 @@ export class Transactions {
         status: 'complete',
         date: new Date(parseInt(tx.block_timestamp + '000', 10)),
       };
-      addTransaction(newTx);
+
+      return newTx;
     };
     let data;
     let page = 0;
     do {
       try {
         data = await fetchTransactions({address, page});
-        data.items.forEach(handleTransaction);
+        const transactionsToAdd = data.items.map(parseTransaction).filter(Boolean);
+        await addTransactions(transactionsToAdd);
         Wallet.getInstance().eventManager.emit(
           TransactionEvents.added,
           address,
