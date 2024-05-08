@@ -3,16 +3,16 @@ import assert from 'assert';
 
 export type NetworkInfo = {
   name: string,
-  substrateUrl: string,
+  substrateUrl: string | string[],
   addressPrefix: number,
 };
 
 export type NetworkId = 'mainnet' | 'testnet' | 'local' | 'custom';
 
-export const SUBSTRATE_NETWORKS = {
+export const SUBSTRATE_NETWORKS : Record<NetworkId, NetworkInfo> = {
   mainnet: {
     name: 'Dock PoS Mainnet',
-    substrateUrl: ['wss://mainnet-node.dock.io', 'mainnet-node-2.dock.io'],
+    substrateUrl: ['wss://mainnet-node.dock.io', 'wss://mainnet-node-2.dock.io'],
     addressPrefix: 22,
   },
   testnet: {
