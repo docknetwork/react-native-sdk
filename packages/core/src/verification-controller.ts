@@ -179,7 +179,7 @@ export function createVerificationController({
             credentials: [
               {
                 credential: credentialSelection.credential,
-                witness: isBBS ? await credentialProvider.getMembershipWitness(credentialSelection.credential.id) : null,
+                witness: await credentialProvider.getMembershipWitness(credentialSelection.credential.id),
                 attributesToReveal: [
                   ...(credentialSelection.attributesToReveal || []),
                   'id',
