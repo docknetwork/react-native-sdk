@@ -308,7 +308,7 @@ describe('Credential Service', () => {
   });
   it('expect to derive vc from bbs+ presentation', async () => {
     const error1 = await getPromiseError(() =>
-      service.deriveVCFromPresentation({
+      service.deriveVCFromBBSPresentation({
         credentials: [],
       }),
     );
@@ -362,7 +362,7 @@ describe('Credential Service', () => {
       {credential, attributesToReveal: ['credentialSubject.givenName']},
     ];
 
-    await service.deriveVCFromPresentation({
+    await service.deriveVCFromBBSPresentation({
       credentials,
     });
 

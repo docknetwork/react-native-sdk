@@ -19,7 +19,7 @@ export const validation = {
     assert(Array.isArray(credentials), 'invalid credentials');
     assert(credentials.length > 0, 'no credential found');
   },
-  deriveVCFromPresentation: params => {
+  deriveVCFromBBSPresentation: params => {
     const {credentials} = params;
     assert(Array.isArray(credentials), 'invalid credentials');
     assert(credentials.length > 0, 'no credential found');
