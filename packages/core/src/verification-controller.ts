@@ -151,10 +151,6 @@ export function createVerificationController({
     return credentialServiceRPC.isBBSPlusCredential({credential});
   }
 
-  async function isBDDTCredential(credential) {
-    return credentialServiceRPC.isBDDTCredential({credential});
-  }
-
   async function createPresentation() {
     assert(!!selectedDID, 'No DID selected');
     assert(!!selectedCredentials.size, 'No credentials selected');
@@ -168,12 +164,13 @@ export function createVerificationController({
 
     for (const credentialSelection of selectedCredentials.values()) {
       const isBBS = await isBBSPlusCredential(credentialSelection.credential);
-      const isBDDT = await isBDDTCredential(credentialSelection.credential);
 
-      if (isBBS || isBDDT) {
-        // derive credential
+      if (!isBBS) {
+        credentials.push(credentialSelection.credential);
+      } else {
+        // derive BBS credential
         const derivedCredentials =
-          await credentialServiceRPC.deriveVCFromPresentation({
+          await credentialServiceRPC.deriveVCFromBBSPresentation({
             proofRequest: templateJSON,
             
             credentials: [
@@ -191,8 +188,6 @@ export function createVerificationController({
         console.log('Credential derived');
 
         credentials.push(derivedCredentials[0]);
-      } else {
-        credentials.push(credentialSelection.credential);
       }
     }
 
