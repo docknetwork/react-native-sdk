@@ -15,7 +15,7 @@ import VerifiableCredential from '@docknetwork/sdk/verifiable-credential';
 import {getKeypairFromDoc} from '@docknetwork/universal-wallet/methods/keypairs';
 import {getSuiteFromKeyDoc} from '@docknetwork/sdk/utils/vc/helpers';
 import VerifiablePresentation from '@docknetwork/sdk/verifiable-presentation';
-import Presentation from '@docknetwork/sdk/presentation';
+import BbsPlusPresentation from '@docknetwork/sdk/presentation';
 import {verifyCredential} from '@docknetwork/sdk/utils/vc/credentials';
 import {PEX} from '@sphereon/pex';
 import {keyDocToKeypair} from './utils';
@@ -40,12 +40,6 @@ export function isBBSPlusCredential(credential) {
   );
 }
 
-export function isBDDTCredential(credential) {
-  return (
-    (typeof credential?.proof?.type === 'string' && credential.proof.type === 'Bls12381BDDT16MACDock2024')
-  );
-}
-
 class CredentialService {
   constructor() {
     this.name = serviceName;
@@ -56,9 +50,8 @@ class CredentialService {
     CredentialService.prototype.createPresentation,
     CredentialService.prototype.verifyCredential,
     CredentialService.prototype.createBBSPresentation,
-    CredentialService.prototype.deriveVCFromPresentation,
+    CredentialService.prototype.deriveVCFromBBSPresentation,
     CredentialService.prototype.isBBSPlusCredential,
-    CredentialService.prototype.isBDDTCredential,
   ];
   generateCredential(params = {}) {
     validation.generateCredential(params);
@@ -168,16 +161,11 @@ class CredentialService {
     return isBBSPlusCredential(credential);
   }
 
-  isBDDTCredential(params) {
-    const {credential} = params;
-    return isBDDTCredential(credential);
-  }
-
   async createBBSPresentation(params) {
     validation.createBBSPresentation(params);
     const {credentials} = params;
 
-    const bbsPlusPresentation = new Presentation();
+    const bbsPlusPresentation = new BbsPlusPresentation();
     for (const {credential, attributesToReveal} of credentials) {
       const idx = await bbsPlusPresentation.addCredentialToPresent(credential, {
         resolver: dockService.resolver,
@@ -254,16 +242,15 @@ class CredentialService {
     return witness.toJSON();
   }
 
-  async deriveVCFromPresentation(params) {
-    validation.deriveVCFromPresentation(params);
+  async deriveVCFromBBSPresentation(params) {
+    validation.deriveVCFromBBSPresentation(params);
     const {credentials, options = {}, proofRequest} = params;
-    const presentation = new Presentation();
+    const bbsPlusPresentation = new BbsPlusPresentation();
     const selectedCredentials = credentials.map(({credential}) => credential);
     let descriptorBounds = [];
-    debugger;
 
     for (const {credential} of credentials) {
-      await presentation.addCredentialToPresent(credential, {
+      await bbsPlusPresentation.addCredentialToPresent(credential, {
         resolver: dockService.resolver,
       });
     }
@@ -271,7 +258,7 @@ class CredentialService {
     if (proofRequest && hasProvingKey(proofRequest)) {
       const {provingKey, provingKeyId} = await fetchProvingKey(proofRequest);
       descriptorBounds = applyEnforceBounds({
-        builder: presentation.presBuilder,
+        builder: bbsPlusPresentation.presBuilder,
         proofRequest,
         provingKey,
         provingKeyId,
@@ -297,19 +284,19 @@ class CredentialService {
       });
 
       if (Array.isArray(filteredAttributes) && filteredAttributes.length > 0) {
-        presentation.addAttributeToReveal(idx, filteredAttributes);
+        bbsPlusPresentation.addAttributeToReveal(idx, filteredAttributes);
       }
 
       if (witness) {
         const details = await getWitnessDetails(credential, witness);
-        presentation.presBuilder.addAccumInfoForCredStatus(idx, details.membershipWitness, details.accumulator.accumulated, details.pk, details.params);
+        bbsPlusPresentation.presBuilder.addAccumInfoForCredStatus(idx, details.membershipWitness, details.accumulator.accumulated, details.pk, details.params);
       }
 
       idx++;
     }
 
     const credentialsFromPresentation =
-      await presentation.deriveCredentials(options);
+      await bbsPlusPresentation.deriveCredentials(options);
 
     return credentialsFromPresentation;
   }
