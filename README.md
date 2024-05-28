@@ -129,3 +129,7 @@ https://github.com/docknetwork/wallet-sdk-examples
 ## Docs
 
 https://docknetwork.github.io/react-native-sdk/
+
+## Features
+- [Biometric Plugin](docs/biometric-plugin.md)
+- [Ecosystem Tools](docs/ecosystem-tools.md)
