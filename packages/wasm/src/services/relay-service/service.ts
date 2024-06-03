@@ -5,6 +5,7 @@ import {
   RegisterDIDPushNotificationParams,
   serviceName,
   validation,
+  AckMessagesParams,
 } from './configs';
 
 import {RelayService as relayServiceClient} from '@docknetwork/wallet-sdk-relay-service/src';
@@ -30,6 +31,10 @@ export class RelayService {
   sendMessage(params: SendMessageParams) {
     validation.sendMessage(params);
     return relayServiceClient.sendMessage(params as any);
+  }
+
+  ackMessages(params: AckMessagesParams) {
+    return relayServiceClient.ackMessage(params);
   }
 
   resolveDidcommMessage(params: ResolveDidcommMessageParams) {

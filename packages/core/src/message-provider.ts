@@ -105,6 +105,7 @@ export function createMessageProvider({
         limit: FETCH_MESSAGE_LIMIT,
         skipMessageResolution: true,
       });
+      const messageIdsPerDid = {};
 
       if (encryptedMessages.length) {
         console.log(`Fetched ${encryptedMessages.length} messages`);
@@ -112,6 +113,12 @@ export function createMessageProvider({
 
       for (const message of encryptedMessages) {
         try {
+          if (!messageIdsPerDid[message.to]) {
+            messageIdsPerDid[message.to] = [];
+          }
+
+          messageIdsPerDid[message.to].push(message._id);
+
           await wallet.addDocument({
             id: message._id,
             type: WalletDocumentTypes.DIDCommMessage,
@@ -121,6 +128,13 @@ export function createMessageProvider({
           // this message will be lost if it fails to be stored in the wallet
           captureException(err);
         }
+      }
+  
+      for (const [did, messageIds] of Object.entries(messageIdsPerDid)) {
+        await relayService.ackMessages({
+          did,
+          messageIds,
+        });
       }
 
       if (encryptedMessages.length > 0) {
@@ -221,5 +235,5 @@ export function createMessageProvider({
     addMessageListener,
     processDIDCommMessages,
     markMessageAsRead,
-  };
+  } as any;
 }
