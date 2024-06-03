@@ -19,6 +19,10 @@ export const validation = {
     assert(!!keyPairDocs, 'keyPairDoc is required');
     assert(!!message, 'message is required');
   },
+  ackMessages({did, messageIds}: AckMessagesParams) {
+    assert(!!did, 'did is required');
+    assert(!!messageIds, 'messageIds is required');
+  },
   registerDIDPushNotification({
     keyPairDocs,
     token,
@@ -43,6 +47,11 @@ export type SendMessageParams = {
   keyPairDoc: any,
   recipientDid: string,
   message: string,
+};
+
+export type AckMessagesParams = {
+  did: string,
+  messageIds: string[],
 };
 
 export type ResolveDidcommMessageParams = {

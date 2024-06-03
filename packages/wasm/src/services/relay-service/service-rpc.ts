@@ -6,6 +6,7 @@ import {
   RegisterDIDPushNotificationParams,
   serviceName,
   validation,
+  AckMessagesParams,
 } from './configs';
 
 export class RelayServiceRpc extends RpcService {
@@ -36,5 +37,9 @@ export class RelayServiceRpc extends RpcService {
   signJwt(params: ResolveDidcommMessageParams) {
     validation.signJwt(params);
     return this.call('signJwt', params);
+  }
+
+  ackMessages(params: AckMessagesParams) {
+    return this.call('ackMessages', params);
   }
 }
