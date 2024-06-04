@@ -34,7 +34,7 @@ export class RelayService {
   }
 
   ackMessages(params: AckMessagesParams) {
-    return relayServiceClient.ackMessage(params);
+    return relayServiceClient.ackMessages(params);
   }
 
   resolveDidcommMessage(params: ResolveDidcommMessageParams) {
