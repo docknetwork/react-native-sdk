@@ -78,7 +78,7 @@ const getMessages = async ({
     const result = await axios.get(
       `${serviceURL}/messages/batch-dids?dids=${encodeURIComponent(
         JSON.stringify(dids),
-      )}&payload=${toBase64(payload)}&keep=true`,
+      )}&payload=${toBase64(payload)}&keepMessages=true`,
     );
 
     const data = result.data;
