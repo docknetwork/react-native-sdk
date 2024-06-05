@@ -7,6 +7,9 @@ import {
 import {createVerificationController} from '@docknetwork/wallet-sdk-core/src/verification-controller';
 import {ProofTemplateIds, createProofRequest} from '../helpers/certs-helpers';
 
+const testAPIURL = process.env.TESTING_API_URL || null;
+const testCredsURL = testAPIURL.replace('api-', 'creds-');
+
 const credential = {
   "@context": [
       "https://www.w3.org/2018/credentials/v1",
@@ -17,7 +20,7 @@ const credential = {
           "name": "dk:name"
       }
   ],
-  "id": "https://***REMOVED***/f20a0b87efb4ccd4313b2d08056e48e12a1927d747d68bb2d45c722d9cd8e6be",
+  "id": `${testCredsURL}/f20a0b87efb4ccd4313b2d08056e48e12a1927d747d68bb2d45c722d9cd8e6be`,
   "type": [
       "VerifiableCredential",
       "BasicCredential"
