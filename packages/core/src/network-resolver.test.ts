@@ -145,10 +145,10 @@ describe('Wallet', () => {
     it('should detect a testnet proof request', async () => {
       let result = await dockDocumentNetworkResolver({
         document: {
-          qr: 'https://***REMOVED***/proof/4970377a-6283-46d8-b95e-db99b011e48c',
+          qr: 'https://creds-testnet.dock.io/proof/4970377a-6283-46d8-b95e-db99b011e48c',
           id: '4970377a-6283-46d8-b95e-db99b011e48c',
           response_url:
-            'https://***REMOVED***/proof-requests/4970377a-6283-46d8-b95e-db99b011e48c/send-presentation',
+            'https://api-testnet.dock.io/proof-requests/4970377a-6283-46d8-b95e-db99b011e48c/send-presentation',
           type: 'proof-request',
         },
         dataStore: wallet.dataStore,
@@ -178,7 +178,7 @@ describe('Wallet', () => {
           qr: 'https://creds.dock.io/proof/4970377a-6283-46d8-b95e-db99b011e48c',
           id: '4970377a-6283-46d8-b95e-db99b011e48c',
           response_url:
-            'https://***REMOVED***/proof-requests/4970377a-6283-46d8-b95e-db99b011e48c/send-presentation',
+            'https://api-testnet.dock.io/proof-requests/4970377a-6283-46d8-b95e-db99b011e48c/send-presentation',
           type: 'proof-request',
         },
         dataStore: wallet.dataStore,
