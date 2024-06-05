@@ -78,7 +78,7 @@ const getMessages = async ({
     const result = await axios.get(
       `${serviceURL}/messages/batch-dids?dids=${encodeURIComponent(
         JSON.stringify(dids),
-      )}&payload=${toBase64(payload)}`,
+      )}&payload=${toBase64(payload)}&keepMessages=true`,
     );
 
     const data = result.data;
@@ -107,6 +107,15 @@ const getMessages = async ({
     console.error(err.response);
     return err;
   }
+};
+
+const ackMessages = ({did, messageIds}) => {
+  assert(!!did, 'did is required');
+  assert(!!messageIds, 'messageIds is required');
+  return axios.post(`${serviceURL}/messages/ack`, {
+    ack: messageIds,
+    did,
+  });
 };
 
 const registerDIDPushNotification = async ({keyPairDocs, token}) => {
@@ -265,6 +274,7 @@ export const RelayService = {
   resolveDidcommMessage,
   registerDIDPushNotification,
   setServiceURL,
+  ackMessages,
   serviceURL,
   signJwt,
 };

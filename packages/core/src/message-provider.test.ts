@@ -25,6 +25,7 @@ describe('MessageProvider', () => {
   beforeEach(async () => {
     relayService = {
       sendMessage: jest.fn(),
+      ackMessages: jest.fn(),
       getMessages: jest.fn().mockResolvedValue(didCommMessages),
       resolveDidcommMessage: jest.fn().mockImplementation(({ message }) => message),
     };
@@ -35,7 +36,7 @@ describe('MessageProvider', () => {
     didProvider = createDIDProvider({
       wallet,
     });
-    didProvider.getDIDKeyPairs = jest.fn().mockResolvedValue([{controller: "someDid"}])
+    didProvider.getDIDKeyPairs = jest.fn().mockResolvedValue([{controller: "did:key:z6MkoQzWru66w91EH7U9Xsv5eYXQabw9U3ZJd5GkatMWkmZT"}])
     messageProvider = createMessageProvider({
       wallet,
       didProvider,
@@ -51,6 +52,8 @@ describe('MessageProvider', () => {
       const walletMessage = await wallet.getDocumentById(message._id);
       expect(walletMessage.encryptedMessage).toEqual(message);
     }
+
+    expect(relayService.ackMessages).toBeCalledWith({did: 'did:key:z6MkoQzWru66w91EH7U9Xsv5eYXQabw9U3ZJd5GkatMWkmZT', messageIds: didCommMessages.map(m => m._id)});
   });
 
   it('should decrypt encrypted messages in the wallet', async () => {
@@ -75,7 +78,7 @@ describe('MessageProvider', () => {
     
     await expect(
       messageProvider.sendMessage({
-        did: 'someDid',
+        did: 'did:key:z6MkoQzWru66w91EH7U9Xsv5eYXQabw9U3ZJd5GkatMWkmZT',
         message: 'someMessage',
         recipientDid: 'recipientDid',
       })
