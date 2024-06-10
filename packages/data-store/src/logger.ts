@@ -11,6 +11,9 @@ const ConsoleTransport = {
   warn: (message: string) => {
     console.warn(message);
   },
+  performance: (action: string, startTime: number) => {
+    console.log(`[PERFORMANCE] ${action} took ${new Date().getTime() - startTime}ms`);
+  }
 };
 
 export let logger = ConsoleTransport;
@@ -33,5 +36,8 @@ export const createLogger = (prefix: string) => {
     warn: (message: string) => {
       logger.warn(`[${prefix}] ${message}`);
     },
+    performance: (action: string, time: number) => {
+      logger.log(`[PERFORMANCE] ${action} took ${time}ms`);
+    }
   };
 };
