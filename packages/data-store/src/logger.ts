@@ -12,7 +12,7 @@ const ConsoleTransport = {
     console.warn(message);
   },
   performance: (action: string, startTime: number) => {
-    console.log(`[PERFORMANCE] ${action} took ${new Date().getTime() - startTime}ms`);
+    console.log(`[PERFORMANCE] ${action} in ${new Date().getTime() - startTime}ms`);
   }
 };
 
