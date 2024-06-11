@@ -6,6 +6,7 @@ import {
   closeWallet,
 } from './helpers/wallet-helpers';
 import assert from 'assert';
+import { logger } from '@docknetwork/wallet-sdk-data-store/src/logger';
 
 const testAPIURL = process.env.TESTING_API_URL || null;
 
@@ -53,22 +54,23 @@ describe('Credential Distribution', () => {
     const wallet = await getWallet();
     const currentDID = await getDIDProvider().getDefaultDID();
 
-    let time = new Date().getTime();
+    let time = Date.now();
     console.log('Issue credential using certs');
     const result = await issueCredential({
       subjectDID: currentDID,
     });
 
-    console.log(`Credential issued in ${new Date().getTime() - time} ms`);
+    logger.performance('Credential issued', time);
 
-    time = new Date().getTime();
+    time = Date.now();
     console.log('Waiting for distribution message....');
 
     getMessageProvider().startAutoFetch();
 
     const message = await getMessageProvider().waitForMessage();
 
-    console.log(`Credential received in ${new Date().getTime() - time} ms`);
+    logger.performance('Credential received', time);
+
     expect(message.type).toBe(
       'https://didcomm.org/issue-credential/2.0/issue-credential',
     );
