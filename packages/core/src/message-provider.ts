@@ -144,11 +144,11 @@ export function createMessageProvider({
             did,
             messageIds,
           })
+          .then(() => {
+            logger.performance('Acknowledged messages', startTime);
+          })
           .catch(err => {
             console.error('Failed to ack messages', err.message);
-          })
-          .finally(() => {
-            logger.performance('Acknowledged messages', startTime);
           });
       }
 
