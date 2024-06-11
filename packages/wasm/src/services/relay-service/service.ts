@@ -22,6 +22,7 @@ export class RelayService {
     RelayService.prototype.registerDIDPushNotification,
     RelayService.prototype.resolveDidcommMessage,
     RelayService.prototype.signJwt,
+    RelayService.prototype.ackMessages,
   ];
 
   constructor() {

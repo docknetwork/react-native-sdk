@@ -1,4 +1,4 @@
-import { logger } from '@docknetwork/wallet-sdk-data-store/src/logger';
+import {logger} from '@docknetwork/wallet-sdk-data-store/src/logger';
 import {IDIDProvider} from './did-provider';
 import {WalletDocumentTypes, captureException} from './helpers';
 import {IWallet} from './types';
@@ -135,20 +135,21 @@ export function createMessageProvider({
           captureException(err);
         }
       }
-  
+
       for (const [did, messageIds] of Object.entries(messageIdsPerDid)) {
         logger.debug(`Acknowledging messages for ${did}`);
         let startTime = new Date().getTime();
-        // FIXME: https://dock-team.atlassian.net/browse/DCKM-415
-        // We don't need to wait for the ack to complete
-        // Those messages were already stored in the wallet
-        // I will let this as is for now until we see the full performance report
-        await relayService.ackMessages({
-          did,
-          messageIds,
-        });
-
-        logger.performance('Acknowledged messages', startTime);
+        relayService
+          .ackMessages({
+            did,
+            messageIds,
+          })
+          .catch(err => {
+            console.error('Failed to ack messages', err.message);
+          })
+          .finally(() => {
+            logger.performance('Acknowledged messages', startTime);
+          });
       }
 
       if (encryptedMessages.length > 0) {
