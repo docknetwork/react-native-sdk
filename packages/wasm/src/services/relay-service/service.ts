@@ -17,10 +17,11 @@ export class RelayService {
   name: string;
 
   rpcMethods = [
+    RelayService.prototype.ackMessages,
     RelayService.prototype.getMessages,
-    RelayService.prototype.sendMessage,
     RelayService.prototype.registerDIDPushNotification,
     RelayService.prototype.resolveDidcommMessage,
+    RelayService.prototype.sendMessage,
     RelayService.prototype.signJwt,
   ];
 
