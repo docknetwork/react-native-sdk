@@ -5,7 +5,7 @@ import {verifyPresentation} from '@docknetwork/sdk/utils/vc/presentations';
 import {dockService} from '@docknetwork/wallet-sdk-wasm/src/services/dock';
 import {autoLoanProofRequest} from './proof-requests';
 
-const credential1 = {
+const biometricCredential = {
   '@context': [
     'https://www.w3.org/2018/credentials/v1',
     'https://ld.dock.io/security/bbs/v1',
@@ -73,7 +73,7 @@ const credential1 = {
   },
 };
 
-const credential2 = {
+const creditScoreCredential = {
   '@context': [
     'https://www.w3.org/2018/credentials/v1',
     'https://w3id.org/vc/status-list/2021/v1',
@@ -120,7 +120,7 @@ const credential2 = {
   },
 };
 
-const credential3 = {
+const bankIdentityCredential = {
   '@context': [
     'https://www.w3.org/2018/credentials/v1',
     'https://ld.dock.io/security/bbs23/v1',
@@ -325,18 +325,18 @@ describe('BBS+ presentations', () => {
       template: autoLoanProofRequest,
     });
 
-    controller.selectedCredentials.set(credential1.id, {
-      credential: credential1,
+    controller.selectedCredentials.set(biometricCredential.id, {
+      credential: biometricCredential,
       attributesToReveal: ['credentialSubject.id'],
     });
 
-    controller.selectedCredentials.set(credential2.id, {
-      credential: credential2,
+    controller.selectedCredentials.set(creditScoreCredential.id, {
+      credential: creditScoreCredential,
       attributesToReveal: ['credentialSubject.data', 'credentialSubject.biometric.id', 'credentialSubject.biometric.created'],
     });
 
-    controller.selectedCredentials.set(credential3.id, {
-      credential: credential3,
+    controller.selectedCredentials.set(bankIdentityCredential.id, {
+      credential: bankIdentityCredential,
       attributesToReveal: ['credentialSubject.id'],
     });
 
