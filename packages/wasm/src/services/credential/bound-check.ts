@@ -73,6 +73,9 @@ export function applyEnforceBounds({
   let skipProvingKey = false;
 
   descriptorBounds.forEach((items, credentialIdx) => {
+    if (!selectedCredentials[credentialIdx]) {
+      return;
+    }
     items.forEach((bound) => {
       builder.enforceBounds(
         credentialIdx,
