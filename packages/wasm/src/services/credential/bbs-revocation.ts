@@ -27,7 +27,7 @@ async function updateMembershipWitness({
   credential,
   membershipWitness,
   registryId,
-  accumulator,
+  blockNo,
 }) {
   const revocationId = credential.credentialStatus.revocationId;
   const member = Accumulator.encodePositiveNumberAsAccumulatorMember(
@@ -38,7 +38,7 @@ async function updateMembershipWitness({
   try {
     updates = await dock.accumulatorModule.getUpdatesFromBlock(
       registryId,
-      accumulator.lastModified,
+      blockNo,
     );
   } catch (err) {
     if (err.code === UnknownBlockErrorCode) {
@@ -80,6 +80,15 @@ async function updateMembershipWitness({
 }
 
 export const getWitnessDetails = async (credential, _membershipWitness) => {
+  let witness = _membershipWitness;
+  let blockNo;
+
+  try {
+    ({blockNo, witness} = JSON.parse(_membershipWitness));
+  } catch (err) {
+    console.error(err);
+  }
+  
   const {credentialStatus} = credential;
   const registryId = credentialStatus?.id.replace('dock:accumulator:', '');
   const revocationIndex = credentialStatus.revocationId;
@@ -107,24 +116,24 @@ export const getWitnessDetails = async (credential, _membershipWitness) => {
   const params = dockAccumulatorParams();
   const pk = new AccumulatorPublicKey(hexToU8a(publicKey.bytes));
 
-  const membershipWitness = new VBMembershipWitness(
-    hexToU8a(_membershipWitness),
+  let membershipWitness = new VBMembershipWitness(
+    hexToU8a(witness),
   );
 
-  // TODO: Currently working with Lovesh to fix this
-  // https://dock-team.atlassian.net/browse/DCKM-453
-  // try {
-  //   const updatedWitness = await updateMembershipWitness({
-  //     credential,
-  //     membershipWitness: _membershipWitness,
-  //     registryId,
-  //     accumulator: queriedAccumulator,
-  //   });
-  //   membershipWitness = updatedWitness;
+  if(blockNo){
+    try {
+      const updatedWitness = await updateMembershipWitness({
+        credential,
+        membershipWitness: witness,
+        registryId,
+        blockNo,
+      });
+      membershipWitness = updatedWitness;
 
-  // } catch (err) {
-  //   console.error(err);
-  // }
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
   return {
     encodedRevId,
