@@ -42,7 +42,7 @@ export function isBBSPlusCredential(credential) {
 
 export function isBDDTCredential(credential) {
   return (
-    (typeof credential?.proof?.type === 'string' && credential.proof.type === 'Bls12381BDDT16MACDock2024')
+    (typeof credential?.proof?.type === 'string' && credential.proof.type.toLowerCase().includes('bbdt16'))
   );
 }
 
