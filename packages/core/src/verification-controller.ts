@@ -168,9 +168,9 @@ export function createVerificationController({
 
     for (const credentialSelection of selectedCredentials.values()) {
       const isBBS = await isBBSPlusCredential(credentialSelection.credential);
-      const isBDDT = await isKvacCredential(credentialSelection.credential);
+      const isKVAC = await isKvacCredential(credentialSelection.credential);
 
-      if (isBBS || isBDDT) {
+      if (isBBS || isKVAC) {
         // derive credential
         const derivedCredentials =
           await credentialServiceRPC.deriveVCFromPresentation({
