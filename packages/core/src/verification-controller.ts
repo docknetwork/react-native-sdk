@@ -151,8 +151,8 @@ export function createVerificationController({
     return credentialServiceRPC.isBBSPlusCredential({credential});
   }
 
-  async function isBDDTCredential(credential) {
-    return credentialServiceRPC.isBDDTCredential({credential});
+  async function isKvacCredential(credential) {
+    return credentialServiceRPC.isKvacCredential({credential});
   }
 
   async function createPresentation() {
@@ -168,7 +168,7 @@ export function createVerificationController({
 
     for (const credentialSelection of selectedCredentials.values()) {
       const isBBS = await isBBSPlusCredential(credentialSelection.credential);
-      const isBDDT = await isBDDTCredential(credentialSelection.credential);
+      const isBDDT = await isKvacCredential(credentialSelection.credential);
 
       if (isBBS || isBDDT) {
         // derive credential

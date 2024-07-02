@@ -405,4 +405,26 @@ describe('Credential Service', () => {
       );
     });
   });
+
+  it('should check if a credential has KVAC support', () => {
+    expect(
+      service.isKvacCredential({
+        credential: {
+          proof: {
+            type: 'Bls12381BDDT16MACDock2024',
+          },
+        },
+      }),
+    ).toBe(false);
+
+    expect(
+      service.isKvacCredential({
+        credential: {
+          proof: {
+            type: 'Bls12381BBDT16MACDock2024',
+          },
+        },
+      }),
+    ).toBe(true);
+  });
 });
