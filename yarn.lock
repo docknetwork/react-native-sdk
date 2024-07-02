@@ -1659,10 +1659,10 @@
     fix-esm "^1.0.1"
     jsonld digitalcredentials/jsonld.js#v10.x
 
-"@docknetwork/crypto-wasm-ts@0.62.0":
-  version "0.62.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/crypto-wasm-ts/-/crypto-wasm-ts-0.62.0.tgz#c0b08039ff49379d5b1d8bcd10dbc4e899acd972"
-  integrity sha512-wiFOSLtJUHuB/FxBBeP9m9vitN5DZgE6Xkc49lUm65qSrUMsdrf4WHxuY2bnthTHv2ZmrLbD7MoIAwCAlT8Saw==
+"@docknetwork/crypto-wasm-ts@0.63.0":
+  version "0.63.0"
+  resolved "https://registry.yarnpkg.com/@docknetwork/crypto-wasm-ts/-/crypto-wasm-ts-0.63.0.tgz#f1ab39693b63e70d682d362e9eacd85842ae56e0"
+  integrity sha512-KryDPIf6suwi5NS1iqA76vpuLmZv4PLV1Dt7I6Z4YS3rDKK43m7j8mox6lhQgkVL7QZdJ1DdZGxcPLekXZYQ1w==
   dependencies:
     "@types/flat" "^5.0.2"
     "@types/lodash" "^4.14.195"
@@ -1691,13 +1691,13 @@
   resolved "https://registry.yarnpkg.com/@docknetwork/node-types/-/node-types-0.17.0.tgz#ca0ddb5b819e012e8f2f112353008325de4f3e33"
   integrity sha512-aSRFtCwLhdhcY1wqX3WfhPpY2QXVqaB9kNB3e5+ajCWXtc0wuKJePpnSZEO4RqUEUKV5Y3LcsQ52ZB+aJ1PpFw==
 
-"@docknetwork/sdk@8.5.0":
-  version "8.5.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/sdk/-/sdk-8.5.0.tgz#f81c18b7acf51b76658bb41d886205f5a8ebac18"
-  integrity sha512-XYs1uVB3J3KS2wH3EFc1O0j0NA22c2pY7ZG7Sy4V8qzy0TkpK4MLgHKwH+wxSAPtRQ0SDqD6SfYcYtjxvxGPSQ==
+"@docknetwork/sdk@8.6.0":
+  version "8.6.0"
+  resolved "https://registry.yarnpkg.com/@docknetwork/sdk/-/sdk-8.6.0.tgz#aac2e0097ff79c74ea9d8836eea2cb8a2b8a71c7"
+  integrity sha512-aPW6f915n5fl4a1/kxe4J52Polqxg7/H0LJSRCeGbLpQntKRVkJ3u9x1aaKSRPnYvsFEgao/skuiFetupn64hg==
   dependencies:
     "@digitalcredentials/vc-status-list" "^8.0.0"
-    "@docknetwork/crypto-wasm-ts" "0.62.0"
+    "@docknetwork/crypto-wasm-ts" "0.63.0"
     "@docknetwork/node-types" "^0.17.0"
     "@juanelas/base64" "^1.0.5"
     "@polkadot/api" "10.12.4"
