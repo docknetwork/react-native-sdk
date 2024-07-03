@@ -1,4 +1,5 @@
-import {getPexRequiredAttributes} from './pex-helpers';
+import { format } from 'winston';
+import { getPexRequiredAttributes, pexToBounds } from './pex-helpers';
 
 describe('pex helpers', () => {
   describe('getPexRequiredAttributes', () => {
@@ -195,6 +196,219 @@ describe('pex helpers', () => {
         'credentialSubject.biometric.data',
       ]);
       expect(result.length).toBe(1);
+    });
+  });
+
+  describe('pexToBounds', () => {
+    it('should convert pexRequest to bounds with default values', () => {
+      const pexRequest = {
+        input_descriptors: [
+          {
+            constraints: {
+              fields: [
+                {
+                  filter: {
+                    type: 'number',
+                    minimum: 0,
+                  },
+                  path: ['$.age'],
+                },
+                {
+                  filter: {
+                    format: 'date',
+                    minimum: "2021-01-01",
+                  },
+                  path: ['$.dateOfBirth'],
+                },
+              ],
+            },
+          },
+        ],
+      };
+
+      const bounds = pexToBounds(pexRequest);
+
+      expect(bounds).toEqual([
+        [
+          {
+            attributeName: 'age',
+            min: 0,
+            max: 1000000000000000000,
+            type: 'number',
+            format: undefined,
+          },
+          {
+            attributeName: 'dateOfBirth',
+            min: new Date("2021-01-01"),
+            max: new Date(884541351600000),
+            type: undefined,
+            format: 'date',
+          },
+        ],
+      ]);
+    });
+
+    it('should convert pexRequest to bounds with raw boundaries enabled', () => {
+      const pexRequest = {
+        input_descriptors: [
+          {
+            constraints: {
+              fields: [
+                {
+                  filter: {
+                    type: 'number',
+                    minimum: 0,
+                  },
+                  path: ['$.age'],
+                },
+              ],
+            },
+          },
+        ],
+      };
+
+      const bounds = pexToBounds(pexRequest, [], true);
+
+      expect(bounds).toEqual([
+        [
+          {
+            attributeName: 'age',
+            min: 0,
+            max: undefined,
+            type: 'number',
+            format: undefined,
+          },
+        ],
+      ]);
+    });
+    it('should convert pexRequest to bounds for date-time format', () => {
+      const pexRequest = {
+        input_descriptors: [
+          {
+            constraints: {
+              fields: [
+                {
+                  filter: {
+                    format: 'date-time',
+                    maximum: '2022-01-01T00:00:00Z',
+                    minimum: '2021-01-01T00:00:00Z',
+                  },
+                  path: ['$.expirationDate'],
+                },
+              ],
+            },
+          },
+        ],
+      };
+
+      const bounds = pexToBounds(pexRequest);
+
+      expect(bounds).toEqual([
+        [
+          {
+            attributeName: 'expirationDate',
+            min: new Date('2021-01-01T00:00:00Z'),
+            max: new Date('2022-01-01T00:00:00Z'),
+            type: undefined,
+            format: 'date-time',
+          },
+        ],
+      ]);
+    });
+
+    it('should convert pexRequest to bounds for number format', () => {
+      const pexRequest = {
+        input_descriptors: [
+          {
+            constraints: {
+              fields: [
+                {
+                  filter: {
+                    type: 'number',
+                    maximum: 100,
+                    minimum: 0,
+                  },
+                  path: ['$.amount'],
+                },
+              ],
+            },
+          },
+        ],
+      };
+
+      const bounds = pexToBounds(pexRequest);
+
+      expect(bounds).toEqual([
+        [
+          {
+            attributeName: 'amount',
+            min: 0,
+            max: 100,
+            type: 'number',
+            format: undefined,
+          },
+        ],
+      ]);
+    });
+
+    it('should convert pexRequest to bounds for multiple fields', () => {
+      const pexRequest = {
+        input_descriptors: [
+          {
+            constraints: {
+              fields: [
+                {
+                  filter: {
+                    format: 'date',
+                    maximum: '2022-01-01',
+                    minimum: '2021-01-01',
+                  },
+                  path: ['$.startDate'],
+                },
+                {
+                  filter: {
+                    type: 'number',
+                    maximum: 100,
+                    minimum: 0,
+                  },
+                  path: ['$.amount'],
+                },
+              ],
+            },
+          },
+        ],
+      };
+
+      const bounds = pexToBounds(pexRequest);
+
+      expect(bounds).toEqual([
+        [
+          {
+            attributeName: 'startDate',
+            min: new Date('2021-01-01'),
+            max: new Date('2022-01-01'),
+            type: undefined,
+            format: 'date',
+          },
+          {
+            attributeName: 'amount',
+            min: 0,
+            max: 100,
+            type: 'number',
+            format: undefined,
+          },
+        ],
+      ]);
+    });
+
+    it('should handle empty pexRequest', () => {
+      const pexRequest = {
+        input_descriptors: [],
+      };
+
+      const bounds = pexToBounds(pexRequest);
+
+      expect(bounds).toEqual([]);
     });
   });
 });
