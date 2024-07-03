@@ -40,9 +40,9 @@ export function isBBSPlusCredential(credential) {
   );
 }
 
-export function isBDDTCredential(credential) {
+export function isKvacCredential(credential) {
   return (
-    (typeof credential?.proof?.type === 'string' && credential.proof.type === 'Bls12381BDDT16MACDock2024')
+    (typeof credential?.proof?.type === 'string' && credential.proof.type.toLowerCase().includes('bbdt16'))
   );
 }
 
@@ -58,7 +58,7 @@ class CredentialService {
     CredentialService.prototype.createBBSPresentation,
     CredentialService.prototype.deriveVCFromPresentation,
     CredentialService.prototype.isBBSPlusCredential,
-    CredentialService.prototype.isBDDTCredential,
+    CredentialService.prototype.isKvacCredential,
   ];
   generateCredential(params = {}) {
     validation.generateCredential(params);
@@ -168,9 +168,9 @@ class CredentialService {
     return isBBSPlusCredential(credential);
   }
 
-  isBDDTCredential(params) {
+  isKvacCredential(params) {
     const {credential} = params;
-    return isBDDTCredential(credential);
+    return isKvacCredential(credential);
   }
 
   async createBBSPresentation(params) {
@@ -260,7 +260,6 @@ class CredentialService {
     const presentation = new Presentation();
     const selectedCredentials = credentials.map(({credential}) => credential);
     let descriptorBounds = [];
-    debugger;
 
     for (const {credential} of credentials) {
       await presentation.addCredentialToPresent(credential, {
