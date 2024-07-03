@@ -101,8 +101,6 @@ export function pexToBounds(
         max = max ? new Date(max) : undefined;
         min = min === undefined ? MIN_DATE_ADJ : min;
         min = min ? new Date(min) : undefined;
-        // max = max ? new Date(max === undefined ? MAX_DATE_ADJ : max) : undefined;
-        // min = min ? new Date(min === undefined ? MIN_DATE_ADJ : min) : undefined;
       } else if (type === 'number') {
         max =
           max === undefined
