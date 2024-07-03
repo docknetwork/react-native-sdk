@@ -15,6 +15,7 @@ export interface IMessageProvider {
   waitForMessage: () => Promise<any>;
   markMessageAsRead: (messageId: string) => Promise<void>;
   clearCache: () => Promise<void>;
+  processMessageRecurrentJob: () => Promise<void>;
 }
 
 async function getKeyPairDocs(didProvider: IDIDProvider, did?: string) {
@@ -55,13 +56,26 @@ export function createMessageProvider({
     }
   }
 
+  let processingLock = false;
   async function processDIDCommMessages(limit = 1) {
+    if (processingLock) {
+      return;
+    }
+
+    processingLock = true;
     try {
       const processMessagesStartTime = Date.now();
-      logger.debug('Processing DIDComm messages');
       const messages = await wallet.getDocumentsByType(
         WalletDocumentTypes.DIDCommMessage,
       );
+
+      if (messages.length === 0) {
+        return;
+      }
+
+      logger.debug('Processing DIDComm messages');
+      
+
       const keyPairDocs = await getKeyPairDocs(didProvider);
       let count = 0;
       for (const message of messages) {
@@ -83,8 +97,8 @@ export function createMessageProvider({
             decryptedMessage,
             messageId: message.id,
           });
+          await markMessageAsRead(message.id);
           count++;
-          // the wallet app will call markMessageAsRead after the message is processed
         } catch (err) {
           if (err.message?.includes('the DID in question does not exist')) {
             // the DID lookup failed (a testnet credential was issued to a mainnet did), so we can't
@@ -98,24 +112,34 @@ export function createMessageProvider({
     } catch (error) {
       captureException(error);
       throw new Error(`Failed to process DIDComm messages: ${error.message}`);
+    } finally {
+      processingLock = false;
     }
   }
+
+  let recentlyFetchedMessages = [];
 
   async function fetchMessages() {
     try {
       logger.debug('Fetching messages');
       const fetchMessagesStartTime = Date.now();
       const keyPairDocs = await getKeyPairDocs(didProvider);
-      const encryptedMessages = await relayService.getMessages({
+      let encryptedMessages = await relayService.getMessages({
         keyPairDocs,
         limit: FETCH_MESSAGE_LIMIT,
         skipMessageResolution: true,
       });
       const messageIdsPerDid = {};
 
-      if (encryptedMessages.length) {
-        console.log(`Fetched ${encryptedMessages.length} messages`);
+      encryptedMessages = encryptedMessages.filter(
+        message => !recentlyFetchedMessages.includes(message._id),
+      );
+
+      if (!encryptedMessages.length) {
+        return;
       }
+
+      console.log(`Fetched ${encryptedMessages.length} messages`);
 
       for (const message of encryptedMessages) {
         try {
@@ -130,6 +154,8 @@ export function createMessageProvider({
             type: WalletDocumentTypes.DIDCommMessage,
             encryptedMessage: message,
           });
+
+          recentlyFetchedMessages.push(message._id);
         } catch (err) {
           // this message will be lost if it fails to be stored in the wallet
           captureException(err);
@@ -172,7 +198,6 @@ export function createMessageProvider({
   function addMessageListener(handler) {
     const listener = async message => {
       await Promise.resolve(handler(message.decryptedMessage));
-      markMessageAsRead(message.messageId);
     };
 
     wallet.eventManager.addListener('didcomm-message-decrypted', listener);
@@ -181,6 +206,16 @@ export function createMessageProvider({
   }
 
   let listenerIntervalId = null;
+
+  const processMessageInterval = 3000;
+
+  async function processMessageRecurrentJob() {
+    try {
+      await processDIDCommMessages();
+    } finally {
+      setTimeout(processMessageRecurrentJob, processMessageInterval);
+    }
+  }
 
   return {
     async sendMessage({
@@ -252,6 +287,7 @@ export function createMessageProvider({
     fetchMessages,
     addMessageListener,
     processDIDCommMessages,
+    processMessageRecurrentJob,
     markMessageAsRead,
   } as any;
 }
