@@ -11,60 +11,64 @@ const testAPIURL = process.env.TESTING_API_URL || null;
 const testCredsURL = testAPIURL.replace('api-', 'creds-');
 
 const credential = {
-  "@context": [
-      "https://www.w3.org/2018/credentials/v1",
-      "https://www.w3.org/2018/credentials/examples/v1",
-      "https://ld.dock.io/security/bddt16/v1",
-      {
-          "dk": "https://ld.dock.io/credentials#",
-          "name": "dk:name"
-      }
-  ],
-  "id": `${testCredsURL}/f20a0b87efb4ccd4313b2d08056e48e12a1927d747d68bb2d45c722d9cd8e6be`,
-  "type": [
-      "VerifiableCredential",
-      "BasicCredential"
-  ],
-  "credentialSubject": {
-      "id": "did:key:z6Mkujh84aPZ3EaYP6t7ftS2kLRkw6G7pkKswEJq2bn86ALs",
-      "name": "T VPI"
-  },
-  "issuanceDate": "2024-05-03T06:50:36.901Z",
-  "issuer": {
-      "name": "Profile bbs",
-      "id": "did:dock:5CDpZeS2fAas4Du87f2VyTj1BospmvQ5BZwZrKFtb3GeAppq"
-  },
-  "credentialSchema": {
-      "id": "data:application/json;charset=utf-8,%7B%22%24id%22%3A%22https%3A%2F%2Fschema.dock.io%2FBasicCredential-V2-1703777584571.json%22%2C%22%24schema%22%3A%22http%3A%2F%2Fjson-schema.org%2Fdraft-07%2Fschema%23%22%2C%22additionalProperties%22%3Atrue%2C%22description%22%3A%22A%20representation%20of%20a%20very%20basic%20example%20credential%22%2C%22name%22%3A%22Basic%20Credential%22%2C%22properties%22%3A%7B%22%40context%22%3A%7B%22type%22%3A%22string%22%7D%2C%22credentialSchema%22%3A%7B%22type%22%3A%22string%22%7D%2C%22credentialSubject%22%3A%7B%22properties%22%3A%7B%22id%22%3A%7B%22description%22%3A%22A%20unique%20identifier%20of%20the%20recipient.%20Example%3A%20DID%2C%20email%20address%2C%20national%20ID%20number%2C%20employee%20ID%2C%20student%20ID%20etc.%20If%20you%20enter%20the%20recipient's%20DID%2C%20the%20person%20will%20automatically%20receive%20the%20credential%20in%20their%20Dock%20wallet.%22%2C%22title%22%3A%22Subject%20ID%22%2C%22type%22%3A%22string%22%7D%2C%22name%22%3A%7B%22description%22%3A%22The%20name%20of%20the%20credential%20holder.%22%2C%22title%22%3A%22Subject%20Name%22%2C%22type%22%3A%22string%22%7D%7D%2C%22required%22%3A%5B%22name%22%5D%2C%22type%22%3A%22object%22%7D%2C%22cryptoVersion%22%3A%7B%22type%22%3A%22string%22%7D%2C%22id%22%3A%7B%22type%22%3A%22string%22%7D%2C%22issuanceDate%22%3A%7B%22format%22%3A%22date-time%22%2C%22type%22%3A%22string%22%7D%2C%22issuer%22%3A%7B%22properties%22%3A%7B%22id%22%3A%7B%22type%22%3A%22string%22%7D%2C%22name%22%3A%7B%22type%22%3A%22string%22%7D%7D%2C%22type%22%3A%22object%22%7D%2C%22name%22%3A%7B%22type%22%3A%22string%22%7D%2C%22proof%22%3A%7B%22properties%22%3A%7B%22%40context%22%3A%7B%22items%22%3A%5B%7B%22properties%22%3A%7B%22proof%22%3A%7B%22properties%22%3A%7B%22%40container%22%3A%7B%22type%22%3A%22string%22%7D%2C%22%40id%22%3A%7B%22type%22%3A%22string%22%7D%2C%22%40type%22%3A%7B%22type%22%3A%22string%22%7D%7D%2C%22type%22%3A%22object%22%7D%2C%22sec%22%3A%7B%22type%22%3A%22string%22%7D%7D%2C%22type%22%3A%22object%22%7D%2C%7B%22type%22%3A%22string%22%7D%5D%2C%22type%22%3A%22array%22%7D%2C%22created%22%3A%7B%22format%22%3A%22date-time%22%2C%22type%22%3A%22string%22%7D%2C%22proofPurpose%22%3A%7B%22type%22%3A%22string%22%7D%2C%22type%22%3A%7B%22type%22%3A%22string%22%7D%2C%22verificationMethod%22%3A%7B%22type%22%3A%22string%22%7D%7D%2C%22type%22%3A%22object%22%7D%2C%22type%22%3A%7B%22type%22%3A%22string%22%7D%7D%2C%22type%22%3A%22object%22%7D",
-      "type": "JsonSchemaValidator2018",
-      "parsingOptions": {
-          "useDefaults": true,
-          "defaultMinimumInteger": -4294967295,
-          "defaultMinimumDate": -17592186044415,
-          "defaultDecimalPlaces": 4
-      },
-      "version": "0.3.0"
-  },
-  "name": "VPI credential",
-  "cryptoVersion": "0.5.0",
-  "proof": {
-      "@context": [
-          {
-              "sec": "https://w3id.org/security#",
-              "proof": {
-                  "@id": "sec:proof",
-                  "@type": "@id",
-                  "@container": "@graph"
-              }
-          },
-          "https://ld.dock.io/security/bddt16/v1"
-      ],
-      "type": "Bls12381BDDT16MACDock2024",
-      "created": "2024-05-03T06:50:37Z",
-      "verificationMethod": "did:dock:5CDpZeS2fAas4Du87f2VyTj1BospmvQ5BZwZrKFtb3GeAppq#7jvC9bs4PXheGvBsbRUQQqXCXddRBK1fNmZfJfTnM7HW6jioKVBZN35tFLyG2yTte9",
-      "proofPurpose": "assertionMethod",
-      "proofValue": "zb1UmaJsbUqDCLDYdmhR34kFD1YdcwaJc3YbN3kXJKn7g6zpZwVCKUufKtnaJJ8AthESCz2txWBMm7MsjoEsFEEz1kpWVBTsPQrYPm3hU7o4MA1KT1MkwLmqy5VCbaLbSdBoXZWaAzkkbZmd2453XS9iBV"
-  }
+	"@context": [
+		"https://www.w3.org/2018/credentials/v1",
+		"https://ld.dock.io/security/bbdt16/v1",
+		{
+			"BasicCredential": "dk:BasicCredential",
+			"address": "dk:address",
+			"city": "dk:city",
+			"dk": "https://ld.dock.io/credentials#",
+			"name": "dk:name",
+			"street": "dk:street",
+			"zipCode": "dk:zipCode"
+		}
+	],
+	"id": `${testCredsURL}/4d007f22b2677d542e18962cc88ba74c2e6e97482f57c9b205f99bf644aa9254`,
+	"type": [
+		"VerifiableCredential",
+		"BasicCredential"
+	],
+	"credentialSubject": {
+		"id": "did:key:z6MkoWAL66HUG7SHmJpwisjbUrjgaUZZnesNXp5m2CDmrFkT",
+		"name": "Nested Attributes",
+		"address": {
+			"street": "Soem street name",
+			"city": "City name",
+			"zipCode": "12345"
+		}
+	},
+	"issuanceDate": "2024-04-09T15:43:59.361Z",
+	"issuer": {
+		"name": "profile bbs+",
+		"id": "did:dock:5GJeBeStWSxqyPGUJnERMFhm3wKcfCZP6nhqtoKyRAmq9FeU"
+	},
+	"credentialSchema": {
+		"id": "https://schema.dock.io/BasicCredential-V2-1703777584571.json",
+		"type": "JsonSchemaValidator2018",
+		"details": "{\"jsonSchema\":{\"$id\":\"https://schema.dock.io/BasicCredential-V2-1703777584571.json\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"additionalProperties\":true,\"description\":\"A representation of a very basic example credential\",\"name\":\"Basic Credential\",\"properties\":{\"@context\":{\"type\":\"string\"},\"credentialSchema\":{\"properties\":{\"details\":{\"type\":\"string\"},\"id\":{\"type\":\"string\"},\"type\":{\"type\":\"string\"},\"version\":{\"type\":\"string\"}},\"type\":\"object\"},\"credentialSubject\":{\"properties\":{\"address\":{\"properties\":{\"city\":{\"type\":\"string\"},\"street\":{\"type\":\"string\"},\"zipCode\":{\"type\":\"string\"}},\"type\":\"object\"},\"id\":{\"description\":\"A unique identifier of the recipient. Example: DID, email address, national ID number, employee ID, student ID etc. If you enter the recipient's DID, the person will automatically receive the credential in their Dock wallet.\",\"title\":\"Subject ID\",\"type\":\"string\"},\"name\":{\"description\":\"The name of the credential holder.\",\"title\":\"Subject Name\",\"type\":\"string\"}},\"required\":[\"name\"],\"type\":\"object\"},\"cryptoVersion\":{\"type\":\"string\"},\"id\":{\"type\":\"string\"},\"issuanceDate\":{\"format\":\"date-time\",\"type\":\"string\"},\"issuer\":{\"properties\":{\"id\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"}},\"type\":\"object\"},\"name\":{\"type\":\"string\"},\"proof\":{\"properties\":{\"@context\":{\"items\":[{\"properties\":{\"proof\":{\"properties\":{\"@container\":{\"type\":\"string\"},\"@id\":{\"type\":\"string\"},\"@type\":{\"type\":\"string\"}},\"type\":\"object\"},\"sec\":{\"type\":\"string\"}},\"type\":\"object\"},{\"type\":\"string\"}],\"type\":\"array\"},\"created\":{\"format\":\"date-time\",\"type\":\"string\"},\"proofPurpose\":{\"type\":\"string\"},\"type\":{\"type\":\"string\"},\"verificationMethod\":{\"type\":\"string\"}},\"type\":\"object\"},\"type\":{\"type\":\"string\"}},\"type\":\"object\"},\"parsingOptions\":{\"defaultDecimalPlaces\":4,\"defaultMinimumDate\":-17592186044415,\"defaultMinimumInteger\":-4294967295,\"useDefaults\":true}}",
+		"version": "0.4.0"
+	},
+	"name": "Nested Attributes",
+	"cryptoVersion": "0.6.0",
+	"proof": {
+		"@context": [
+			{
+				"sec": "https://w3id.org/security#",
+				"proof": {
+					"@id": "sec:proof",
+					"@type": "@id",
+					"@container": "@graph"
+				}
+			},
+			"https://ld.dock.io/security/bbdt16/v1"
+		],
+		"type": "Bls12381BBDT16MACDock2024",
+		"created": "2024-07-03T17:38:33Z",
+		"verificationMethod": "did:dock:5GJeBeStWSxqyPGUJnERMFhm3wKcfCZP6nhqtoKyRAmq9FeU#73UFp7oRA5TcjuRLyAy7D2z7szZPjEZs1S8uVP8pvVJL9rm7xW2TBPcQShwLz813pT",
+		"proofPurpose": "assertionMethod",
+		"proofValue": "zYtFbq55ZsfiK7wLB8AKfdyBriaMCg5CDNgoeKbJphiCGnE3JHG5PNZJV2scJAnaAT1StakGswamqoLAVjfTDTyz78KSqVmRNB4JuPDGFi4umBRc4wCFQvQjGwgzm812bqmtzkJWijrvFVaiFnoKDNRUZU"
+	}
 }
 
 describe('VPI verification', () => {
