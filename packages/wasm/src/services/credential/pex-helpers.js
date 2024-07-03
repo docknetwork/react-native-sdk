@@ -49,8 +49,19 @@ function getAttributeName({field, selectedCredentials, index}) {
   return attributeName;
 }
 
-export function pexToBounds(pexRequest, selectedCredentials = []) {
+export function pexToBounds(pexRequest, selectedCredentials = [], isRawBoundies = false) {
   const descriptorBounds = [];
+  const [
+    MIN_DATE_ADJ,
+    MAX_DATE_ADJ,
+    MIN_NUMBER_ADJ,
+    MAX_NUMBER_ADJ
+  ] = [
+    MIN_DATE_PLACEHOLDER, 
+    MAX_DATE_PLACEHOLDER,
+    MIN_NUMBER, 
+    MAX_NUMBER
+  ].map(value => isRawBoundies ? undefined : value);
 
   // One list of bounds per descriptor/credential
   pexRequest.input_descriptors.forEach((inputDescriptor, index) => {
@@ -87,34 +98,38 @@ export function pexToBounds(pexRequest, selectedCredentials = []) {
 
       // Get min/max bounds values, if using exclusive we must apply an epsilon so equality isnt true
       if (format === 'date-time' || format === 'date') {
-        max = new Date(max === undefined ? MAX_DATE_PLACEHOLDER : max);
-        min = new Date(min === undefined ? MIN_DATE_PLACEHOLDER : min);
+        max = max === undefined ? MAX_DATE_ADJ : max
+        max = max ? new Date(max) : undefined;
+        min = min === undefined ? MIN_DATE_ADJ : min
+        min = min ? new Date(min) : undefined;
+        // max = max ? new Date(max === undefined ? MAX_DATE_ADJ : max) : undefined;
+        // min = min ? new Date(min === undefined ? MIN_DATE_ADJ : min) : undefined;
       } else if (type === 'number') {
         max =
           max === undefined
-            ? MAX_NUMBER
-            : exclusiveMaximum === undefined
-            ? max
-            : max - EPSILON_NUMBER;
+            ? MAX_NUMBER_ADJ
+            : exclusiveMaximum === undefined || isRawBoundies
+              ? max
+              : max - EPSILON_NUMBER;
         min =
           min === undefined
-            ? MIN_NUMBER
-            : exclusiveMinimum === undefined
-            ? min
-            : min + EPSILON_NUMBER;
+            ? MIN_NUMBER_ADJ
+            : exclusiveMinimum === undefined || isRawBoundies
+              ? min
+              : min + EPSILON_NUMBER;
       } else if (type === 'integer') {
         max =
           max === undefined
-            ? MAX_NUMBER
-            : exclusiveMaximum === undefined
-            ? max
-            : max - EPSILON_INT;
+            ? MAX_NUMBER_ADJ
+            : exclusiveMaximum === undefined || isRawBoundies
+              ? max
+              : max - EPSILON_INT;
         min =
           min === undefined
-            ? MIN_NUMBER
-            : exclusiveMinimum === undefined
-            ? min
-            : min + EPSILON_INT;
+            ? MIN_NUMBER_ADJ
+            : exclusiveMinimum === undefined || isRawBoundies
+              ? min
+              : min + EPSILON_INT;
       } else {
         throw new Error(
           `Unsupported format ${format} and type ${type} for enforce bounds`,
@@ -131,6 +146,8 @@ export function pexToBounds(pexRequest, selectedCredentials = []) {
         attributeName,
         min,
         max,
+        type,
+        format,
       });
     });
 
@@ -167,8 +184,8 @@ export function getPexRequiredAttributes(pexRequest, selectedCredentials = []) {
 
             const paths = Array.isArray(field.path)
               ? field.path.flatMap(singlePath =>
-                  JSONPath.paths(selectedCredentials[index], singlePath),
-                )
+                JSONPath.paths(selectedCredentials[index], singlePath),
+              )
               : JSONPath.paths(selectedCredentials[index], field.path);
 
             return paths.length !== 0;
@@ -177,7 +194,7 @@ export function getPexRequiredAttributes(pexRequest, selectedCredentials = []) {
             return false;
           }
         })
-        .map(field => getAttributeName({field, selectedCredentials, index}))
+        .map(field => getAttributeName({ field, selectedCredentials, index }))
         .filter(attributeName => {
           return !shouldSkipAttribute(attributeName);
         });
