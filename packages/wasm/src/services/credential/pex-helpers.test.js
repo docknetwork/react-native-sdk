@@ -1,5 +1,4 @@
-import { format } from 'winston';
-import { getPexRequiredAttributes, pexToBounds } from './pex-helpers';
+import {getPexRequiredAttributes, pexToBounds} from './pex-helpers';
 
 describe('pex helpers', () => {
   describe('getPexRequiredAttributes', () => {
@@ -216,7 +215,7 @@ describe('pex helpers', () => {
                 {
                   filter: {
                     format: 'date',
-                    minimum: "2021-01-01",
+                    minimum: '2021-01-01',
                   },
                   path: ['$.dateOfBirth'],
                 },
@@ -239,7 +238,7 @@ describe('pex helpers', () => {
           },
           {
             attributeName: 'dateOfBirth',
-            min: new Date("2021-01-01"),
+            min: new Date('2021-01-01'),
             max: new Date(884541351600000),
             type: undefined,
             format: 'date',
