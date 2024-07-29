@@ -210,9 +210,9 @@ const issueBiometricMatchCredential = async enrollmentCredential => {
         id: biometricId,
         created,
         // TODO: Certs template conditions needs to be updated to not require the data object
-        // Workaround is to define that as true
+        // Workaround is to define that as 'hidden'
         // We can remove this line once the template is updated
-        data: true,
+        data: 'hidden',
       },
     },
   });
