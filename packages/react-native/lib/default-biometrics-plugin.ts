@@ -183,17 +183,20 @@ const issueBiometricMatchCredential = async enrollmentCredential => {
 
   const schema = await getDefaultBiometricSchema();
   const algorithm = isVpiSchema(schema) ? 'bbdt16' : 'dockbbs+';
-  const fetchSchemaResponse = await axios.get(schema.id).catch((err) => {
-    console.error(err);
-    console.error('Failed to fetch schema data');
-    return null
-  });
-
   let created = getIssuanceDate();
 
-  const {credentialSubject} = fetchSchemaResponse?.data?.properties;
-  if (credentialSubject?.properties?.biometric?.properties?.created?.format === 'date') {
-    created = created.split('T')[0];
+  if (schema?.id) {
+    const fetchSchemaResponse = await axios.get(schema?.id).catch((err) => {
+      console.error(err);
+      console.error('Failed to fetch schema data');
+      return null
+    });
+
+
+    const {credentialSubject} = fetchSchemaResponse?.data?.properties;
+    if (credentialSubject?.properties?.biometric?.properties?.created?.format === 'date') {
+      created = created.split('T')[0];
+    }
   }
 
   return await certsApi.issueBiometricsVC({
