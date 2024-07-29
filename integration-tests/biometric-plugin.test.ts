@@ -106,7 +106,7 @@ describe('Biometric Plugin', () => {
     expect(credentialSubject.biometric.created).toBeDefined();
     expect(credentialSubject.biometric.id).toBeDefined();
     // should not share the biometric data
-    expect(credentialSubject.biometric.data).toBe(true);
+    expect(credentialSubject.biometric.data).toBe('hidden');
   })
 
   it('should remove old biometric match credential', async () => {
