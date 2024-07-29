@@ -40,7 +40,7 @@ setBiometricConfigs({
     {
       networkId: 'testnet',
       did: 'did:dock:5HLbQLSmirNuZVRsdWKbsgdajw9QTGzSFJABSVzMT5EBj5sb',
-      apiKey: process.env.CERTS_API_KEY,
+      apiKey: process.env.SALES_CERTS_API_KEY,
       apiUrl: 'https://api-testnet.dock.io',
     },
   ],

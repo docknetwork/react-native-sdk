@@ -75,6 +75,7 @@ jobs:
 
       - name: Integration Tests
         env:
+          SALES_CERTS_API_KEY: ${{ secrets.SALES_CERTS_API_KEY }}
           CERTS_API_KEY: ${{ secrets.CERTS_API_KEY }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           PROOF_TEMPLATE_FOR_ANY_CREDENTIAL: ${{ vars.PROOF_TEMPLATE_FOR_ANY_CREDENTIAL }}
