@@ -32,7 +32,7 @@ jest.mock('react-native-keychain', () => {
   };
 });
 
-setBiometricConfigs({
+const configs = {
   enrollmentCredentialType: 'ForSurBiometricEnrollment',
   biometricMatchCredentialType: 'ForSurBiometric',
   biometricMatchExpirationMinutes: 2,
@@ -44,11 +44,14 @@ setBiometricConfigs({
       apiUrl: 'https://api-testnet.dock.io',
     },
   ],
-});
+};
 
 describe('Biometric Plugin', () => {
   let plugin;
-  let configs;
+
+  beforeEach(() => {
+    setBiometricConfigs(configs);
+  });
 
   beforeAll(async () => {
     const wallet: IWallet = await getWallet();
@@ -63,8 +66,6 @@ describe('Biometric Plugin', () => {
       onMatch: defaultBiometricsPlugin.matchBiometrics,
       onCheckBiometryRequired: defaultBiometricsPlugin.hasProofOfBiometrics,
     });
-
-    configs = getBiometricConfigs();
   });
 
   it('should create enrollment credential', async () => {
@@ -86,15 +87,17 @@ describe('Biometric Plugin', () => {
   });
 
   it('should create bbs+ biometric match credential', async () => {
+    setBiometricConfigs({
+      ...configs,
+      biometricMatchCredentialType: 'ForSurBiometricBBS',
+    });
     const credential = await plugin.matchBiometry();
     const isBBS = await credentialService.isBBSPlusCredential({
       credential
     });
     expect(isBBS).toBe(true);
 
-    const credentials = await getCredentialProvider().getCredentials(
-      configs.biometricMatchCredentialType,
-    );
+    const credentials = await getCredentialProvider().getCredentials('ForSurBiometricBBS');
 
     expect(credentials.length).toBe(1);
 
