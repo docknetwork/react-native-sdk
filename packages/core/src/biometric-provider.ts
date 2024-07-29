@@ -28,6 +28,7 @@ export function assertConfigs() {
 }
 
 export function getBiometricConfigs() {
+  assertConfigs();
   return configs;
 }
 

@@ -23,7 +23,7 @@ const initiateBiometricCheck = async () => {
   if (biometrySupported) {
     await saveBiometricData(BIOMETRIC_KEY, BIOMETRIC_PROPERTIES);
 
-    const biometricData = await getBiometricData();
+    const biometricData: any = await getBiometricData();
 
     if (biometricData?.password) {
       return biometricData.password;
@@ -44,49 +44,113 @@ function hasProofOfBiometrics(proofRequest) {
   );
 }
 
-async function issueBiometricsVC({type, subject, expirationDate}: any) {
-  assertConfigs();
+export const certsApi = {
+  issueBiometricsVC: async function ({
+    type,
+    subject,
+    expirationDate,
+    algorithm,
+    schema,
+  }: any) {
+    assertConfigs();
 
-  const networkConfig = getIssuerConfigsForNetwork(getWallet().getNetworkId());
+    const networkConfig = getIssuerConfigsForNetwork(
+      getWallet().getNetworkId(),
+    );
 
-  assert(
-    !!networkConfig,
-    `No issuer config found for network ${getWallet().getNetworkId()}`,
-  );
+    assert(
+      !!networkConfig,
+      `No issuer config found for network ${getWallet().getNetworkId()}`,
+    );
 
-  const body = {
-    anchor: false,
-    persist: false,
-    credential: {
-      name: type,
-      type: ['VerifiableCredential', type],
-      issuer: networkConfig.did,
-      issuanceDate: getIssuanceDate(),
-      expirationDate: expirationDate,
-      subject,
-    },
-    algorithm: 'dockbbs+',
-  };
-
-  const response = await axios.post(
-    `${networkConfig.apiUrl}/credentials`,
-    body,
-    {
-      headers: {
-        'Content-Type': 'application/json',
-        'DOCK-API-TOKEN': networkConfig.apiKey,
+    const body = {
+      anchor: false,
+      persist: false,
+      credential: {
+        name: type,
+        schema,
+        type: ['VerifiableCredential', type],
+        issuer: networkConfig.did,
+        issuanceDate: getIssuanceDate(),
+        expirationDate: expirationDate,
+        subject,
       },
-    },
-  );
+      algorithm: algorithm || 'dockbbs+',
+    };
 
-  return response.data;
-}
+    try {
+      const response = await axios.post(
+        `${networkConfig.apiUrl}/credentials`,
+        body,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'DOCK-API-TOKEN': networkConfig.apiKey,
+          },
+        },
+      );
+
+      return response.data;
+    } catch (err) {
+      console.error(err);
+      debugger;
+    }
+  },
+  getTrustRegistries: async function () {
+    assertConfigs();
+
+    const networkConfig = getIssuerConfigsForNetwork(
+      getWallet().getNetworkId(),
+    );
+
+    assert(
+      !!networkConfig,
+      `No issuer config found for network ${getWallet().getNetworkId()}`,
+    );
+
+    const response = await axios.get(
+      `${networkConfig.apiUrl}/trust-registries/`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'DOCK-API-TOKEN': networkConfig.apiKey,
+        },
+      },
+    );
+
+    return response.data;
+  },
+  getTrustRegistrySchemas: async function ({registryId}) {
+    assertConfigs();
+
+    const networkConfig = getIssuerConfigsForNetwork(
+      getWallet().getNetworkId(),
+    );
+
+    assert(
+      !!networkConfig,
+      `No issuer config found for network ${getWallet().getNetworkId()}`,
+    );
+
+    const response = await axios.get(
+      `${networkConfig.apiUrl}/trust-registries/${registryId}/schemas`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'DOCK-API-TOKEN': networkConfig.apiKey,
+        },
+      },
+    );
+
+    return response.data;
+  },
+};
 
 const issueEnrollmentCredential = async () => {
   const biometricId = await initiateBiometricCheck();
 
   try {
-    const credential = await issueBiometricsVC({
+    const credential = await certsApi.issueBiometricsVC({
       type: getBiometricConfigs().enrollmentCredentialType,
       subject: {
         id: await getDIDProvider().getDefaultDID(),
@@ -117,14 +181,31 @@ const issueBiometricMatchCredential = async enrollmentCredential => {
     Date.now() + 1000 * 60 * expirationMinutes,
   ).toISOString();
 
-  return await issueBiometricsVC({
+  const schema = await getDefaultBiometricSchema();
+  const algorithm = isVpiSchema(schema) ? 'bbdt16' : 'dockbbs+';
+  const fetchSchemaResponse = await axios.get(schema.id).catch((err) => {
+    console.error(err);
+    console.error('Failed to fetch schema data');
+    return null
+  });
+
+  let created = getIssuanceDate();
+
+  const {credentialSubject} = fetchSchemaResponse?.data?.properties;
+  if (credentialSubject?.properties?.biometric?.properties?.created?.format === 'date') {
+    created = created.split('T')[0];
+  }
+
+  return await certsApi.issueBiometricsVC({
     type: getBiometricConfigs().biometricMatchCredentialType,
+    algorithm,
+    schema: schema?.id,
     expirationDate,
     subject: {
       id: await getDIDProvider().getDefaultDID(),
       biometric: {
         id: biometricId,
-        created: getIssuanceDate(),
+        created,
         // TODO: Certs template conditions needs to be updated to not require the data object
         // Workaround is to define that as true
         // We can remove this line once the template is updated
@@ -133,6 +214,35 @@ const issueBiometricMatchCredential = async enrollmentCredential => {
     },
   });
 };
+
+export async function getBiometricSchemas() {
+  const registries = await certsApi.getTrustRegistries();
+  const schemas = [];
+
+  for (const registry of registries) {
+    const registrySchemas = await certsApi.getTrustRegistrySchemas({
+      registryId: registry.id,
+    });
+
+    schemas.push(...registrySchemas.list);
+  }
+
+  return schemas.filter(
+    schema =>
+      schema.id.indexOf(getBiometricConfigs().biometricMatchCredentialType) >
+      -1,
+  );
+}
+
+export async function getDefaultBiometricSchema() {
+  const schemas = await getBiometricSchemas();
+  const vpiSchema = schemas.find(schema => schema.prices.length > 0);
+  return vpiSchema || schemas[0];
+}
+
+export function isVpiSchema(schema) {
+  return schema?.prices?.length > 0;
+}
 
 export const defaultBiometricsPlugin = {
   hasProofOfBiometrics,
