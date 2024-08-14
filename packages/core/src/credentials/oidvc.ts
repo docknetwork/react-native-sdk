@@ -15,8 +15,8 @@ export async function acequireOpenIDCredentialFromURI({
 }) {
   const [holderKeyDocument] = await didProvider.getDIDKeyPairs();
 
-  const queryString = uri.split('?')[1];
-  const params = new URLSearchParams(queryString);
+  const searchParams = new URL(uri).searchParams;
+  const params = new URLSearchParams(searchParams);
   const credentialOfferEncoded = params.get('credential_offer');
   const credentialOfferDecoded = decodeURIComponent(credentialOfferEncoded);
   const credentialOffer = JSON.parse(credentialOfferDecoded);
@@ -40,8 +40,6 @@ export async function acequireOpenIDCredentialFromURI({
     code = client.credentialOffer?.preAuthorizedCode;
   } else {
     code = await getAuthCode(client.authorizationURL); 
-    // TODO: Remove this return
-    return;
   }
 
   await client.acquireAccessToken({
