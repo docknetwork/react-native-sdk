@@ -2,7 +2,7 @@ import {credentialServiceRPC} from '@docknetwork/wallet-sdk-wasm/src/services/cr
 import {IWallet} from './types';
 import assert from 'assert';
 import {dockService} from '@docknetwork/wallet-sdk-wasm/src/services/dock';
-import {getOpenIDCredentialFromURI} from './credentials/oidvc';
+import {acequireOpenIDCredentialFromURI} from './credentials/oidvc';
 import {IDIDProvider} from './did-provider';
 
 export type Credential = any;
@@ -55,7 +55,7 @@ export async function importCredentialFromURI({
   // if the URI is an OpenID credential offer, use the OpenID flow
   // if the URI is a dock credential, then get user password and import that
   // we can add support for other types of credentials later
-  const credential = await getOpenIDCredentialFromURI({
+  const credential = await acequireOpenIDCredentialFromURI({
     didProvider,
     uri,
     getAuthCode,

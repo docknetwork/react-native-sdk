@@ -4,7 +4,7 @@ import {IDIDProvider} from '../did-provider';
 import {Alg} from '@sphereon/oid4vci-common';
 import {didServiceRPC} from '@docknetwork/wallet-sdk-wasm/src/services/dids';
 
-export async function getOpenIDCredentialFromURI({
+export async function acequireOpenIDCredentialFromURI({
   didProvider,
   uri,
   getAuthCode,
@@ -48,7 +48,7 @@ export async function getOpenIDCredentialFromURI({
     code,
   });
 
-  const credentialResponse = await client.acquireCredentials({
+  const response = await client.acquireCredentials({
     credentialTypes,
     proofCallbacks: {
       signCallback: async args => {
@@ -67,5 +67,5 @@ export async function getOpenIDCredentialFromURI({
     kid: holderKeyDocument.id,
   });
 
-  return credentialResponse;
+  return response.credential;
 }
