@@ -24,4 +24,7 @@ export class DIDServiceRPC extends RpcService {
   getDidDockDocument(did) {
     return this.call('getDidDockDocument', did);
   }
+  createSignedJWT(params) {
+    return this.call('createSignedJWT', params);
+  }
 }
