@@ -38,9 +38,8 @@ export function isBBSPlusCredential(credential) {
 
 type importCredentialFromUriParams = {
   uri: string;
-  wallet: IWallet;
   didProvider: IDIDProvider;
-  getAuthCode: (authorizationURL: string) => Promise<string>;
+  getAuthCode?: (authorizationURL: string) => Promise<string>;
 };
 
 export async function importCredentialFromURI({
