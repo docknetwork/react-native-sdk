@@ -32,7 +32,7 @@ export class CredentialServiceRPC extends RpcService {
   async getAccumulatorId(params) {
     return this.call('getAccumulatorId', params);
   }
-  async acequireOIDCredential(params) {
-    return this.call('acequireOIDCredential', params);
+  async acquireOIDCredential(params) {
+    return this.call('acquireOIDCredential', params);
   }
 }

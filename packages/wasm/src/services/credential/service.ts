@@ -64,7 +64,7 @@ class CredentialService {
     CredentialService.prototype.deriveVCFromPresentation,
     CredentialService.prototype.isBBSPlusCredential,
     CredentialService.prototype.isKvacCredential,
-    CredentialService.prototype.acequireOIDCredential,
+    CredentialService.prototype.acquireOIDCredential,
   ];
   generateCredential(params = {}) {
     validation.generateCredential(params);
@@ -179,7 +179,7 @@ class CredentialService {
     return isKvacCredential(credential);
   }
 
-  async acequireOIDCredential({uri, authorizationCode, holderKeyDocument}: {
+  async acquireOIDCredential({uri, authorizationCode, holderKeyDocument}: {
     uri: string,
     authorizationCode?: string,
     holderKeyDocument: any
