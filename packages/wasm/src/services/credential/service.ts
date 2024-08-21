@@ -8,9 +8,9 @@ import {
   WitnessUpdatePublicInfo,
   MembershipWitness,
 } from '@docknetwork/crypto-wasm-ts';
-import {
-  getDockRevIdFromCredential,
-} from '@docknetwork/sdk/utils/revocation';
+import {OpenID4VCIClientV1_0_13} from '@sphereon/oid4vci-client';
+import {Alg} from '@sphereon/oid4vci-common';
+import {getDockRevIdFromCredential} from '@docknetwork/sdk/utils/revocation';
 import VerifiableCredential from '@docknetwork/sdk/verifiable-credential';
 import {getKeypairFromDoc} from '@docknetwork/universal-wallet/methods/keypairs';
 import {getSuiteFromKeyDoc} from '@docknetwork/sdk/utils/vc/helpers';
@@ -27,22 +27,27 @@ import {
 } from './bound-check';
 import assert from 'assert';
 import axios from 'axios';
-import { getIsRevoked, getWitnessDetails } from './bbs-revocation';
-import { getPexRequiredAttributes } from './pex-helpers';
+import {getIsRevoked, getWitnessDetails} from './bbs-revocation';
+import {getPexRequiredAttributes} from './pex-helpers';
+import {didService} from '../dids/service';
 
 const pex: PEX = new PEX();
 
 export function isBBSPlusCredential(credential) {
   return (
     (typeof credential?.proof?.type === 'string' &&
-      (credential.proof.type.includes('BBS+SignatureDock')) ||
-    (Array.isArray(credential['@context']) && credential['@context'].find(context => typeof context === 'string' && context.indexOf('bbs') > -1)))
+      credential.proof.type.includes('BBS+SignatureDock')) ||
+    (Array.isArray(credential['@context']) &&
+      credential['@context'].find(
+        context => typeof context === 'string' && context.indexOf('bbs') > -1,
+      ))
   );
 }
 
 export function isKvacCredential(credential) {
   return (
-    (typeof credential?.proof?.type === 'string' && credential.proof.type.toLowerCase().includes('bbdt16'))
+    typeof credential?.proof?.type === 'string' &&
+    credential.proof.type.toLowerCase().includes('bbdt16')
   );
 }
 
@@ -59,6 +64,7 @@ class CredentialService {
     CredentialService.prototype.deriveVCFromPresentation,
     CredentialService.prototype.isBBSPlusCredential,
     CredentialService.prototype.isKvacCredential,
+    CredentialService.prototype.acquireOIDCredential,
   ];
   generateCredential(params = {}) {
     validation.generateCredential(params);
@@ -108,7 +114,7 @@ class CredentialService {
     }
 
     keyDoc.keypair = keyDocToKeypair(keyDoc, getDock());
-    
+
     if (isBBS) {
       return vp.toJSON();
     }
@@ -133,12 +139,12 @@ class CredentialService {
           result.verified = false;
           result.error = 'revocation check: the credential is revoked';
         }
-      } catch(err) {
+      } catch (err) {
         console.log('Unable to get revocation status');
         console.error(err);
       }
     }
-    
+
     return result;
   }
 
@@ -173,6 +179,72 @@ class CredentialService {
     return isKvacCredential(credential);
   }
 
+  async acquireOIDCredential({uri, authorizationCode, holderKeyDocument}: {
+    uri: string,
+    authorizationCode?: string,
+    holderKeyDocument: any
+  }) {
+    const searchParams = new URL(uri).searchParams;
+    const params = new URLSearchParams(searchParams);
+    const credentialOfferEncoded = params.get('credential_offer');
+    const credentialOfferDecoded = decodeURIComponent(credentialOfferEncoded);
+    const credentialOffer = JSON.parse(credentialOfferDecoded);
+    const scope = credentialOffer.credentials[0];
+    const format = 'ldp_vc';
+    const credentialTypes = scope.replace('ldp_vc:', '');
+
+    const client = await OpenID4VCIClientV1_0_13.fromURI({
+      uri: uri,
+      clientId: 'dock.wallet',
+      authorizationRequest: {
+        redirectUri: 'dock-wallet://credentials/callback',
+        clientId: 'dock.wallet',
+        scope: credentialOffer.credentials[0],
+      },
+    });
+
+    let code;
+
+    if (client.credentialOffer?.preAuthorizedCode) {
+      code = client.credentialOffer?.preAuthorizedCode;
+    } else {
+      if (authorizationCode) {
+        code = authorizationCode;
+      } else {
+        return {
+          authorizationURL: client.authorizationURL,
+        };
+      }
+    }
+
+    await client.acquireAccessToken({
+      code,
+    });
+
+    const response = await client.acquireCredentials({
+      credentialTypes,
+      proofCallbacks: {
+        signCallback: async args => {
+          // use service method here
+          const jwt = await didService.createSignedJWT({
+            payload: args.payload,
+            privateKeyDoc: holderKeyDocument,
+            headerInput: args.header,
+          });
+
+          return jwt;
+        },
+      },
+      format: format,
+      alg: Alg.EdDSA,
+      kid: holderKeyDocument.id,
+    });
+
+    return {
+      credential: response.credential,
+    };
+  }
+
   async createBBSPresentation(params) {
     validation.createBBSPresentation(params);
     const {credentials} = params;
@@ -189,7 +261,7 @@ class CredentialService {
     return bbsPlusPresentation.createPresentation();
   }
 
-  getAccumulatorId({ credential }) {
+  getAccumulatorId({credential}) {
     assert(!!credential, `credential is required`);
     if (!credential?.credentialStatus) {
       return null;
@@ -198,9 +270,9 @@ class CredentialService {
     return credential?.credentialStatus.id.replace('dock:accumulator:', '');
   }
 
-  async getAccumulatorData({ credential }) {
+  async getAccumulatorData({credential}) {
     assert(!!credential, `credential is required`);
-    const accumulatorId = await this.getAccumulatorId({ credential });
+    const accumulatorId = await this.getAccumulatorId({credential});
 
     if (!accumulatorId) {
       return null;
@@ -212,16 +284,20 @@ class CredentialService {
   /**
    * Fetch the latest accumulator witness updates for a given credential and membership witness
    * The witness is generated by the issuer when the credential is created and is stored in the wallet when the credential is imported
-   * 
-   * @param param0 
+   *
+   * @param param0
    */
-  async updateMembershipWitness({ credential, membershipWitnessJSON }) {
+  async updateMembershipWitness({credential, membershipWitnessJSON}) {
     const revocationId = credential.credentialStatus.revocationId;
-    const member = Accumulator.encodePositiveNumberAsAccumulatorMember(revocationId);
+    const member =
+      Accumulator.encodePositiveNumberAsAccumulatorMember(revocationId);
     let updates = [];
     try {
-      updates = await dock.accumulatorModule.getUpdatesFromBlock(accumulatorId, accumulator.lastModified);
-    } catch(err) {
+      updates = await dock.accumulatorModule.getUpdatesFromBlock(
+        accumulatorId,
+        accumulator.lastModified,
+      );
+    } catch (err) {
       if (err.code === -32000) {
         console.error(err);
         // "-32000: Client error: UnknownBlock: State already discarded for BlockId::Hash(<hash>)"
@@ -247,9 +323,16 @@ class CredentialService {
       }
     }
 
-    const queriedWitnessInfo = new WitnessUpdatePublicInfo(hexToU8a(updates[0].witnessUpdateInfo));
+    const queriedWitnessInfo = new WitnessUpdatePublicInfo(
+      hexToU8a(updates[0].witnessUpdateInfo),
+    );
     const witness = MembershipWitness.fromJSON(membershipWitnessJSON);
-    witness.updateUsingPublicInfoPostBatchUpdate(member, additions, removals, queriedWitnessInfo);
+    witness.updateUsingPublicInfoPostBatchUpdate(
+      member,
+      additions,
+      removals,
+      queriedWitnessInfo,
+    );
 
     return witness.toJSON();
   }
@@ -280,16 +363,23 @@ class CredentialService {
 
     let pexRequiredAttributes = [];
     if (proofRequest?.request) {
-      pexRequiredAttributes = getPexRequiredAttributes(proofRequest.request, selectedCredentials);
+      pexRequiredAttributes = getPexRequiredAttributes(
+        proofRequest.request,
+        selectedCredentials,
+      );
     }
 
     let idx = 0;
     for (const {attributesToReveal, witness, credential} of credentials) {
-      const attributesToSkip = descriptorBounds[idx] ? descriptorBounds[idx].map((bound) => bound.attributeName) : [];
-      const filteredAttributes = attributesToReveal.filter((attribute) => !attributesToSkip.includes(attribute));
+      const attributesToSkip = descriptorBounds[idx]
+        ? descriptorBounds[idx].map(bound => bound.attributeName)
+        : [];
+      const filteredAttributes = attributesToReveal.filter(
+        attribute => !attributesToSkip.includes(attribute),
+      );
       const _pexRequiredAttributes = pexRequiredAttributes[idx] || [];
 
-      _pexRequiredAttributes.forEach((attr) => {
+      _pexRequiredAttributes.forEach(attr => {
         if (!filteredAttributes.includes(attr)) {
           filteredAttributes.push(attr);
         }
@@ -301,14 +391,21 @@ class CredentialService {
 
       if (witness) {
         const details = await getWitnessDetails(credential, witness);
-        presentation.presBuilder.addAccumInfoForCredStatus(idx, details.membershipWitness, details.accumulator.accumulated, details.pk, details.params);
+        presentation.presBuilder.addAccumInfoForCredStatus(
+          idx,
+          details.membershipWitness,
+          details.accumulator.accumulated,
+          details.pk,
+          details.params,
+        );
       }
 
       idx++;
     }
 
-    const credentialsFromPresentation =
-      await presentation.deriveCredentials(options);
+    const credentialsFromPresentation = await presentation.deriveCredentials(
+      options,
+    );
 
     return credentialsFromPresentation;
   }
