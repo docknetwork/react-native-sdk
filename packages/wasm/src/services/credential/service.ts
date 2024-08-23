@@ -51,7 +51,7 @@ export function isKvacCredential(credential) {
   );
 }
 
-export function isAnnonyomousCredential(credential) {
+export function isAnnonymousCredential(credential) {
   return isBBSPlusCredential(credential) || isKvacCredential(credential);
 }
 
@@ -110,7 +110,7 @@ class CredentialService {
     let shouldSkipSigning = false;
     for (const signedVC of credentials) {
       vp.addCredential(signedVC);
-      shouldSkipSigning = shouldSkipSigning || isAnnonyomousCredential(signedVC);
+      shouldSkipSigning = shouldSkipSigning || isAnnonymousCredential(signedVC);
     }
 
     if (!shouldSkipSigning) {
