@@ -19,6 +19,12 @@ export type FilterCredentialsParams = {
   holderDIDs: string[];
 };
 
+export type CreatePresentationParams = {
+  credentials: any[];
+  presentationDefinition: any;
+  holderDID: string;
+};
+
 export type EvaluatePresentationParams = {
   presentation: any;
   presentationDefinition: any;

@@ -4,8 +4,9 @@ import {
   validation,
   EvaluatePresentationParams,
   FilterCredentialsParams,
+  CreatePresentationParams,
 } from './config';
-import {PEX} from '@sphereon/pex';
+import {IPresentationDefinition, PEX} from '@sphereon/pex';
 
 const pex: PEX = new PEX();
 
@@ -65,6 +66,7 @@ class PEXService {
   rpcMethods = [
     PEXService.prototype.filterCredentials,
     PEXService.prototype.evaluatePresentation,
+    PEXService.prototype.presentationFrom,
   ];
 
   filterCredentials(params: FilterCredentialsParams) {
@@ -85,6 +87,17 @@ class PEXService {
     const result = pex.evaluatePresentation(
       removeOptionalAttribute(presentationDefinition),
       presentation,
+    );
+
+    return result;
+  }
+
+  presentationFrom(params: CreatePresentationParams) {
+    const {credentials, presentationDefinition, holderDID} = params;
+    const result: IPresentation = pex.presentationFrom(
+      removeOptionalAttribute(presentationDefinition),
+      credentials,
+      holderDID,
     );
 
     return result;
