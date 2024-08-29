@@ -51,6 +51,10 @@ export function isKvacCredential(credential) {
   );
 }
 
+export function isAnnonymousCredential(credential) {
+  return isBBSPlusCredential(credential) || isKvacCredential(credential);
+}
+
 class CredentialService {
   constructor() {
     this.name = serviceName;
@@ -103,19 +107,19 @@ class CredentialService {
     validation.createPresentation(params);
     const {credentials, keyDoc, challenge, id, domain} = params;
     const vp = new VerifiablePresentation(id);
-    let isBBS;
+    let shouldSkipSigning = false;
     for (const signedVC of credentials) {
       vp.addCredential(signedVC);
-      isBBS = isBBS || isBBSPlusCredential(signedVC);
+      shouldSkipSigning = shouldSkipSigning || isAnnonymousCredential(signedVC);
     }
 
-    if (!isBBS) {
+    if (!shouldSkipSigning) {
       vp.setHolder(keyDoc.controller);
     }
 
     keyDoc.keypair = keyDocToKeypair(keyDoc, getDock());
 
-    if (isBBS) {
+    if (shouldSkipSigning) {
       return vp.toJSON();
     }
 
