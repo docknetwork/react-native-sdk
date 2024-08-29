@@ -4,6 +4,7 @@ import {
   FilterCredentialsParams,
   validation,
   EvaluatePresentationParams,
+  CreatePresentationParams,
 } from './config';
 
 export class PEXServiceRPC extends RpcService {
@@ -18,5 +19,9 @@ export class PEXServiceRPC extends RpcService {
   async evaluatePresentation(params: EvaluatePresentationParams) {
     validation.evaluatePresentation(params);
     return this.call('evaluatePresentation', params);
+  }
+
+  async presentationFrom(params: CreatePresentationParams) {
+    return this.call('presentationFrom', params);
   }
 }
