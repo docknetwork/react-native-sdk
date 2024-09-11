@@ -56,6 +56,8 @@ export async function getAuthURL(
   const searchParams = new URL(uri).searchParams;
   const params = new URLSearchParams(searchParams);
   const clientId = params.get('client_id');
+  // We need to investigate why MetadataClient.retrieveAllMetadata(clientId); is not working on android
+  // Follow up bug ticket: https://dock-team.atlassian.net/browse/DCKM-600
   const metadataURI = `${clientId}${WellKnownEndpoints.OPENID_CONFIGURATION}`;
   const {data: metadata} = await axios.get(metadataURI);
 
