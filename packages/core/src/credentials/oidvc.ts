@@ -5,6 +5,7 @@ import {MetadataClient} from '@sphereon/oid4vci-client';
 import jwtDecode from 'jwt-decode';
 import axios from 'axios';
 import {pexService} from '@docknetwork/wallet-sdk-wasm/src/services/pex';
+import {WellKnownEndpoints} from '@sphereon/oid4vci-common';
 
 export async function acquireOpenIDCredentialFromURI({
   didProvider,
@@ -55,7 +56,9 @@ export async function getAuthURL(
   const searchParams = new URL(uri).searchParams;
   const params = new URLSearchParams(searchParams);
   const clientId = params.get('client_id');
-  const metadata = await MetadataClient.retrieveAllMetadata(clientId);
+  const metadataURI = `${clientId}${WellKnownEndpoints.OPENID_CONFIGURATION}`;
+  const {data: metadata} = await axios.get(metadataURI);
+
   const requestedAlg =
     metadata?.authorizationServerMetadata
       ?.request_object_signing_alg_values_supported[0];
