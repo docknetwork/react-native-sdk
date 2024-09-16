@@ -1,5 +1,6 @@
+import {getDataSource} from '../helpers';
 import {Entity, Column, PrimaryColumn} from '../typeorm';
-import {ContextProps, DataStore} from '../types';
+import {DataStore} from '@docknetwork/wallet-sdk-data-store/src/types';
 
 @Entity()
 export class LogEntity {
@@ -21,7 +22,8 @@ export async function getLogs({
 }: {
   dataStore: DataStore;
 }): Promise<LogEntity[]> {
-  const repository = dataStore.db.getRepository(LogEntity);
+  const db = getDataSource(dataStore);
+  const repository = db.getRepository(LogEntity);
   const entities = await repository.find({
     order: {
       createdAt: 'DESC',
@@ -36,9 +38,10 @@ export async function createLog({
   log,
 }: {
   dataStore: DataStore;
-  log: LogEntity,
+  log: LogEntity;
 }): Promise<LogEntity> {
-  const repository = dataStore.db.getRepository(LogEntity);
+  const db = getDataSource(dataStore);
+  const repository = db.getRepository(LogEntity);
 
   log.createdAt = new Date();
 

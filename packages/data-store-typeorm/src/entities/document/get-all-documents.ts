@@ -1,6 +1,7 @@
-import {WalletDocument, DataStore} from '../../types';
+import {WalletDocument, DataStore} from '@docknetwork/wallet-sdk-data-store/src/types';
 import {toWalletDocument} from './helpers';
 import {DocumentEntity} from './document.entity';
+import { getDataSource } from '../../helpers';
 
 function toWalletDocumentExpanded(entity: DocumentEntity): WalletDocument {
   const result = toWalletDocument(entity);
@@ -24,7 +25,8 @@ export async function getAllDocuments({
   dataStore: DataStore;
   allNetworks?: boolean;
 }): Promise<WalletDocument[]> {
-  const repository = dataStore.db.getRepository(DocumentEntity);
+  const db = getDataSource(dataStore);
+  const repository = db.getRepository(DocumentEntity);
   const entities = await repository.find({
     where: allNetworks
       ? {}

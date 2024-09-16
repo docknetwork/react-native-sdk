@@ -1,27 +1,10 @@
-import {createDataStore} from '@docknetwork/wallet-sdk-data-store/src';
-import {
-  DataStore,
-  DataStoreConfigs,
-  WalletDocument,
-} from '@docknetwork/wallet-sdk-data-store/src/types';
-import {
-  getDocumentsByType,
-  getDocumentById,
-  createDocument,
-  removeDocument,
-  getDocumentCorrelations,
-  getAllDocuments,
-  updateDocument,
-  removeAllDocuments,
-  getDocumentsById,
-} from '@docknetwork/wallet-sdk-data-store/src/entities/document';
 import {CreateWalletProps, IWallet} from './types';
 import {toV1Wallet} from './v1-helpers';
 import {initWalletWasm} from './wallet-wasm';
 import {EventEmitter} from 'events';
 import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
 import {walletService} from '@docknetwork/wallet-sdk-wasm/src/services/wallet';
-import {importUniversalWalletDocuments} from '@docknetwork/wallet-sdk-data-store/src/migration/migration1/migrate-v1-data';
+import {importUniversalWalletDocuments} from '@docknetwork/wallet-sdk-data-store/src/helpers';
 import {ensureDID} from './did-provider';
 export type {IWallet};
 
@@ -46,10 +29,9 @@ export function ensureDocumentContext(document) {
  * @param createWalletProps
  * @returns {Promise<IWallet>}
  */
-export async function createWallet(
-  createWalletProps: CreateWalletProps,
-): Promise<IWallet> {
-  const dataStore = await createDataStore(createWalletProps);
+export async function createWallet({
+  dataStore,
+}: CreateWalletProps): Promise<IWallet> {
   let status;
 
   const eventEmitter = new EventEmitter();
@@ -68,9 +50,7 @@ export async function createWallet(
       });
     },
     deleteWallet: async () => {
-      await removeAllDocuments({
-        dataStore,
-      });
+      await dataStore.documents.removeAllDocuments();
 
       eventEmitter.emit(WalletEvents.walletDeleted);
     },
@@ -84,41 +64,18 @@ export async function createWallet(
     getNetworkId: () => {
       return dataStore.networkId;
     },
-    getDocumentById: id =>
-      getDocumentById({
-        dataStore,
-        id,
-      }),
-
-    getAllDocuments: () => {
-      return getAllDocuments({
-        dataStore,
-      });
-    },
-    getDocumentsById: idList =>
-      getDocumentsById({
-        dataStore,
-        idList,
-      }),
-    getDocumentsByType: type =>
-      getDocumentsByType({
-        dataStore,
-        type,
-      }),
+    getDocumentById: dataStore.documents.getDocumentById,
+    getAllDocuments: dataStore.documents.getAllDocuments,
+    getDocumentsById: dataStore.documents.getDocumentsById,
+    getDocumentsByType: dataStore.documents.getDocumentsByType,
     addDocument: (json: any) => {
-      return createDocument({
-        dataStore,
-        json,
-      }).then(result => {
+      return dataStore.documents.addDocument(json).then(result => {
         eventEmitter.emit(WalletEvents.documentAdded, result);
         return result;
       });
     },
     updateDocument: (document: any) => {
-      return updateDocument({
-        dataStore,
-        document,
-      }).then(result => {
+      return dataStore.documents.updateDocument(document).then(result => {
         eventEmitter.emit(WalletEvents.documentUpdated, result);
         return result;
       });
@@ -126,25 +83,16 @@ export async function createWallet(
     removeDocument: async (id: string) => {
       const document = await wallet.getDocumentById(id);
 
-      return removeDocument({
-        dataStore,
-        id,
-      }).then(result => {
+      return dataStore.documents.removeDocument(id).then(result => {
         eventEmitter.emit(WalletEvents.documentRemoved, document);
         return result;
       });
     },
     getDocumentCorrelations: (documentId: string) => {
-      return getDocumentCorrelations({
-        dataStore,
-        documentId,
-      });
+      return dataStore.documents.getDocumentCorrelations(documentId);
     },
     getAccountKeyPair: async (accountId: string) => {
-      const correlations = await getDocumentCorrelations({
-        dataStore,
-        documentId: accountId,
-      });
+      const correlations = await dataStore.documents.getDocumentCorrelations(accountId);
 
       const keyPair = correlations.find(
         correlation => correlation.type === 'KeyringPair',
@@ -179,10 +127,7 @@ export async function createWallet(
       });
     },
     exportUniversalWalletJSON: async (password: string) => {
-      let documents = await getAllDocuments({
-        dataStore,
-        allNetworks: true,
-      });
+      let documents = await dataStore.documents.getAllDocuments(true);
 
       const result = await wallet.exportDocuments({
         documents,
@@ -201,11 +146,13 @@ export async function createWallet(
     wallet: v1Wallet,
   });
 
-  [WalletEvents.networkUpdated, WalletEvents.walletDeleted].forEach((event) => eventEmitter.on(event, () => {
-    ensureDID({
-      wallet: v1Wallet,
-    });
-  }));
+  [WalletEvents.networkUpdated, WalletEvents.walletDeleted].forEach(event =>
+    eventEmitter.on(event, () => {
+      ensureDID({
+        wallet: v1Wallet,
+      });
+    }),
+  );
 
   return v1Wallet;
 }

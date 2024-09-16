@@ -1,5 +1,6 @@
-import {Entity, Column, PrimaryGeneratedColumn, PrimaryColumn} from '../typeorm';
-import {ContextProps} from '../types';
+import { getDataSource } from '../helpers';
+import {Entity, Column, PrimaryColumn} from '../typeorm';
+import {ContextProps} from '@docknetwork/wallet-sdk-data-store/src/types';
 
 @Entity()
 export class WalletEntity {
@@ -18,19 +19,22 @@ export class WalletEntity {
 export async function getWallet({
   dataStore,
 }: ContextProps): Promise<WalletEntity> {
-  const result = await dataStore.db.getRepository(WalletEntity).find();
+  const db = getDataSource(dataStore);
+  const result = await db.getRepository(WalletEntity).find();
   return result[0];
 }
 
 export function createWallet({dataStore}: ContextProps): Promise<WalletEntity> {
-  return dataStore.db.getRepository(WalletEntity).save({
+  const db = getDataSource(dataStore);
+  return db.getRepository(WalletEntity).save({
     id: 'configs',
     ...dataStore,
   });
 }
 
 export function updateWallet({dataStore}: ContextProps): Promise<WalletEntity> {
-  return dataStore.db.getRepository(WalletEntity).save({
+  const db = getDataSource(dataStore);
+  return db.getRepository(WalletEntity).save({
     id: 'configs',
     ...dataStore,
   });

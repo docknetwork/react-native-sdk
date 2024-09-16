@@ -41,11 +41,11 @@ export async function toV1Wallet(wallet: IWallet): Promise<IWallet> {
 
       return wallet.getAllDocuments();
     },
-    remove(id: string): Promise<void> {
+    remove(id: string, options: any): Promise<void> {
       return wallet.removeDocument(id);
     },
-    add(json: any): Promise<WalletDocument> {
-      return wallet.addDocument(json);
+    add(json: any, options): Promise<WalletDocument> {
+      return wallet.addDocument(json, options);
     },
     resolveCorrelations(id: string): Promise<WalletDocument[]> {
       return wallet.getDocumentCorrelations(id);
@@ -53,8 +53,8 @@ export async function toV1Wallet(wallet: IWallet): Promise<IWallet> {
     sync(): Promise<void> {
       return Promise.resolve(undefined);
     },
-    update(json: any): Promise<WalletDocument> {
-      return wallet.updateDocument(json);
+    update(json: any, options): Promise<WalletDocument> {
+      return wallet.updateDocument(json, options);
     },
     upsert(json: any): Promise<WalletDocument> {
       return wallet.upsertDocument(json);

@@ -10,7 +10,6 @@ import {EventEmitter} from 'events';
 import axios from 'axios';
 import assert from 'assert';
 import {createDIDProvider, IDIDProvider} from './did-provider';
-import { getWallet } from '@docknetwork/wallet-sdk-data-store/src/entities/wallet.entity';
 
 export enum VerificationStatus {
   Started = 'Started',

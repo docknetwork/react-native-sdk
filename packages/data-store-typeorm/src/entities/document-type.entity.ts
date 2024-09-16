@@ -1,4 +1,4 @@
-import {Entity, Column, PrimaryColumn, ManyToMany} from '../typeorm';
+import {Entity, PrimaryColumn, ManyToMany} from '../typeorm';
 import {DocumentEntity} from './document/document.entity';
 
 @Entity()
