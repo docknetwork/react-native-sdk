@@ -1,6 +1,6 @@
 import {NetworkManager} from './packages/wasm/src/modules/network-manager';
 
-import {setV1LocalStorage} from '@docknetwork/wallet-sdk-data-store/src/migration/migration1/v1-data-store';
+import {setV1LocalStorage} from '@docknetwork/wallet-sdk-data-store-typeorm/src/migration/migration1/v1-data-store';
 
 NetworkManager.getInstance().setNetworkId('testnet');
 
