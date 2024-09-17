@@ -97,7 +97,6 @@ export async function createDataStore(
       },
     },
     localStorageImpl: getV1LocalStorage(),
-    runMigrations: dataStore => migrate({dataStore}),
     walletStore: {
       getWallet: async () => {
         return getWallet({dataStore});
@@ -107,6 +106,8 @@ export async function createDataStore(
       },
     },
   });
+
+  migrate({dataStore});
 
   const wallet = await dataStore.wallet.getWallet();
   dataStore.networkId = wallet.networkId;

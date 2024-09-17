@@ -45,14 +45,12 @@ export async function createDataStore({
   documentStore,
   walletStore,
   dataSource,
-  runMigrations,
   localStorageImpl,
 }: {
   configs: DataStoreConfigs;
   documentStore: DocumentStore;
   walletStore: WalletStore;
   dataSource: DataSource;
-  runMigrations: (dataStore: DataStore) => Promise<void>;
   localStorageImpl: any;
 }): Promise<DataStore> {
   _localStorageImpl = localStorageImpl;
@@ -78,8 +76,6 @@ export async function createDataStore({
   };
 
   logger.debug('Data store initialized');
-
-  await runMigrations(dataStore);
 
   return dataStore;
 }
