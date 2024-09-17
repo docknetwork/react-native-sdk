@@ -2,6 +2,7 @@ import {createWallet, IWallet} from '@docknetwork/wallet-sdk-core/src/wallet';
 import {Network} from '@docknetwork/wallet-sdk-data-store/src/types';
 import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
 import {closeWallet} from './helpers/wallet-helpers';
+import {createDataStore} from '@docknetwork/wallet-sdk-data-store-typeorm/src';
 
 describe('Custom networks', () => {
   let wallet: IWallet;
@@ -40,9 +41,12 @@ describe('Custom networks', () => {
   };
 
   beforeAll(async () => {
-    wallet = await createWallet({
+    const dataStore = await createDataStore({
       databasePath: ':memory:',
       networks,
+    });
+    wallet = await createWallet({
+      dataStore,
     });
 
     await wallet.waitForEvent(WalletEvents.networkConnected);

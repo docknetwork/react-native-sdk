@@ -1,8 +1,14 @@
 import {IWallet} from './types';
 import {createWallet} from './wallet';
-import {createDIDock, createDIDKey, createDIDProvider, IDIDProvider} from './did-provider';
+import {
+  createDIDock,
+  createDIDKey,
+  createDIDProvider,
+  IDIDProvider,
+} from './did-provider';
 import {createAccountProvider} from './account-provider';
 import {didServiceRPC} from '@docknetwork/wallet-sdk-wasm/src/services/dids';
+import {createDataStore} from '@docknetwork/wallet-sdk-data-store-typeorm/src';
 
 describe('DID Provider', () => {
   let wallet: IWallet;
@@ -49,7 +55,9 @@ describe('DID Provider', () => {
 
   beforeEach(async () => {
     wallet = await createWallet({
-      databasePath: ':memory:',
+      dataStore: await createDataStore({
+        databasePath: ':memory:',
+      }),
     });
     accountProvider = createAccountProvider({wallet});
     didProvider = createDIDProvider({wallet});
@@ -149,18 +157,19 @@ describe('DID Provider', () => {
 
   describe('create DID Key', () => {
     it('expect to create a DID Key', async () => {
-
       jest.spyOn(didServiceRPC, 'generateKeyDoc').mockResolvedValueOnce({
         id: 'did:key:abcde#key-1',
         type: 'KeyDocument',
       });
 
-      jest.spyOn(didServiceRPC, 'keypairToDIDKeyDocument').mockResolvedValueOnce({
-        didDocument: {
-          id: 'did:key:abcde#key-2',
-          type: 'DidDocument',
-        }
-      });
+      jest
+        .spyOn(didServiceRPC, 'keypairToDIDKeyDocument')
+        .mockResolvedValueOnce({
+          didDocument: {
+            id: 'did:key:abcde#key-2',
+            type: 'DidDocument',
+          },
+        });
 
       jest.spyOn(didServiceRPC, 'getDIDResolution').mockResolvedValueOnce({
         id: new Date().getTime().toString(),
@@ -185,10 +194,9 @@ describe('DID Provider', () => {
       expect(didDocument.length).toBe(2);
     });
     it('expect to assert parameters', async () => {
-
       await expect(
         didProvider.createDIDKey({
-          name: ''
+          name: '',
         }),
       ).rejects.toThrowError('name is required');
 

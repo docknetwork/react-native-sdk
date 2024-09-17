@@ -12,7 +12,7 @@ import {
   IDIDProvider,
 } from '@docknetwork/wallet-sdk-core/src/did-provider';
 import select from '@inquirer/select';
-
+import {createDataStore} from '@docknetwork/wallet-sdk-data-store-typeorm/src';
 let wallet: IWallet;
 let didProvider: IDIDProvider;
 let credentialProvider: ICredentialProvider;
@@ -21,9 +21,11 @@ let messageProvider: IMessageProvider;
 export async function getWallet(): Promise<IWallet> {
   if (!wallet) {
     wallet = await createWallet({
-      databasePath: './wallet.db',
-      dbType: 'sqlite',
-      defaultNetwork: 'testnet',
+      dataStore: await createDataStore({
+        databasePath: './wallet.db',
+        dbType: 'sqlite',
+        defaultNetwork: 'testnet',
+      }),
     });
 
     wallet.setNetwork('testnet');

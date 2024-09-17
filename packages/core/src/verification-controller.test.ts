@@ -12,7 +12,8 @@ import anyCredentialProofRequest from './fixtures/any-credential-proof-request.j
 import universityDegreeProofRequest from './fixtures/university-degree-proof-request.json';
 import {createDIDProvider, IDIDProvider} from './did-provider';
 import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
-import { replaceResponseURL } from './helpers';
+import {replaceResponseURL} from './helpers';
+import {createDataStore} from '@docknetwork/wallet-sdk-data-store-typeorm/src';
 
 describe('Verification provider', () => {
   let wallet: IWallet;
@@ -20,8 +21,10 @@ describe('Verification provider', () => {
 
   beforeAll(async () => {
     wallet = await createWallet({
-      databasePath: ':memory:',
-      defaultNetwork: 'testnet',
+      dataStore: await createDataStore({
+        databasePath: ':memory:',
+        defaultNetwork: 'testnet',
+      }),
     });
 
     await wallet.waitForEvent(WalletEvents.networkConnected);
