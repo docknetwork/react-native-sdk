@@ -81,16 +81,6 @@ export async function createDataStore({
 
   await runMigrations(dataStore);
 
-  const wallet = await walletStore.getWallet();
-  dataStore.networkId = wallet.networkId;
-  dataStore.network = options.networks.find(
-    item => item.id === wallet.networkId,
-  );
-
-  documentStore.getAllDocuments().then(documents => {
-    logger.debug(`Wallet loaded with ${documents.length} documents`);
-  });
-
   return dataStore;
 }
 

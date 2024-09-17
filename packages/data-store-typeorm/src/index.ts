@@ -24,6 +24,7 @@ import {
   DataStore,
   DataStoreConfigs,
 } from '@docknetwork/wallet-sdk-data-store/src/types';
+import { logger } from '@docknetwork/wallet-sdk-data-store/src/logger';
 
 export async function createDataStore(
   configs: DataStoreConfigs,
@@ -103,6 +104,17 @@ export async function createDataStore(
       },
     },
   });
+
+  const wallet = await dataStore.wallet.getWallet();
+  dataStore.networkId = wallet.networkId;
+  dataStore.network = options.networks.find(
+    item => item.id === wallet.networkId,
+  );
+
+  dataStore.documents.getAllDocuments().then(documents => {
+    logger.debug(`Wallet loaded with ${documents.length} documents`);
+  });
+
 
   return dataStore;
 }
