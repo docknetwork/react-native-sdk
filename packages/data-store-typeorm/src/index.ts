@@ -107,7 +107,7 @@ export async function createDataStore(
     },
   });
 
-  migrate({dataStore});
+  await migrate({dataStore});
 
   const wallet = await dataStore.wallet.getWallet();
   dataStore.networkId = wallet.networkId;
