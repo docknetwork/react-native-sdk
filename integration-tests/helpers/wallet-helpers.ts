@@ -57,7 +57,7 @@ export async function createNewWallet({
 
   console.log('Waiting for network connection');
 
-  if (dontWaitForNetwork) {
+  if (!dontWaitForNetwork) {
     await wallet.waitForEvent(WalletEvents.networkConnected);
   }
   console.log('Network connected');
