@@ -3,6 +3,7 @@ import {ContextProps} from '@docknetwork/wallet-sdk-data-store/src/types';
 import {logger} from '../logger';
 import {createWallet, getWallet, updateWallet} from '../entities/wallet.entity';
 import {bootstrapTables} from './bootstrap-tables';
+import {DataSource} from 'typeorm';
 
 export const CURRENT_DATA_STORE_VERSION = 'v2';
 
@@ -18,7 +19,7 @@ const migrations = [
 
 export async function migrate({dataStore}: ContextProps) {
   // bootstrap v2 data
-  await bootstrapTables(dataStore.db);
+  await bootstrapTables(dataStore.db as any as DataSource);
 
   // Fetch existing configs from the database
   let existingConfigs = await getWallet({dataStore});
