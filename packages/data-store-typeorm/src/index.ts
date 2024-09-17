@@ -18,6 +18,7 @@ import {
 import {
   createDataStore as createGenericDataStore,
   parseConfigs,
+  setLocalStorage,
 } from '@docknetwork/wallet-sdk-data-store/src/index';
 
 import {
@@ -25,6 +26,8 @@ import {
   DataStoreConfigs,
 } from '@docknetwork/wallet-sdk-data-store/src/types';
 import { logger } from '@docknetwork/wallet-sdk-data-store/src/logger';
+
+setLocalStorage(getV1LocalStorage());
 
 export async function createDataStore(
   configs: DataStoreConfigs,
