@@ -1,5 +1,5 @@
 import {isRunningOnV1DataStore, migration1} from './migration1';
-import {ContextProps} from '../types';
+import {ContextProps} from '@docknetwork/wallet-sdk-data-store/src/types';
 import {logger} from '../logger';
 import {createWallet, getWallet, updateWallet} from '../entities/wallet.entity';
 import {bootstrapTables} from './bootstrap-tables';
