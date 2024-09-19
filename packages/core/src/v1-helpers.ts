@@ -80,7 +80,7 @@ export type KeypairType = 'sr25519' | 'ed25519' | 'ecdsa';
 export function toV1WalletService(wallet: IWallet) {
   return {
     getDocumentById: id => {
-      return wallet.getDocumentById(id);
+      return wallet.dataStore.documents.getDocumentById(id);
     },
     // accounts are not required in a wallet
     // Ideally should move this code to the accounts provider file

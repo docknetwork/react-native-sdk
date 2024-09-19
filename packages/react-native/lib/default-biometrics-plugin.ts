@@ -93,7 +93,6 @@ export const certsApi = {
       return response.data;
     } catch (err) {
       console.error(err);
-      debugger;
     }
   },
   getTrustRegistries: async function () {

@@ -27,6 +27,7 @@ import {
 } from '@docknetwork/wallet-sdk-core/src/credential-provider';
 import {dockService} from '@docknetwork/wallet-sdk-wasm/src/services/dock';
 import {createDataStore} from '@docknetwork/wallet-sdk-data-store-typeorm/src';
+import {DataStore} from '@docknetwork/wallet-sdk-data-store/src/types';
 
 let wallet: IWallet;
 let didProvider: IDIDProvider;
@@ -35,17 +36,18 @@ let messageProvider: IMessageProvider;
 
 export async function createNewWallet({
   dontWaitForNetwork,
-  otherProps,
+  dataStore,
 }: {
   dontWaitForNetwork?: boolean;
-  otherProps?: CreateWalletProps;
+  dataStore?: DataStore;
 } = {}): Promise<IWallet> {
-  const dataStore = await createDataStore({
-    databasePath: ':memory:',
-    dbType: 'sqlite',
-    defaultNetwork: 'testnet',
-    ...(otherProps ? otherProps : {}),
-  });
+  if (!dataStore) {
+    dataStore = await createDataStore({
+      databasePath: ':memory:',
+      dbType: 'sqlite',
+      defaultNetwork: 'testnet',
+    });
+  }
 
   wallet = await createWallet({
     dataStore,

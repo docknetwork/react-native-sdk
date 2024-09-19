@@ -1,11 +1,6 @@
 import {IWallet} from '@docknetwork/wallet-sdk-core/lib/types';
-import {
-  closeWallet,
-  createNewWallet,
-} from './helpers/wallet-helpers';
-import {
-  DataStore,
-} from '@docknetwork/wallet-sdk-data-store/src/types';
+import {closeWallet, createNewWallet} from './helpers/wallet-helpers';
+import {DataStore} from '@docknetwork/wallet-sdk-data-store/src/types';
 import {
   SYNC_MARKER_TYPE,
   initializeCloudWallet,
@@ -13,6 +8,7 @@ import {
 import {createDataStore} from '@docknetwork/wallet-sdk-data-store-typeorm/src';
 
 const EDV_URL = process.env.EDV_URL;
+const EDV_AUTH_KEY = process.env.EDV_AUTH_KEY;
 
 const agreementKey = {
   '@context': ['https://w3id.org/wallet/v1'],
@@ -75,15 +71,14 @@ describe('Cloud wallet', () => {
       agreementKey,
       verificationKey,
       hmacKey,
+      authKey: EDV_AUTH_KEY,
     }));
 
     await clearEdvDocuments();
 
     wallet = await createNewWallet({
       dontWaitForNetwork: true,
-      otherProps: {
-        dataStore,
-      },
+      dataStore,
     });
   });
 
@@ -103,7 +98,9 @@ describe('Cloud wallet', () => {
 
     await pullDocuments();
 
-    const sdkDocument = await wallet.getDocumentById(newDocId);
+    const sdkDocument = await dataStore.documents.getDocumentById(newDocId);
+
+
     expect(sdkDocument).toEqual(newDoc);
   });
 

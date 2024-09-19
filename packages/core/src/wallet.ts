@@ -64,10 +64,10 @@ export async function createWallet({
     getNetworkId: () => {
       return dataStore.networkId;
     },
-    getDocumentById: dataStore.documents.getDocumentById,
-    getAllDocuments: dataStore.documents.getAllDocuments,
-    getDocumentsById: dataStore.documents.getDocumentsById,
-    getDocumentsByType: dataStore.documents.getDocumentsByType,
+    getDocumentById: (id) => dataStore.documents.getDocumentById(id),
+    getAllDocuments: () => dataStore.documents.getAllDocuments(),
+    getDocumentsById: (idList) => dataStore.documents.getDocumentsById(idList),
+    getDocumentsByType: (type) => dataStore.documents.getDocumentsByType(type),
     addDocument: (json: any) => {
       return dataStore.documents.addDocument(json).then(result => {
         eventEmitter.emit(WalletEvents.documentAdded, result);

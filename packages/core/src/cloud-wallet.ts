@@ -12,22 +12,23 @@ import {logger} from '@docknetwork/wallet-sdk-data-store/src/logger';
 
 export const SYNC_MARKER_TYPE = 'SyncMarkerDocument';
 
-
 export async function initializeCloudWallet({
   dataStore,
   edvUrl,
   agreementKey,
   verificationKey,
   hmacKey,
+  authKey,
 }: {
   dataStore?: DataStore;
   edvUrl: string;
   agreementKey: any;
   verificationKey: any;
   hmacKey: any;
+  authKey: string;
 }) {
   const hmac = await HMAC.create({
-    key: hmacKey
+    key: hmacKey,
   });
   const keyAgreementKey = await X25519KeyAgreementKey2020.from(agreementKey);
   const keys = {
@@ -43,6 +44,9 @@ export async function initializeCloudWallet({
     url: edvUrl,
     keys,
     invocationSigner,
+    defaultHeaders: {
+      DockAuth: authKey,
+    },
   });
 
   let edvId;
@@ -198,7 +202,7 @@ export async function initializeCloudWallet({
       const walletDoc = await dataStore.documents.getDocumentById(edvDoc.id);
 
       if (!walletDoc) {
-        await dataStore.documents.addDocument(edvDoc, {
+        const result = await dataStore.documents.addDocument(edvDoc, {
           stopPropagation: true,
         });
       }
