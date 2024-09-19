@@ -26,6 +26,12 @@ module.exports = {
   globalTeardown: './scripts/integration-test-teardown.js',
   setupFiles: ['jest-localstorage-mock'],
   moduleNameMapper: {
+    '@digitalbazaar/edv-client': require.resolve(
+      '@digitalbazaar/edv-client/main.js',
+    ),
+    '@digitalbazaar/http-signature-zcap-invoke': require.resolve(
+      '@digitalbazaar/http-signature-zcap-invoke/main.js',
+    ),
     '@digitalbazaar/x25519-key-agreement-key-2020':
       '@digitalbazaar/x25519-key-agreement-key-2020/lib/X25519KeyAgreementKey2020',
     '@digitalbazaar/ed25519-verification-key-2020':
