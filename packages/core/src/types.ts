@@ -37,16 +37,16 @@ export type IWallet = {
   getDocumentsById: (idList: string[]) => Promise<WalletDocument[]>;
   getDocumentsByType: (type: string) => Promise<WalletDocument[]>;
   getAllDocuments: () => Promise<WalletDocument[]>;
-  addDocument: (json: any) => Promise<WalletDocument>;
-  upsertDocument: (json: any) => Promise<WalletDocument>;
-  updateDocument: (json: any) => Promise<WalletDocument>;
+  addDocument: (json: any, options?: any) => Promise<WalletDocument>;
+  upsertDocument: (json: any, options?: any) => Promise<WalletDocument>;
+  updateDocument: (json: any, options?: any) => Promise<WalletDocument>;
   getDocumentCorrelations: (documentId: string) => Promise<WalletDocument[]>;
   getAccountKeyPair: (accountId: string) => Promise<any>;
   /**
    * Remove document by id
    * @param id
    */
-  removeDocument: (id: string) => Promise<void>;
+  removeDocument: (id: string, options?: any) => Promise<void>;
   /**
    * Import data from a Universal Wallet 2020 JSON
    * https://w3c-ccg.github.io/universal-wallet-interop-spec/
@@ -72,4 +72,10 @@ export type IWallet = {
   dataStore: DataStore;
 } & IV1Wallet;
 
-export type CreateWalletProps = DataStoreConfigs & {};
+export type CrateWalletWithDataStore = {
+  
+}
+
+export type CreateWalletProps = {
+  dataStore: DataStore;
+}

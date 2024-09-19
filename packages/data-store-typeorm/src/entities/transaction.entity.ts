@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
-import { DataStore } from '../types';
+import { Entity, Column, PrimaryColumn, DataSource } from 'typeorm';
+import { DataStore } from '@docknetwork/wallet-sdk-data-store/src/types';
+import { getDataSource } from '../helpers';
 
 @Entity()
 export class TransactionEntity {
@@ -48,7 +49,8 @@ export async function getLogs({
 }: {
   dataStore: DataStore;
 }): Promise<TransactionEntity[]> {
-  const repository = dataStore.db.getRepository(TransactionEntity);
+  const db = getDataSource(dataStore);
+  const repository = db.getRepository(TransactionEntity);
   const entities = await repository.find({});
 
   return entities;
@@ -61,7 +63,8 @@ export async function createTransaction({
   dataStore: DataStore;
   transaction: TransactionEntity,
 }): Promise<TransactionEntity> {
-  const repository = dataStore.db.getRepository(TransactionEntity);
+  const db = getDataSource(dataStore);
+  const repository = await db.getRepository(TransactionEntity);
 
   return repository.save(transaction);
 }

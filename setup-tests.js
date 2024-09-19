@@ -2,13 +2,14 @@ import '@testing-library/jest-dom';
 import {JSDOM} from 'jsdom';
 
 jest.mock('esm', () => {
-  return (module) => module.require;
+  return module => module.require;
 });
 
 import {NetworkManager} from './packages/wasm/src/modules/network-manager';
 import {getStorage} from './packages/wasm/src/core/storage';
 import {mockDockService} from '@docknetwork/wallet-sdk-wasm/src/services/test-utils';
-import { setV1LocalStorage } from '@docknetwork/wallet-sdk-data-store/src/migration/migration1/v1-data-store';
+import {setV1LocalStorage} from '@docknetwork/wallet-sdk-data-store-typeorm/src/migration/migration1/v1-data-store';
+import {setLocalStorage} from '@docknetwork/wallet-sdk-data-store/src';
 
 NetworkManager.getInstance().setNetworkId('testnet');
 
@@ -50,11 +51,12 @@ jest.mock('@docknetwork/sdk/presentation', () => {
       deriveCredentials: mockDeriveCredentials,
       presBuilder: {
         enforceBounds: jest.fn(),
-      }
+      },
     };
   });
 });
 
-
 setV1LocalStorage(global.localStorage);
+setLocalStorage(global.localStorage);
+
 global.localStorage.setItem('networkId', 'testnet');

@@ -1,7 +1,8 @@
-import {ContextProps, WalletDocument} from '../../types';
+import {ContextProps, WalletDocument} from '@docknetwork/wallet-sdk-data-store/src/types';
 import {toWalletDocument} from './helpers';
 import {DocumentEntity} from './document.entity';
 import {In} from 'typeorm';
+import { getDataSource } from '../../helpers';
 
 /**
  * Get document by id
@@ -14,7 +15,8 @@ export async function getDocumentById({
 }: ContextProps & {
   id: string;
 }): Promise<WalletDocument> {
-  const repository = dataStore.db.getRepository(DocumentEntity);
+  const db = getDataSource(dataStore);
+  const repository = db.getRepository(DocumentEntity);
 
   const entity = await repository.findOne({
     where: {
@@ -32,7 +34,8 @@ export async function getDocumentsById({
 }: ContextProps & {
   idList: string[];
 }): Promise<WalletDocument> {
-  const repository = dataStore.db.getRepository(DocumentEntity);
+  const db = getDataSource(dataStore);
+  const repository = db.getRepository(DocumentEntity);
 
   const entities = await repository.find({
     where: {

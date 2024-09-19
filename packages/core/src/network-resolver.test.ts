@@ -6,14 +6,17 @@ import {
   proofRequestResolver,
   resolveApiNetwork,
 } from './network-resolver';
+import {createDataStore} from '@docknetwork/wallet-sdk-data-store-typeorm/src';
 
 describe('Wallet', () => {
   let wallet: IWallet;
 
   beforeEach(async () => {
     wallet = await createWallet({
-      databasePath: ':memory:',
-      documentNetworkResolver: dockDocumentNetworkResolver,
+      dataStore: await createDataStore({
+        databasePath: ':memory:',
+        documentNetworkResolver: dockDocumentNetworkResolver,
+      }),
     });
   });
 
@@ -169,7 +172,6 @@ describe('Wallet', () => {
       });
 
       expect(result.networkId).toBe('testnet');
-
     });
 
     it('should detect a mainnet proof request', async () => {

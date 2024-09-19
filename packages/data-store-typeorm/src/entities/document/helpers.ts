@@ -1,9 +1,10 @@
-import {ContextProps, WalletDocument} from '../../types';
+import {ContextProps, WalletDocument} from '@docknetwork/wallet-sdk-data-store/src/types';
 import {DocumentTypeEntity} from '../document-type.entity';
 import assert from 'assert';
 import {logger} from '../../logger';
 import {DocumentEntity} from './document.entity';
 import {In} from '../../typeorm';
+import { getDataSource } from '../../helpers';
 
 /**
  * Get document by id
@@ -24,7 +25,8 @@ export async function getOrCreateDocumentTypes({
     types = [types];
   }
  
-  const typeRepository = dataStore.db.getRepository(DocumentTypeEntity);
+  const db = getDataSource(dataStore);
+  const typeRepository = db.getRepository(DocumentTypeEntity);
   const typeEntityList = [];
 
   for (const type of types) {
@@ -55,7 +57,8 @@ export async function findDocumentEntitiesById({
   entityIds: string[];
 }): Promise<DocumentEntity[]> {
   assert(!!entityIds, 'Document ids must be provided');
-  const repository = dataStore.db.getRepository(DocumentEntity);
+  const db = getDataSource(dataStore);
+  const repository = db.getRepository(DocumentEntity);
 
   const entities = await repository.findBy({
     id: In(entityIds),

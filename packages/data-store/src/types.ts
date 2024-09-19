@@ -1,5 +1,4 @@
-import {DataSource} from './typeorm';
-import {WalletEntity} from './entities/wallet.entity';
+import {EventEmitter} from 'events';
 
 export type DocumentResolverProps = {
   document: WalletDocument;
@@ -22,7 +21,30 @@ export type Network = {
   configs?: any;
 };
 
+export type DataSource = {
+  initialize: () => Promise<void>;
+  destroy: () => Promise<void>;
+};
+
+export type DocumentStore = {
+  addDocument: (json: any, options?: any) => Promise<WalletDocument>;
+  updateDocument: (json: any, options?: any) => Promise<WalletDocument>;
+  removeDocument: (id: string, options?: any) => Promise<void>;
+  getDocumentById: (id: string) => Promise<WalletDocument>;
+  getDocumentsById: (idList: string[]) => Promise<WalletDocument[]>;
+  getDocumentsByType: (type: string) => Promise<WalletDocument[]>;
+  getAllDocuments: (allNetworks?: boolean) => Promise<WalletDocument[]>;
+  removeAllDocuments: () => Promise<void>;
+  getDocumentCorrelations: (documentId: string) => Promise<WalletDocument[]>;
+};
+
+export type WalletStore = {
+  getWallet: () => Promise<WalletDocument>;
+  updateWallet: (json: any) => Promise<WalletDocument>;
+}
+
 export type DataStore = {
+  events: EventEmitter;
   db: DataSource;
   networkId: string;
   testNetworkId: string;
@@ -33,6 +55,8 @@ export type DataStore = {
   version?: string;
   resolveDocumentNetwork: DocumentNetworkResolver;
   setNetwork: (networkId: string) => Promise<void>;
+  documents: DocumentStore;
+  wallet: WalletStore;
 };
 
 export type ContextProps = {
@@ -66,3 +90,10 @@ export type WalletDocument = {
   id: string;
   type: string[] | string;
 } & AnyJSON;
+
+export enum DataStoreEvents {
+  DocumentCreated = 'DocumentCreated',
+  DocumentUpdated = 'DocumentUpdated',
+  DocumentDeleted = 'DocumentDeleted',
+  AllDocumentsDeleted = 'AllDocumentsDeleted',
+}

@@ -2,7 +2,7 @@ import {getV1LocalStorage, getWalletDocuments} from './v1-data-store';
 import {logger} from '../../logger';
 import {migrateV1Data} from './migrate-v1-data';
 import {MigrationResult} from '../index';
-import {ContextProps} from '../../types';
+import {ContextProps} from '@docknetwork/wallet-sdk-data-store/src/types';
 
 /**
  * Migrate from v1 to v2

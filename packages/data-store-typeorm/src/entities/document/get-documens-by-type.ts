@@ -1,7 +1,8 @@
-import {ContextProps, WalletDocument} from '../../types';
+import {ContextProps, WalletDocument} from '@docknetwork/wallet-sdk-data-store/src/types';
 import {DocumentEntity} from './document.entity';
 import {createQueryBuilder} from '../../typeorm';
 import {toWalletDocument} from './helpers';
+import { getDataSource } from '../../helpers';
 
 /**
  * Get documents by type
@@ -14,7 +15,8 @@ export async function getDocumentsByType({
 }: ContextProps & {
   type: string;
 }): Promise<WalletDocument[]> {
-  const repository = dataStore.db.getRepository(DocumentEntity);
+  const db = getDataSource(dataStore);
+  const repository = db.getRepository(DocumentEntity);
 
   const documents = repository
     .createQueryBuilder('document')

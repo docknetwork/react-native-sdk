@@ -1,24 +1,6 @@
 import {getV1LocalStorage} from './v1-data-store';
-import {createDocument} from '../../entities/document';
-import {documentHasType} from '../../helpers';
+import {importUniversalWalletDocuments} from '@docknetwork/wallet-sdk-data-store/src/helpers';
 
-export async function importUniversalWalletDocuments({documents, dataStore}) {
-  for (const _document of documents) {
-    let document = _document;
-    if (documentHasType(document, 'VerifiableCredential') && document.value) {
-      document = document.value;
-    }
-
-    try {
-      await createDocument({
-        dataStore,
-        json: document,
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  }
-}
 async function migrateDocuments({v1Storage, dataStore}) {
   const walletJSON = await v1Storage.getItem('wallet');
   const wallet = JSON.parse(walletJSON);

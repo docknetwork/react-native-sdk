@@ -1,3 +1,4 @@
+import {createDataStore} from '@docknetwork/wallet-sdk-data-store-typeorm/src';
 import {createDIDProvider} from './did-provider';
 import {createWallet, ensureDocumentContext, IWallet} from './wallet';
 
@@ -6,7 +7,9 @@ describe('Wallet', () => {
 
   beforeEach(async () => {
     wallet = await createWallet({
-      databasePath: ':memory:',
+      dataStore: await createDataStore({
+        databasePath: ':memory:',
+      }),
     });
   });
 

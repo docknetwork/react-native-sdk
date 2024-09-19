@@ -9,6 +9,7 @@ import {IWallet, createWallet} from './wallet';
 import biometricsBBSRevocation from './fixtures/biometrics-credential-bbs-revocation.json';
 import customerCredential from './fixtures/customer-credential.json';
 import {credentialServiceRPC} from '@docknetwork/wallet-sdk-wasm/src/services/credential';
+import {createDataStore} from '@docknetwork/wallet-sdk-data-store-typeorm/src'
 
 describe('CredentialProvider', () => {
   let wallet: IWallet;
@@ -16,7 +17,9 @@ describe('CredentialProvider', () => {
 
   beforeEach(async () => {
     wallet = await createWallet({
-      databasePath: ':memory:',
+      dataStore: await createDataStore({
+        databasePath: ':memory:',
+      }),
     });
 
     provider = createCredentialProvider({wallet});
@@ -118,10 +121,14 @@ describe('CredentialProvider', () => {
 
       // load data into cache
       await provider.syncCredentialStatus({});
-      
+
       // update statusDoc updateAt to 25 hours ago
-      const statusDoc = await wallet.getDocumentById(`${customerCredential.id}#status`);
-      statusDoc.updatedAt = new Date(Date.now() - 25 * 60 * 60 * 1000).toISOString();
+      const statusDoc = await wallet.getDocumentById(
+        `${customerCredential.id}#status`,
+      );
+      statusDoc.updatedAt = new Date(
+        Date.now() - 25 * 60 * 60 * 1000,
+      ).toISOString();
       await wallet.updateDocument(statusDoc);
 
       const statusDocs = await provider.syncCredentialStatus({});
@@ -155,7 +162,6 @@ describe('CredentialProvider', () => {
         expect(statusDoc.status).toBe(CredentialStatus.Verified);
       }
     });
-
 
     afterEach(() => {
       (credentialServiceRPC.verifyCredential as any).mockReset();

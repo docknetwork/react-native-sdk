@@ -6,10 +6,13 @@
 import dock from '@docknetwork/sdk';
 import {DataStoreSnapshotV1} from '../data/data-store';
 import {WalletBackupJSON, WalletBackupPasssword} from '../data/wallet-backup';
-import {IWallet} from '@docknetwork/wallet-sdk-core/lib/types';
+import {
+  CreateWalletProps,
+  IWallet,
+} from '@docknetwork/wallet-sdk-core/lib/types';
 import {createWallet} from '@docknetwork/wallet-sdk-core/lib/wallet';
 import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
-import {setV1LocalStorage} from '@docknetwork/wallet-sdk-data-store/src/migration/migration1/v1-data-store';
+import {setV1LocalStorage} from '@docknetwork/wallet-sdk-data-store-typeorm/src/migration/migration1/v1-data-store';
 import {
   IMessageProvider,
   createMessageProvider,
@@ -23,17 +26,29 @@ import {
   createCredentialProvider,
 } from '@docknetwork/wallet-sdk-core/src/credential-provider';
 import {dockService} from '@docknetwork/wallet-sdk-wasm/src/services/dock';
+import {createDataStore} from '@docknetwork/wallet-sdk-data-store-typeorm/src';
 
 let wallet: IWallet;
 let didProvider: IDIDProvider;
 let credentialProvider: ICredentialProvider;
 let messageProvider: IMessageProvider;
 
-export async function createNewWallet(): Promise<IWallet> {
-  wallet = await createWallet({
+export async function createNewWallet({
+  dontWaitForNetwork,
+  otherProps,
+}: {
+  dontWaitForNetwork?: boolean;
+  otherProps?: CreateWalletProps;
+} = {}): Promise<IWallet> {
+  const dataStore = await createDataStore({
     databasePath: ':memory:',
     dbType: 'sqlite',
     defaultNetwork: 'testnet',
+    ...(otherProps ? otherProps : {}),
+  });
+
+  wallet = await createWallet({
+    dataStore,
   });
 
   didProvider = createDIDProvider({wallet});
@@ -41,7 +56,10 @@ export async function createNewWallet(): Promise<IWallet> {
   messageProvider = createMessageProvider({wallet, didProvider}) as any;
 
   console.log('Waiting for network connection');
-  await wallet.waitForEvent(WalletEvents.networkConnected);
+
+  if (!dontWaitForNetwork) {
+    await wallet.waitForEvent(WalletEvents.networkConnected);
+  }
   console.log('Network connected');
 
   return wallet;
@@ -51,7 +69,7 @@ export async function getWallet(): Promise<IWallet> {
   if (!wallet) {
     await createNewWallet();
   }
-  
+
   return wallet;
 }
 
@@ -113,7 +131,7 @@ export async function closeWallet(wallet?: IWallet) {
       try {
         wallet.dataStore.db.destroy();
         await dockService.disconnect();
-      } catch(err) {
+      } catch (err) {
         console.error(err);
       }
       res(null);

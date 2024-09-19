@@ -1,3 +1,4 @@
+import { createDataStore } from '@docknetwork/wallet-sdk-data-store-typeorm/src';
 import {IDIDProvider, createDIDProvider} from './did-provider';
 import {IMessageProvider, createMessageProvider} from './message-provider';
 import {IWallet, createWallet} from './wallet';
@@ -31,7 +32,9 @@ describe('MessageProvider', () => {
     };
 
     wallet = await createWallet({
-      databasePath: ':memory:',
+      dataStore: await createDataStore({
+        databasePath: ':memory:',
+      })
     });
     didProvider = createDIDProvider({
       wallet,

@@ -6,6 +6,8 @@ import {EventEmitter} from 'events';
 import {createWallet, IWallet} from '@docknetwork/wallet-sdk-core/src/wallet';
 import {dockDocumentNetworkResolver} from '@docknetwork/wallet-sdk-core/src/network-resolver';
 import {DataStoreConfigs} from '@docknetwork/wallet-sdk-data-store/src/types';
+import {createDataStore} from '@docknetwork/wallet-sdk-data-store-typeorm/src';
+
 import {
   createDIDProvider,
   IDIDProvider,
@@ -93,9 +95,12 @@ export const DEFAULT_WALLET_CONFIGS: any = {
 };
 
 export async function initializeWallet(params: DataStoreConfigs = {} as any) {
-  const _wallet = await createWallet({
+  const dataStore = await createDataStore({
     ...DEFAULT_WALLET_CONFIGS,
     ...params,
+  });
+  const _wallet = await createWallet({
+    dataStore,
   });
 
   setWallet(_wallet);

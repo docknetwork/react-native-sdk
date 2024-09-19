@@ -1,16 +1,27 @@
-import {initializeTypeORM} from './helpers';
+import {EventEmitter} from 'events';
 import {DataStore, DataStoreConfigs} from './types';
-import {migrate} from './migration';
 import {DEFAULT_CONFIGS} from './configs';
 import {logger} from './logger';
-import {DataSource} from './typeorm';
 import assert from 'assert';
-import {getWallet, updateWallet} from './entities/wallet.entity';
-import { getV1LocalStorage } from './migration/migration1/v1-data-store';
-import { getAllDocuments } from './entities/document';
 
+import {DocumentStore, DataSource, WalletStore} from './types';
 
-export const getLocalStorage = getV1LocalStorage;
+export let _localStorageImpl = null;
+export const getLocalStorage = () => _localStorageImpl;
+export const setLocalStorage = impl => (_localStorageImpl = impl);
+
+export function parseConfigs(configs: DataStoreConfigs): DataStoreConfigs {
+  const options: DataStoreConfigs = {
+    ...DEFAULT_CONFIGS,
+    ...configs,
+  };
+
+  if (!options.defaultNetwork) {
+    options.defaultNetwork = options.networks[0].id;
+  }
+
+  return options;
+}
 
 export async function updateNetwork({
   dataStore,
@@ -26,23 +37,28 @@ export async function updateNetwork({
   dataStore.network = network;
   dataStore.networkId = networkId;
 
-  await updateWallet({dataStore});
+  await dataStore.wallet.updateWallet({dataStore});
 }
 
-export async function createDataStore(
-  _options: DataStoreConfigs,
-): Promise<DataStore> {
-  const options: DataStoreConfigs = {
-    ...DEFAULT_CONFIGS,
-    ..._options,
-  };
+export async function createDataStore({
+  configs,
+  documentStore,
+  walletStore,
+  dataSource,
+  localStorageImpl,
+}: {
+  configs: DataStoreConfigs;
+  documentStore: DocumentStore;
+  walletStore: WalletStore;
+  dataSource: DataSource;
+  localStorageImpl: any;
+}): Promise<DataStore> {
+  _localStorageImpl = localStorageImpl;
 
-  if (!options.defaultNetwork) {
-    options.defaultNetwork = options.networks[0].id;
-  }
+  const options = parseConfigs(configs);
 
-  const dataSource: DataSource = await initializeTypeORM(options);
   const dataStore: DataStore = {
+    events: new EventEmitter(),
     db: dataSource,
     networkId: options.defaultNetwork,
     network: options.networks.find(item => item.id === options.defaultNetwork),
@@ -55,21 +71,11 @@ export async function createDataStore(
       logger.debug(`Setting network to ${networkId}`);
       return updateNetwork({dataStore, networkId});
     },
+    wallet: walletStore,
+    documents: documentStore,
   };
 
   logger.debug('Data store initialized');
-
-  await migrate({dataStore});
-
-  const wallet = await getWallet({dataStore});
-  dataStore.networkId = wallet.networkId;
-  dataStore.network = options.networks.find(
-    item => item.id === wallet.networkId,
-  );
-
-  getAllDocuments({dataStore}).then(documents => {
-    logger.debug(`Wallet loaded with ${documents.length} documents`);
-  });
 
   return dataStore;
 }
