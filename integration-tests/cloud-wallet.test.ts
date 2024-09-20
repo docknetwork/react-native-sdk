@@ -3,39 +3,13 @@ import {closeWallet, createNewWallet} from './helpers/wallet-helpers';
 import {DataStore} from '@docknetwork/wallet-sdk-data-store/src/types';
 import {
   SYNC_MARKER_TYPE,
+  generateEDVKeys,
   initializeCloudWallet,
 } from '@docknetwork/wallet-sdk-core/src/cloud-wallet';
 import {createDataStore} from '@docknetwork/wallet-sdk-data-store-typeorm/src';
 
 const EDV_URL = process.env.EDV_URL;
 const EDV_AUTH_KEY = process.env.EDV_AUTH_KEY;
-
-const agreementKey = {
-  '@context': ['https://w3id.org/wallet/v1'],
-  type: 'X25519KeyAgreementKey2020',
-  id: 'did:key:z6LSqN54mGZqf99ptTHyB3WWpwnrs25uAMrUgWsZiSLCdSDP#z6LSqN54mGZqf99ptTHyB3WWpwnrs25uAMrUgWsZiSLCdSDP',
-  controller: 'did:key:z6LSqN54mGZqf99ptTHyB3WWpwnrs25uAMrUgWsZiSLCdSDP',
-  publicKeyMultibase: 'z6LSqN54mGZqf99ptTHyB3WWpwnrs25uAMrUgWsZiSLCdSDP',
-  privateKeyMultibase: 'z3weecLZfDoMXCvQYUpvjTdvnw9g5zjRmh7eErSpJQwQjCar',
-};
-
-const verificationKey = {
-  '@context': ['https://w3id.org/wallet/v1'],
-  id: 'did:key:z6MkjjCpsoQrwnEmqHzLdxWowXk5gjbwor4urC1RPDmGeV8r#z6MkjjCpsoQrwnEmqHzLdxWowXk5gjbwor4urC1RPDmGeV8r',
-  name: 'My Test Key 2',
-  image: 'https://via.placeholder.com/150',
-  description: 'For testing only, totally compromised.',
-  tags: ['professional', 'organization', 'compromised'],
-  correlation: ['4058a72a-9523-11ea-bb37-0242ac130002'],
-  controller: 'did:key:z6MkjjCpsoQrwnEmqHzLdxWowXk5gjbwor4urC1RPDmGeV8r',
-  type: 'Ed25519VerificationKey2018',
-  privateKeyBase58:
-    '3CQCBKF3Mf1tU5q1FLpHpbxYrNYxLiZk4adDtfyPEfc39Wk6gsTb2qoc1ZtpqzJYdM1rG4gpaD3ZVKdkiDrkLF1p',
-  publicKeyBase58: '6GwnHZARcEkJio9dxPYy6SC5sAL6PxpZAB6VYwoFjGMU',
-};
-
-const hmacKey =
-  'T4TUcRii3XOf8gwq37_MiCfUKCY074xRo2FCy-rZyXxmD_NPrALuMdWxFE91j7ZoqRUm6tUrq3LJGiRYWRGgLw';
 
 describe('Cloud wallet', () => {
   let dataStore: DataStore;
@@ -50,6 +24,8 @@ describe('Cloud wallet', () => {
   let wallet: IWallet;
 
   beforeAll(async () => {
+    const {verificationKey, agreementKey, hmacKey} = await generateEDVKeys();
+
     dataStore = await createDataStore({
       databasePath: ':memory:',
       dbType: 'sqlite',
@@ -99,7 +75,6 @@ describe('Cloud wallet', () => {
     await pullDocuments();
 
     const sdkDocument = await dataStore.documents.getDocumentById(newDocId);
-
 
     expect(sdkDocument).toEqual(newDoc);
   });

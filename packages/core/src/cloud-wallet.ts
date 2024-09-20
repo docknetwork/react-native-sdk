@@ -5,12 +5,34 @@ import {
 
 import HMAC from './hmac';
 import {X25519KeyAgreementKey2020} from '@digitalbazaar/x25519-key-agreement-key-2020';
-import {getKeypairFromDoc} from '@docknetwork/universal-wallet/methods/keypairs';
+import {getKeypairFromDoc, getKeydocFromPair} from '@docknetwork/universal-wallet/methods/keypairs';
 import EDVHTTPStorageInterface from '@docknetwork/universal-wallet/storage/edv-http-storage';
 import {IWallet} from './types';
 import {logger} from '@docknetwork/wallet-sdk-data-store/src/logger';
+import {didService} from '@docknetwork/wallet-sdk-wasm/src/services/dids/service';
+import {keyringService} from '@docknetwork/wallet-sdk-wasm/src/services/keyring';
+import {Ed25519VerificationKey2018} from '@digitalbazaar/ed25519-verification-key-2018';
 
 export const SYNC_MARKER_TYPE = 'SyncMarkerDocument';
+
+export async function generateEDVKeys() {
+  await keyringService.initialize({
+    ss58Format: 22,
+  });
+  const keyPair = await didService.generateKeyDoc({});
+
+  const verificationKey = await Ed25519VerificationKey2018.generate({
+    controller: keyPair.controller,
+    id: keyPair.id,
+  });
+
+  const agreementKey = await X25519KeyAgreementKey2020.generate({
+    controller: keyPair.controller,
+  });
+  const hmacKey = await HMAC.exportKey(await HMAC.generateKey());
+
+  return {verificationKey, agreementKey, hmacKey};
+}
 
 export async function initializeCloudWallet({
   dataStore,
