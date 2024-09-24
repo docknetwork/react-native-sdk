@@ -1,10 +1,5 @@
+import {LocalStorage} from '@docknetwork/wallet-sdk-data-store/src/types';
 import assert from 'assert';
-
-export type LocalStorage = {
-  getItem: (key: string) => Promise<string | null>;
-  setItem: (key: string, value: string) => Promise<void>;
-  removeItem: (key: string) => Promise<void>;
-};
 
 let _localStorage: LocalStorage;
 

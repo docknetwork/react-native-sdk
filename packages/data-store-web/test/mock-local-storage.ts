@@ -1,4 +1,4 @@
-import { LocalStorage } from "../src/types";
+import {LocalStorage} from '../src/migration/migration1/v1-data-store';
 
 export const createMockLocalStorage = (): LocalStorage => {
   let data: any = {};

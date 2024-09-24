@@ -234,6 +234,7 @@ export async function initializeCloudWallet({
   async function clearEdvDocuments() {
     const allDocs = await storageInterface.find({});
 
+    debugger;
     for (const doc of allDocs.documents) {
       await storageInterface.delete({document: doc});
     }

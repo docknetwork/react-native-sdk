@@ -1,6 +1,6 @@
-import {getDataSource} from './helpers';
+import {createDataSource} from './helpers';
 
-export default getDataSource({
+export default createDataSource({
   dbType: 'sqlite',
   databasePath: 'data-store.sqlite',
 });

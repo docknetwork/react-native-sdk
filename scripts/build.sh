@@ -1,5 +1,7 @@
 #!/bin/bash
 
+yarn workspace @docknetwork/wallet-sdk-data-store-typeorm build
+yarn workspace @docknetwork/wallet-sdk-data-store-web build
 yarn workspace @docknetwork/wallet-sdk-data-store build
 yarn workspace @docknetwork/wallet-sdk-wasm build
 yarn workspace @docknetwork/wallet-sdk-core build
