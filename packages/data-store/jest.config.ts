@@ -16,6 +16,5 @@ module.exports = {
     '^.+\\.ts$': 'ts-jest',
   },
   resetMocks: false,
-  setupFilesAfterEnv: ['<rootDir>/setup-tests.ts'],
   setupFiles: ['jest-localstorage-mock'],
 };
