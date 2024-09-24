@@ -2,37 +2,10 @@ import {
   DataStore,
   DataStoreEvents,
 } from '@docknetwork/wallet-sdk-data-store/src/types';
-
-import HMAC from './hmac';
-import {X25519KeyAgreementKey2020} from '@digitalbazaar/x25519-key-agreement-key-2020';
-import {getKeypairFromDoc, getKeydocFromPair} from '@docknetwork/universal-wallet/methods/keypairs';
-import EDVHTTPStorageInterface from '@docknetwork/universal-wallet/storage/edv-http-storage';
-import {IWallet} from './types';
 import {logger} from '@docknetwork/wallet-sdk-data-store/src/logger';
-import {didService} from '@docknetwork/wallet-sdk-wasm/src/services/dids/service';
-import {keyringService} from '@docknetwork/wallet-sdk-wasm/src/services/keyring';
-import {Ed25519VerificationKey2018} from '@digitalbazaar/ed25519-verification-key-2018';
+import {edvService} from '@docknetwork/wallet-sdk-wasm/src/services/edv';
 
 export const SYNC_MARKER_TYPE = 'SyncMarkerDocument';
-
-export async function generateEDVKeys() {
-  await keyringService.initialize({
-    ss58Format: 22,
-  });
-  const keyPair = await didService.generateKeyDoc({});
-
-  const verificationKey = await Ed25519VerificationKey2018.generate({
-    controller: keyPair.controller,
-    id: keyPair.id,
-  });
-
-  const agreementKey = await X25519KeyAgreementKey2020.generate({
-    controller: keyPair.controller,
-  });
-  const hmacKey = await HMAC.exportKey(await HMAC.generateKey());
-
-  return {verificationKey, agreementKey, hmacKey};
-}
 
 export async function initializeCloudWallet({
   dataStore,
@@ -49,46 +22,14 @@ export async function initializeCloudWallet({
   hmacKey: any;
   authKey: string;
 }) {
-  const hmac = await HMAC.create({
-    key: hmacKey,
+
+  await edvService.initialize({
+    hmacKey,
+    agreementKey,
+    verificationKey,
+    edvUrl,
+    authKey
   });
-  const keyAgreementKey = await X25519KeyAgreementKey2020.from(agreementKey);
-  const keys = {
-    keyAgreementKey,
-    hmac,
-  };
-
-  const {controller} = verificationKey;
-  const invocationSigner = getKeypairFromDoc(verificationKey);
-  invocationSigner.sign = invocationSigner.signer().sign;
-
-  const storageInterface = new EDVHTTPStorageInterface({
-    url: edvUrl,
-    keys,
-    invocationSigner,
-    defaultHeaders: {
-      DockAuth: authKey,
-    },
-  });
-
-  let edvId;
-  try {
-    console.log('Creating EDV with controller:', controller);
-    edvId = await storageInterface.createEdv({
-      sequence: 0,
-      controller,
-    });
-  } catch (e) {
-    const existingConfig = await storageInterface.findConfigFor(controller);
-    edvId = existingConfig && existingConfig.id;
-    if (!edvId) {
-      logger.error('Unable to create or find primary EDV:');
-      throw e;
-    }
-  }
-
-  logger.log(`EDV found/created: ${edvId} - connecting to it`);
-  storageInterface.connectTo(edvId);
 
   let pendingOperations = 0;
   let pendingOperationsResolvers = [];
@@ -103,7 +44,7 @@ export async function initializeCloudWallet({
   }
 
   async function findDocumentByContentId(id) {
-    const result = await storageInterface.find({
+    const result = await edvService.find({
       equals: {
         'content.id': id,
       },
@@ -121,7 +62,7 @@ export async function initializeCloudWallet({
 
     logger.debug(`Updating document ${documentContent.id} in EDV`);
 
-    await storageInterface.update({
+    await edvService.update({
       document: {
         id: edvDocument.id,
         content: documentContent,
@@ -135,7 +76,7 @@ export async function initializeCloudWallet({
     pendingOperations++;
     try {
       logger.debug(`Adding document to EDV: ${content.id}`);
-      await storageInterface.insert({
+      await edvService.insert({
         document: {
           content: content,
         },
@@ -155,7 +96,7 @@ export async function initializeCloudWallet({
     try {
       logger.debug(`Removing document from EDV: ${documentId}`);
       const edvDocument = await findDocumentByContentId(documentId);
-      await storageInterface.delete({document: edvDocument});
+      await edvService.delete({document: edvDocument});
       logger.debug(`Document removed from EDV: ${documentId}`);
     } finally {
       pendingOperations--;
@@ -183,15 +124,6 @@ export async function initializeCloudWallet({
   dataStore.events.on(DataStoreEvents.DocumentDeleted, removeDocumentHandler);
   dataStore.events.on(DataStoreEvents.DocumentUpdated, updateDocumentHandler);
 
-  await storageInterface.client.ensureIndex({
-    attribute: 'content.id',
-    unique: true,
-  });
-
-  await storageInterface.client.ensureIndex({
-    attribute: 'content.type',
-  });
-
   async function getSyncMarkerDiff() {
     const edvSyncMaker = await findDocumentByContentId(SYNC_MARKER_TYPE);
     const localSyncMarker = await dataStore.documents.getDocumentById(
@@ -217,7 +149,7 @@ export async function initializeCloudWallet({
   }
 
   async function pullDocuments() {
-    const allDocs = await storageInterface.find({});
+    const allDocs = await edvService.find({});
 
     for (const doc of allDocs.documents) {
       const edvDoc = doc.content;
@@ -232,19 +164,17 @@ export async function initializeCloudWallet({
   }
 
   async function clearEdvDocuments() {
-    const allDocs = await storageInterface.find({});
+    const allDocs = await edvService.find({});
 
     for (const doc of allDocs.documents) {
-      await storageInterface.delete({document: doc});
+      await edvService.delete({document: doc});
     }
   }
 
   return {
-    edvId,
     clearEdvDocuments,
     pushSyncMarker,
     getSyncMarkerDiff,
-    storageInterface,
     findDocumentByContentId,
     updateDocumentByContentId,
     waitForEdvIdle,

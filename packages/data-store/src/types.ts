@@ -82,6 +82,10 @@ export type DataStoreConfigs = {
   documentNetworkResolver?: DocumentNetworkResolver;
   sqlJsConfig?: any;
   typeORMConfigs?: any;
+  cloudWallet?: {
+    edvUrl: string;
+    authKey: string;
+  }
 };
 
 export type AnyJSON = any;

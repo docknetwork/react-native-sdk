@@ -1,19 +1,15 @@
 import {IWallet} from '@docknetwork/wallet-sdk-core/lib/types';
 import {closeWallet, createNewWallet} from './helpers/wallet-helpers';
 import {DataStore} from '@docknetwork/wallet-sdk-data-store/src/types';
-import {
-  SYNC_MARKER_TYPE,
-  generateEDVKeys,
-  initializeCloudWallet,
-} from '@docknetwork/wallet-sdk-core/src/cloud-wallet';
+import {initializeCloudWallet} from '@docknetwork/wallet-sdk-core/src/cloud-wallet';
 import {createDataStore} from '@docknetwork/wallet-sdk-data-store-typeorm/src';
+import {edvService} from '@docknetwork/wallet-sdk-wasm/src/services/edv';
 
 const EDV_URL = process.env.EDV_URL;
 const EDV_AUTH_KEY = process.env.EDV_AUTH_KEY;
 
 describe('Cloud wallet', () => {
   let dataStore: DataStore;
-  let storageInterface: any;
   let waitForEdvIdle: any;
   let pushSyncMarker: any;
   let findDocumentByContentId: any;
@@ -24,7 +20,8 @@ describe('Cloud wallet', () => {
   let wallet: IWallet;
 
   beforeAll(async () => {
-    const {verificationKey, agreementKey, hmacKey} = await generateEDVKeys();
+    const {verificationKey, agreementKey, hmacKey} =
+      await edvService.generateKeys();
 
     dataStore = await createDataStore({
       databasePath: ':memory:',
@@ -33,7 +30,6 @@ describe('Cloud wallet', () => {
     });
 
     ({
-      storageInterface,
       waitForEdvIdle,
       pushSyncMarker,
       findDocumentByContentId,
@@ -66,7 +62,7 @@ describe('Cloud wallet', () => {
       data: 'test',
     };
 
-    await storageInterface.insert({
+    await edvService.insert({
       document: {
         content: newDoc,
       },
