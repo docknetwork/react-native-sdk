@@ -84,6 +84,9 @@ jobs:
           PR_TITLE: ${{ steps.pr_info.outputs.title }}
           GITHUB_ACTION_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           TESTING_API_URL: ${{secrets.TESTING_API_URL}}
+          EDV_URL: ${{secrets.EDV_URL}}
+          EDV_AUTH_KEY: ${{secrets.EDV_AUTH_KEY}}
+
         run: |
           export NODE_OPTIONS="--max_old_space_size=12096"
           export CI=true
