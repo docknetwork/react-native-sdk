@@ -1,7 +1,7 @@
 import {IWallet} from '@docknetwork/wallet-sdk-core/lib/types';
 import {closeWallet, createNewWallet} from './helpers/wallet-helpers';
 import {DataStore} from '@docknetwork/wallet-sdk-data-store/src/types';
-import {initializeCloudWallet} from '@docknetwork/wallet-sdk-core/src/cloud-wallet';
+import {SYNC_MARKER_TYPE, initializeCloudWallet} from '@docknetwork/wallet-sdk-core/src/cloud-wallet';
 import {createDataStore} from '@docknetwork/wallet-sdk-data-store-typeorm/src';
 import {edvService} from '@docknetwork/wallet-sdk-wasm/src/services/edv';
 
