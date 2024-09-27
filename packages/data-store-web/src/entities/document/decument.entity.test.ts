@@ -2,7 +2,7 @@ import {DocumentEntity} from './document.entity';
 import {createTestDataStore} from '../../../test/test-utils';
 import {DataStore} from '../../types';
 import {createDocument} from './create-document';
-import {getDocumentsByType} from './get-documens-by-type';
+import {getDocumentsByType} from './get-documents-by-type';
 import {getDocumentById} from './get-document-by-id';
 import {getDocumentCorrelations} from './get-document-correlations';
 
