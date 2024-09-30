@@ -6,9 +6,12 @@ import assert from 'assert';
 
 import {DocumentStore, DataSource, WalletStore} from './types';
 
-export let _localStorageImpl = null;
+export let _localStorageImpl = global.localStorage;
 export const getLocalStorage = () => _localStorageImpl;
-export const setLocalStorage = impl => (_localStorageImpl = impl);
+export const setLocalStorage = impl => {
+  console.log('Setting local storage impl', impl);
+  _localStorageImpl = impl
+};
 
 export function parseConfigs(configs: DataStoreConfigs): DataStoreConfigs {
   const options: DataStoreConfigs = {

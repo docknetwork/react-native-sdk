@@ -1724,6 +1724,22 @@
     rify "^0.7.1"
     semver "^7.6.0"
 
+"@docknetwork/universal-wallet@2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@docknetwork/universal-wallet/-/universal-wallet-2.1.1.tgz#e51122dacfeb65eb883ddf1b7b5b3f2996e7068a"
+  integrity sha512-wezRtmuLiFUswqx1DGzjPCdqCjqmGGiMu8l+L6PHoeAzRo2bzESJMFAhNSe2xU4WV8FGy3yoNxq8tYzd4z+Ezw==
+  dependencies:
+    "@digitalbazaar/ed25519-verification-key-2018" "3.1.1"
+    "@digitalbazaar/ed25519-verification-key-2020" "3.3.0"
+    "@digitalbazaar/minimal-cipher" "4.0.2"
+    "@digitalbazaar/x25519-key-agreement-key-2019" "5.0.1"
+    "@digitalbazaar/x25519-key-agreement-key-2020" "2.1.0"
+    "@peculiar/webcrypto" "^1.1.6"
+    babel-polyfill "^6.26.0"
+    base58-universal "1.0.0"
+  optionalDependencies:
+    "@digitalbazaar/edv-client" "^11.3.2"
+
 "@docknetwork/universal-wallet@^2.0.1":
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/@docknetwork/universal-wallet/-/universal-wallet-2.0.1.tgz#60f24db09c540dc8a3cc0ef8cbabdcc9dbb8d800"
@@ -4774,13 +4790,6 @@ available-typed-arrays@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/available-typed-arrays/-/available-typed-arrays-1.0.5.tgz#92f95616501069d07d10edb2fc37d3e1c65123b7"
   integrity sha512-DMD0KiN46eipeziST1LPP/STfDU0sufISXmjSgvVsoU2tqxctQeASejWcfNtxYKqETM1UxQ8sp2OrSBWpHY6sw==
-
-available-typed-arrays@^1.0.7:
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/available-typed-arrays/-/available-typed-arrays-1.0.7.tgz#a5cc375d6a03c2efc87a553f3e0b1522def14846"
-  integrity sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==
-  dependencies:
-    possible-typed-array-names "^1.0.0"
 
 axe-core@^4.6.2:
   version "4.8.1"

@@ -183,10 +183,14 @@ class CredentialService {
     return isKvacCredential(credential);
   }
 
-  async acquireOIDCredential({uri, authorizationCode, holderKeyDocument}: {
-    uri: string,
-    authorizationCode?: string,
-    holderKeyDocument: any
+  async acquireOIDCredential({
+    uri,
+    authorizationCode,
+    holderKeyDocument,
+  }: {
+    uri: string;
+    authorizationCode?: string;
+    holderKeyDocument: any;
   }) {
     const searchParams = new URL(uri).searchParams;
     const params = new URLSearchParams(searchParams);
@@ -225,28 +229,33 @@ class CredentialService {
       code,
     });
 
-    const response = await client.acquireCredentials({
-      credentialTypes,
-      proofCallbacks: {
-        signCallback: async args => {
-          // use service method here
-          const jwt = await didService.createSignedJWT({
-            payload: args.payload,
-            privateKeyDoc: holderKeyDocument,
-            headerInput: args.header,
-          });
 
-          return jwt;
+    try {
+      const response = await client.acquireCredentials({
+        credentialTypes,
+        proofCallbacks: {
+          signCallback: async args => {
+            // use service method here
+            const jwt = await didService.createSignedJWT({
+              payload: args.payload,
+              privateKeyDoc: holderKeyDocument,
+              headerInput: args.header,
+            });
+
+            return jwt;
+          },
         },
-      },
-      format: format,
-      alg: Alg.EdDSA,
-      kid: holderKeyDocument.id,
-    });
+        format: format,
+        alg: Alg.EdDSA,
+        kid: holderKeyDocument.id,
+      });
 
-    return {
-      credential: response.credential,
-    };
+      return {
+        credential: response.credential,
+      };
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   async createBBSPresentation(params) {

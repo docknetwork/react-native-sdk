@@ -33,7 +33,7 @@ export type DocumentStore = {
   getDocumentById: (id: string) => Promise<WalletDocument>;
   getDocumentsById: (idList: string[]) => Promise<WalletDocument[]>;
   getDocumentsByType: (type: string) => Promise<WalletDocument[]>;
-  getAllDocuments: (allNetworks?: boolean) => Promise<WalletDocument[]>;
+  getAllDocuments: (allNetworks?: any) => Promise<WalletDocument[]>;
   removeAllDocuments: () => Promise<void>;
   getDocumentCorrelations: (documentId: string) => Promise<WalletDocument[]>;
 };
@@ -82,6 +82,10 @@ export type DataStoreConfigs = {
   documentNetworkResolver?: DocumentNetworkResolver;
   sqlJsConfig?: any;
   typeORMConfigs?: any;
+  cloudWallet?: {
+    edvUrl: string;
+    authKey: string;
+  }
 };
 
 export type AnyJSON = any;
@@ -97,3 +101,10 @@ export enum DataStoreEvents {
   DocumentDeleted = 'DocumentDeleted',
   AllDocumentsDeleted = 'AllDocumentsDeleted',
 }
+
+
+export type LocalStorage = {
+  getItem: (key: string) => Promise<string | null>;
+  setItem: (key: string, value: string) => Promise<void>;
+  removeItem: (key: string) => Promise<void>;
+};
