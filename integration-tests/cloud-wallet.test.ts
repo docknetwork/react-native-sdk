@@ -75,75 +75,75 @@ describe('Cloud wallet', () => {
     expect(sdkDocument).toEqual(newDoc);
   });
 
-  // it('should sync a document added to the wallet to the EDV', async () => {
-  //   const doc = {
-  //     type: 'test',
-  //     data: 'test',
-  //   };
-  //   const {id: addedDocId} = await wallet.addDocument(doc);
+  it('should sync a document added to the wallet to the EDV', async () => {
+    const doc = {
+      type: 'test',
+      data: 'test',
+    };
+    const {id: addedDocId} = await wallet.addDocument(doc);
 
-  //   await waitForEdvIdle();
+    await waitForEdvIdle();
 
-  //   const edvDocument = await findDocumentByContentId(addedDocId);
-  //   expect(edvDocument.content.id).toBe(addedDocId);
-  // });
+    const edvDocument = await findDocumentByContentId(addedDocId);
+    expect(edvDocument.content.id).toBe(addedDocId);
+  });
 
-  // it('should update a document in the wallet and see it updated in the EDV', async () => {
-  //   const doc = {
-  //     type: 'test',
-  //     data: 'test',
-  //   };
-  //   const {id: addedDocId} = await wallet.addDocument(doc);
+  it('should update a document in the wallet and see it updated in the EDV', async () => {
+    const doc = {
+      type: 'test',
+      data: 'test',
+    };
+    const {id: addedDocId} = await wallet.addDocument(doc);
 
-  //   await waitForEdvIdle();
+    await waitForEdvIdle();
 
-  //   await wallet.updateDocument({
-  //     id: addedDocId,
-  //     ...doc,
-  //     data: 'updated',
-  //   });
+    await wallet.updateDocument({
+      id: addedDocId,
+      ...doc,
+      data: 'updated',
+    });
 
-  //   await waitForEdvIdle();
+    await waitForEdvIdle();
 
-  //   const updatedEdvDocument = await findDocumentByContentId(addedDocId);
-  //   expect(updatedEdvDocument.content.data).toBe('updated');
-  // });
+    const updatedEdvDocument = await findDocumentByContentId(addedDocId);
+    expect(updatedEdvDocument.content.data).toBe('updated');
+  });
 
-  // it('should remove a document from the wallet and see it removed from the EDV', async () => {
-  //   const doc = {
-  //     type: 'test',
-  //     data: 'test',
-  //   };
-  //   const {id: addedDocId} = await wallet.addDocument(doc);
+  it('should remove a document from the wallet and see it removed from the EDV', async () => {
+    const doc = {
+      type: 'test',
+      data: 'test',
+    };
+    const {id: addedDocId} = await wallet.addDocument(doc);
 
-  //   await waitForEdvIdle();
+    await waitForEdvIdle();
 
-  //   await wallet.removeDocument(addedDocId);
+    await wallet.removeDocument(addedDocId);
 
-  //   await waitForEdvIdle();
+    await waitForEdvIdle();
 
-  //   const removedEdvDocument = await findDocumentByContentId(addedDocId);
-  //   expect(removedEdvDocument).toBeUndefined();
-  // });
+    const removedEdvDocument = await findDocumentByContentId(addedDocId);
+    expect(removedEdvDocument).toBeUndefined();
+  });
 
-  // it('should have zero sync marker diff after pushing sync marker', async () => {
-  //   await pushSyncMarker();
-  //   await waitForEdvIdle();
+  it('should have zero sync marker diff after pushing sync marker', async () => {
+    await pushSyncMarker();
+    await waitForEdvIdle();
 
-  //   const syncMarkerDiff = await getSyncMarkerDiff();
-  //   expect(syncMarkerDiff).toBe(0);
-  // });
+    const syncMarkerDiff = await getSyncMarkerDiff();
+    expect(syncMarkerDiff).toBe(0);
+  });
 
-  // it('should detect sync marker diff after updating sync marker directly in EDV', async () => {
-  //   await updateDocumentByContentId({
-  //     id: SYNC_MARKER_TYPE,
-  //     type: SYNC_MARKER_TYPE,
-  //     updatedAt: Date.now() + 1000,
-  //   });
+  it('should detect sync marker diff after updating sync marker directly in EDV', async () => {
+    await updateDocumentByContentId({
+      id: SYNC_MARKER_TYPE,
+      type: SYNC_MARKER_TYPE,
+      updatedAt: Date.now() + 1000,
+    });
 
-  //   const syncMarkerDiff = await getSyncMarkerDiff();
-  //   expect(syncMarkerDiff > 0).toBeTruthy();
-  // });
+    const syncMarkerDiff = await getSyncMarkerDiff();
+    expect(syncMarkerDiff > 0).toBeTruthy();
+  });
 
   afterAll(() => closeWallet());
 });
