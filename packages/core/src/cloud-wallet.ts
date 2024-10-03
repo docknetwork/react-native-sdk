@@ -82,6 +82,8 @@ export async function initializeCloudWallet({
         },
       });
       logger.debug(`Document added to EDV: ${content.id}`);
+    } catch(err) {
+      console.error('Unable to add document', content);
     } finally {
       pendingOperations--;
       if (pendingOperations === 0) {
