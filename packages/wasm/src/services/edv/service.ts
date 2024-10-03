@@ -1,13 +1,13 @@
 // @ts-nocheck
-import { InitializeEDVParams, serviceName } from './configs';
+import {InitializeEDVParams, serviceName} from './configs';
 import EDVHTTPStorageInterface from '@docknetwork/universal-wallet/storage/edv-http-storage';
 import HMAC from './hmac';
-import { Ed25519VerificationKey2018 } from '@digitalbazaar/ed25519-verification-key-2018';
-import { X25519KeyAgreementKey2020 } from '@digitalbazaar/x25519-key-agreement-key-2020';
-import { getKeypairFromDoc } from '@docknetwork/universal-wallet/methods/keypairs';
-import { logger } from '@docknetwork/wallet-sdk-data-store/src/logger';
-import { didService } from '@docknetwork/wallet-sdk-wasm/src/services/dids/service';
-import { keyringService } from '@docknetwork/wallet-sdk-wasm/src/services/keyring';
+import {Ed25519VerificationKey2018} from '@digitalbazaar/ed25519-verification-key-2018';
+import {X25519KeyAgreementKey2020} from '@digitalbazaar/x25519-key-agreement-key-2020';
+import {getKeypairFromDoc} from '@docknetwork/universal-wallet/methods/keypairs';
+import {logger} from '@docknetwork/wallet-sdk-data-store/src/logger';
+import {didService} from '@docknetwork/wallet-sdk-wasm/src/services/dids/service';
+import {keyringService} from '@docknetwork/wallet-sdk-wasm/src/services/keyring';
 
 /**
  * EDVService
@@ -15,7 +15,6 @@ import { keyringService } from '@docknetwork/wallet-sdk-wasm/src/services/keyrin
 export class EDVService {
   storageInterface: EDVHTTPStorageInterface;
 
-  // Queue for insert method calls
   private insertQueue: Promise<any> = Promise.resolve();
 
   rpcMethods = [
@@ -47,7 +46,7 @@ export class EDVService {
       hmac,
     };
 
-    const { controller } = verificationKey;
+    const {controller} = verificationKey;
     const invocationSigner = getKeypairFromDoc(verificationKey);
     invocationSigner.sign = invocationSigner.signer().sign;
 
@@ -107,7 +106,7 @@ export class EDVService {
     });
     const hmacKey = await HMAC.exportKey(await HMAC.generateKey());
 
-    return { verificationKey, agreementKey, hmacKey };
+    return {verificationKey, agreementKey, hmacKey};
   }
 
   find(params: any) {
@@ -118,14 +117,12 @@ export class EDVService {
     return this.storageInterface.update(params);
   }
 
-  // Queueing insert method calls
   insert(params: any) {
     this.insertQueue = this.insertQueue.then(() => {
-      return this.storageInterface.insert(params)
-        .catch((error) => {
-          logger.error('Insert failed:', error);
-          throw error;
-        });
+      return this.storageInterface.insert(params).catch(error => {
+        logger.error('Insert failed:', error);
+        throw error;
+      });
     });
     return this.insertQueue;
   }
