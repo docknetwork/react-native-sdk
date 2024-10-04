@@ -4,13 +4,13 @@ Here is an improved version of your documentation, with clearer instructions and
 
 # Cloud Wallet Documentation
 
-The Cloud Wallet feature allows secure storage and synchronization of wallet documents via an Encrypted Data Vault (EDV).
+The Cloud Wallet feature allows secure storage and synchronization of wallet documents via an [Encrypted Data Vault (EDV)](https://digitalbazaar.github.io/encrypted-data-vaults/).
 
 **File Path:** `@docknetwork/wallet-sdk-core/src/cloud-wallet`
 
 ## Feature Overview
 
-The Cloud Wallet integrates with an EDV to securely store, sync, and manage documents. Once initialized, it automatically synchronizes documents between the EDV and the wallet, allowing you to add, update, remove, without dealing with the synchronization logic.
+The Cloud Wallet integrates with an [Encrypted Data Vault (EDV)](https://digitalbazaar.github.io/encrypted-data-vaults/) to securely store, sync, and manage documents. Once initialized, it automatically synchronizes documents between the EDV and the wallet, allowing you to add, update, remove, without dealing with the synchronization logic.
 
 ## Usage Example
 
