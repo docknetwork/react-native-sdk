@@ -28,7 +28,7 @@ import {edvService} from '@docknetwork/wallet-sdk-wasm/src/services/edv';
 
 ### Step 2: Initialize the Data Store
 
-For **Mobile** and **Node.js**:
+#### For Mobile and Node.js
 
 ```ts
 import {createDataStore} from '@docknetwork/wallet-sdk-data-store-typeorm/src';
@@ -40,7 +40,7 @@ const dataStore = await createDataStore({
 });
 ```
 
-For **Browser**:
+#### For Browser
 
 ```ts
 import {createDataStore} from '@docknetwork/wallet-sdk-data-store-web/src';
