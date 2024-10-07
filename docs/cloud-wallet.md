@@ -1,6 +1,3 @@
-Here is an improved version of your documentation, with clearer instructions and a more concise description:
-
----
 
 # Cloud Wallet Documentation
 
