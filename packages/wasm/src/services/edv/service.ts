@@ -15,6 +15,8 @@ import {keyringService} from '@docknetwork/wallet-sdk-wasm/src/services/keyring'
 export class EDVService {
   storageInterface: EDVHTTPStorageInterface;
 
+  private insertQueue: Promise<any> = Promise.resolve();
+
   rpcMethods = [
     EDVService.prototype.generateKeys,
     EDVService.prototype.initialize,
@@ -116,7 +118,13 @@ export class EDVService {
   }
 
   insert(params: any) {
-    return this.storageInterface.insert(params);
+    this.insertQueue = this.insertQueue.then(() => {
+      return this.storageInterface.insert(params).catch(error => {
+        logger.error('Insert failed:', error);
+        throw error;
+      });
+    });
+    return this.insertQueue;
   }
 
   delete(params: any) {
