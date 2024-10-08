@@ -1,6 +1,6 @@
 {
     "name": "@docknetwork/wallet-sdk-wasm",
-    "version": "0.4.19",
+    "version": "0.4.23",
     "license": "https://github.com/docknetwork/react-native-sdk/LICENSE",
     "repository": {
         "type": "git",
@@ -10,7 +10,7 @@
     "scripts": {
         "prepublishOnly": "npm run build",
         "build:babel": "rm -rf lib && NODE_ENV=production babel src/ --out-dir lib --copy-files",
-        "build": "rm -rf lib && rollup -c"
+        "build": "rm -rf lib && rollup -c && node ../../scripts/fix-build-imports.js ./lib"
     },
     "resolutions": {
         "@polkadot/wasm-crypto": "6.3.1",
@@ -25,7 +25,9 @@
         "@polkadot/util-crypto": "10.1.11"
     },
     "dependencies": {
+        "@astronautlabs/jsonpath": "^1.1.2",
         "@docknetwork/universal-wallet": "^2.0.1",
+        "@docknetwork/wallet-sdk-dids": "^0.4.22",
         "@polkadot/api": "9.7.1",
         "@polkadot/keyring": "10.1.11",
         "@polkadot/rpc-core": "9.7.1",
@@ -37,6 +39,8 @@
         "@polkadot/util-crypto": "10.1.11",
         "@polkadot/wasm-crypto": "6.3.1",
         "@docknetwork/sdk": "8.6.0",
+        "@sphereon/oid4vci-client": "^0.16.0",
+        "@sphereon/oid4vci-common": "^0.16.0",
         "axios": "^0.25.0",
         "babel-node": "^0.0.1-security",
         "bignumber.js": "^9.0.1",

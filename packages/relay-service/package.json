@@ -1,6 +1,6 @@
 {
     "name": "@docknetwork/wallet-sdk-relay-service",
-    "version": "0.4.19",
+    "version": "0.4.22",
     "license": "https://github.com/docknetwork/react-native-sdk/LICENSE",
     "repository": {
         "type": "git",
@@ -8,7 +8,7 @@
         "directory": "packages/relay-service"
     },
     "scripts": {
-        "build": "rm -rf lib && rollup -c"
+        "build": "rm -rf lib && rollup -c && node ../../scripts/fix-build-imports.js ./lib"
     },
     "dependencies": {
         "uuid": "^9.0.0",

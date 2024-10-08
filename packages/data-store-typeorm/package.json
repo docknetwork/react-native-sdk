@@ -11,7 +11,7 @@
   },
   "scripts": {
     "test": "jest",
-    "build": "tsc -p tsconfig.build.json"
+    "build": "rm -rf lib && rm -rf tsconfig.build.tsbuildinfo && tsc -p tsconfig.build.json && node ../../scripts/fix-build-imports.js ./lib"
   },
   "peerDependencies": {
     "typeorm": "^0.3.15"
