@@ -3138,7 +3138,7 @@
   resolved "https://registry.yarnpkg.com/@docknetwork/node-types/-/node-types-0.17.0.tgz#ca0ddb5b819e012e8f2f112353008325de4f3e33"
   integrity sha512-aSRFtCwLhdhcY1wqX3WfhPpY2QXVqaB9kNB3e5+ajCWXtc0wuKJePpnSZEO4RqUEUKV5Y3LcsQ52ZB+aJ1PpFw==
 
-"@docknetwork/sdk@8.6.0":
+"@docknetwork/sdk@8.0.0", "@docknetwork/sdk@8.6.0":
   version "8.6.0"
   resolved "https://registry.yarnpkg.com/@docknetwork/sdk/-/sdk-8.6.0.tgz#aac2e0097ff79c74ea9d8836eea2cb8a2b8a71c7"
   integrity sha512-aPW6f915n5fl4a1/kxe4J52Polqxg7/H0LJSRCeGbLpQntKRVkJ3u9x1aaKSRPnYvsFEgao/skuiFetupn64hg==
@@ -3201,6 +3201,34 @@
     "@peculiar/webcrypto" "^1.1.6"
     babel-polyfill "^6.26.0"
     base58-universal "1.0.0"
+
+"@docknetwork/wallet-sdk-wasm@0.4.19":
+  version "0.4.19"
+  resolved "https://registry.yarnpkg.com/@docknetwork/wallet-sdk-wasm/-/wallet-sdk-wasm-0.4.19.tgz#d591b1c1d88453542a11adfeca51b79127512187"
+  integrity sha512-du4a945CK0dzceOStCneF9xdtS/PSxeGY+YlBDqKWLpZ0vz0mKoWCu5BW55Kog1FpjpJvXEKrffHWPgG0iRfIw==
+  dependencies:
+    "@docknetwork/sdk" "8.0.0"
+    "@docknetwork/universal-wallet" "^2.0.1"
+    "@polkadot/api" "9.7.1"
+    "@polkadot/keyring" "10.1.11"
+    "@polkadot/rpc-core" "9.7.1"
+    "@polkadot/rpc-provider" "9.7.1"
+    "@polkadot/types" "9.7.1"
+    "@polkadot/types-known" "9.7.1"
+    "@polkadot/ui-shared" "3.4.1"
+    "@polkadot/util" "10.1.11"
+    "@polkadot/util-crypto" "10.1.11"
+    "@polkadot/wasm-crypto" "6.3.1"
+    "@sphereon/pex" "^1.1.4"
+    axios "^0.25.0"
+    axios-retry "^3.2.5"
+    babel-node "^0.0.1-security"
+    bignumber.js "^9.0.1"
+    cwait "1.1.2"
+    json-rpc-2.0 "^0.2.16"
+    react-native-keychain "^8.0.0"
+    uuid "^8.3.2"
+    winston "^3.3.3"
 
 "@eslint/eslintrc@^0.4.3":
   version "0.4.3"
@@ -4588,7 +4616,7 @@
     cross-fetch "^3.1.8"
     debug "^4.3.5"
 
-"@sphereon/oid4vci-common@0.16.0":
+"@sphereon/oid4vci-common@0.16.0", "@sphereon/oid4vci-common@^0.16.0":
   version "0.16.0"
   resolved "https://registry.yarnpkg.com/@sphereon/oid4vci-common/-/oid4vci-common-0.16.0.tgz#57cb1241ff618a5b61d25b67aa4d0914259246a9"
   integrity sha512-Bf937YsOP7XkI8vgQSPh4e8bwxnkMQAanEtfPv27HSQPEcHpsFtrlQ9T5TRzmb6k66E+n1k0XJXK2WzOrOt7Eg==
