@@ -7,6 +7,7 @@ import {IDIDProvider} from './did-provider';
 
 export type Credential = any;
 
+
 export interface ICredentialProvider {
   getCredentials(type?: string): Credential[];
   getById(id: string): Credential;
