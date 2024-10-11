@@ -23,8 +23,6 @@ jobs:
 
       - name: Copy files
         run: |
-          pwd
-          ls
           # Specify the files or directories you want to copy
           cp -r docs/* knowledge-base/developer-documentation/wallet-sdk
 
@@ -44,6 +42,7 @@ jobs:
           git config user.email "github-actions@dock.io"
           # Get the commit message from the merged PR
           commit_message="${{ github.event.pull_request.title }}"
+          git status
           git add -A .
           git commit -m "Copy files from ${{ github.event.pull_request.head.repo.full_name }} branch $branch_name: $commit_message"
 
@@ -54,4 +53,4 @@ jobs:
           title: "${{ github.event.pull_request.title }}"
           body: "This PR copies /docs files from ${{ github.event.pull_request.head.repo.full_name }}."
           base: main  # Change to the base branch of the destination repo
-          head: ${{ env.branch_name }}
+          branch: ${{ env.branch_name }}
