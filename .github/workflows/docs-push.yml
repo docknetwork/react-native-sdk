@@ -45,7 +45,12 @@ jobs:
           git add -A .
           git status
           git commit -m "Copy files from ${{ github.event.pull_request.head.repo.full_name }} branch $branch_name: $commit_message"
-          git push -u origin $branch_name
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.KNOWLEDGEBASE_PR_TOKEN }}
+          branch: ${{ env.branch_name }}
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
