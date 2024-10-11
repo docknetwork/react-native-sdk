@@ -23,10 +23,12 @@ jobs:
         with:
           repository: docknetwork/knowledgebase-docs
           token: ${{ secrets.KNOWLEDGEBASE_PR_TOKEN }}
-          path: knowledge-base
+          path: ../knowledge-base
 
       - name: Copy files
         run: |
+          pwd
+          ls
           # Specify the files or directories you want to copy
           cp -r docs/* ../knowledge-base/developer-documentation/wallet-sdk
 
