@@ -14,23 +14,19 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Create destination repo folder
-        run: |
-          mkdir -p ../knowledge-base
-          
       - name: Checkout destination repo
         uses: actions/checkout@v2
         with:
           repository: docknetwork/knowledgebase-docs
           token: ${{ secrets.KNOWLEDGEBASE_PR_TOKEN }}
-          path: ../knowledge-base
+          path: knowledge-base
 
       - name: Copy files
         run: |
           pwd
           ls
           # Specify the files or directories you want to copy
-          cp -r docs/* ../knowledge-base/developer-documentation/wallet-sdk
+          cp -r docs/* knowledge-base/developer-documentation/wallet-sdk
 
       - name: Get branch name
         id: get_branch
