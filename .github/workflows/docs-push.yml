@@ -45,18 +45,11 @@ jobs:
           git add -A .
           git status
           git commit -m "Copy files from ${{ github.event.pull_request.head.repo.full_name }} branch $branch_name: $commit_message"
-
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.KNOWLEDGEBASE_PR_TOKEN }}
-          branch: ${{ env.branch_name }}
-
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
-        with:
-          token: ${{ secrets.KNOWLEDGEBASE_PR_TOKEN }}
-          title: "${{ github.event.pull_request.title }}"
-          body: "This PR copies /docs files from ${{ github.event.pull_request.head.repo.full_name }}."
-          base: main  # Change to the base branch of the destination repo
-          branch: ${{ env.branch_name }}
+          
+          gh auth login --with-token ${{ secrets.KNOWLEDGEBASE_PR_TOKEN }}
+          git push origin $branch_name
+          gh pr create \
+            --body "This PR copies /docs files from ${{ github.event.pull_request.head.repo.full_name }}." \
+            --title "${{ github.event.pull_request.title }}" \
+            --head "${{ env.branch_name }}" \
+            --base "main"
