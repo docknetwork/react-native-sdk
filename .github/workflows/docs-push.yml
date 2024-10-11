@@ -47,7 +47,7 @@ jobs:
           git commit -m "Copy files from ${{ github.event.pull_request.head.repo.full_name }} branch $branch_name: $commit_message"
           # Create PR
           gh auth login --with-token ${{ secrets.KNOWLEDGEBASE_PR_TOKEN }}
-          git push origin $branch_name
+          git push -u origin ${{ env.branch_name }}
           gh pr create \
             --body "This PR copies /docs files from ${{ github.event.pull_request.head.repo.full_name }}." \
             --title "${{ github.event.pull_request.title }}" \
