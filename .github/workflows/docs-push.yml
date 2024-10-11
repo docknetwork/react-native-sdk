@@ -1,0 +1,19 @@
+on:
+  workflow_dispatch:
+  
+jobs:
+  copy-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - uses: olivr/copybara-action@v1.2.3
+        with:
+          access_token: ${{ secrets.KNOWLEDGEBASE_PR_TOKEN }}
+          sot_repo: docknetwork/react-native-sdk 
+          origin_include: docs/*
+          destination_repo: docknetwork/knowledgebase-docs
+          move: |
+            docs/*||developer-documentation/wallet-sdk
