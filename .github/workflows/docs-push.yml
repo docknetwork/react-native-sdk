@@ -28,16 +28,12 @@ jobs:
 
       - name: Get branch name
         id: get_branch
-        run: echo "branch_name=${{ github.event.pull_request.head.ref }}" >> $GITHUB_ENV
-
-      - name: Create a new branch
-        run: |
-          cd knowledge-base
-          git checkout -b $branch_name
+        run: echo "branch_name=sync/${{ github.event.pull_request.head.ref }}" >> $GITHUB_ENV
 
       - name: Commit changes
         run: |
           cd knowledge-base
+          git checkout -b ${{env.branch_name}}
           git config user.name "${{ github.triggering_actor }}"
           git config user.email "mike@dock.io"
           # Get the commit message from the merged PR
@@ -47,9 +43,13 @@ jobs:
           git commit -m "Copy files from ${{ github.event.pull_request.head.repo.full_name }} branch $branch_name: $commit_message"
           # Create PR
           gh auth login --with-token ${{ secrets.KNOWLEDGEBASE_PR_TOKEN }}
+          echo "hi 1"
           git push -u origin ${{ env.branch_name }}
+          echo "hi 2"
           gh pr create \
             --body "This PR copies /docs files from ${{ github.event.pull_request.head.repo.full_name }}." \
             --title "${{ github.event.pull_request.title }}" \
             --head "${{ env.branch_name }}" \
             --base "main"
+          echo "hi 3"
+          
