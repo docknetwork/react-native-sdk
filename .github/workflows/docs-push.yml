@@ -44,6 +44,7 @@ jobs:
           # Create PR
           gh auth login --with-token ${{ secrets.KNOWLEDGEBASE_PR_TOKEN }}
           echo "hi 1"
+          git ls-remote --get-url origin
           git push -u origin ${{ env.branch_name }}
           echo "hi 2"
           gh pr create \
