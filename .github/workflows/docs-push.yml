@@ -1,19 +1,59 @@
+name: Push docs to knowledgebase
 on:
   workflow_dispatch:
-  
+  pull_request:
+  push:
+    branches: main
 jobs:
-  copy-docs:
+  copy:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout source repo
+        uses: actions/checkout@v2
         with:
           fetch-depth: 0
 
-      - uses: olivr/copybara-action@v1.2.3
+      - name: Create destination repo folder
+        run: |
+          mkdir -p ../knowledge-base
+          
+      - name: Copy files
+        run: |
+          # Specify the files or directories you want to copy
+          cp -r docs/* ../knowledge-base/
+
+      - name: Checkout destination repo
+        uses: actions/checkout@v2
         with:
-          access_token: ${{ secrets.KNOWLEDGEBASE_PR_TOKEN }}
-          sot_repo: docknetwork/react-native-sdk 
-          origin_include: docs/*
-          destination_repo: docknetwork/knowledgebase-docs
-          move: |
-            docs/*||developer-documentation/wallet-sdk
+          repository: docknetwork/knowledgebase-docs
+          token: ${{ secrets.KNOWLEDGEBASE_PR_TOKEN }}
+          path: knowledge-base
+
+      - name: Get branch name
+        id: get_branch
+        run: echo "branch_name=$(echo $GITHUB_REF | awk -F'/' '{print $3}')" >> $GITHUB_ENV
+
+      - name: Create a new branch
+        run: |
+          cd knowledge-base
+          git checkout -b $branch_name
+
+      - name: Commit changes
+        run: |
+          cd knowledge-base
+          git config user.name "${{ github.event.pull_request.merged_by.login }}"
+          git config user.email "${{ github.event.pull_request.merged_by.email }}"
+          # Get the commit message from the merged PR
+          commit_message="${{ github.event.pull_request.title }}"
+          git add .
+          git commit -m "Copy files from ${{ github.event.pull_request.head.repo.full_name }} branch $branch_name: $commit_message"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.KNOWLEDGEBASE_PR_TOKEN }}
+          title: "${{ github.event.pull_request.title }}"
+          body: "This PR copies /docs files from ${{ github.event.pull_request.head.repo.full_name }}."
+          base: main  # Change to the base branch of the destination repo
+          head: ${{ env.branch_name }}
