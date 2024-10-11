@@ -18,17 +18,17 @@ jobs:
         run: |
           mkdir -p ../knowledge-base
           
-      - name: Copy files
-        run: |
-          # Specify the files or directories you want to copy
-          cp -r docs/* ../knowledge-base/
-
       - name: Checkout destination repo
         uses: actions/checkout@v2
         with:
           repository: docknetwork/knowledgebase-docs
           token: ${{ secrets.KNOWLEDGEBASE_PR_TOKEN }}
           path: knowledge-base
+
+      - name: Copy files
+        run: |
+          # Specify the files or directories you want to copy
+          cp -r docs/* ../knowledge-base/developer-documentation/wallet-sdk
 
       - name: Get branch name
         id: get_branch
@@ -46,7 +46,7 @@ jobs:
           git config user.email "github-actions@dock.io"
           # Get the commit message from the merged PR
           commit_message="${{ github.event.pull_request.title }}"
-          git add .
+          git add -A .
           git commit -m "Copy files from ${{ github.event.pull_request.head.repo.full_name }} branch $branch_name: $commit_message"
 
       - name: Create Pull Request
