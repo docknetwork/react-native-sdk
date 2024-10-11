@@ -44,7 +44,7 @@ jobs:
           # Create PR
           echo "GH_TOKEN=${{ secrets.KNOWLEDGEBASE_PR_TOKEN }}" >> $GITHUB_ENV
           echo "hi 0"
-          gh auth login
+          gh auth login --with-token
           echo "hi 1"
           git ls-remote --get-url origin
           git push -u origin ${{ env.branch_name }}
