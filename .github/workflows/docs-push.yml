@@ -32,7 +32,7 @@ jobs:
 
       - name: Get branch name
         id: get_branch
-        run: echo "branch_name=$(echo $GITHUB_REF | awk -F'/' '{print $3}')" >> $GITHUB_ENV
+        run: echo "branch_name=${{ github.event.pull_request.head.ref }}" >> $GITHUB_ENV
 
       - name: Create a new branch
         run: |
@@ -42,8 +42,8 @@ jobs:
       - name: Commit changes
         run: |
           cd knowledge-base
-          git config user.name "${{ github.event.pull_request.merged_by.login }}"
-          git config user.email "${{ github.event.pull_request.merged_by.email }}"
+          # git config user.name "${{ github.event.pull_request.merged_by.login }}"
+          # git config user.email "${{ github.event.pull_request.merged_by.email }}"
           # Get the commit message from the merged PR
           commit_message="${{ github.event.pull_request.title }}"
           git add .
