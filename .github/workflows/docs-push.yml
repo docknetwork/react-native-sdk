@@ -42,8 +42,8 @@ jobs:
       - name: Commit changes
         run: |
           cd knowledge-base
-          # git config user.name "${{ github.event.pull_request.merged_by.login }}"
-          # git config user.email "${{ github.event.pull_request.merged_by.email }}"
+          git config user.name "${{ github.triggering_actor }}"
+          git config user.email "github-actions@dock.io"
           # Get the commit message from the merged PR
           commit_message="${{ github.event.pull_request.title }}"
           git add .
