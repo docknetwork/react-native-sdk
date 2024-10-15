@@ -1,4 +1,3 @@
-
 # Cloud Wallet Documentation
 
 The Cloud Wallet feature allows secure storage and synchronization of wallet documents via an [Encrypted Data Vault (EDV)](https://digitalbazaar.github.io/encrypted-data-vaults/).
@@ -48,6 +47,8 @@ const {verificationKey, agreementKey, hmacKey} = await edvService.generateKeys()
 ```
 
 The key generation returns an object with `agreementKey`, `verificationKey`, and `hmacKey`. You will use these keys to initialize the Cloud Wallet.
+
+**Note:** Encryption keys can be derived from biometric data through a third-party service, offering enhanced security by linking the keys to a user's unique biometric profile
 
 ### Step 3: Initialize the Cloud Wallet
 
