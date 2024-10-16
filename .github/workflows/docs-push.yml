@@ -27,7 +27,7 @@ jobs:
 
       - name: Get branch name
         id: get_branch
-        run: echo "branch_name=sync/${{ github.event.ref }}" >> $GITHUB_ENV
+        run: echo "branch_name=sync/${{ github.event.ref }}_${{github.event.head_commit.timestamp}}" >> $GITHUB_ENV
 
       - name: Commit changes
         env: 
@@ -38,16 +38,16 @@ jobs:
           git config user.name "${{ github.triggering_actor }}"
           git config user.email "mike@dock.io"
           # Get the commit message from the merged PR
-          commit_message="${{ github.event.pull_request.title }}"
+          commit_message="${{ github.event.head_commit.message }}"
           git add -A .
           git status
-          git commit -m "Copy files from ${{ github.event.pull_request.head.repo.full_name }} branch $branch_name: $commit_message"
+          git commit -m "Copy files from ${{ github.event.repository.full_name }} branch $branch_name: $commit_message"
           # Create PR
           git ls-remote --get-url origin
           git push -u origin ${{ env.branch_name }}
           gh pr create \
-            --body "This PR copies /docs files from ${{ github.event.pull_request.head.repo.full_name }}." \
-            --title "${{ github.event.pull_request.title }}" \
+            --body "This PR copies /docs files from ${{ github.event.repository.full_name }}." \
+            --title "${{ github.event.head_commit.message }}" \
             --head "${{ env.branch_name }}" \
             --base "main"
           echo "Docs successfully pushed to knowledgebase-docs"
