@@ -1,9 +1,9 @@
 name: Push docs to knowledgebase
 on:
-  workflow_dispatch:
   pull_request:
   push:
-    branches: main
+    branches: master
+    
 jobs:
   Copy-docs:
     runs-on: ubuntu-latest
@@ -31,6 +31,8 @@ jobs:
         run: echo "branch_name=sync/${{ github.event.pull_request.head.ref }}" >> $GITHUB_ENV
 
       - name: Commit changes
+        env: 
+          GH_TOKEN: ${{ secrets.KNOWLEDGEBASE_PR_TOKEN }}
         run: |
           cd knowledge-base
           git checkout -b ${{env.branch_name}}
@@ -42,7 +44,6 @@ jobs:
           git status
           git commit -m "Copy files from ${{ github.event.pull_request.head.repo.full_name }} branch $branch_name: $commit_message"
           # Create PR
-          echo "GH_TOKEN=${{ secrets.KNOWLEDGEBASE_PR_TOKEN }}" >> $GITHUB_ENV
           echo "hi 0"
           gh auth login --with-token
           echo "hi 1"
