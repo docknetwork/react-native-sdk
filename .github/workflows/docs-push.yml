@@ -27,7 +27,7 @@ jobs:
 
       - name: Get branch name
         id: get_branch
-        run: echo "branch_name=sync/${{ github.event.ref }}_${{github.event.head_commit.timestamp}}" >> $GITHUB_ENV
+        run: echo "branch_name=sync/${{ github.event.ref }}_${{github.event.head_commit.id}}" >> $GITHUB_ENV
 
       - name: Commit changes
         env: 
