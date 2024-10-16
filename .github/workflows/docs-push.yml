@@ -45,7 +45,7 @@ jobs:
           git commit -m "Copy files from ${{ github.event.pull_request.head.repo.full_name }} branch $branch_name: $commit_message"
           # Create PR
           echo "hi 0"
-          gh auth login --with-token
+          gh auth login
           echo "hi 1"
           git ls-remote --get-url origin
           git push -u origin ${{ env.branch_name }}
