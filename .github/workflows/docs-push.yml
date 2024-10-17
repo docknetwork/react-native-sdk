@@ -36,6 +36,7 @@ jobs:
           GH_TOKEN: ${{ secrets.KNOWLEDGEBASE_PR_TOKEN }}
         run: |
           cd knowledge-base
+          echo ${{env.branch_name}}
           git checkout -b ${{env.branch_name}}
           git config user.name "${{ github.triggering_actor }}"
           git config user.email "mike@dock.io"
@@ -47,6 +48,7 @@ jobs:
           # Create PR
           git ls-remote --get-url origin
           git push -u origin ${{ env.branch_name }}
+          echo "Creating PR..."
           gh pr create \
             --body "This PR copies /docs files from ${{ github.event.repository.full_name }}." \
             --title "${{ github.event.head_commit.message }}" \
