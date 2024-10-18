@@ -29,7 +29,7 @@ jobs:
 
       - name: Get branch name
         id: get_branch
-        run: echo "branch_name=sync/${{ github.event.ref }}_${{github.event.head_commit.id}}"| sed -e "s/refs\///" >> $GITHUB_ENV
+        run: echo "branch_name=sync/${{ github.event.ref }}_${{github.event.head_commit.id}}"| sed -e "s/refs\///g"| sed -e "s/\/\//\//g" >> $GITHUB_ENV
 
       - name: Commit changes
         env: 
