@@ -36,8 +36,8 @@ jobs:
           cd knowledge-base
           echo ${{env.branch_name}}
           git checkout -b ${{env.branch_name}}
-          git config user.name "${{ github.triggering_actor }}"
-          git config user.email "mike@dock.io"
+          git config user.name "${{ github.event.head_commit.author.name }}"
+          git config user.email "${{ github.event.head_commit.author.email }}"
           # Get the commit message from the merged PR
           commit_message="${{ github.event.head_commit.message }}"
           git add -A .
