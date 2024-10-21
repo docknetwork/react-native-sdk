@@ -1,12 +1,14 @@
 # Ecosystem Tools
+
 You can find the implementation of ecosystem tools in the following location:
 
-File Path: packages/core/src/ecosystem-tools.ts
+File Path: [packages/core/src/ecosystem-tools.ts](https://github.com/docknetwork/react-native-sdk/blob/5dfbcb197b848802478d2f7a697286a8c3c28823/packages/core/src/ecosystem-tools.ts#L4)
+
 ## Usage Example
+
 Below is an example demonstrating how to use getEcosystems to retrieve ecosystem information based on an issuer's DID.
 
-Importing the Function
-First, ensure you import getEcosystems from the SDK:
+Importing the Function First, ensure you import getEcosystems from the SDK:
 
 ```js
 import {getEcosystems} from '@docknetwork/wallet-sdk-core/src/ecosystem-tools';
@@ -26,6 +28,7 @@ fetchEcosystemDetails();
 ```
 
 ## Expected Output
+
 When you run the above code, you should expect an output similar to this:
 
 ```json
@@ -37,10 +40,11 @@ When you run the above code, you should expect an output similar to this:
     }
 }
 ```
+
 This JSON output contains the details of the ecosystems associated with the given issuerDID.
 
 ## Integration Tests
+
 For more examples and usage, please refer to the integration test at:
 
-Test File Path: integration-tests/ecosystem-tools.test.ts
-This test file provides comprehensive examples on how to interact with ecosystem tools effectively.
+Test File Path: https://github.com/docknetwork/react-native-sdk/blob/master/integration-tests/ecosystem-tools.test.ts This test file provides comprehensive examples on how to interact with ecosystem tools effectively.
