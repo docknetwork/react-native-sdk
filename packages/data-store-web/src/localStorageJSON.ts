@@ -1,4 +1,18 @@
-let _localStorage;
+let _localStorage = (() => {
+  let data = {};
+
+  return {
+    getItem: (key) => {
+      return data[key];
+    },
+    setItem: (key, value) => {
+      data[key] = value;
+    },
+    removeItem: (key) => {
+      delete data[key];
+    },
+  };
+})();
 
 export const setLocalStorageImpl = (impl: any) => {
   _localStorage = impl;
