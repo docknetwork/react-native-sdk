@@ -1,14 +1,13 @@
 # Dock Wallet SDK
 
-The [Wallet SDK](https://github.com/docknetwork/react-native-sdk) enables you to build a Verifiable Credentials wallet inside your app and allows your users to receive, store, and manage their DOCK tokens too. This was built for native applications with added support for Polkadot-JS.
-
-The Dock Wallet SDK handles all the Polkadot Web Assembly in a WebView, sending messages to the React Native thread through a JSON RPC layer.
+The [Wallet SDK](https://github.com/docknetwork/react-native-sdk) enables you to build a Verifiable Credentials wallet inside your app and allows your users to receive, store, and manage their DOCK tokens too. This was built for mobile applications with added support for Polkadot-JS.
 
 To use the wallet-sdk, all you need to do is wrap your app in a `WalletSDKProvider` and start building your wallet.
 
-Dock Mobile SDK supports devices that have  Android 8.1 or higher and iOS 11 or higher.
-
 Using [polkadot-js](https://polkadot.js.org/) libraries in React Native is a challenge, due to the lack of WebAssembly support.
+The Dock Wallet SDK handles all the Polkadot Web Assembly in a WebView, sending messages to the React Native thread through a JSON RPC layer.
+
+Dock Mobile SDK supports devices that have Android 8.1 or higher and iOS 11 or higher.
 
 ## Installation
 ```js
