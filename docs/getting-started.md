@@ -117,7 +117,3 @@ console.log(verificationResponse);
 ```
 
 In this example, the verification process starts by fetching a proof request template. After selecting the credentials and specifying which attributes to reveal, the wallet creates a verifiable presentation. The presentation is then submitted, and the verifier responds with a verification result.
-
-### Conclusion
-
-This tutorial covers the basic setup and usage of the Dock Wallet SDK.
