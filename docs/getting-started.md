@@ -30,6 +30,8 @@ const dataStore = await createDataStore({
 
 This code initializes a SQLite database to store wallet data. You can adjust the `databasePath` and `defaultNetwork` based on your needs.
 
+If you want to use the cloud wallet solution, please refer to the [Cloud Wallet Documentation](cloud-wallet.md) for detailed instructions and configuration options.
+
 ### 2. Create a New Wallet
 
 Once the data store is set up, you can create a wallet. The wallet will act as a container for managing your documents, DIDs, and credentials. 
