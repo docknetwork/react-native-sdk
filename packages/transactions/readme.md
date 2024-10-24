@@ -1,5 +1,9 @@
 
-# Transactions Manager
+# Deprecated Module
+
+The transaction module is deprecated and will be removed in the future.
+
+# Transactions Manager 
 
 Transactions are required to send and receive (DOCK Tokens)[[https://www.dock.io/token]. This module handles the transaction history and provides methods to send DOCK tokens to any address.
 
