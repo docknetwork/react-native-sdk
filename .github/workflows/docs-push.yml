@@ -1,0 +1,61 @@
+name: Push docs to knowledgebase
+on:
+  push:
+    branches: master
+    paths:
+      - "docs/**"
+      - ".github/workflows/docs-push.yml"
+    
+jobs:
+  Copy-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Checkout destination repo
+        uses: actions/checkout@v2
+        with:
+          repository: docknetwork/knowledgebase-docs
+          token: ${{ secrets.KNOWLEDGEBASE_PR_TOKEN }}
+          path: knowledge-base
+
+      - name: Copy files
+        run: |
+          # Specify the files or directories you want to copy
+          cp -r docs/* knowledge-base/developer-documentation/wallet-sdk
+          cp README.md knowledge-base/developer-documentation/wallet-sdk
+          cp -r examples/ knowledge-base/developer-documentation/wallet-sdk
+
+      - name: Get branch name
+        id: get_branch
+        run: echo "branch_name=sync/${{ github.event.ref }}_${{github.event.head_commit.id}}"| sed -e "s/refs\///g"| sed -e "s/\/\//\//g" >> $GITHUB_ENV
+
+      - name: Commit changes
+        env: 
+          GH_TOKEN: ${{ secrets.KNOWLEDGEBASE_PR_TOKEN }}
+        run: |
+          cd knowledge-base
+          echo ${{env.branch_name}}
+          git checkout -b ${{env.branch_name}}
+          git config user.name "${{ github.event.head_commit.author.name }}"
+          git config user.email "${{ github.event.head_commit.author.email }}"
+          # Get the commit message from the merged PR
+          commit_message="${{ github.event.head_commit.message }}"
+          git add -A .
+          git status
+          git commit -m "Copy files from ${{ github.event.repository.full_name }} branch $branch_name: $commit_message"
+          # Create PR
+          git ls-remote --get-url origin
+          git push -u origin ${{ env.branch_name }}
+          echo "Creating PR..."
+          gh pr create \
+            --body "This PR copies /docs files from ${{ github.event.repository.full_name }}." \
+            --title "${{ github.event.head_commit.message }}" \
+            --head "${{ env.branch_name }}" \
+            --base "main"
+          echo "Docs successfully pushed to knowledgebase-docs"
+          
