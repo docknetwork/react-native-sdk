@@ -28,7 +28,7 @@ jobs:
       - name: Copy files
         run: |
           # Specify the files or directories you want to copy
-          cp -r docs/* knowledge-base/developer-documentation/wallet-sdk
+          cp -r docs/* knowledge-base/developer-documentation/wallet-sdk/
           cp README.md knowledge-base/developer-documentation/wallet-sdk/README.md
           mkdir knowledge-base/developer-documentation/wallet-sdk/examples
           cp -r examples/* knowledge-base/developer-documentation/wallet-sdk/examples/
