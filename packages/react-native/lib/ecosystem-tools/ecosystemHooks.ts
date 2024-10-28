@@ -3,6 +3,7 @@ import {getEcosystems} from '@docknetwork/wallet-sdk-core/src/ecosystem-tools';
 import {hexToString} from '@polkadot/util';
 import axios from 'axios';
 import { captureException } from '@docknetwork/wallet-sdk-core/src/helpers';
+import { getWallet } from '../wallet';
 
 const getMetadata = async govFramework => {
   const metadataURL = await hexToString(govFramework);
@@ -41,7 +42,7 @@ export function useEcosystems({issuer, verifier, schemaId}) {
     if(isLoading) return;
     setIsLoading(true);
     setIsError(false);
-    getEcosystems({issuerDID: issuer, verifierDID: verifier, schemaId: schemaId})
+    getEcosystems({issuerDID: issuer, verifierDID: verifier, schemaId: schemaId, networkId: getWallet().getNetworkId()})
       .then(async result => {
         try {
           const ecosystemData = await formatEcosystemData(result);
