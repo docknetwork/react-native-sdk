@@ -19,10 +19,10 @@ const getMetadata = async govFramework => {
 
 const formatEcosystemData = async ecosystems => {
   const formattedEcosystems = [];
-  const ecosystemsList = Object.entries(ecosystems);
+  const ecosystemsList: any = Object.entries(ecosystems);
 
   for (let i = 0; i < ecosystemsList.length; i++) {
-    let ecosystemData = {};
+    let ecosystemData: any = {};
     ecosystemData.trustRegistryId = ecosystemsList[i][0];
     ecosystemData = {...ecosystemData, ...ecosystemsList[i][1]};
 
