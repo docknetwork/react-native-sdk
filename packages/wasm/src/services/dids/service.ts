@@ -9,20 +9,41 @@ import {
 import {keyringService} from '../keyring/service';
 import {utilCryptoService} from '../util-crypto/service';
 import assert from 'assert';
-import {createNewDockDID} from '@docknetwork/sdk/utils/did';
 import {dockService, getDock} from '../dock/service';
 
 import {
   DidKey,
+  DockDid,
   VerificationRelationship,
-  PublicKeySr25519
+  PublicKeySr25519,
 } from '@docknetwork/credential-sdk/types';
 
 import {Logger} from '../../core/logger';
 import {polkadotToKeydoc} from '../../core/polkadot-utils';
 import base64url from 'base64url';
-import { keyDocToKeypair } from '../credential/utils';
-import {Ed25519Signature2020, EcdsaSecp256k1Signature2019} from '@docknetwork/credential-sdk/vc/crypto';
+import {keyDocToKeypair} from '../credential/utils';
+import {
+  Ed25519Signature2020,
+  EcdsaSecp256k1Signature2019,
+} from '@docknetwork/credential-sdk/vc/crypto';
+
+async function createDockDID({keyPair}) {
+  const dockDID = DockDid.random();
+  const dockController = dockDID.toString();
+  const publicKey = keyPair.publicKey();
+  const verRels = new VerificationRelationship();
+  const didKey = new DidKey(publicKey, verRels);
+
+  await dockService.modules.did.dockOnly.rawTx.newOnchain(
+    dockDID.did,
+    [didKey],
+    dockController === dockDID.toString()
+      ? []
+      : [DockDid.fromQualifiedString(dockController)],
+  );
+
+  return {did: dockDID.toString(), controller: dockController};
+}
 
 async function getSignerKeypair(privateKeyDoc) {
   const privateKey =
@@ -65,7 +86,6 @@ class DIDService {
     DIDService.prototype.registerDidDock,
     DIDService.prototype.getDidDockDocument,
     DIDService.prototype.createSignedJWT,
-
   ];
   keypairToDIDKeyDocument(params: KeypairToDIDKeyDocumentParams) {
     validation.keypairToDIDKeyDocument(params);
@@ -99,11 +119,7 @@ class DIDService {
     return polkadotToKeydoc(keyring, params.controller);
   }
 
-  async createSignedJWT({
-    payload,
-    privateKeyDoc,
-    headerInput
-  }) {
+  async createSignedJWT({payload, privateKeyDoc, headerInput}) {
     const privateKey = await getSignerKeypair(privateKeyDoc);
     const {sign} =
       typeof privateKey.signer === 'function'
@@ -118,7 +134,7 @@ class DIDService {
     const payloadBase64URL = base64url(JSON.stringify(payload));
     const headerAndPayloadBase64URL = `${headerBase64URL}.${payloadBase64URL}`;
     const signPayload = Buffer.from(headerAndPayloadBase64URL);
-  
+
     const signature = await sign({data: signPayload});
     return `${headerAndPayloadBase64URL}.${base64url.encode(signature)}`;
   }
@@ -132,17 +148,15 @@ class DIDService {
 
   async registerDidDock(keyPairJSON) {
     assert(!!keyPairJSON, 'keyPair is required');
-    const dockDID = createNewDockDID();
-    const dock = getDock();
     const keyPair = keyringService.keyring.addFromJson(keyPairJSON);
+    const publicKey = PublicKeySr25519.fromKeyringPair(keyPair);
+    const didKey = new DidKey(publicKey, new VerificationRelationship());
+    const dockDID = createDockDID({ keyPair });
+    const dock = getDock();
 
     keyPair.unlock('');
 
     dock.setAccount(keyPair);
-
-    const publicKey = PublicKeySr25519.fromKeyringPair(keyPair);
-
-    const didKey = new DidKey(publicKey, new VerificationRelationship());
 
     Logger.info(`Submitting new DID: ${dockDID}`);
 

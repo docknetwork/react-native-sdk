@@ -13,6 +13,7 @@ import {EventEmitter} from 'events';
 import {Logger} from '../../core/logger';
 import {once} from '../../modules/event-manager';
 import {InitParams, validation} from './configs';
+import {DockCoreModules} from '@docknetwork/dock-blockchain-modules';
 
 let dockInstance;
 
@@ -36,6 +37,7 @@ class AnyDIDResolver extends ResolverRouter {
  */
 export class DockService {
   dock;
+  modules;
   didModule;
   isDockReady = false;
   resolver: any;
@@ -55,6 +57,7 @@ export class DockService {
     this.name = 'dock';
     this.dock = new DockAPI();
     this.didModule = new DockDIDModule(this.dock);
+    this.modules = new DockCoreModules(this.dock);
     dockInstance = this.dock;
     this.emitter = new EventEmitter();
     this.resolver = this.createDIDResolver();
