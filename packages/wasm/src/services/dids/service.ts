@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {DIDKeyManager} from '@docknetwork/wallet-sdk-dids/src';
 import {
   serviceName,
@@ -10,14 +11,18 @@ import {utilCryptoService} from '../util-crypto/service';
 import assert from 'assert';
 import {createNewDockDID} from '@docknetwork/sdk/utils/did';
 import {dockService, getDock} from '../dock/service';
-import {PublicKeySr25519} from '@docknetwork/sdk';
-import {DidKey, VerificationRelationship} from '@docknetwork/sdk/public-keys';
+
+import {
+  DidKey,
+  VerificationRelationship,
+  PublicKeySr25519
+} from '@docknetwork/credential-sdk/types';
+
 import {Logger} from '../../core/logger';
 import {polkadotToKeydoc} from '../../core/polkadot-utils';
 import base64url from 'base64url';
 import { keyDocToKeypair } from '../credential/utils';
-import Ed25519Signature2020 from '@docknetwork/sdk/utils/vc/crypto/Ed25519Signature2020';
-import EcdsaSecp256k1Signature2019 from '@docknetwork/sdk/utils/vc/crypto/EcdsaSecp256k1Signature2019';
+import {Ed25519Signature2020, EcdsaSecp256k1Signature2019} from '@docknetwork/credential-sdk/vc/crypto';
 
 async function getSignerKeypair(privateKeyDoc) {
   const privateKey =

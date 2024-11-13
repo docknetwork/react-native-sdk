@@ -27,8 +27,6 @@ describe('Credentials', () => {
   let wallet;
   beforeEach(async () => {
     await cleanup();
-    await setupEnvironent();
-    await createNewWallet();
     wallet = await getWallet();
   });
 

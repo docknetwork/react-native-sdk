@@ -1,18 +1,20 @@
 // @ts-nocheck
-import dock from '@docknetwork/sdk';
+import { DockAPI } from '@docknetwork/dock-blockchain-api';
 import {
-  DockResolver,
   DIDKeyResolver,
-  WildcardMultiResolver,
   UniversalResolver,
-} from '@docknetwork/sdk/resolver';
+  WILDCARD,
+  DIDResolver,
+  ResolverRouter,
+} from '@docknetwork/credential-sdk/resolver';
+import {DockDIDModule} from '@docknetwork/dock-blockchain-modules';
 import {initializeWasm} from '@docknetwork/crypto-wasm-ts/lib/index';
 import {EventEmitter} from 'events';
 import {Logger} from '../../core/logger';
 import {once} from '../../modules/event-manager';
 import {InitParams, validation} from './configs';
 
-let dockInstance = dock;
+let dockInstance;
 
 export function getDock() {
   return dockInstance;
@@ -25,19 +27,16 @@ export function setDock(instance) {
 // Create a resolver in order to lookup DIDs for verifying
 export const universalResolverUrl = 'https://uniresolver.io';
 
-// class WalletSDKResolver extends WildcardMultiResolver {
-//   async resolve(did) {
-//     const trimmedDID = did.split('#')[0];
-//     const document = await super.resolve(trimmedDID);
-//     return document;
-//   }
-// }
+class AnyDIDResolver extends ResolverRouter {
+  method = WILDCARD;
+}
 
 /**
  *
  */
 export class DockService {
   dock;
+  didModule;
   isDockReady = false;
   resolver: any;
   static Events = {
@@ -54,7 +53,9 @@ export class DockService {
 
   constructor() {
     this.name = 'dock';
-    this.dock = dock;
+    this.dock = new DockAPI();
+    this.didModule = new DockDIDModule(this.dock);
+    dockInstance = this.dock;
     this.emitter = new EventEmitter();
     this.resolver = this.createDIDResolver();
   }
@@ -72,11 +73,12 @@ export class DockService {
   }
 
   createDIDResolver() {
-    return new WildcardMultiResolver([
-      new DockResolver(getDock()), // Prebuilt resolver
-      new DIDKeyResolver(), // did:key resolution
+    return new AnyDIDResolver([
+      new DIDKeyResolver(),
+      new DIDResolver(this.didModule),
       new UniversalResolver(universalResolverUrl),
     ]);
+
   }
   /**
    *
