@@ -15,8 +15,9 @@ import {
   DidKey,
   DockDid,
   VerificationRelationship,
-  PublicKeySr25519,
+  DidMethodKey,
 } from '@docknetwork/credential-sdk/types';
+import {Ed25519Keypair} from '@docknetwork/credential-sdk/keypairs';
 
 import {Logger} from '../../core/logger';
 import {polkadotToKeydoc} from '../../core/polkadot-utils';
@@ -148,21 +149,8 @@ class DIDService {
 
   async registerDidDock(keyPairJSON) {
     assert(!!keyPairJSON, 'keyPair is required');
-    const keyPair = keyringService.keyring.addFromJson(keyPairJSON);
-    const publicKey = PublicKeySr25519.fromKeyringPair(keyPair);
-    const didKey = new DidKey(publicKey, new VerificationRelationship());
-    const dockDID = createDockDID({ keyPair });
-    const dock = getDock();
-
-    keyPair.unlock('');
-
-    dock.setAccount(keyPair);
-
-    Logger.info(`Submitting new DID: ${dockDID}`);
-
-    const result = await dock.did.new(dockDID, [didKey], [], false);
-
-    Logger.info(`DID created with tx hash ${result.txHash.toString()}`);
+    const keyPair = Ed25519Keypair.random();
+    const dockDID = await createDockDID({keyPair});
 
     return {
       dockDID,
