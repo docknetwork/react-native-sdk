@@ -4,6 +4,7 @@ import {Ed25519VerificationKey2020} from '@digitalbazaar/ed25519-verification-ke
 import {Cipher} from '@docknetwork/minimal-cipher';
 import {v1 as uuidv1} from 'uuid';
 import base64url from 'base64url';
+import * as bs58 from 'base58-universal';
 
 import {resolveDID} from './did/dids';
 
@@ -180,15 +181,27 @@ export function isDerivableKey(keyDoc) {
   );
 }
 
+function getDIDKeydocsFromDIDDocument(didDocument) {
+  return [
+    ...potentialToArray(didDocument.verificationMethod),
+    ...potentialToArray(didDocument.keyAgreement),
+    ...potentialToArray(didDocument.publicKey),
+  ];
+}
+
 export async function getAgreementKeydocFromDID(did) {
   if (!did) {
     return undefined;
   }
 
+  // Early out for polygon DIDs as they dont support this
+  if (did.startsWith('did:polygon')) {
+    throw new Error('PolygonID DIDs cannot be used for DIDComm purposes');
+  }
+
   // Resolve actual DID document and get key agreement keys
   const isDIDUrl = did.indexOf('#') !== -1;
   const didDocument = await resolveDID(did);
-
   const keyAgreements = didDocument.keyAgreement
     ? Array.isArray(didDocument.keyAgreement)
       ? didDocument.keyAgreement
@@ -214,11 +227,7 @@ export async function getAgreementKeydocFromDID(did) {
   }
 
   // No valid key agreement found on resolution, lets derive one from a ED25519 key if we can
-  const publicKeys = didDocument.publicKey
-    ? Array.isArray(didDocument.publicKey)
-      ? didDocument.publicKey
-      : [didDocument.publicKey]
-    : [];
+  const publicKeys = getDIDKeydocsFromDIDDocument(didDocument);
 
   // See if DID document has any derivable keys
   const derivableKey = publicKeys.filter(isDerivableKey)[0];
@@ -231,26 +240,43 @@ export async function getAgreementKeydocFromDID(did) {
   );
 }
 
+export const MULTIBASE_BASE58BTC_HEADER = 'z';
+export const MULTICODEC_ED25519_PRIV_HEADER = new Uint8Array([0x80, 0x26]);
+export const MULTICODEC_ED25519_PUB_HEADER = new Uint8Array([0xed, 0x01]);
+export function encodeMbKey(header, key) {
+  const mbKey = new Uint8Array(header.length + key.length);
+  mbKey.set(header);
+  mbKey.set(key, header.length);
+  return MULTIBASE_BASE58BTC_HEADER + bs58.encode(mbKey);
+}
+
 export async function getDerivedAgreementKey(derivableKey) {
   if (!isDerivableKey(derivableKey)) {
     throw new Error(`Cannot derive X25519 KAK from type: ${derivableKey.type}`);
   }
 
-  if (!derivableKey.publicKeyMultibase) {
-    derivableKey.publicKeyMultibase = derivableKey.publicKeyBase58;
-  }
-
-  // Convert derivable key into latest 2020 format
-  const ed2020VerificationKey = await Ed25519VerificationKey2020.from({
-    keyPair: derivableKey,
-    ...derivableKey,
-  });
+  const publicKeyMultibase = derivableKey.publicKeyBase58
+    ? encodeMbKey(
+        MULTICODEC_ED25519_PUB_HEADER,
+        bs58.decode(derivableKey.publicKeyBase58),
+      )
+    : derivableKey.publicKeyMultibase;
+  const privateKeyMultibase =
+    (derivableKey.privateKeyBase58
+      ? encodeMbKey(
+          MULTICODEC_ED25519_PRIV_HEADER,
+          bs58.decode(derivableKey.privateKeyBase58),
+        )
+      : undefined) || derivableKey.privateKeyMultibase;
 
   // Convert ed25519 2020 verification key into a key agreement key
   const derivedKeyAgreement =
     X25519KeyAgreementKey2020.fromEd25519VerificationKey2020({
-      keyPair: ed2020VerificationKey,
-      ...ed2020VerificationKey,
+      keyPair: {
+        publicKeyMultibase,
+        privateKeyMultibase,
+        controller: derivableKey.controller,
+      },
     });
   return derivedKeyAgreement;
 }

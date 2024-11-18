@@ -9,7 +9,6 @@ import {
   createNewWallet,
   getAccounts,
   getWallet,
-  setupEnvironent,
 } from './helpers';
 import {NetworkManager} from '@docknetwork/wallet-sdk-wasm/src/modules/network-manager';
 
@@ -17,8 +16,6 @@ describe('Transactions', () => {
   let wallet;
   beforeAll(async () => {
     await cleanup();
-    await setupEnvironent();
-    await createNewWallet();
     await createAccounts();
     wallet = await getWallet();
   });
