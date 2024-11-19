@@ -12,7 +12,6 @@ import {
   createWalletFromSnapshot,
   getAccounts,
   getWallet,
-  setupEnvironent,
 } from './helpers';
 import {getCredentials} from './helpers/credential-helpers';
 import {getDIDResolutions, getDIDKeyPairs} from './helpers/did-helpers';
@@ -22,7 +21,6 @@ describe('Wallet Snapshot V1', () => {
   let wallet;
   beforeAll(async () => {
     await cleanup();
-    await setupEnvironent();
     await createWalletFromSnapshot();
     wallet = await getWallet();
   });
