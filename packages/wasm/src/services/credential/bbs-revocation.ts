@@ -36,6 +36,8 @@ async function updateMembershipWitness({
 
   let updates = [];
   try {
+    // TODO: Ensure it will for cheqd 
+    // Will be handled on https://dock-team.atlassian.net/browse/DCKW-572
     updates = await dockService.modules.accumulator.dockOnly.getUpdatesFromBlock(
       registryId,
       blockNo,

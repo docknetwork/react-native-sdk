@@ -216,7 +216,7 @@ export const getWitnessDetails = async (credential, _membershipWitness) => {
 
   const encodedRevId = Encoder.defaultEncodeFunc()(revocationIndex.toString());
 
-  const publicKey = await dock.accumulatorModule.getPublicKey(
+  const publicKey = await dock.accumulatorModule.getPublicKeyByHexDid(
     queriedAccumulator.keyRef[0],
     queriedAccumulator.keyRef[1],
   );
