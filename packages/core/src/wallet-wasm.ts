@@ -43,6 +43,7 @@ export async function setBlockchainNetwork(wallet: IWallet) {
   if (!cheqdMnemonicDoc) {
     cheqdMnemonicDoc = {
       id: 'cheqd-mnemonic',
+      type: 'Mnemonic',
       value: await utilCryptoService.mnemonicGenerate(12),
     }
 
