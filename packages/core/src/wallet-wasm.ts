@@ -1,11 +1,11 @@
-import {keyringService} from '@docknetwork/wallet-sdk-wasm/src/services/keyring';
-import {utilCryptoService} from '@docknetwork/wallet-sdk-wasm/src/services/util-crypto';
-import {dockService} from '@docknetwork/wallet-sdk-wasm/src/services/dock';
+import { dockService } from '@docknetwork/wallet-sdk-wasm/src/services/dock';
+import { keyringService } from '@docknetwork/wallet-sdk-wasm/src/services/keyring';
+import { utilCryptoService } from '@docknetwork/wallet-sdk-wasm/src/services/util-crypto';
 
-import {IWallet} from './types';
-import {Network} from '@docknetwork/wallet-sdk-data-store/src/types';
-import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
+import { Network } from '@docknetwork/wallet-sdk-data-store/src/types';
+import { WalletEvents } from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
 import { captureException } from './helpers';
+import { IWallet } from './types';
 
 function isSubstrateNetwork(network: Network) {
   return !!network.configs.substrateUrl;
@@ -37,6 +37,18 @@ export async function setSubstrateNetwork(wallet: IWallet) {
   const network = wallet.dataStore.network;
   const networkConfigs = network.configs;
 
+
+  let cheqdMnemonicDoc = await wallet.getDocumentById('cheqd-mnemonic');
+
+  if (!cheqdMnemonicDoc) {
+    cheqdMnemonicDoc = {
+      id: 'cheqd-mnemonic',
+      value: await utilCryptoService.mnemonicGenerate(12),
+    }
+
+    await wallet.addDocument(cheqdMnemonicDoc);
+  }
+
   await keyringService.initialize({
     ss58Format: networkConfigs.addressPrefix,
   });
@@ -44,6 +56,9 @@ export async function setSubstrateNetwork(wallet: IWallet) {
   dockService
     .init({
       address: networkConfigs.substrateUrl,
+      cheqdApiUrl: networkConfigs.cheqdApiUrl,
+      networkId: network.id,
+      cheqdMnemonic: cheqdMnemonicDoc.value,
     })
     .then(() => {
       wallet.eventManager.emit(WalletEvents.networkConnected);
