@@ -52,11 +52,11 @@ export class BlockchainService {
   };
 
   rpcMethods = [
-    DockService.prototype.disconnect,
-    DockService.prototype.ensureBlockchainReady,
-    DockService.prototype.init,
-    DockService.prototype.isApiConnected,
-    DockService.prototype.getAddress,
+    BlockchainService.prototype.disconnect,
+    BlockchainService.prototype.ensureBlockchainReady,
+    BlockchainService.prototype.init,
+    BlockchainService.prototype.isApiConnected,
+    BlockchainService.prototype.getAddress,
   ];
 
   constructor() {
@@ -185,7 +185,7 @@ export class BlockchainService {
     this.isDockReady = isDockReady;
 
     if (isDockReady) {
-      this.emitter.emit(DockService.Events.DOCK_READY);
+      this.emitter.emit(BlockchainService.Events.DOCK_READY);
     }
   }
 }
