@@ -5,9 +5,9 @@ import { CheqdAPI } from '@docknetwork/cheqd-blockchain-api';
 import { CheqdCoreModules } from '@docknetwork/cheqd-blockchain-modules';
 import { MultiApiCoreModules } from '@docknetwork/credential-sdk/modules';
 import {
+  CoreResolver,
   DIDKeyResolver,
   ResolverRouter,
-  CoreResolver,
   UniversalResolver,
   WILDCARD,
 } from '@docknetwork/credential-sdk/resolver';
@@ -110,28 +110,30 @@ export class BlockchainService {
 
     Logger.info(`Substrate initialized at: ${params.address}`);
 
-    const checkdApiUrl = params?.cheqdApiUrl;
-    const cheqdNetworkId = params?.networkId;
-    const cheqdMnemonic = params?.cheqdMnemonic || await utilCryptoService.mnemonicGenerate(12);
+    if (params?.cheqdApiUrl) {
+      const checkdApiUrl = params?.cheqdApiUrl;
+      const cheqdNetworkId = params?.networkId;
+      const cheqdMnemonic = params?.cheqdMnemonic || await utilCryptoService.mnemonicGenerate(12);
 
-    const wallet = await DirectSecp256k1HdWallet.fromMnemonic(cheqdMnemonic, {
-      prefix: 'cheqd',
-    });
+      const wallet = await DirectSecp256k1HdWallet.fromMnemonic(cheqdMnemonic, {
+        prefix: 'cheqd',
+      });
 
-    const walletAccounts = await wallet.getAccounts();
-    const [{address}] = walletAccounts;
-    console.log('Using cheqd account:', address);
+      const walletAccounts = await wallet.getAccounts();
+      const [{address}] = walletAccounts;
+      console.log('Using cheqd account:', address);
 
-    Logger.info(`Attempt to initialized cheqd at: ${checkdApiUrl}`);
-    Logger.info(`Using cheqd account: ${address}`);
+      Logger.info(`Attempt to initialized cheqd at: ${checkdApiUrl}`);
+      Logger.info(`Using cheqd account: ${address}`);
 
-    await this.cheqdApi.init({
-      wallet,
-      url: checkdApiUrl,
-      network: cheqdNetworkId,
-    });
+      await this.cheqdApi.init({
+        wallet,
+        url: checkdApiUrl,
+        network: cheqdNetworkId,
+      });
 
-    Logger.info(`Cheqd initialized at: ${checkdApiUrl}`);
+      Logger.info(`Cheqd initialized at: ${checkdApiUrl}`);
+    }
 
     this.address = params.address;
 
