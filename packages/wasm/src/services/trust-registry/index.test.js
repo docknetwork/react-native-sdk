@@ -42,10 +42,12 @@ describe('TrustRegistryService', () => {
     };
     const result = await service.getTrustRegistryVerifiers(params);
     const queryObject =
-      blockchainService.dock.trustRegistry.registrySchemasMetadata.mock.calls[0][0];
+      blockchainService.dock.trustRegistry.registrySchemasMetadata.mock
+        .calls[0][0];
 
     expect(
-      blockchainService.dock.trustRegistry.registrySchemasMetadata.mock.calls[0][1],
+      blockchainService.dock.trustRegistry.registrySchemasMetadata.mock
+        .calls[0][1],
     ).toEqual(trustRegistryId);
     expect(queryObject.issuers.AnyOf).toHaveLength(1);
     expect(queryObject.schemaIds[0]).toEqual(
