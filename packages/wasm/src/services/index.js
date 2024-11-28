@@ -1,5 +1,5 @@
 import {keyringService} from './keyring/service';
-import {dockService} from './dock/service';
+import {blockchainService} from './blockchain/service';
 import {substrateService} from './substrate/service';
 import {walletService} from './wallet/service';
 import {polkadotService} from './polkadot/service';
@@ -14,7 +14,7 @@ import {edvService} from './edv/service';
 
 export default [
   keyringService,
-  dockService,
+  blockchainService,
   substrateService,
   walletService,
   polkadotService,

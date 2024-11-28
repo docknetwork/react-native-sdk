@@ -9,7 +9,7 @@ import {
 } from '@docknetwork/crypto-wasm-ts';
 
 import {hexToU8a} from '@polkadot/util';
-import { dockService } from '../dock/service';
+import {blockchainService} from '../blockchain/service';
 
 const trimHexID = id => {
   if (id.substr(0, 2) !== '0x') {
@@ -38,7 +38,7 @@ async function updateMembershipWitness({
   try {
     // TODO: Ensure it will for cheqd 
     // Will be handled on https://dock-team.atlassian.net/browse/DCKW-572
-    updates = await dockService.modules.accumulator.dockOnly.getUpdatesFromBlock(
+    updates = await blockchainService.modules.accumulator.dockOnly.getUpdatesFromBlock(
       registryId,
       blockNo,
     );
@@ -99,7 +99,7 @@ export const getWitnessDetails = async (credential, _membershipWitness) => {
   const registryId = credentialStatus?.id.replace('dock:accumulator:', '');
   const revocationIndex = credentialStatus.revocationId;
 
-  const queriedAccumulator = await dockService.modules.accumulator.getAccumulator(
+  const queriedAccumulator = await blockchainService.modules.accumulator.getAccumulator(
     registryId,
     false,
   );
@@ -112,7 +112,7 @@ export const getWitnessDetails = async (credential, _membershipWitness) => {
 
   const encodedRevId = Encoder.defaultEncodeFunc()(revocationIndex.toString());
 
-  const publicKey = await dockService.modules.accumulator.getPublicKey(
+  const publicKey = await blockchainService.modules.accumulator.getPublicKey(
     queriedAccumulator.keyRef[0],
     queriedAccumulator.keyRef[1],
   );

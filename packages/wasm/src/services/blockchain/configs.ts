@@ -9,7 +9,7 @@ export const validation = {
 
 export type InitParams = {
   address: string,
-  cheqdApiUrl: string,
-  networkId: string,
+  cheqdApiUrl?: string,
+  networkId?: string,
   cheqdMnemonic?: string,
 };

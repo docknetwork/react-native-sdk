@@ -19,7 +19,7 @@ import Presentation from '@docknetwork/sdk/presentation';
 import {verifyCredential} from '@docknetwork/sdk/utils/vc/credentials';
 import {PEX} from '@sphereon/pex';
 import {keyDocToKeypair} from './utils';
-import {dockService, getDock} from '../dock/service';
+import {blockchainService, getDock} from '../blockchain/service';
 import {
   applyEnforceBounds,
   hasProvingKey,
@@ -123,13 +123,13 @@ class CredentialService {
       return vp.toJSON();
     }
 
-    return vp.sign(keyDoc, challenge, domain, dockService.resolver);
+    return vp.sign(keyDoc, challenge, domain, blockchainService.resolver);
   }
   async verifyCredential(params) {
     validation.verifyCredential(params);
     const {credential, membershipWitness} = params;
     const result = await verifyCredential(credential, {
-      resolver: dockService.resolver,
+      resolver: blockchainService.resolver,
       revocationApi: {dock: getDock()},
     });
 
@@ -265,7 +265,7 @@ class CredentialService {
     const bbsPlusPresentation = new Presentation();
     for (const {credential, attributesToReveal} of credentials) {
       const idx = await bbsPlusPresentation.addCredentialToPresent(credential, {
-        resolver: dockService.resolver,
+        resolver: blockchainService.resolver,
       });
       if (Array.isArray(attributesToReveal) && attributesToReveal.length > 0) {
         await bbsPlusPresentation.addAttributeToReveal(idx, attributesToReveal);
@@ -359,7 +359,7 @@ class CredentialService {
 
     for (const {credential} of credentials) {
       await presentation.addCredentialToPresent(credential, {
-        resolver: dockService.resolver,
+        resolver: blockchainService.resolver,
       });
     }
 

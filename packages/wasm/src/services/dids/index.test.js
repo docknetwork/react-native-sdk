@@ -5,7 +5,7 @@ import {validation} from './config';
 import {DIDKeyManager} from '@docknetwork/wallet-sdk-dids/src';
 import {TestFixtures} from '../../fixtures';
 import {getTestWallet} from '../../test/setup-test-state';
-import {dockService, getDock} from '../dock/service';
+import {blockchainService, getDock} from '../blockchain/service';
 import {DockDid} from '@docknetwork/credential-sdk/types';
 
 describe('DID Service', () => {
@@ -100,7 +100,7 @@ describe('DID Service', () => {
   });
 
   it('expect to register did dock', async () => {
-    dockService.modules = {
+    blockchainService.modules = {
       did: {
         dockOnly: {
           rawTx: {
@@ -120,7 +120,7 @@ describe('DID Service', () => {
   });
 
   it('expect to fail to register did dock', async () => {
-    dockService.modules = {
+    blockchainService.modules = {
       did: {
         dockOnly: {
           rawTx: {

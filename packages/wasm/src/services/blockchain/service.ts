@@ -40,7 +40,7 @@ class AnyDIDResolver extends ResolverRouter {
 /**
  *
  */
-export class DockService {
+export class BlockchainService {
   dock;
   modules;
   didModule;
@@ -48,12 +48,12 @@ export class DockService {
   isDockReady = false;
   resolver: any;
   static Events = {
-    DOCK_READY: 'dock-ready',
+    BLOCKCHAIN_READY: 'blockchain-ready',
   };
 
   rpcMethods = [
     DockService.prototype.disconnect,
-    DockService.prototype.ensureDockReady,
+    DockService.prototype.ensureBlockchainReady,
     DockService.prototype.init,
     DockService.prototype.isApiConnected,
     DockService.prototype.getAddress,
@@ -77,12 +77,12 @@ export class DockService {
    *
    * @returns
    */
-  async ensureDockReady() {
+  async ensureBlockchainReady() {
     if (this.isDockReady) {
       return;
     }
 
-    return once(this.emitter, DockService.Events.DOCK_READY);
+    return once(this.emitter, BlockchainService.Events.BLOCKCHAIN_READY);
   }
 
   createDIDResolver() {
@@ -164,7 +164,7 @@ export class DockService {
       if (this.isDockReady) {
         resolve();
       } else {
-        this.emitter.once(DockService.Events.DOCK_READY, resolve);
+        this.emitter.once(BlockchainService.Events.BLOCKCHAIN_READY, resolve);
       }
     });
   }
@@ -190,4 +190,4 @@ export class DockService {
   }
 }
 
-export const dockService: DockService = new DockService();
+export const blockchainService: BlockchainService = new BlockchainService();
