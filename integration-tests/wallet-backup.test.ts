@@ -1,6 +1,6 @@
 import {closeWallet, createNewWallet} from './helpers';
 import {WalletBackupJSON, WalletBackupPasssword} from './data/wallet-backup';
-import { dockService } from '@docknetwork/wallet-sdk-wasm/lib/services/dock';
+import {blockchainService} from '@docknetwork/wallet-sdk-wasm/lib/services/blockchain';
 
 describe('Wallet backups', () => {
   it('expect to import wallet from backup', async () => {
@@ -34,7 +34,7 @@ describe('Wallet backups', () => {
   });
 
   afterEach(async () => {
-    await dockService.disconnect();
+    await blockchainService.disconnect();
   })
 
   afterAll(() => closeWallet());
