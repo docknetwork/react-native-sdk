@@ -1,9 +1,9 @@
 // @ts-nocheck
 
-import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
-import { CheqdAPI } from '@docknetwork/cheqd-blockchain-api';
-import { CheqdCoreModules } from '@docknetwork/cheqd-blockchain-modules';
-import { MultiApiCoreModules } from '@docknetwork/credential-sdk/modules';
+import {DirectSecp256k1HdWallet} from '@cosmjs/proto-signing';
+import {CheqdAPI} from '@docknetwork/cheqd-blockchain-api';
+import {CheqdCoreModules} from '@docknetwork/cheqd-blockchain-modules';
+import {MultiApiCoreModules} from '@docknetwork/credential-sdk/modules';
 import {
   CoreResolver,
   DIDKeyResolver,
@@ -11,14 +11,17 @@ import {
   UniversalResolver,
   WILDCARD,
 } from '@docknetwork/credential-sdk/resolver';
-import { initializeWasm } from '@docknetwork/crypto-wasm-ts/lib/index';
-import { DockAPI } from '@docknetwork/dock-blockchain-api';
-import { DockCoreModules, DockDIDModule } from '@docknetwork/dock-blockchain-modules';
-import { EventEmitter } from 'events';
-import { Logger } from '../../core/logger';
-import { once } from '../../modules/event-manager';
-import { utilCryptoService } from '../util-crypto';
-import { InitParams, validation } from './configs';
+import {initializeWasm} from '@docknetwork/crypto-wasm-ts/lib/index';
+import {DockAPI} from '@docknetwork/dock-blockchain-api';
+import {
+  DockCoreModules,
+  DockDIDModule,
+} from '@docknetwork/dock-blockchain-modules';
+import {EventEmitter} from 'events';
+import {Logger} from '../../core/logger';
+import {once} from '../../modules/event-manager';
+import {utilCryptoService} from '../util-crypto';
+import {InitParams, validation} from './configs';
 
 let dockInstance;
 
@@ -104,6 +107,10 @@ export class BlockchainService {
       await this.dock.disconnect();
     }
 
+    if (this.cheqdApi && this.cheqdApi.isInitialized()) {
+      await this.cheqdApi.disconnect();
+    }
+
     Logger.info(`Attempt to initialized substrate at: ${params.address}`);
 
     await getDock().init(params);
@@ -113,7 +120,8 @@ export class BlockchainService {
     if (params?.cheqdApiUrl) {
       const checkdApiUrl = params?.cheqdApiUrl;
       const cheqdNetworkId = params?.networkId;
-      const cheqdMnemonic = params?.cheqdMnemonic || await utilCryptoService.mnemonicGenerate(12);
+      const cheqdMnemonic =
+        params?.cheqdMnemonic || (await utilCryptoService.mnemonicGenerate(12));
 
       const wallet = await DirectSecp256k1HdWallet.fromMnemonic(cheqdMnemonic, {
         prefix: 'cheqd',
@@ -123,14 +131,20 @@ export class BlockchainService {
       const [{address}] = walletAccounts;
       console.log('Using cheqd account:', address);
 
-      Logger.info(`Attempt to initialized cheqd at: ${checkdApiUrl}`);
+      Logger.info(
+        `Attempt to initialized cheqd at: ${checkdApiUrl} with networkId: ${cheqdNetworkId}`,
+      );
       Logger.info(`Using cheqd account: ${address}`);
 
-      await this.cheqdApi.init({
-        wallet,
-        url: checkdApiUrl,
-        network: cheqdNetworkId,
-      });
+      try {
+        await this.cheqdApi.init({
+          wallet,
+          url: checkdApiUrl,
+          network: cheqdNetworkId,
+        });
+      } catch (err) {
+        Logger.error(`Failed to initialize cheqd at: ${checkdApiUrl}`);
+      }
 
       Logger.info(`Cheqd initialized at: ${checkdApiUrl}`);
     }
