@@ -65,9 +65,6 @@ export default App;
 
 ```
 
-For more details you can check the [getting started guide](docs/getting-started.md).
-
-
 ## Running on other platforms
 
 Check the following repository for detailed examples for running the Dock Wallet SDK on NodeJS, Web, and Flutter.
@@ -77,8 +74,11 @@ https://github.com/docknetwork/wallet-sdk-examples
 
 ## Docs
 
+For more details you can check the [getting started guide](https://github.com/docknetwork/react-native-sdk/blob/master/docs/getting-started.md)
+
 https://docknetwork.github.io/react-native-sdk/
 
 ## Features
-- [Biometric Plugin](docs/biometric-plugin.md)
-- [Ecosystem Tools](docs/ecosystem-tools.md)
+- [Biometric Plugin](https://github.com/docknetwork/react-native-sdk/blob/master/docs/biometric-plugin.md)
+- [Ecosystem Tools](https://github.com/docknetwork/react-native-sdk/blob/master/docs/ecosystem-tools.md)
+- [Cloud Wallet](https://github.com/docknetwork/react-native-sdk/blob/master/docs/cloud-wallet.md)
