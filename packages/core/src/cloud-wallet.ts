@@ -7,6 +7,10 @@ import {edvService} from '@docknetwork/wallet-sdk-wasm/src/services/edv';
 
 export const SYNC_MARKER_TYPE = 'SyncMarkerDocument';
 
+export function generateEDVKeys() {
+  return edvService.generateKeys()
+}
+
 export async function initializeCloudWallet({
   dataStore,
   edvUrl,
