@@ -5,7 +5,6 @@ import {
   createNewWallet,
   getDocumentsByType,
   setNetwork,
-  setupEnvironent,
 } from './helpers';
 import {BasicCredential} from './data/credentials';
 import {importCredentialJSON} from './helpers/credential-helpers';
@@ -33,7 +32,6 @@ async function isWalletEmpty() {
 describe('Switch wallet', () => {
   beforeEach(async () => {
     await cleanup();
-    await setupEnvironent();
     await createNewWallet();
   });
 

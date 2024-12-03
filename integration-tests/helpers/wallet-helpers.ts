@@ -3,7 +3,6 @@
  *
  * Ensure that a new wallet can be created and will be functional
  */
-import dock from '@docknetwork/sdk';
 import {DataStoreSnapshotV1} from '../data/data-store';
 import {WalletBackupJSON, WalletBackupPasssword} from '../data/wallet-backup';
 import {

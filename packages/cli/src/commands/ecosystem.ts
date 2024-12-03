@@ -1,7 +1,7 @@
 import {Command} from 'commander';
-import {typedHexDID, createNewDockDID, registerNewDIDUsingPair} from '@docknetwork/sdk/utils/did/typed-did/helpers';
+import {typedHexDID} from '@docknetwork/sdk/utils/did/typed-did/helpers';
 import {dockService} from '@docknetwork/wallet-sdk-wasm/src/services/dock/service';
-import {getDIDProvider, getWallet} from '../helpers';
+import {getWallet} from '../helpers';
 import {getDIDKeyPairs} from '@docknetwork/wallet-sdk-core/src/did-provider';
 import {randomAsHex} from '@polkadot/util-crypto';
 

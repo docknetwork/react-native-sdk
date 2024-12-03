@@ -7,7 +7,6 @@ import {
   getWallet,
   importAccountFromMnemonic,
   importAccountJSON,
-  setupEnvironent,
 } from './helpers';
 import {Account2MnemonicDetails, AccountJSON} from './data/accounts';
 
@@ -16,8 +15,6 @@ describe('Accounts', () => {
 
   beforeAll(async () => {
     await cleanup();
-    await setupEnvironent();
-    await createNewWallet();
     await createAccounts();
     wallet = await getWallet();
   });
