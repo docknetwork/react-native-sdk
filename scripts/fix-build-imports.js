@@ -25,11 +25,18 @@ function replacePathsInFile(filePath) {
 
 // Function to recursively process files in the directory
 function processDirectory(directory) {
-  fs.readdirSync(directory).forEach((file) => {
+  fs.readdirSync(directory).forEach(file => {
     const filePath = path.join(directory, file);
     if (fs.statSync(filePath).isDirectory()) {
       processDirectory(filePath);
-    } else if (filePath.endsWith('.js') || filePath.endsWith('.ts') || filePath.endsWith('.jsx') || filePath.endsWith('.tsx')) {
+    } else if (
+      filePath.endsWith('.js') ||
+      filePath.endsWith('.ts') ||
+      filePath.endsWith('.jsx') ||
+      filePath.endsWith('.tsx') ||
+      filePath.endsWith('.mjs') ||
+      filePath.endsWith('.cjs')
+    ) {
       replacePathsInFile(filePath);
     }
   });
