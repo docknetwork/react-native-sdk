@@ -416,6 +416,8 @@ class CredentialService {
       idx++;
     }
 
+    debugger;
+
     const credentialsFromPresentation = await presentation.deriveCredentials(
       options,
     );
