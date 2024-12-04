@@ -422,6 +422,9 @@ describe('Pex Examples', () => {
               fields: [
                 {
                   path: ['$.credentialSubject.id'],
+                  filter: {
+                    format: 'did',
+                  },
                 },
                 {
                   path: ['$.type[*]'],
@@ -441,6 +444,9 @@ describe('Pex Examples', () => {
       result = removeOptionalAttribute(template);
       expect(getFieldsWithOptionalAttributes(result)).toBe(0);
       expect(result.input_descriptors[0].constraints.fields.length).toBe(1);
+      expect(
+        result.input_descriptors[0].constraints.fields[0].filter.format,
+      ).toBeUndefined();
 
       template = {
         id: 'income_test',
