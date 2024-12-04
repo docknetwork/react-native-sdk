@@ -12,8 +12,9 @@ The Cloud Wallet integrates with an [Encrypted Data Vault (EDV)](https://digital
 
 The example below demonstrates how to initialize and use the Cloud Wallet for managing documents.
 
-
 ### Step 1: Initialize the Data Store
+
+First, you need to create local data storage to connect to the credential wallet.
 
 #### For Mobile and Node.js
 
@@ -40,7 +41,7 @@ const dataStore = await createDataStore({
 
 ### Step 2: Generate Wallet Keys
 
-Use the same Cloud Wallet keys across multiple devices to access the same documents. These keys are used to encrypt, decrypt, and locate documents in the EDV.
+Next, we generate keys for interacting with the cloud wallet. Use the same Cloud Wallet keys across multiple devices to access the same documents. These keys are used to encrypt, decrypt, and locate documents in the EDV.
 
 ```ts
 const {verificationKey, agreementKey, hmacKey} = await edvService.generateKeys();
@@ -52,7 +53,7 @@ The key generation returns an object with `agreementKey`, `verificationKey`, and
 
 ### Step 3: Initialize the Cloud Wallet
 
-After setting up the data store and generating keys, initialize the Cloud Wallet. This ensures continuous synchronization between the EDV and the wallet.
+After setting up the data store and generating keys, initialize the Cloud Wallet and connect it to the local data storage. This ensures continuous synchronization between the EDV and the wallet.
 
 ```ts
 import {initializeCloudWallet} from '@docknetwork/wallet-sdk-core/lib/cloud-wallet';
@@ -70,11 +71,11 @@ const {pullDocuments} = await initializeCloudWallet({
 await pullDocuments();
 ```
 
-The `pullDocuments` function synchronizes the EDV and the wallet by comparing documents and updating the data store accordingly.
+The `pullDocuments` function synchronizes the EDV and the wallet by comparing documents and updating the data store accordingly.Documents can be credentials or messages.
 
 ### Step 4: Create a New Wallet
 
-Now, create a wallet to manage your documents. This will allow you to add, update, and remove documents.
+Now, create a credential wallet inside of the data storage. This will allow you to add, update, and remove documents.
 
 ```ts
 import {createWallet} from '@docknetwork/wallet-sdk-core/lib/wallet';

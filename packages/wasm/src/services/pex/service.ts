@@ -30,12 +30,18 @@ export function removeOptionalAttribute(presentationDefinition) {
         field => field.optional !== true,
       );
 
-    // Removes the optinal attributes from the fields
-    // It applies in case optional: false
-    // The field is required, but pex doesn't support the attribute
+    
     inputDescriptor.constraints.fields.forEach(field => {
+      // Removes the optinal attributes from the fields
+      // It applies in case optional: false
+      // The field is required, but pex doesn't support the attribute
       if (field.optional !== undefined) {
         delete field.optional;
+      }
+
+      // Remove the did format attribute, that is not support by pex
+      if(field?.filter?.format === 'did') {
+        delete field.filter.format;
       }
     });
 
