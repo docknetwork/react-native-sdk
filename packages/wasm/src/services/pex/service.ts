@@ -18,36 +18,41 @@ const pex: PEX = new PEX();
  * This is a temporary workaround until the issue is fixed in the @sphereon/pex library
  **/
 export function removeOptionalAttribute(presentationDefinition) {
-  presentationDefinition.input_descriptors.forEach(inputDescriptor => {
+  // Deep clone the presentationDefinition to avoid mutating the original
+  const clonedPresentationDefinition = JSON.parse(
+    JSON.stringify(presentationDefinition),
+  );
+
+  clonedPresentationDefinition.input_descriptors.forEach(inputDescriptor => {
     if (!inputDescriptor.constraints?.fields?.length) {
       return;
     }
+
     // Filter the optional fields
-    // If we include those fields, it might exclude few credentials from the resulsts
-    // e.g: Expiration date as optional, a credenntial without expiration date should be included
     inputDescriptor.constraints.fields =
       inputDescriptor.constraints.fields.filter(
         field => field.optional !== true,
       );
 
-    
-    inputDescriptor.constraints.fields.forEach(field => {
-      // Removes the optinal attributes from the fields
-      // It applies in case optional: false
-      // The field is required, but pex doesn't support the attribute
-      if (field.optional !== undefined) {
-        delete field.optional;
-      }
+    inputDescriptor.constraints.fields = inputDescriptor.constraints.fields.map(
+      field => {
+        const updatedField = {...field};
 
-      // Remove the did format attribute, that is not support by pex
-      if(field?.filter?.format === 'did') {
-        delete field.filter.format;
-      }
-    });
+        // Remove the optional attribute if it exists
+        if (updatedField.optional !== undefined) {
+          delete updatedField.optional;
+        }
 
-    // There is a case where ALL fields are optional
-    // If we remove all fields, it will cause an error with PEX
-    // So, we add a placeholder field to avoid the error
+        // Remove the did format attribute if it exists
+        if (updatedField.filter?.format === 'did') {
+          delete updatedField.filter.format;
+        }
+
+        return updatedField;
+      },
+    );
+
+    // Handle case where all fields are optional
     if (inputDescriptor.constraints.fields.length === 0) {
       inputDescriptor.constraints.fields.push({
         path: ['$.id'],
@@ -55,11 +60,11 @@ export function removeOptionalAttribute(presentationDefinition) {
     }
   });
 
-  if (!presentationDefinition.id) {
-    presentationDefinition.id = 'id';
+  if (!clonedPresentationDefinition.id) {
+    clonedPresentationDefinition.id = 'id';
   }
 
-  return presentationDefinition;
+  return clonedPresentationDefinition;
 }
 
 class PEXService {
