@@ -8,7 +8,7 @@ import {keyringService} from './keyring';
 import {RpcService} from './rpc-service-client';
 import {walletService} from './wallet';
 import Keyring from '@polkadot/keyring';
-import {blockchainService, getDock, setDock} from './blockchain/service';
+import {blockchainService, setDock} from './blockchain/service';
 
 export async function initializeWalletService() {
   await cryptoWaitReady();

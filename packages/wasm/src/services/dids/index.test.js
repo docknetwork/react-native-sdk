@@ -5,7 +5,7 @@ import {validation} from './config';
 import {DIDKeyManager} from '@docknetwork/wallet-sdk-dids/src';
 import {TestFixtures} from '../../fixtures';
 import {getTestWallet} from '../../test/setup-test-state';
-import {blockchainService, getDock} from '../blockchain/service';
+import {blockchainService} from '../blockchain/service';
 import {DockDid} from '@docknetwork/credential-sdk/types';
 
 describe('DID Service', () => {
