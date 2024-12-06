@@ -23,15 +23,6 @@ import {once} from '../../modules/event-manager';
 import {utilCryptoService} from '../util-crypto';
 import {InitParams, validation} from './configs';
 
-let dockInstance;
-
-export function getDock() {
-  return dockInstance;
-}
-
-export function setDock(instance) {
-  dockInstance = instance;
-}
 
 // Create a resolver in order to lookup DIDs for verifying
 export const universalResolverUrl = 'https://uniresolver.io';
@@ -48,7 +39,7 @@ export class BlockchainService {
   modules;
   didModule;
   cheqdApi;
-  isDockReady = false;
+  isBlockchainReady = false;
   resolver: any;
   static Events = {
     BLOCKCHAIN_READY: 'blockchain-ready',
@@ -70,8 +61,6 @@ export class BlockchainService {
     this.dockModules = new DockCoreModules(this.dock);
     this.cheqdModules = new CheqdCoreModules(this.cheqdApi);
     this.modules = new MultiApiCoreModules([this.dockModules]);
-
-    dockInstance = this.dock;
     this.emitter = new EventEmitter();
     this.resolver = this.createDIDResolver();
   }
@@ -81,7 +70,7 @@ export class BlockchainService {
    * @returns
    */
   async ensureBlockchainReady() {
-    if (this.isDockReady) {
+    if (this.isBlockchainReady) {
       return;
     }
 
@@ -113,7 +102,7 @@ export class BlockchainService {
 
     Logger.info(`Attempt to initialized substrate at: ${params.address}`);
 
-    await getDock().init(params);
+    await this.dock.init(params);
 
     Logger.info(`Substrate initialized at: ${params.address}`);
 
@@ -160,7 +149,7 @@ export class BlockchainService {
       await initializeWasm();
     }
 
-    this._setDockReady(true);
+    this._setBlockchainReady(true);
 
     return true;
   }
@@ -171,13 +160,13 @@ export class BlockchainService {
    */
   async disconnect() {
     const result = await this.dock.disconnect();
-    this._setDockReady(false);
+    this._setBlockchainReady(false);
     return result;
   }
 
-  async waitDockReady() {
+  async waitBlockchainReady() {
     return new Promise(resolve => {
-      if (this.isDockReady) {
+      if (this.isBlockchainReady) {
         resolve();
       } else {
         this.emitter.once(BlockchainService.Events.BLOCKCHAIN_READY, resolve);
@@ -190,18 +179,18 @@ export class BlockchainService {
    * @returns
    */
   async isApiConnected() {
-    return this.isDockReady;
+    return this.isBlockchainReady;
   }
 
   async getAddress() {
     return this.dock.address;
   }
 
-  _setDockReady(isDockReady) {
-    this.isDockReady = isDockReady;
+  _setBlockchainReady(isBlockchainReady) {
+    this.isBlockchainReady = isBlockchainReady;
 
-    if (isDockReady) {
-      this.emitter.emit(BlockchainService.Events.DOCK_READY);
+    if (isBlockchainReady) {
+      this.emitter.emit(BlockchainService.Events.BLOCKCHAIN_READY);
     }
   }
 }

@@ -142,7 +142,9 @@ describe('DID Service', () => {
 
   it('expect to get did document', async () => {
     const document = 'document';
-    jest.spyOn(getDock().did, 'getDocument').mockResolvedValue(document);
+    jest
+      .spyOn(blockchainService.dock.did, 'getDocument')
+      .mockResolvedValue(document);
 
     const result = await service.getDidDockDocument(
       'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi',

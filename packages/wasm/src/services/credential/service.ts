@@ -117,7 +117,7 @@ class CredentialService {
       vp.setHolder(keyDoc.controller);
     }
 
-    keyDoc.keypair = keyDocToKeypair(keyDoc, getDock());
+    keyDoc.keypair = keyDocToKeypair(keyDoc, blockchainService.dock);
 
     if (shouldSkipSigning) {
       return vp.toJSON();
@@ -130,7 +130,7 @@ class CredentialService {
     const {credential, membershipWitness} = params;
     const result = await verifyCredential(credential, {
       resolver: blockchainService.resolver,
-      revocationApi: {dock: getDock()},
+      revocationApi: {dock: blockchainService.dock},
     });
 
     const {credentialStatus} = credential;
@@ -291,7 +291,7 @@ class CredentialService {
       return null;
     }
 
-    return getDock().accumulatorModule.getAccumulator(accumulatorId, false);
+    return blockchainService.dock.accumulatorModule.getAccumulator(accumulatorId, false);
   }
 
   /**

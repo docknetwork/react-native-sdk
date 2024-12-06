@@ -142,7 +142,7 @@ class DIDService {
 
   async getDidDockDocument(did) {
     assert(!!did, 'DID is required');
-    const dock = getDock();
+    const dock = blockchainService.dock;
     const result = await dock.did.getDocument(did);
     return result;
   }

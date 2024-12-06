@@ -164,7 +164,7 @@ export async function setupTestWallet() {
 
 export function mockDockSdkConnection(connectionError) {
   const result = 'result';
-  const dock = getDock();
+  const dock = blockchainService.dock;
   const mocks = [
     jest.spyOn(dock, 'init').mockImplementation(() => {
       if (connectionError) {
