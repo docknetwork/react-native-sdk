@@ -5,8 +5,8 @@ import {
   mockDockSdkConnection,
 } from '../test-utils';
 import {validation} from './configs';
-import {dockService as service} from './service';
-import {DockServiceRpc} from './service-rpc';
+import {blockchainService as service} from './service';
+import {BlockchainServiceRpc} from './service-rpc';
 
 const doConnect = (
   address = NetworkManager.getInstance().getNetworkInfo().substrateUrl,
@@ -17,7 +17,7 @@ const doConnect = (
 
 describe('DockService', () => {
   it('ServiceRpc', () => {
-    assertRpcService(DockServiceRpc, service, validation);
+    assertRpcService(BlockchainServiceRpc, service, validation);
   });
 
   describe('init', () => {

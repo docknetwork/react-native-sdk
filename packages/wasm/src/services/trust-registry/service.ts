@@ -2,7 +2,7 @@
 import {serviceName} from './configs';
 import {typedHexDID} from '@docknetwork/sdk/utils/did/typed-did/helpers';
 import {createHash} from 'crypto';
-import {dockService} from '../dock/service';
+import {blockchainService} from '../blockchain/service';
 import {validation} from './configs';
 
 class TrustRegistryService {
@@ -35,7 +35,7 @@ class TrustRegistryService {
     }
 
     if (issuerDID) {
-      const issuerDIDMethodKey = typedHexDID(dockService.dock.api, issuerDID);
+      const issuerDIDMethodKey = typedHexDID(blockchainService.dock.api, issuerDID);
       queryOptions.issuers = {
         AnyOf: [issuerDIDMethodKey],
       };
@@ -43,7 +43,7 @@ class TrustRegistryService {
 
     if (verifierDID) {
       const verifierDIDMethodKey = typedHexDID(
-        dockService.dock.api,
+        blockchainService.dock.api,
         verifierDID,
       );
       queryOptions.verifiers = {
@@ -51,7 +51,7 @@ class TrustRegistryService {
       };
     }
 
-    const registryInfo = await dockService.dock.trustRegistry?.registriesInfo(
+    const registryInfo = await blockchainService.dock.trustRegistry?.registriesInfo(
       queryOptions,
     );
 
@@ -65,11 +65,11 @@ class TrustRegistryService {
     const schemaIdHex = '0x' + hashedId;
 
     const issuerDIDMethodKey = issuerDID
-      ? typedHexDID(dockService.dock.api, issuerDID)
+      ? typedHexDID(blockchainService.dock.api, issuerDID)
       : null;
 
     const metadata =
-      await dockService.dock.trustRegistry.registrySchemasMetadata(
+      await blockchainService.dock.trustRegistry.registrySchemasMetadata(
         {
           schemaIds: [schemaIdHex],
           ...(issuerDIDMethodKey && {

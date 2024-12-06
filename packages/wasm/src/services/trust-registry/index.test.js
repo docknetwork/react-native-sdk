@@ -1,4 +1,4 @@
-import {dockService} from '../dock/service';
+import {blockchainService} from '../blockchain/service';
 
 import {trustRegistryService as service} from './service';
 import {
@@ -23,7 +23,7 @@ describe('TrustRegistryService', () => {
     const result = await service.getTrustRegistries(params);
 
     const queryObject =
-      dockService.dock.trustRegistry.registriesInfo.mock.calls[0][0];
+      blockchainService.dock.trustRegistry.registriesInfo.mock.calls[0][0];
     expect(queryObject.issuers.AnyOf).toHaveLength(1);
     expect(queryObject.verifiers.AnyOf).toHaveLength(1);
     expect(queryObject.schemaIds.AnyOf[0]).toEqual(
@@ -42,10 +42,12 @@ describe('TrustRegistryService', () => {
     };
     const result = await service.getTrustRegistryVerifiers(params);
     const queryObject =
-      dockService.dock.trustRegistry.registrySchemasMetadata.mock.calls[0][0];
+      blockchainService.dock.trustRegistry.registrySchemasMetadata.mock
+        .calls[0][0];
 
     expect(
-      dockService.dock.trustRegistry.registrySchemasMetadata.mock.calls[0][1],
+      blockchainService.dock.trustRegistry.registrySchemasMetadata.mock
+        .calls[0][1],
     ).toEqual(trustRegistryId);
     expect(queryObject.issuers.AnyOf).toHaveLength(1);
     expect(queryObject.schemaIds[0]).toEqual(

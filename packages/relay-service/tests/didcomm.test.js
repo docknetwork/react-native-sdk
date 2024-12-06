@@ -5,7 +5,7 @@ import {
   getDerivedAgreementKey,
 } from '../lib/didcomm';
 import {ALICE_KEY_PAIR_DOC, BOB_KEY_PAIR_DOC} from './mock-data';
-import {dockService} from '@docknetwork/wallet-sdk-wasm/src/services/dock/service';
+import {blockchainService} from '@docknetwork/wallet-sdk-wasm/src/services/blockchain/service';
 import {WildcardMultiResolver} from '@docknetwork/sdk/resolver';
 
 const didList = [ALICE_KEY_PAIR_DOC, BOB_KEY_PAIR_DOC];
@@ -34,12 +34,12 @@ const mockDIDResolver = new WalletSDKResolver([
   // new UniversalResolver(universalResolverUrl),
 ]);
 
-dockService.createDIDResolver = () => mockDIDResolver;
-dockService.resolver = mockDIDResolver;
+blockchainService.createDIDResolver = () => mockDIDResolver;
+blockchainService.resolver = mockDIDResolver;
 
 describe('DIDComm', () => {
   it('expect to decrypt didcomm message', async () => {
-    dockService.resolver = mockDIDResolver;
+    blockchainService.resolver = mockDIDResolver;
 
     const keyAgreementKey = await getDerivedAgreementKey(ALICE_KEY_PAIR_DOC);
 

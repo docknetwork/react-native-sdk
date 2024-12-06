@@ -1,14 +1,14 @@
-import {keyringService} from '@docknetwork/wallet-sdk-wasm/src/services/keyring';
-import {utilCryptoService} from '@docknetwork/wallet-sdk-wasm/src/services/util-crypto';
-import {dockService} from '@docknetwork/wallet-sdk-wasm/src/services/dock';
+import { blockchainService } from '@docknetwork/wallet-sdk-wasm/src/services/blockchain';
+import { keyringService } from '@docknetwork/wallet-sdk-wasm/src/services/keyring';
+import { utilCryptoService } from '@docknetwork/wallet-sdk-wasm/src/services/util-crypto';
 
-import {IWallet} from './types';
-import {Network} from '@docknetwork/wallet-sdk-data-store/src/types';
-import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
+import { Network } from '@docknetwork/wallet-sdk-data-store/src/types';
+import { WalletEvents } from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
 import { captureException } from './helpers';
+import { IWallet } from './types';
 
-function isSubstrateNetwork(network: Network) {
-  return !!network.configs.substrateUrl;
+function isBlockchainNetwork(network: Network) {
+  return !!(network.configs.substrateUrl || network.configs.cheqdApiUrl);
 }
 
 /**
@@ -16,34 +16,50 @@ function isSubstrateNetwork(network: Network) {
  * Compare connected substrate connection with the current walle network
  * Disconnect and Establish a new connection if the network is different
  */
-export async function handleSubstrateNetworkChange(
+export async function handleBlockchainNetworkChange(
   wallet: IWallet,
 ): Promise<void> {
-  const currentSubstrateAddress = await dockService.getAddress();
-  const substrateNetworkId = wallet.dataStore.networks.find(
-    network => network.configs.substrateUrl === currentSubstrateAddress,
+  const currentAddress = await blockchainService.getAddress();
+  const networkId = wallet.dataStore.networks.find(
+    network => network.configs.substrateUrl === currentAddress || network.configs.cheqdApiUrl === currentAddress,
   )?.id;
   const currentNetworkId = wallet.dataStore.network?.id;
 
-  if (substrateNetworkId === currentNetworkId) {
+  if (networkId === currentNetworkId) {
     return;
   }
 
-  await dockService.disconnect();
-  await setSubstrateNetwork(wallet);
+  await blockchainService.disconnect();
+  await setBlockchainNetwork(wallet);
 }
 
-export async function setSubstrateNetwork(wallet: IWallet) {
+export async function setBlockchainNetwork(wallet: IWallet) {
   const network = wallet.dataStore.network;
   const networkConfigs = network.configs;
+
+
+  let cheqdMnemonicDoc = await wallet.getDocumentById('cheqd-mnemonic');
+
+  if (!cheqdMnemonicDoc) {
+    cheqdMnemonicDoc = {
+      id: 'cheqd-mnemonic',
+      type: 'Mnemonic',
+      value: await utilCryptoService.mnemonicGenerate(12),
+    }
+
+    await wallet.addDocument(cheqdMnemonicDoc);
+  }
 
   await keyringService.initialize({
     ss58Format: networkConfigs.addressPrefix,
   });
 
-  dockService
+  blockchainService
     .init({
       address: networkConfigs.substrateUrl,
+      cheqdApiUrl: networkConfigs.cheqdApiUrl,
+      networkId: network.id,
+      cheqdMnemonic: cheqdMnemonicDoc.value,
     })
     .then(() => {
       wallet.eventManager.emit(WalletEvents.networkConnected);
@@ -60,11 +76,11 @@ export async function initWalletWasm(wallet: IWallet) {
   await utilCryptoService.cryptoWaitReady();
   const network = wallet.dataStore.network;
 
-  if (isSubstrateNetwork(network)) {
-    await setSubstrateNetwork(wallet);
+  if (isBlockchainNetwork(network)) {
+    await setBlockchainNetwork(wallet);
 
     wallet.eventManager.on(WalletEvents.networkUpdated, async () => {
-      handleSubstrateNetworkChange(wallet).catch(err => console.error(err));
+      handleBlockchainNetworkChange(wallet).catch(err => console.error(err));
     });
   }
 

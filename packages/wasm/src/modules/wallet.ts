@@ -2,7 +2,7 @@
 import assert from 'assert';
 import {v4 as uuid} from 'uuid';
 import {getStorage} from '../core/storage';
-import {dockService} from '../services/dock';
+import {blockchainService} from '../services/blockchain';
 import {keyringService} from '../services/keyring';
 import {utilCryptoService} from '../services/util-crypto';
 import {walletService} from '../services/wallet';
@@ -165,7 +165,7 @@ class Wallet {
    * Close wallet
    */
   async close() {
-    await dockService.disconnect();
+    await blockchainService.disconnect();
     this.setStatus('closed');
   }
 
@@ -227,13 +227,13 @@ class Wallet {
       });
 
       Logger.debug(`Initializing network ${JSON.stringify(networkInfo)}`);
-      const isDockConnected = await dockService.isApiConnected();
+      const isDockConnected = await blockchainService.isApiConnected();
 
       if (isDockConnected) {
-        await dockService.disconnect();
+        await blockchainService.disconnect();
       }
 
-      await dockService.init({
+      await blockchainService.init({
         address: networkInfo.substrateUrl,
       });
 

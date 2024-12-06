@@ -2,10 +2,10 @@
 import assert from 'assert';
 import {EventEmitter} from 'events';
 import {Logger} from '../../core/logger';
-import {dockService} from '../dock/service';
+import {blockchainService} from '../blockchain/service';
 
 export const extrisicErrorsFilter = ({event}) => {
-  return dockService.dock.api.events.system.ExtrinsicFailed.is(event);
+  return blockchainService.dock.api.events.system.ExtrinsicFailed.is(event);
 };
 
 export const mapEventToErrorMessage = ({event}) => {
@@ -16,7 +16,7 @@ export const mapEventToErrorMessage = ({event}) => {
 
   if (error.isModule) {
     // for module errors, we have the section indexed, lookup
-    const decoded = dockService.dock.api.registry.findMetaError(error.asModule);
+    const decoded = blockchainService.dock.api.registry.findMetaError(error.asModule);
     const {docs, method, section} = decoded;
 
     return `${section}.${method}: ${docs.join(' ')}`;
