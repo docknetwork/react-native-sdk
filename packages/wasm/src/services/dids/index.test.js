@@ -143,7 +143,7 @@ describe('DID Service', () => {
   it('expect to get did document', async () => {
     const document = 'document';
     jest
-      .spyOn(blockchainService.dock.did, 'getDocument')
+      .spyOn(blockchainService.didModule, 'getDocument')
       .mockResolvedValue(document);
 
     const result = await service.getDidDockDocument(
