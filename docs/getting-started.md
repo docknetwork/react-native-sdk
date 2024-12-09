@@ -73,13 +73,11 @@ const credentialProvider = createCredentialProvider({
   wallet, // Pass the wallet instance
 });
 
+const credentialOfferUrl = 'openid-credential-offer://?credential_offer=%7B%22credential_issuer%22%3A%22https%3A%2F%2Fapi-testnet.dock.io%2Fopenid%2Fissuers%2F7eff516f-69fb-4b9d-94dc-e88308ec0c4c%22%2C%22credentials%22%3A%5B%22ldp_vc%3AMyCredential%22%5D%2C%22grants%22%3A%7B%22urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Apre-authorized_code%22%3A%7B%22pre-authorized_code%22%3A%22AAL4MPpEpWY6daBxVxJ8Q3chxOhvc9qIV3EAyj7dvps%22%2C%22user_pin_required%22%3Afalse%7D%7D%7D';
+
 await credentialProvider.importCredentialFromURI({
-  uri: 'https://creds-testnet.dock.io/8489dc69b69a70c97646ad9b4f256acaddb57762b5a6f661f0c9dae3b7f72ea6', // Credential URL
-  getAuthCode: async () => {
-    // You can implement your own UI to get the password
-    // For this example it will be hardcoded
-    return 'test';
-  },
+  uri: credentialOfferUrl,
+  didProvider,
 });
 
 const credentials = await credentialProvider.getCredentials(); // Retrieve all imported credentials
