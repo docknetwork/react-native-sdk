@@ -22,7 +22,7 @@ ecosystemCommands
       address: 'wss://knox-1.dock.io',
     });
 
-    await blockchainService.waitDockReady();
+    await blockchainService.waitBlockchainReady();
     await blockchainService.ensureBlockchainReady();
 
     const trustRegistryId = randomAsHex(32);
@@ -49,7 +49,7 @@ ecosystemCommands
       address: 'wss://knox-1.dock.io',
     });
 
-    await blockchainService.waitDockReady();
+    await blockchainService.waitBlockchainReady();
     await blockchainService.ensureBlockchainReady();
 
     const issuerDIDMethodKey = typedHexDID(

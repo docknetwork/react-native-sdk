@@ -68,7 +68,7 @@ const getMessages = async ({
   assert(Array.isArray(keyPairDocs), 'keyPairDocs must be an array');
   assert(!!keyPairDocs.length, 'keyPairDocs must not be empty');
 
-  await blockchainService.waitDockReady();
+  await blockchainService.waitBlockchainReady();
 
   const {payload, dids} = await generateSignedPayloadFromList(keyPairDocs, {
     limit,
