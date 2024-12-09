@@ -5,7 +5,7 @@ import {validation} from './config';
 import {DIDKeyManager} from '@docknetwork/wallet-sdk-dids/src';
 import {TestFixtures} from '../../fixtures';
 import {getTestWallet} from '../../test/setup-test-state';
-import {dockService, getDock} from '../dock/service';
+import {blockchainService} from '../blockchain/service';
 import {DockDid} from '@docknetwork/credential-sdk/types';
 
 describe('DID Service', () => {
@@ -100,7 +100,7 @@ describe('DID Service', () => {
   });
 
   it('expect to register did dock', async () => {
-    dockService.modules = {
+    blockchainService.modules = {
       did: {
         dockOnly: {
           rawTx: {
@@ -120,7 +120,7 @@ describe('DID Service', () => {
   });
 
   it('expect to fail to register did dock', async () => {
-    dockService.modules = {
+    blockchainService.modules = {
       did: {
         dockOnly: {
           rawTx: {
@@ -142,7 +142,9 @@ describe('DID Service', () => {
 
   it('expect to get did document', async () => {
     const document = 'document';
-    jest.spyOn(getDock().did, 'getDocument').mockResolvedValue(document);
+    jest
+      .spyOn(blockchainService.didModule, 'getDocument')
+      .mockResolvedValue(document);
 
     const result = await service.getDidDockDocument(
       'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi',

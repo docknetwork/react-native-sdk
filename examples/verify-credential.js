@@ -6,7 +6,7 @@ const {
   didServiceRPC,
 } = require('@docknetwork/wallet-sdk-wasm/src/services/dids');
 
-const {dockService} = require('@docknetwork/wallet-sdk-wasm/src/services/dock');
+const {blockchainService} = require('@docknetwork/wallet-sdk-wasm/src/services/blockchain');
 
 const exampleCredential = require('./example-credential.json');
 const presentationDefinition = require('./presentation-definition.json');
@@ -19,7 +19,7 @@ async function main() {
 
   console.log('Connecting to dock network');
 
-  await dockService.ensureDockReady();
+  await blockchainService.ensureBlockchainReady();
 
   // generate new DID
   const keyDoc = await didServiceRPC.generateKeyDoc({});

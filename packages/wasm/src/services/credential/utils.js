@@ -3,6 +3,7 @@ import {generateEcdsaSecp256k1Keypair} from '@docknetwork/sdk/utils/misc';
 import {randomAsHex} from '@polkadot/util-crypto';
 import {u8aToHex} from '@polkadot/util';
 import Bls12381G2KeyPairDock2022 from '@docknetwork/sdk/utils/vc/crypto/Bls12381G2KeyPairDock2022';
+import {getKeyring} from '../keyring/service';
 function createSecp256k1Keypair(privateKeyHex) {
   const pk = privateKeyHex || randomAsHex(32);
   const kp = generateEcdsaSecp256k1Keypair(pk);
@@ -36,7 +37,7 @@ export function keyDocToKeypair(keyDoc, dock) {
       throw new Error(`Unsupported key type: ${type}`);
     }
 
-    return dock.keyring.createFromPair(
+    return getKeyring().createFromPair(
       {
         publicKey: bs58.decode(publicKeyEncoded),
         secretKey: privateKeyBytes,

@@ -1,7 +1,7 @@
 import {TestFixtures} from '../fixtures';
 import {NetworkManager} from '../modules/network-manager';
 import {Wallet} from '../modules/wallet';
-import {dockService} from '../services/dock';
+import {blockchainService} from '../services/blockchain';
 import {mockDockService} from '../services/test-utils';
 import promiseMemoize from 'promise-memoize';
 import {setStorage} from '../core/storage';
@@ -29,7 +29,7 @@ export const getTestWallet: Wallet = promiseMemoize(async () => {
     mnemonic: TestFixtures.noBalanceAccount.mnemonic,
   });
 
-  await dockService.init({
+  await blockchainService.init({
     address: NetworkManager.getInstance().getNetworkInfo().substrateUrl,
   });
 

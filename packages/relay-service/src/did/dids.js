@@ -1,5 +1,5 @@
 import {hexDIDToQualified} from '@docknetwork/sdk/utils/did';
-import {dockService} from '@docknetwork/wallet-sdk-wasm/src/services/dock/service';
+import {blockchainService} from '@docknetwork/wallet-sdk-wasm/src/services/blockchain/service';
 
 export async function resolveDID(did, disableCache = false) {
   // Check if string has no qualifier, if so assume its hex format
@@ -14,5 +14,5 @@ export async function resolveDID(did, disableCache = false) {
     }
   }
 
-  return await dockService.resolver.resolve(qualifiedDID, disableCache);
+  return await blockchainService.resolver.resolve(qualifiedDID, disableCache);
 }

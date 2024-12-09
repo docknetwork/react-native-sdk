@@ -3,7 +3,7 @@ import assert from 'assert';
 import BigNumber from 'bignumber.js';
 import BN from 'bn.js';
 import {DOCK_TOKEN_UNIT, getPlainDockAmount} from '../../core/format-utils';
-import {dockService} from '../dock/service';
+import {blockchainService} from '../blockchain/service';
 import {signAndSend} from './api-utils';
 import {
   GetAccountBalanceParams,
@@ -36,13 +36,13 @@ export class SubstrateService {
     validation.getAccountBalance(params);
 
     console.log('ensure dock ready');
-    await dockService.ensureDockReady();
+    await blockchainService.ensureBlockchainReady();
 
     console.log('ensure dock ready done');
 
     const {
       data: {free},
-    } = await dockService.dock.api.query.system.account(params.address);
+    } = await blockchainService.dock.api.query.system.account(params.address);
 
     return free.toNumber() / DOCK_TOKEN_UNIT;
   }
@@ -58,9 +58,9 @@ export class SubstrateService {
       password: '',
     });
 
-    dockService.dock.setAccount(account);
+    blockchainService.dock.setAccount(account);
 
-    const extrinsic = dockService.dock.api.tx.balances.transfer(
+    const extrinsic = blockchainService.dock.api.tx.balances.transfer(
       toAddress,
       amount,
     );
@@ -81,7 +81,7 @@ export class SubstrateService {
       jsonData: keyPair,
       password: '',
     });
-    const {dock} = dockService;
+    const {dock} = blockchainService;
 
     dock.setAccount(account);
 

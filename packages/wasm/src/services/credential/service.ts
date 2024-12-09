@@ -19,7 +19,7 @@ import Presentation from '@docknetwork/sdk/presentation';
 import {verifyCredential} from '@docknetwork/sdk/utils/vc/credentials';
 import {PEX} from '@sphereon/pex';
 import {keyDocToKeypair} from './utils';
-import {dockService, getDock} from '../dock/service';
+import {blockchainService, getDock} from '../blockchain/service';
 import {
   applyEnforceBounds,
   hasProvingKey,
@@ -117,20 +117,20 @@ class CredentialService {
       vp.setHolder(keyDoc.controller);
     }
 
-    keyDoc.keypair = keyDocToKeypair(keyDoc, getDock());
+    keyDoc.keypair = keyDocToKeypair(keyDoc, blockchainService.dock);
 
     if (shouldSkipSigning) {
       return vp.toJSON();
     }
 
-    return vp.sign(keyDoc, challenge, domain, dockService.resolver);
+    return vp.sign(keyDoc, challenge, domain, blockchainService.resolver);
   }
   async verifyCredential(params) {
     validation.verifyCredential(params);
     const {credential, membershipWitness} = params;
     const result = await verifyCredential(credential, {
-      resolver: dockService.resolver,
-      revocationApi: {dock: getDock()},
+      resolver: blockchainService.resolver,
+      revocationApi: {dock: blockchainService.dock},
     });
 
     const {credentialStatus} = credential;
@@ -265,7 +265,7 @@ class CredentialService {
     const bbsPlusPresentation = new Presentation();
     for (const {credential, attributesToReveal} of credentials) {
       const idx = await bbsPlusPresentation.addCredentialToPresent(credential, {
-        resolver: dockService.resolver,
+        resolver: blockchainService.resolver,
       });
       if (Array.isArray(attributesToReveal) && attributesToReveal.length > 0) {
         await bbsPlusPresentation.addAttributeToReveal(idx, attributesToReveal);
@@ -291,7 +291,7 @@ class CredentialService {
       return null;
     }
 
-    return getDock().accumulatorModule.getAccumulator(accumulatorId, false);
+    return blockchainService.dock.accumulatorModule.getAccumulator(accumulatorId, false);
   }
 
   /**
@@ -359,7 +359,7 @@ class CredentialService {
 
     for (const {credential} of credentials) {
       await presentation.addCredentialToPresent(credential, {
-        resolver: dockService.resolver,
+        resolver: blockchainService.resolver,
       });
     }
 
@@ -415,8 +415,6 @@ class CredentialService {
 
       idx++;
     }
-
-    debugger;
 
     const credentialsFromPresentation = await presentation.deriveCredentials(
       options,

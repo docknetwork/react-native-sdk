@@ -9,7 +9,7 @@ import {
 import {keyringService} from '../keyring/service';
 import {utilCryptoService} from '../util-crypto/service';
 import assert from 'assert';
-import {dockService, getDock} from '../dock/service';
+import {blockchainService, getDock} from '../blockchain/service';
 
 import {
   DidKey,
@@ -35,7 +35,7 @@ async function createDockDID({keyPair}) {
   const verRels = new VerificationRelationship();
   const didKey = new DidKey(publicKey, verRels);
 
-  await dockService.modules.did.dockOnly.rawTx.newOnchain(
+  await blockchainService.modules.did.dockOnly.rawTx.newOnchain(
     dockDID.did,
     [didKey],
     dockController === dockDID.toString()
@@ -48,7 +48,7 @@ async function createDockDID({keyPair}) {
 
 async function getSignerKeypair(privateKeyDoc) {
   const privateKey =
-    privateKeyDoc.keypair || keyDocToKeypair(privateKeyDoc, dockService.dock);
+    privateKeyDoc.keypair || keyDocToKeypair(privateKeyDoc, blockchainService.dock);
 
   if (!privateKey.signer && privateKey.sign) {
     privateKey.signer = () => ({sign: ({data}) => privateKey.sign(data)});
@@ -142,8 +142,8 @@ class DIDService {
 
   async getDidDockDocument(did) {
     assert(!!did, 'DID is required');
-    const dock = getDock();
-    const result = await dock.did.getDocument(did);
+    const dock = blockchainService.dock;
+    const result = await blockchainService.didModule.getDocument(did);
     return result;
   }
 
