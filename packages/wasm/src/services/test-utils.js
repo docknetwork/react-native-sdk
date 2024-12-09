@@ -8,7 +8,7 @@ import {keyringService} from './keyring';
 import {RpcService} from './rpc-service-client';
 import {walletService} from './wallet';
 import Keyring from '@polkadot/keyring';
-import {blockchainService, setDock} from './blockchain/service';
+import {blockchainService} from './blockchain/service';
 
 export async function initializeWalletService() {
   await cryptoWaitReady();
@@ -178,7 +178,7 @@ export function mockDockSdkConnection(connectionError) {
 
   let currentAccount;
 
-  setDock({
+  blockchainService.dock = {
     ...dock,
     setAccount(account) {
       currentAccount = account;
@@ -229,7 +229,7 @@ export function mockDockSdkConnection(connectionError) {
         return kr.createFromUri('//Alice');
       }),
     },
-  });
+  };
 
   return {
     result,

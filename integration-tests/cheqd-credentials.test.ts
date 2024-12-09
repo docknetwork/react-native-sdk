@@ -1,6 +1,6 @@
 import { IWallet } from '@docknetwork/wallet-sdk-core/lib/types';
 import { createVerificationController } from '@docknetwork/wallet-sdk-core/src/verification-controller';
-import { CheqdCredentialNonZKP } from './data/credentials/cheqd-credentials';
+import { CheqdCredentialNonZKP, CheqdCredentialZKP } from './data/credentials/cheqd-credentials';
 import { closeWallet, createNewWallet, getCredentialProvider, getWallet } from './helpers';
 import { ProofTemplateIds, createProofRequest } from './helpers/certs-helpers';
 
@@ -57,13 +57,13 @@ describe('Cheq integration tests', () => {
   it('should verify a ZKP cheqd credential', async () => {
     const wallet: IWallet = await getWallet();
 
-    getCredentialProvider().addCredential(CheqdCredentialNonZKP);
+    getCredentialProvider().addCredential(CheqdCredentialZKP);
 
     const proofRequest = await createProofRequest(
       ProofTemplateIds.ANY_CREDENTIAL,
     );
 
-    const result: any = await getCredentialProvider().isValid(CheqdCredentialNonZKP);
+    const result: any = await getCredentialProvider().isValid(CheqdCredentialZKP);
 
     expect(result).toBeTruthy();
 
@@ -75,8 +75,11 @@ describe('Cheq integration tests', () => {
       template: proofRequest,
     });
 
-    controller.selectedCredentials.set(CheqdCredentialNonZKP.id, {
-      credential: CheqdCredentialNonZKP,
+    const attributesToReveal = ['credentialSubject.name'];
+
+    controller.selectedCredentials.set(CheqdCredentialZKP.id, {
+      credential: CheqdCredentialZKP,
+      attributesToReveal
     });
 
     const presentation = await controller.createPresentation();
