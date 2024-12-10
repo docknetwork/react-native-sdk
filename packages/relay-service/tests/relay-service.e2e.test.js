@@ -1,4 +1,4 @@
-import {dockService} from '@docknetwork/wallet-sdk-wasm/src/services/dock';
+import {blockchainService} from '@docknetwork/wallet-sdk-wasm/src/services/blockchain';
 import {RelayService} from '../lib';
 import {ALICE_KEY_PAIR_DOC, BOB_KEY_PAIR_DOC} from './mock-data';
 
@@ -6,7 +6,7 @@ describe('Relay service', () => {
   const messageContent = `Test message ${Date.now()}`;
 
   beforeAll(async () => {
-    await dockService.init({
+    await blockchainService.init({
       address: 'wss://knox-1.dock.io',
     });
   });

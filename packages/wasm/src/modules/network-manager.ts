@@ -5,6 +5,7 @@ export type NetworkInfo = {
   name: string,
   substrateUrl: string | string[],
   addressPrefix: number,
+  cheqdApiUrl: string,
 };
 
 export type NetworkId = 'mainnet' | 'testnet' | 'local' | 'custom';
@@ -14,11 +15,13 @@ export const SUBSTRATE_NETWORKS : Record<NetworkId, NetworkInfo> = {
     name: 'Dock PoS Mainnet',
     substrateUrl: ['wss://mainnet-node.dock.io', 'wss://mainnet-node-2.dock.io'],
     addressPrefix: 22,
+    cheqdApiUrl: 'https://cheqd-mainnet-rpc.autostake.com/',
   },
   testnet: {
     name: 'Dock PoS Testnet',
     substrateUrl: 'wss://knox-1.dock.io',
     addressPrefix: 21,
+    cheqdApiUrl: 'https://cheqd-testnet.docknode.io/',
   },
   local: {
     name: 'Local Node',
