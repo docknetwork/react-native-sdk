@@ -1,5 +1,3 @@
-import {dockService} from '@docknetwork/wallet-sdk-wasm/src/services/dock';
-import {trustRegistryService} from '@docknetwork/wallet-sdk-wasm/src/services/trust-registry';
 import assert from 'assert';
 import axios from 'axios';
 

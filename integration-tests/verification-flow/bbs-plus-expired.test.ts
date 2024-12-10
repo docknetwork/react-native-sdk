@@ -4,7 +4,7 @@ import {createVerificationController} from '@docknetwork/wallet-sdk-core/src/ver
 import {verifyPresentation} from '@docknetwork/sdk/utils/vc/presentations';
 import assert from 'assert';
 import {initializeWasm} from '@docknetwork/crypto-wasm-ts/lib/index';
-import { dockService } from '@docknetwork/wallet-sdk-wasm/src/services/dock';
+import { blockchainService } from '@docknetwork/wallet-sdk-wasm/src/services/blockchain';
 
 const testAPIURL = process.env.TESTING_API_URL || null;
 
@@ -129,7 +129,7 @@ describe('BBS+ presentations', () => {
 
     const verificationResults = await verifyPresentation(presentation, {
       compactProof: true,
-      resolver: dockService.resolver,
+      resolver: blockchainService.resolver,
       challenge: proofRequest.nonce,
       unsignedPresentation: true,
       domain: 'dock.io',

@@ -24,7 +24,7 @@ import {
   ICredentialProvider,
   createCredentialProvider,
 } from '@docknetwork/wallet-sdk-core/src/credential-provider';
-import {dockService} from '@docknetwork/wallet-sdk-wasm/src/services/dock';
+import {blockchainService} from '@docknetwork/wallet-sdk-wasm/src/services/blockchain';
 import {createDataStore} from '@docknetwork/wallet-sdk-data-store-typeorm/src';
 import {DataStore} from '@docknetwork/wallet-sdk-data-store/src/types';
 
@@ -131,7 +131,7 @@ export async function closeWallet(wallet?: IWallet) {
     setTimeout(async () => {
       try {
         wallet.dataStore.db.destroy();
-        await dockService.disconnect();
+        await blockchainService.disconnect();
       } catch (err) {
         console.error(err);
       }

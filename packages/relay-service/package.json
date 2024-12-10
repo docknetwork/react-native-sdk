@@ -1,6 +1,6 @@
 {
     "name": "@docknetwork/wallet-sdk-relay-service",
-    "version": "0.4.19",
+    "version": "0.4.23",
     "license": "https://github.com/docknetwork/react-native-sdk/LICENSE",
     "repository": {
         "type": "git",
