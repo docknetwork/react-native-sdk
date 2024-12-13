@@ -10,13 +10,13 @@ export const DEFAULT_CONFIGS: DataStoreConfigs = {
     {
       name: 'Mainnet',
       id: 'mainnet',
-      credentialHostnames: ['creds.dock.io'],
+      credentialHostnames: [/creds\..*\.io/],
       configs: SUBSTRATE_NETWORKS.mainnet,
     },
     {
       name: 'Testnet',
       id: 'testnet',
-      credentialHostnames: [/creds-.*\.dock\.io/],
+      credentialHostnames: [/creds-.*\.*\.io/],
       configs: SUBSTRATE_NETWORKS.testnet,
     },
   ],
