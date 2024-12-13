@@ -17,7 +17,7 @@ export type DocumentResolverResult = {
 export type Network = {
   name: string;
   id: string;
-  credentialHostnames: [string | RegExp];
+  credentialHostnames: Array<string | RegExp>;
   configs?: any;
 };
 
