@@ -139,16 +139,20 @@ export function pexToBounds(
         index,
       });
 
-      bounds.push({
-        attributeName,
-        min,
-        max,
-        type,
-        format,
-      });
+      if (attributeName !== undefined) {
+        bounds.push({
+          attributeName,
+          min,
+          max,
+          type,
+          format,
+        });
+      }
     });
 
-    descriptorBounds.push(bounds);
+    if (bounds.length) {
+      descriptorBounds.push(bounds);
+    }
   });
 
   return descriptorBounds;
