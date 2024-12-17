@@ -54,7 +54,7 @@ export class BlockchainService {
   ];
 
   constructor() {
-    this.name = 'dock';
+    this.name = 'blockchain';
     this.dock = new DockAPI();
     this.cheqdApi = new CheqdAPI();
     this.didModule = new DockDIDModule(this.dock);
