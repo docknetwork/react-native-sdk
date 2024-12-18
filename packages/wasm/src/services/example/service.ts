@@ -4,7 +4,9 @@ import {SumParams, validation} from './configs';
 export class ExampleService {
   rpcMethods = [ExampleService.prototype.sum];
 
-  constructor() {}
+  constructor() {
+    this.name = 'example';
+  }
 
   sum(params: SumParams) {
     validation.sum(params);
