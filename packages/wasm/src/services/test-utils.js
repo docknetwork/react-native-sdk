@@ -255,6 +255,8 @@ export function assertRpcService(
   const rpcService = new ServiceClass();
   const validationTmp = {};
 
+  assert(rpcService.serviceName === service.name, 'service name mismatch');
+
   Object.keys(validation).forEach(key => {
     validationTmp[key] = validation[key];
     validation[key] = () => true;
