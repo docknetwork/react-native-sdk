@@ -2,8 +2,6 @@
 import {serviceName, validation} from './config';
 import {
   Accumulator,
-  PositiveAccumulator,
-  dockAccumulatorParams,
   VB_ACCUMULATOR_22 as AccumulatorType,
   WitnessUpdatePublicInfo,
   MembershipWitness,
@@ -229,7 +227,6 @@ class CredentialService {
       code,
     });
 
-
     try {
       const response = await client.acquireCredentials({
         credentialTypes,
@@ -291,7 +288,10 @@ class CredentialService {
       return null;
     }
 
-    return blockchainService.dock.accumulatorModule.getAccumulator(accumulatorId, false);
+    return blockchainService.dock.accumulatorModule.getAccumulator(
+      accumulatorId,
+      false,
+    );
   }
 
   /**
@@ -404,10 +404,19 @@ class CredentialService {
 
       if (witness) {
         const details = await getWitnessDetails(credential, witness);
+        const chainModule =
+          credential.credentialStatus.id.indexOf('accumulator:dock:') === 0
+            ? blockchainService.modules.accumulator.modules[0]
+            : blockchainService.modules.accumulator.modules[1];
+        const accumulatorModuleClass = chainModule.constructor;
+
         presentation.presBuilder.addAccumInfoForCredStatus(
           idx,
           details.membershipWitness,
-          details.accumulator.accumulated,
+          accumulatorModuleClass.accumulatedFromHex(
+            details.accumulator.accumulated,
+            AccumulatorType.VBPos,
+          ),
           details.pk,
           details.params,
         );
