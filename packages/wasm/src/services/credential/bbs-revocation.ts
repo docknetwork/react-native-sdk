@@ -87,10 +87,9 @@ async function updateMembershipWitness({
 
 export const getWitnessDetails = async (credential, _membershipWitness) => {
   let witness = _membershipWitness;
-  let blockNo;
 
   try {
-    ({blockNo, witness} = JSON.parse(_membershipWitness));
+    ({witness} = JSON.parse(_membershipWitness));
   } catch (err) {
     console.error(err);
   }
@@ -120,24 +119,7 @@ export const getWitnessDetails = async (credential, _membershipWitness) => {
   const params = dockAccumulatorParams();
   const pk = new AccumulatorPublicKey(publicKey.bytes);
 
-  let membershipWitness = new VBMembershipWitness(
-    hexToU8a(witness),
-  );
-
-  if(blockNo){
-    try {
-      const updatedWitness = await updateMembershipWitness({
-        credential,
-        membershipWitness: witness,
-        registryId,
-        blockNo,
-      });
-      membershipWitness = updatedWitness;
-
-    } catch (err) {
-      console.error(err);
-    }
-  }
+  const membershipWitness = new VBMembershipWitness(hexToU8a(witness));
 
   return {
     encodedRevId,
