@@ -1,6 +1,6 @@
-# Dock Wallet SDK
+# Truvera Wallet SDK
 
-This guide walks you through the process of setting up the Dock Wallet SDK, creating a wallet, managing decentralized identifiers (DIDs), adding credentials, and verifying them.
+This guide walks you through the process of setting up the Truvera Wallet SDK, creating a wallet, managing decentralized identifiers (DIDs), adding credentials, and verifying them.
 
 ## Installation
 
@@ -89,7 +89,7 @@ In this example, the credential is fetched from a specified URI and imported int
 
 ### 5. Verify a Credential
 
-The Dock Wallet SDK provides built-in functionality for verifying credentials. This is especially useful when interacting with third parties who need to verify your credentials. The verification controller manages this process. Below is an example of how to start a verification, select which credentials to reveal, create a presentation, and submit it for verification.
+The Truvera Wallet SDK provides built-in functionality for verifying credentials. This is especially useful when interacting with third parties who need to verify your credentials. The verification controller manages this process. Below is an example of how to start a verification, select which credentials to reveal, create a presentation, and submit it for verification.
 
 ```ts
 const {
