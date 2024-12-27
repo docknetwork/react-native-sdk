@@ -98,12 +98,12 @@ The biometric ID should not contain the user's actual biometric information. Whe
 
 ## Using the Biometric Service Plugin
 
-* Create a [Dock API key](../../dock-certs/creating-api-keys-and-webhook-endpoints.md)
+* Create a [Truvera API key](https://docs.truvera.io/workspace/creating-api-keys-and-webhook-endpoints)
 * Wrap the Dock API in your mobile API (which is usually protected with an app username / password)
 * When a specific install does a biometric check, call your mobile API to issue a biometric credential
   * The biometric binding nested attributes in the primary credential should include the ecosystem and biometric issuer alongside the biometric ID
-  * Your mobile API calls the Dock API to do issuance to the DID
-    * In order to use the ecosystem definition of the credentials, the Dock API should be used to query the ecosystem that is found in the credential for the “\*biometric check” schema
+  * Your mobile API calls the Truvera API to do issuance to the DID
+    * In order to use the ecosystem definition of the credentials, the Truvera API should be used to query the ecosystem that is found in the credential for the “\*biometric check” schema
     * Mobile API should include the DID that the credential is pushed to
     * This allows the biometric check credential to be managed in the ecosystem where other participants can rely on it and VPI can be enforced
 * Biometric Service Plugin monitors credentials received. When a new biometric check credential is received, old ones can be deleted from wallet storage.
