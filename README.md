@@ -69,7 +69,7 @@ export default App;
 
 Check the following repository for detailed examples for running the Truvera Wallet SDK on NodeJS, Web, and Flutter.
 
-https://github.com/docknetwork/wallet-sdk-examples
+[https://github.com/docknetwork/wallet-sdk-examples](https://github.com/docknetwork/wallet-sdk-examples)
 
 
 ## Docs
