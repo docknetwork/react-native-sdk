@@ -69,14 +69,14 @@ export default App;
 
 Check the following repository for detailed examples for running the Truvera Wallet SDK on NodeJS, Web, and Flutter.
 
-[https://github.com/docknetwork/wallet-sdk-examples](https://github.com/docknetwork/wallet-sdk-examples)
+[See the examples](https://github.com/docknetwork/wallet-sdk-examples)
 
 
 ## Docs
 
 For more details you can check the [getting started guide](https://github.com/docknetwork/react-native-sdk/blob/master/docs/getting-started.md)
 
-[https://docknetwork.github.io/react-native-sdk/](https://docknetwork.github.io/react-native-sdk/)
+[See the Github repository](https://docknetwork.github.io/react-native-sdk/)
 
 ## Features
 - [Biometric Plugin](https://github.com/docknetwork/react-native-sdk/blob/master/docs/biometric-plugin.md)
