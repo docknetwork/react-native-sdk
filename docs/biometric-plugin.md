@@ -99,7 +99,7 @@ The biometric ID should not contain the user's actual biometric information. Whe
 ## Using the Biometric Service Plugin
 
 * Create a [Truvera API key](https://docs.truvera.io/workspace/creating-api-keys-and-webhook-endpoints)
-* Wrap the Dock API in your mobile API (which is usually protected with an app username / password)
+* Wrap the Truvera API in your mobile API (which is usually protected with an app username / password)
 * When a specific install does a biometric check, call your mobile API to issue a biometric credential
   * The biometric binding nested attributes in the primary credential should include the ecosystem and biometric issuer alongside the biometric ID
   * Your mobile API calls the Truvera API to do issuance to the DID
