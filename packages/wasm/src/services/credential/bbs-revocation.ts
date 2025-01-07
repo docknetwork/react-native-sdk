@@ -95,7 +95,7 @@ export const getWitnessDetails = async (credential, _membershipWitness) => {
   }
   
   const {credentialStatus} = credential;
-  const registryId = credentialStatus?.id.replace('dock:accumulator:', '');
+  const registryId = credentialStatus?.id
   const revocationIndex = credentialStatus.revocationId;
 
   const queriedAccumulator = await blockchainService.modules.accumulator.getAccumulator(

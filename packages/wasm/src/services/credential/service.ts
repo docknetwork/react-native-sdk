@@ -277,7 +277,7 @@ class CredentialService {
       return null;
     }
 
-    return credential?.credentialStatus.id.replace('dock:accumulator:', '');
+    return credential?.credentialStatus.id;
   }
 
   async getAccumulatorData({credential}) {
@@ -405,7 +405,7 @@ class CredentialService {
       if (witness) {
         const details = await getWitnessDetails(credential, witness);
         const chainModule =
-          credential.credentialStatus.id.indexOf('accumulator:dock:') === 0
+          credential.credentialStatus.id.indexOf('dock:accumulator') === 0
             ? blockchainService.modules.accumulator.modules[0]
             : blockchainService.modules.accumulator.modules[1];
         const accumulatorModuleClass = chainModule.constructor;
