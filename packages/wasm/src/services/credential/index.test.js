@@ -401,7 +401,7 @@ describe('Credential Service', () => {
           },
         }),
       ).toBe(
-        '0xa632a41f2fbdb681c14b33daae4fcc46af41661b90b35c4ac1545c9bebf0d7cc',
+        'dock:accumulator:0xa632a41f2fbdb681c14b33daae4fcc46af41661b90b35c4ac1545c9bebf0d7cc',
       );
     });
   });
