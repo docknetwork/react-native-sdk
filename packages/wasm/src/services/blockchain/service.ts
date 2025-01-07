@@ -60,7 +60,7 @@ export class BlockchainService {
     this.didModule = new DockDIDModule(this.dock);
     this.dockModules = new DockCoreModules(this.dock);
     this.cheqdModules = new CheqdCoreModules(this.cheqdApi);
-    this.modules = new MultiApiCoreModules([this.dockModules]);
+    this.modules = new MultiApiCoreModules([this.dockModules, this.cheqdModules]);
     this.emitter = new EventEmitter();
     this.resolver = this.createDIDResolver();
   }
