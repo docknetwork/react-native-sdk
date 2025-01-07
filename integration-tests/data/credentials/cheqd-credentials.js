@@ -59,7 +59,7 @@ export const CheqdCredentialZKP = {
     },
     'https://ld.dock.io/credentials/prettyvc',
   ],
-  id: 'https://creds-staging.dock.io/0e053c47ca6c79b8bede418af740a8a57e8515b5b4a77294057ab2fe53a76163',
+  id: `${testCredsURL}/0e053c47ca6c79b8bede418af740a8a57e8515b5b4a77294057ab2fe53a76163`,
   type: [
     'VerifiableCredential',
     'BasicCredential',

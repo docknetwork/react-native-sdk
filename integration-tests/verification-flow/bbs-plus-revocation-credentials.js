@@ -220,7 +220,7 @@ export const cheqdRevocationCredential = {
     revocationCheck: 'membership',
     revocationId: '1',
   },
-  id: 'https://creds-staging.truvera.io/2ad872209d8db53dab929d21fad68359bc0467b3ef3aa4fdad51296d9f19344e',
+  id: `${testCredsURL}/2ad872209d8db53dab929d21fad68359bc0467b3ef3aa4fdad51296d9f19344e`,
   type: [
     'VerifiableCredential',
     'BasicCredential',
