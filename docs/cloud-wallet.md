@@ -71,7 +71,7 @@ const {pullDocuments} = await initializeCloudWallet({
 await pullDocuments();
 ```
 
-The `pullDocuments` function synchronizes the EDV and the wallet by comparing documents and updating the data store accordingly.Documents can be credentials or messages.
+The `pullDocuments` function synchronizes the EDV and the wallet by comparing documents and updating the data store accordingly. Documents can be credentials or messages.
 
 ### Step 4: Create a New Wallet
 
