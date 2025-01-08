@@ -185,7 +185,8 @@ const issueBiometricMatchCredential = async enrollmentCredential => {
   let created = getIssuanceDate();
 
   if (schema?.id) {
-    const fetchSchemaResponse = await axios.get(schema?.id).catch((err) => {
+    // React native iOS can't handle cross-origin redirects
+    const fetchSchemaResponse = await axios.get(schema?.id?.replace('dock', 'truvera')).catch((err) => {
       console.error(err);
       console.error('Failed to fetch schema data');
       return null
