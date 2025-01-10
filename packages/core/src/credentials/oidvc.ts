@@ -23,6 +23,10 @@ export async function acquireOpenIDCredentialFromURI({
     holderKeyDocument,
   });
 
+  if (!response) {
+    throw new Error('Unable to acquire credential. Please check your credential offer and try again.');
+  }
+
   if (response.authorizationURL) {
     const authorizationCode = await getAuthCode(response.authorizationURL);
     response = await credentialServiceRPC.acquireOIDCredential({
