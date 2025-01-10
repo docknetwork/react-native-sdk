@@ -7,7 +7,9 @@ To use the wallet-sdk, all you need to do is wrap your app in a `WalletSDKProvid
 Using [polkadot-js](https://polkadot.js.org/) libraries in React Native is a challenge, due to the lack of WebAssembly support.
 The Truvera Wallet SDK handles all the Polkadot Web Assembly in a WebView, sending messages to the React Native thread through a JSON RPC layer.
 
-Truvera Mobile SDK supports devices that have Android 8.1 or higher and iOS 11 or higher.
+Truvera Mobile SDK supports:
+- Devices that have Android 8.1 or higher and iOS 11 or higher.
+- Minimum supported version of Node.js is 20.2.0
 
 ## Installation
 ```js
