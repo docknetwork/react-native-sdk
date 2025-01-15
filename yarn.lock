@@ -4990,29 +4990,29 @@
     fix-esm "^1.0.1"
     jsonld digitalcredentials/jsonld.js#v10.x
 
-"@docknetwork/cheqd-blockchain-api@0.16.0":
-  version "0.16.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/cheqd-blockchain-api/-/cheqd-blockchain-api-0.16.0.tgz#3b3a24c84a3ac552bb6978f20949dfa3bc4e42cf"
-  integrity sha512-6ljQxL3h9LgHNbIDeouUsJDuQlmjag52gKhFUx656j3CeCkX3NqOM5sF9IMsCqFr2t7p5GaOLuJly6qLOcr/IQ==
+"@docknetwork/cheqd-blockchain-api@0.17.1":
+  version "0.17.1"
+  resolved "https://registry.yarnpkg.com/@docknetwork/cheqd-blockchain-api/-/cheqd-blockchain-api-0.17.1.tgz#c55cb2cddc2a7484c260014f96c1c112930e2546"
+  integrity sha512-wOrN7RmcGscjGpXRJgK29J5CiJ+poJHk3iCrakgyhDKC/IoO9MVtH3IEzWAnVjDBhZh/ad3V/NCKEHI3znHBYA==
   dependencies:
     "@cheqd/sdk" cjs
-    "@docknetwork/credential-sdk" "0.21.0"
+    "@docknetwork/credential-sdk" "0.23.0"
 
-"@docknetwork/cheqd-blockchain-modules@^0.13.3":
-  version "0.13.3"
-  resolved "https://registry.yarnpkg.com/@docknetwork/cheqd-blockchain-modules/-/cheqd-blockchain-modules-0.13.3.tgz#ef7fd53e2ce8c3856fef9039a9634d0c7068ade4"
-  integrity sha512-E/Y6VKa9p9tkLvi7Z0zzROG7YUp2jzAoeNN+VaAUFh2cbfIJOgOyXhIhGzXBsnFnTyX0MRzURod1HEjnx7KR8Q==
+"@docknetwork/cheqd-blockchain-modules@0.14.1":
+  version "0.14.1"
+  resolved "https://registry.yarnpkg.com/@docknetwork/cheqd-blockchain-modules/-/cheqd-blockchain-modules-0.14.1.tgz#574fec1b68789fb42c4fe5d0c15f7aa52d782876"
+  integrity sha512-bOfSFBfd6xOiDyFn6HHBeJeGcnEGUzJsGHRutFiq8ClWuBAQt79V8weIIqvdRQ6FUmtbOHCMhei4argK9tPdYA==
   dependencies:
-    "@docknetwork/credential-sdk" "0.21.0"
+    "@docknetwork/credential-sdk" "0.23.0"
 
-"@docknetwork/credential-sdk@0.21.0":
-  version "0.21.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/credential-sdk/-/credential-sdk-0.21.0.tgz#8a6b64d6f58c4aa24907cb9d54510f1614b885b1"
-  integrity sha512-4vQEBK5GVso99gY6S4L650rc3AXw8J32qpnZ7IYaLOHsp28l8xShL20Cp7X6VahDarcKS4YpT/C7TC49NbIvDg==
+"@docknetwork/credential-sdk@0.23.0":
+  version "0.23.0"
+  resolved "https://registry.yarnpkg.com/@docknetwork/credential-sdk/-/credential-sdk-0.23.0.tgz#6366fda4076fe3971dcb14481b9550620bb9089d"
+  integrity sha512-DgJacyyw1HfTlyxzPjO584rDTcY2xgCaZz+7a5ZGRApTwRnIwDUVkBGTpE9sO0HZJ6LoI82EsKf1dW0ZEeyOPg==
   dependencies:
     "@comunica/query-sparql-rdfjs" "^4.0.2"
     "@digitalcredentials/vc-status-list" "^8.0.0"
-    "@docknetwork/crypto-wasm-ts" "^0.63.0"
+    "@docknetwork/crypto-wasm-ts" "^0.67.0"
     "@juanelas/base64" "^1.1.5"
     "@sphereon/ssi-sdk-ext.did-resolver-jwk" "^0.26.0"
     "@stablelib/ed25519" "^1.0.0"
@@ -5038,7 +5038,7 @@
     uuidv4 "^6.2.13"
     varint "^6.0.0"
 
-"@docknetwork/crypto-wasm-ts@0.63.0", "@docknetwork/crypto-wasm-ts@^0.63.0":
+"@docknetwork/crypto-wasm-ts@0.63.0":
   version "0.63.0"
   resolved "https://registry.yarnpkg.com/@docknetwork/crypto-wasm-ts/-/crypto-wasm-ts-0.63.0.tgz#f1ab39693b63e70d682d362e9eacd85842ae56e0"
   integrity sha512-KryDPIf6suwi5NS1iqA76vpuLmZv4PLV1Dt7I6Z4YS3rDKK43m7j8mox6lhQgkVL7QZdJ1DdZGxcPLekXZYQ1w==
@@ -5054,12 +5054,29 @@
     lzutf8 "0.6.3"
     semver "^7.6.0"
 
-"@docknetwork/dock-blockchain-api@0.8.7":
-  version "0.8.7"
-  resolved "https://registry.yarnpkg.com/@docknetwork/dock-blockchain-api/-/dock-blockchain-api-0.8.7.tgz#a72f95a3f302445150ee6ea2f2774b4fca5a88d4"
-  integrity sha512-B7BeLLvCJa41YZDqIqfSaIRAQ/3EGiLZ4K8O1KcQbLkWqLQ2RXBP+bxoEiPp0s1sK+gdkXinA/ycXrrIsn4agw==
+"@docknetwork/crypto-wasm-ts@^0.67.0":
+  version "0.67.0"
+  resolved "https://registry.yarnpkg.com/@docknetwork/crypto-wasm-ts/-/crypto-wasm-ts-0.67.0.tgz#6cb748ba107523fdb3b3770a4126d8fe74f0676c"
+  integrity sha512-S2QC10XTe7RbK/OfvFo3PHh98m/576E3XAGJWhoabc3w7nz5bgrBacEwsBsZqnZ4ttiB7/HLyDVnSD0OCTelrA==
   dependencies:
-    "@docknetwork/credential-sdk" "0.21.0"
+    "@types/flat" "^5.0.2"
+    "@types/lodash" "^4.14.195"
+    bs58 "5.0.0"
+    crypto-wasm-new "npm:@docknetwork/crypto-wasm@0.33.0"
+    flat "^5.0.2"
+    json-pointer "^0.6.2"
+    json-stringify-deterministic "^1.0.11"
+    lodash "^4.17.21"
+    lzutf8 "0.6.3"
+    semver "^7.6.0"
+    typedoc-github-theme "^0.1.2"
+
+"@docknetwork/dock-blockchain-api@0.9.1":
+  version "0.9.1"
+  resolved "https://registry.yarnpkg.com/@docknetwork/dock-blockchain-api/-/dock-blockchain-api-0.9.1.tgz#806b077d0c278bb583aeca9fc53c39c60c118685"
+  integrity sha512-zjtQgqnG6oBzGjvELx+RYmchl56IznEGK2GMPIEPEvMyL4r72rBSApaQI+Kg2X16ml6bO+DIsvtfmpFCiStEQg==
+  dependencies:
+    "@docknetwork/credential-sdk" "0.23.0"
     "@docknetwork/node-types" "^0.17.0"
     "@juanelas/base64" "^1.0.5"
     "@polkadot/api" "10.12.4"
@@ -5084,12 +5101,12 @@
     rify "^0.7.1"
     semver "^7.6.0"
 
-"@docknetwork/dock-blockchain-modules@0.11.2":
-  version "0.11.2"
-  resolved "https://registry.yarnpkg.com/@docknetwork/dock-blockchain-modules/-/dock-blockchain-modules-0.11.2.tgz#a5910ea886ce27351f56ef02ddeface9bc7cacee"
-  integrity sha512-m++im1c8wP0xxnwCRM6+mhgFeArZEKB8jGGmJmWwfgaG0MBmq25uIWxVLNjRnkPQHbpbIizdfmUbZUKWc7ZtQg==
+"@docknetwork/dock-blockchain-modules@0.13.0":
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/@docknetwork/dock-blockchain-modules/-/dock-blockchain-modules-0.13.0.tgz#e2d2e04b7aad09a5fa9b5b1ded80a3e10eb065b9"
+  integrity sha512-DfqaBKDjmVTXii49p7qDZZG8YEE/DHtUG27N3u8HCgXZK+udoF1rKfHMsAOYz4j981jIv8Md0HcIp7bIBT8y4w==
   dependencies:
-    "@docknetwork/credential-sdk" "0.21.0"
+    "@docknetwork/credential-sdk" "0.23.0"
 
 "@docknetwork/minimal-cipher@^5.2.1":
   version "5.2.1"
@@ -10573,6 +10590,13 @@ crypto-ld@^6.0.0:
   version "0.30.0"
   resolved "https://registry.yarnpkg.com/@docknetwork/crypto-wasm/-/crypto-wasm-0.30.0.tgz#d54a56989cf98847e6e4ebe8119b6eb6012d8da4"
   integrity sha512-xwDtakDBaiOf0Cm6H74JsJ2I610rc+d9tSrgjuACE7QBpmkTug6QX4Q4OzxXA12wp86K5QqRMHoCzc6geS1Z0g==
+  dependencies:
+    buffer "^6.0.3"
+
+"crypto-wasm-new@npm:@docknetwork/crypto-wasm@0.33.0":
+  version "0.33.0"
+  resolved "https://registry.yarnpkg.com/@docknetwork/crypto-wasm/-/crypto-wasm-0.33.0.tgz#56c45659b9f5d54493048855a305c679adbfcfbe"
+  integrity sha512-af3sOB2vJsJimu86PG+79Vbe4SJrTLbGd65on06Au2WyOnPXF4J2pPfSqKl+40vO6I43HaxUzeR23gt8WGEx5g==
   dependencies:
     buffer "^6.0.3"
 
@@ -19998,6 +20022,11 @@ typedarray@~0.0.5:
   version "0.0.7"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.7.tgz#799207136a37f3b3efb8c66c40010d032714dc73"
   integrity sha512-ueeb9YybpjhivjbHP2LdFDAjbS948fGEPj+ACAMs4xCMmh72OCOMQWBQKlaN4ZNQ04yfLSDLSx1tGRIoWimObQ==
+
+typedoc-github-theme@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/typedoc-github-theme/-/typedoc-github-theme-0.1.2.tgz#54bcaa05a22ec864d1a996c3c460d895a8b10a8b"
+  integrity sha512-GFwQeq+z4FMtA9u2+wBx/UvzaX6t3xueigv6Jrt1G8JQLLyYuFfWwE3ESuKzpLfDu1+29GK4n70GbIqFRG+gaw==
 
 typeorm@^0.3.15:
   version "0.3.17"
