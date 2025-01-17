@@ -132,10 +132,5 @@ export async function fetchProvingKey(proofRequest: ProofRequest) {
   return {provingKey, provingKeyId: 'key0'};
 }
 
-export const MAX_DATE_PLACEHOLDER = 884541351600000;
-export const MIN_DATE_PLACEHOLDER = -17592186044415;
-export const MAX_NUMBER = Math.pow(100, 9);
-export const MIN_INTEGER = -4294967295;
-
 export const hasProvingKey = (proofRequest: ProofRequest) =>
   !!proofRequest.boundCheckSnarkKey;

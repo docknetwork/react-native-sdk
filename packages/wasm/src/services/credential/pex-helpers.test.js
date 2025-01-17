@@ -232,7 +232,7 @@ describe('pex helpers', () => {
           {
             attributeName: 'age',
             min: 0,
-            max: 1000000000000000000,
+            max: 10000000000,
             type: 'number',
             format: undefined,
           },
