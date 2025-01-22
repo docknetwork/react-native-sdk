@@ -1,7 +1,7 @@
 import {IWallet} from '@docknetwork/wallet-sdk-core/lib/types';
 import {closeWallet, getWallet} from '../helpers/wallet-helpers';
 import {createVerificationController} from '@docknetwork/wallet-sdk-core/src/verification-controller';
-import {verifyPresentation} from '@docknetwork/sdk/utils/vc/presentations';
+import {verifyPresentation} from '@docknetwork/credential-sdk/vc';
 import {blockchainService} from '@docknetwork/wallet-sdk-wasm/src/services/blockchain';
 import {autoLoanProofRequest} from './proof-requests';
 

@@ -1,9 +1,8 @@
 import {IWallet} from '@docknetwork/wallet-sdk-core/lib/types';
 import {closeWallet, getWallet} from '../helpers/wallet-helpers';
 import {createVerificationController} from '@docknetwork/wallet-sdk-core/src/verification-controller';
-import {verifyPresentation} from '@docknetwork/sdk/utils/vc/presentations';
+import {verifyPresentation} from '@docknetwork/credential-sdk/vc';
 import assert from 'assert';
-import {initializeWasm} from '@docknetwork/crypto-wasm-ts/lib/index';
 import { blockchainService } from '@docknetwork/wallet-sdk-wasm/src/services/blockchain';
 
 const testAPIURL = process.env.TESTING_API_URL || null;

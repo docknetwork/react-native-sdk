@@ -5,8 +5,6 @@ import {
   getWallet,
 } from '../helpers/wallet-helpers';
 import {createVerificationController} from '@docknetwork/wallet-sdk-core/src/verification-controller';
-import {verifyPresentation} from '@docknetwork/sdk/utils/vc/presentations';
-import axios from 'axios';
 import {ProofTemplateIds, createProofRequest} from '../helpers/certs-helpers';
 import { bbsPlusRevocationCredential, credentialWithUpdatedWitness } from './bbs-plus-revocation-credentials';
 

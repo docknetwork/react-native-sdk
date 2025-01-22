@@ -4990,25 +4990,25 @@
     fix-esm "^1.0.1"
     jsonld digitalcredentials/jsonld.js#v10.x
 
-"@docknetwork/cheqd-blockchain-api@^0.20.0":
-  version "0.20.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/cheqd-blockchain-api/-/cheqd-blockchain-api-0.20.0.tgz#5d394437d351eacddc18d492856dd943762f996f"
-  integrity sha512-5lDmuoEbAVNmXxXwWgXp8uvG/vNoXMxlyNNvoBVSX4Ry/5c2fJ9wmZo+Mx2grutPO2jLhs3EWRc5p/LtW1eZxw==
+"@docknetwork/cheqd-blockchain-api@^0.21.0":
+  version "0.21.0"
+  resolved "https://registry.yarnpkg.com/@docknetwork/cheqd-blockchain-api/-/cheqd-blockchain-api-0.21.0.tgz#8634f26be989f3c1537983ad3781e71e32992b98"
+  integrity sha512-RdcZuLj8m604rJwfvQ+odGpc8fR3D8CajPdzT52cC2vl+ZqKZB5RPoKwEv3DjfQxxXE53zAwuH57wUU49T15Ww==
   dependencies:
     "@cheqd/sdk" cjs
-    "@docknetwork/credential-sdk" "0.26.0"
+    "@docknetwork/credential-sdk" "0.27.0"
 
-"@docknetwork/cheqd-blockchain-modules@^0.17.0":
-  version "0.17.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/cheqd-blockchain-modules/-/cheqd-blockchain-modules-0.17.0.tgz#6b4c524c3fdd1eef110e942bb53aeaeda1382c83"
-  integrity sha512-LaDWqA9/xLGkuEPrcp9uMG5RWuvUu/CURsJdsmdEhUUhl7IUtIwuma+kASi0ui9zvhQM5QNyV04QrGIrsbUx+A==
+"@docknetwork/cheqd-blockchain-modules@^0.18.0":
+  version "0.18.0"
+  resolved "https://registry.yarnpkg.com/@docknetwork/cheqd-blockchain-modules/-/cheqd-blockchain-modules-0.18.0.tgz#1c426c62ca796ca7aacc0896ef47f5bcbb07460e"
+  integrity sha512-y2WMKgp3+YssTv4au/KD/onCeymUdtA5jkk8VHh7wH8EEAqON9UE0lj4U4gKxY7tmikyPxpSVaXH23wxR4cYzg==
   dependencies:
-    "@docknetwork/credential-sdk" "0.26.0"
+    "@docknetwork/credential-sdk" "0.27.0"
 
-"@docknetwork/credential-sdk@0.26.0":
-  version "0.26.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/credential-sdk/-/credential-sdk-0.26.0.tgz#3ef07c5b1e5842b7a686fe80bfee85e754584b4f"
-  integrity sha512-N3/PBmyeoRTo0pzkZ0AFkikWe9Kzr5KGj+oa/ZaHpMSWi874brNYjhNjHTnQyFEpqlP2FrTVEJGNliF8dKIixQ==
+"@docknetwork/credential-sdk@0.27.0":
+  version "0.27.0"
+  resolved "https://registry.yarnpkg.com/@docknetwork/credential-sdk/-/credential-sdk-0.27.0.tgz#04abefced38355d274076ba6f646c8d7f8a18069"
+  integrity sha512-qOl4oJVXoIiiS6x25hElDBJUbjs7WKykr1+/vQQQFNfzffUM0ERudTjZVuIc/BTGPryEGvC892cLoDfSHu3v8A==
   dependencies:
     "@comunica/query-sparql-rdfjs" "^4.0.2"
     "@digitalcredentials/vc-status-list" "^8.0.0"
@@ -5038,22 +5038,6 @@
     uuidv4 "^6.2.13"
     varint "^6.0.0"
 
-"@docknetwork/crypto-wasm-ts@0.63.0":
-  version "0.63.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/crypto-wasm-ts/-/crypto-wasm-ts-0.63.0.tgz#f1ab39693b63e70d682d362e9eacd85842ae56e0"
-  integrity sha512-KryDPIf6suwi5NS1iqA76vpuLmZv4PLV1Dt7I6Z4YS3rDKK43m7j8mox6lhQgkVL7QZdJ1DdZGxcPLekXZYQ1w==
-  dependencies:
-    "@types/flat" "^5.0.2"
-    "@types/lodash" "^4.14.195"
-    bs58 "5.0.0"
-    crypto-wasm-new "npm:@docknetwork/crypto-wasm@0.30.0"
-    flat "^5.0.2"
-    json-pointer "^0.6.2"
-    json-stringify-deterministic "^1.0.11"
-    lodash "^4.17.21"
-    lzutf8 "0.6.3"
-    semver "^7.6.0"
-
 "@docknetwork/crypto-wasm-ts@^0.67.0":
   version "0.67.0"
   resolved "https://registry.yarnpkg.com/@docknetwork/crypto-wasm-ts/-/crypto-wasm-ts-0.67.0.tgz#6cb748ba107523fdb3b3770a4126d8fe74f0676c"
@@ -5071,12 +5055,12 @@
     semver "^7.6.0"
     typedoc-github-theme "^0.1.2"
 
-"@docknetwork/dock-blockchain-api@0.11.0":
-  version "0.11.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/dock-blockchain-api/-/dock-blockchain-api-0.11.0.tgz#cc5efba4ebab109a0b8d4675fff6f6094de1430a"
-  integrity sha512-AGJeboQAX18mTwYt8DxuJq6fPPZJ4znpCAzp59xWP+9qF1/eG9vW4UG+zT4tkbZJu3D7MRxNTWcY0oc9W7UBvg==
+"@docknetwork/dock-blockchain-api@0.12.0":
+  version "0.12.0"
+  resolved "https://registry.yarnpkg.com/@docknetwork/dock-blockchain-api/-/dock-blockchain-api-0.12.0.tgz#ec9cc040bdb8a5e2dabcc0aef49794c680c1fadf"
+  integrity sha512-j0t86GX2csSUfnlwWCYHaG0VW27baivUYcJJzluLTAmrL1otFtIaXr4uUcss9atmVZi2IObOQSu8sC1jdkUPOw==
   dependencies:
-    "@docknetwork/credential-sdk" "0.26.0"
+    "@docknetwork/credential-sdk" "0.27.0"
     "@docknetwork/node-types" "^0.17.0"
     "@juanelas/base64" "^1.0.5"
     "@polkadot/api" "10.12.4"
@@ -5101,12 +5085,12 @@
     rify "^0.7.1"
     semver "^7.6.0"
 
-"@docknetwork/dock-blockchain-modules@0.15.0":
-  version "0.15.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/dock-blockchain-modules/-/dock-blockchain-modules-0.15.0.tgz#ba922cbfea043ac3ba18e32ffb934ed00ba68619"
-  integrity sha512-btXUjawnvvelBPza0kBzdeJ/rF8NC3MS113n74T7OIIE0xmCZCkAeILzwylSCyicHlG2W+s1OJgsM22mxZno0g==
+"@docknetwork/dock-blockchain-modules@0.16.0":
+  version "0.16.0"
+  resolved "https://registry.yarnpkg.com/@docknetwork/dock-blockchain-modules/-/dock-blockchain-modules-0.16.0.tgz#bb4b6313015640c6c5d124aeea4bd5cc5f9a76aa"
+  integrity sha512-duIf19302GhYInK1bvt+6w3kZGk4dYA9tguhfRU2Gk4Wu457jWd1ZnqIw/HeAlCPWU4StfqPTWw7dodjaMamTw==
   dependencies:
-    "@docknetwork/credential-sdk" "0.26.0"
+    "@docknetwork/credential-sdk" "0.27.0"
 
 "@docknetwork/minimal-cipher@^5.2.1":
   version "5.2.1"
@@ -5123,39 +5107,6 @@
   version "0.17.0"
   resolved "https://registry.yarnpkg.com/@docknetwork/node-types/-/node-types-0.17.0.tgz#ca0ddb5b819e012e8f2f112353008325de4f3e33"
   integrity sha512-aSRFtCwLhdhcY1wqX3WfhPpY2QXVqaB9kNB3e5+ajCWXtc0wuKJePpnSZEO4RqUEUKV5Y3LcsQ52ZB+aJ1PpFw==
-
-"@docknetwork/sdk@8.6.0":
-  version "8.6.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/sdk/-/sdk-8.6.0.tgz#aac2e0097ff79c74ea9d8836eea2cb8a2b8a71c7"
-  integrity sha512-aPW6f915n5fl4a1/kxe4J52Polqxg7/H0LJSRCeGbLpQntKRVkJ3u9x1aaKSRPnYvsFEgao/skuiFetupn64hg==
-  dependencies:
-    "@digitalcredentials/vc-status-list" "^8.0.0"
-    "@docknetwork/crypto-wasm-ts" "0.63.0"
-    "@docknetwork/node-types" "^0.17.0"
-    "@juanelas/base64" "^1.0.5"
-    "@polkadot/api" "10.12.4"
-    "@transmute/json-web-signature" "^0.7.0-unstable.80"
-    base64url "3.0.1"
-    blake2b "2.1.4"
-    bs58 "5.0.0"
-    cross-fetch "3.1.6"
-    deep-equal "2.0.5"
-    dotenv "16.0.1"
-    elliptic "6.5.4"
-    flat "^5.0.2"
-    js-sha256 "0.9.0"
-    json-canonicalize "1.0.4"
-    json-stringify-deterministic "^1.0.11"
-    jsonld "^5.0.0"
-    jsonld-signatures "^9.3.1"
-    jsonschema "1.4.1"
-    key-did-resolver "^1.4.0"
-    mrklt "^0.2.0"
-    multiformats "^9.5.4"
-    n3 "1.16.2"
-    pako "^2.1.0"
-    rify "^0.7.1"
-    semver "^7.6.0"
 
 "@docknetwork/universal-wallet@2.1.1":
   version "2.1.1"
@@ -10586,13 +10537,6 @@ crypto-ld@^6.0.0:
   resolved "https://registry.yarnpkg.com/crypto-ld/-/crypto-ld-6.0.0.tgz#cf8dcf566cb3020bdb27f0279e6cc9b46d031cd7"
   integrity sha512-XWL1LslqggNoaCI/m3I7HcvaSt9b2tYzdrXO+jHLUj9G1BvRfvV7ZTFDVY5nifYuIGAPdAGu7unPxLRustw3VA==
 
-"crypto-wasm-new@npm:@docknetwork/crypto-wasm@0.30.0":
-  version "0.30.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/crypto-wasm/-/crypto-wasm-0.30.0.tgz#d54a56989cf98847e6e4ebe8119b6eb6012d8da4"
-  integrity sha512-xwDtakDBaiOf0Cm6H74JsJ2I610rc+d9tSrgjuACE7QBpmkTug6QX4Q4OzxXA12wp86K5QqRMHoCzc6geS1Z0g==
-  dependencies:
-    buffer "^6.0.3"
-
 "crypto-wasm-new@npm:@docknetwork/crypto-wasm@0.33.0":
   version "0.33.0"
   resolved "https://registry.yarnpkg.com/@docknetwork/crypto-wasm/-/crypto-wasm-0.33.0.tgz#56c45659b9f5d54493048855a305c679adbfcfbe"
@@ -11248,10 +11192,10 @@ electron-to-chromium@^1.4.668:
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.728.tgz#ac54d9d1b38752b920ec737a48c83dec2bf45ea1"
   integrity sha512-Ud1v7hJJYIqehlUJGqR6PF1Ek8l80zWwxA6nGxigBsGJ9f9M2fciHyrIiNMerSHSH3p+0/Ia7jIlnDkt41h5cw==
 
-elliptic@6.5.4, elliptic@^6.5.3, elliptic@^6.5.4:
-  version "6.5.4"
-  resolved "https://registry.yarnpkg.com/elliptic/-/elliptic-6.5.4.tgz#da37cebd31e79a1367e941b592ed1fbebd58abbb"
-  integrity sha512-iLhC6ULemrljPZb+QutR5TQGB+pdW6KGD5RSegS+8sorOZT+rdQFbsQFJgvN3eRqNALqJer4oQ16YvJHlU8hzQ==
+elliptic@6.6.0:
+  version "6.6.0"
+  resolved "https://registry.yarnpkg.com/elliptic/-/elliptic-6.6.0.tgz#5919ec723286c1edf28685aa89261d4761afa210"
+  integrity sha512-dpwoQcLc/2WLQvJvLRHKZ+f9FgOdjnq11rurqwekGQygGPsYSK29OMMD2WalatiqQ+XGFDglTNixpPfI+lpaAA==
   dependencies:
     bn.js "^4.11.9"
     brorand "^1.1.0"
@@ -11261,10 +11205,10 @@ elliptic@6.5.4, elliptic@^6.5.3, elliptic@^6.5.4:
     minimalistic-assert "^1.0.1"
     minimalistic-crypto-utils "^1.0.1"
 
-elliptic@6.6.0:
-  version "6.6.0"
-  resolved "https://registry.yarnpkg.com/elliptic/-/elliptic-6.6.0.tgz#5919ec723286c1edf28685aa89261d4761afa210"
-  integrity sha512-dpwoQcLc/2WLQvJvLRHKZ+f9FgOdjnq11rurqwekGQygGPsYSK29OMMD2WalatiqQ+XGFDglTNixpPfI+lpaAA==
+elliptic@^6.5.3, elliptic@^6.5.4:
+  version "6.5.4"
+  resolved "https://registry.yarnpkg.com/elliptic/-/elliptic-6.5.4.tgz#da37cebd31e79a1367e941b592ed1fbebd58abbb"
+  integrity sha512-iLhC6ULemrljPZb+QutR5TQGB+pdW6KGD5RSegS+8sorOZT+rdQFbsQFJgvN3eRqNALqJer4oQ16YvJHlU8hzQ==
   dependencies:
     bn.js "^4.11.9"
     brorand "^1.1.0"
