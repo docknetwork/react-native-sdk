@@ -13,6 +13,7 @@ import {
   VerifiablePresentation,
   Presentation,
   verifyCredential,
+  verifyPresentation,
   VerifiableCredential,
   getSuiteFromKeyDoc,
 } from '@docknetwork/credential-sdk/vc';
@@ -124,6 +125,11 @@ class CredentialService {
 
     return vp.sign(keyDoc, challenge, domain, blockchainService.resolver);
   }
+
+  async verifyPresentation({ presentation, options }: any) {
+    return verifyPresentation(presentation, options);
+  }
+
   async verifyCredential(params) {
     validation.verifyCredential(params);
     const {credential, membershipWitness} = params;
