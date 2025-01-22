@@ -1,14 +1,29 @@
 import {assertRpcService, getPromiseError} from '../test-utils';
 import {credentialService as service} from './service';
 import {validation} from './config';
-import * as credentialsUtils from '@docknetwork/sdk/utils/vc/credentials';
+import * as credentialUtils from '@docknetwork/credential-sdk/vc';
 import {CredentialServiceRPC} from './service-rpc';
 import {getTestWallet} from '../../test/setup-test-state';
-import BbsPlusPresentation from '@docknetwork/sdk/presentation';
 
 describe('Credential Service', () => {
   beforeAll(async () => {
     await getTestWallet();
+    const mockAddCredentialToPresent = jest.fn(() => 0);
+    const mockAddAttributeToReveal = jest.fn();
+    const mockCreatePresentation = jest.fn();
+    const mockDeriveCredentials = jest.fn(() => []);
+
+    jest.spyOn(credentialUtils, 'Presentation').mockImplementation(() => {
+      return {
+        addCredentialToPresent: mockAddCredentialToPresent,
+        addAttributeToReveal: mockAddAttributeToReveal,
+        createPresentation: mockCreatePresentation,
+        deriveCredentials: mockDeriveCredentials,
+        presBuilder: {
+          enforceBounds: jest.fn(),
+        },
+      };
+    });
   });
   it('ServiceRpc', () => {
     assertRpcService(CredentialServiceRPC, service, validation);
@@ -19,7 +34,7 @@ describe('Credential Service', () => {
   });
   it('expect to verify credential', async () => {
     jest
-      .spyOn(credentialsUtils, 'verifyCredential')
+      .spyOn(credentialUtils, 'verifyCredential')
       .mockImplementationOnce(async () => ({verified: true}));
     const credential = {
       '@context': [
@@ -71,7 +86,7 @@ describe('Credential Service', () => {
       },
     };
     await service.verifyCredential({credential});
-    expect(credentialsUtils.verifyCredential).toBeCalled();
+    expect(credentialUtils.verifyCredential).toBeCalled();
   });
   it('should create a vc', async () => {
     const subject = {
@@ -296,7 +311,7 @@ describe('Credential Service', () => {
       credentials,
     });
 
-    const bbsPresentation = new BbsPlusPresentation();
+    const bbsPresentation = new credentialUtils.Presentation();
     expect(bbsPresentation.addCredentialToPresent).toBeCalledWith(
       credential,
       expect.any(Object),
@@ -366,7 +381,7 @@ describe('Credential Service', () => {
       credentials,
     });
 
-    const bbsPresentation = new BbsPlusPresentation();
+    const bbsPresentation = new credentialUtils.Presentation();
     expect(bbsPresentation.addCredentialToPresent).toBeCalledWith(
       credential,
       expect.any(Object),

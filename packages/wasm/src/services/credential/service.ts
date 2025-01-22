@@ -8,13 +8,15 @@ import {
 } from '@docknetwork/crypto-wasm-ts';
 import {OpenID4VCIClientV1_0_13} from '@sphereon/oid4vci-client';
 import {Alg} from '@sphereon/oid4vci-common';
-import {getDockRevIdFromCredential} from '@docknetwork/sdk/utils/revocation';
-import VerifiableCredential from '@docknetwork/sdk/verifiable-credential';
 import {getKeypairFromDoc} from '@docknetwork/universal-wallet/methods/keypairs';
-import {getSuiteFromKeyDoc} from '@docknetwork/sdk/utils/vc/helpers';
-import VerifiablePresentation from '@docknetwork/sdk/verifiable-presentation';
-import Presentation from '@docknetwork/sdk/presentation';
-import {verifyCredential} from '@docknetwork/sdk/utils/vc/credentials';
+import {
+  VerifiablePresentation,
+  Presentation,
+  verifyCredential,
+  verifyPresentation,
+  VerifiableCredential,
+  getSuiteFromKeyDoc,
+} from '@docknetwork/credential-sdk/vc';
 import {PEX} from '@sphereon/pex';
 import {keyDocToKeypair} from './utils';
 import {blockchainService, getDock} from '../blockchain/service';
@@ -123,6 +125,11 @@ class CredentialService {
 
     return vp.sign(keyDoc, challenge, domain, blockchainService.resolver);
   }
+
+  async verifyPresentation({ presentation, options }: any) {
+    return verifyPresentation(presentation, options);
+  }
+
   async verifyCredential(params) {
     validation.verifyCredential(params);
     const {credential, membershipWitness} = params;

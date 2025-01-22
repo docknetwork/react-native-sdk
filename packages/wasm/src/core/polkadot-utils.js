@@ -5,10 +5,8 @@ import {
   sr25519PairFromSeed,
   secp256k1PairFromSeed,
 } from '@polkadot/util-crypto';
-
+import {Ed25519Keypair} from '@docknetwork/credential-sdk/keypairs';
 import {decodePair} from '@polkadot/keyring/pair/decode';
-import {getKeyPairType} from '@docknetwork/sdk/utils/misc';
-
 import * as bs58 from 'base58-universal';
 
 import {getKeypairFromDoc} from '@docknetwork/universal-wallet/methods/keypairs';
@@ -19,6 +17,19 @@ const polkadotTypesToKeys = {
   secp256k1: 'EcdsaSecp256k1VerificationKey2019',
   ecdsa: 'EcdsaSecp256k1VerificationKey2019',
 };
+
+export function getKeyPairType(key) {
+  const keyType = key.type || key.constructor.VerKeyType;
+  if (keyType) {
+    return keyType;
+  }
+
+  if (key instanceof Ed25519Keypair) {
+    return 'Ed25519VerificationKey2018';
+  }
+
+  throw new Error(`Unknown key type for ${key.constructor.name}`);
+}
 
 const TYPE_FROM_SEED = {
   ecdsa: secp256k1PairFromSeed,

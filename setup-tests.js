@@ -22,12 +22,6 @@ const cfg = {url: 'http://localhost'};
 const dom = new JSDOM('', cfg);
 global.window = dom.window;
 global.document = dom.window.document;
-//
-// Object.keys(global.window).forEach(property => {
-//   if (typeof global[property] === 'undefined') {
-//     global[property] = global.window[property];
-//   }
-// });
 
 global.navigator = {
   userAgent: 'node.js',
@@ -37,24 +31,6 @@ global.navigator = {
 require('@docknetwork/wallet-sdk-wasm/src/setup-tests');
 
 jest.mock('@react-native-async-storage/async-storage', () => 'AsyncStorage');
-
-jest.mock('@docknetwork/sdk/presentation', () => {
-  const mockAddCredentialToPresent = jest.fn(() => 0);
-  const mockAddAttributeToReveal = jest.fn();
-  const mockCreatePresentation = jest.fn();
-  const mockDeriveCredentials = jest.fn(() => []);
-  return jest.fn().mockImplementation(() => {
-    return {
-      addCredentialToPresent: mockAddCredentialToPresent,
-      addAttributeToReveal: mockAddAttributeToReveal,
-      createPresentation: mockCreatePresentation,
-      deriveCredentials: mockDeriveCredentials,
-      presBuilder: {
-        enforceBounds: jest.fn(),
-      },
-    };
-  });
-});
 
 setV1LocalStorage(global.localStorage);
 setLocalStorage(global.localStorage);

@@ -15,8 +15,7 @@
         "@polkadot/types": "5.6.1",
         "@polkadot/types-known": "5.6.1",
         "@polkadot/util": "7.9.2",
-        "@polkadot/rpc-core": "5.6.1",
-        "@docknetwork/sdk": "1.2.3"
+        "@polkadot/rpc-core": "5.6.1"
     },
     "devDependencies": {
         "@polkadot/types": "5.6.1",

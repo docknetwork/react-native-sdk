@@ -33,9 +33,5 @@ describe('Wallet backups', () => {
     expect(backup.credentialSubject).toBeDefined();
   });
 
-  afterEach(async () => {
-    await blockchainService.disconnect();
-  })
-
   afterAll(() => closeWallet());
 });

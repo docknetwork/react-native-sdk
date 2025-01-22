@@ -6,14 +6,11 @@ import {
 } from '../lib/didcomm';
 import {ALICE_KEY_PAIR_DOC, BOB_KEY_PAIR_DOC} from './mock-data';
 import {blockchainService} from '@docknetwork/wallet-sdk-wasm/src/services/blockchain/service';
-import {WildcardMultiResolver} from '@docknetwork/sdk/resolver';
+// import {ResolverRouter} from '@docknetwork/credential-sdk/resolver';
 
 const didList = [ALICE_KEY_PAIR_DOC, BOB_KEY_PAIR_DOC];
 
-class WalletSDKResolver extends WildcardMultiResolver {
-  static PREFIX = WildcardMultiResolver.PREFIX;
-  static METHOD = WildcardMultiResolver.METHOD;
-
+const mockDIDResolver = {
   async resolve(did) {
     const trimmedDID = did.split('#')[0];
     const document = didList.find(
@@ -25,14 +22,8 @@ class WalletSDKResolver extends WildcardMultiResolver {
     }
 
     return document;
-  }
-}
-
-const mockDIDResolver = new WalletSDKResolver([
-  // new DockResolver(dock),
-  // new DIDKeyResolver(),
-  // new UniversalResolver(universalResolverUrl),
-]);
+  },
+};
 
 blockchainService.createDIDResolver = () => mockDIDResolver;
 blockchainService.resolver = mockDIDResolver;

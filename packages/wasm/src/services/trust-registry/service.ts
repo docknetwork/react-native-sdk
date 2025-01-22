@@ -1,10 +1,16 @@
 // @ts-nocheck
 import {serviceName} from './configs';
-import {typedHexDID} from '@docknetwork/sdk/utils/did/typed-did/helpers';
 import {createHash} from 'crypto';
 import {blockchainService} from '../blockchain/service';
 import {validation} from './configs';
 
+
+// TODO: Implement this function when the Trust Registry support is added to the SDK
+function typedHexDID(resolver, issuerDID) {
+  return issuerDID;
+}
+
+// Trust Registry Service is not supported in the current version of the SDK
 class TrustRegistryService {
   constructor() {
     this.name = serviceName;

@@ -1,17 +1,18 @@
 const testAPIURL = process.env.TESTING_API_URL || null;
 const testCredsURL = testAPIURL.replace('api-', 'creds-');
+const testTruveraUrl = testCredsURL.replace('dock.io', 'truvera.io');
 
 export const CheqdCredentialNonZKP = {
   '@context': [
     'https://www.w3.org/2018/credentials/v1',
-    'https://ld.dock.io/credentials/extensions-v1',
+    'https://ld.truvera.io/credentials/extensions-v1',
     {
       BasicCredential: 'dk:BasicCredential',
-      dk: 'https://ld.dock.io/credentials#',
+      dk: 'https://ld.truvera.io/credentials#',
     },
-    'https://ld.dock.io/credentials/prettyvc',
+    'https://ld.truvera.io/credentials/prettyvc',
   ],
-  id: `${testCredsURL}/22ab419cbd0d4d0ddc32098ea7cbb9eb615cf47d38a87e0dd70e4740cac46e3b`,
+  id: `${testTruveraUrl}/35974693fd06183e9792590462b970393b55c3af67bad60da81d3167b5964c50`,
   type: [
     'VerifiableCredential',
     'BasicCredential',
@@ -21,13 +22,13 @@ export const CheqdCredentialNonZKP = {
     id: 'test',
     name: 'test',
   },
-  issuanceDate: '2024-11-26T19:55:13.316Z',
+  issuanceDate: '2025-01-22T19:50:00.582Z',
   issuer: {
-    name: 'Cheqd DID',
-    id: 'did:cheqd:testnet:b230d9b6-87ba-48a7-bba6-0008b27f9e51',
+    name: 'Default Cheqd DID',
+    id: 'did:cheqd:testnet:f9651526-196d-429f-930d-af32938a8b49',
   },
   credentialSchema: {
-    id: 'https://schema.dock.io/BasicCredential-V2-1703777584571.json',
+    id: 'https://schema.truvera.io/BasicCredential-V2-1703777584571.json',
     type: 'JsonSchemaValidator2018',
   },
   name: 'test',
@@ -40,11 +41,11 @@ export const CheqdCredentialNonZKP = {
   },
   proof: {
     type: 'Ed25519Signature2018',
-    created: '2024-11-26T19:55:31Z',
+    created: '2025-01-22T19:50:30Z',
     verificationMethod:
-      'did:cheqd:testnet:b230d9b6-87ba-48a7-bba6-0008b27f9e51#keys-1',
+      'did:cheqd:testnet:f9651526-196d-429f-930d-af32938a8b49#keys-1',
     proofPurpose: 'assertionMethod',
-    jws: 'eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..FM7riHz2AbMEMdgIcx72LHDJufiqiTOFLCaTHAE45javN0cXLMsVRdzpFgmMbyRvWnU6Bk0AK9IRS2DY3IPFBA',
+    jws: 'eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..XEi0hLtlJ5ba63_2TxCCO11U-OU7QaaB8fA2OeMxp8HoFfsN7I867KgzA3uKm97Ub5aIK375l0zQQquayCewCg',
   },
 };
 

@@ -1,5 +1,4 @@
 import {Command} from 'commander';
-import {typedHexDID} from '@docknetwork/sdk/utils/did/typed-did/helpers';
 import {blockchainService} from '@docknetwork/wallet-sdk-wasm/src/services/blockchain/service';
 import {getWallet} from '../helpers';
 import {getDIDKeyPairs} from '@docknetwork/wallet-sdk-core/src/did-provider';
@@ -36,30 +35,6 @@ ecosystemCommands
       blockchainService.dock,
     );
     console.log(trustRegistry);
-
-    await blockchainService.disconnect();
-  });
-
-ecosystemCommands
-  .command('getEcosystemFromDID')
-  .option('-d, --did <did>', 'DID')
-  .description('Get ecosystem from issuer DID')
-  .action(async ({did}) => {
-    await blockchainService.init({
-      address: 'wss://knox-1.dock.io',
-    });
-
-    await blockchainService.waitBlockchainReady();
-    await blockchainService.ensureBlockchainReady();
-
-    const issuerDIDMethodKey = typedHexDID(
-      blockchainService.dock.api,
-      did,
-    );
-    const registryInfo = await blockchainService.dock.trustRegistry?.registriesInfo({
-      Issuer: issuerDIDMethodKey,
-    });
-    console.log(registryInfo);
 
     await blockchainService.disconnect();
   });

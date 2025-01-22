@@ -1,10 +1,9 @@
 import {IWallet} from '@docknetwork/wallet-sdk-core/lib/types';
 import {closeWallet, getWallet} from '../helpers/wallet-helpers';
 import {createVerificationController} from '@docknetwork/wallet-sdk-core/src/verification-controller';
-import {verifyPresentation} from '@docknetwork/sdk/utils/vc/presentations';
 import assert from 'assert';
-import {initializeWasm} from '@docknetwork/crypto-wasm-ts/lib/index';
-import { blockchainService } from '@docknetwork/wallet-sdk-wasm/src/services/blockchain';
+import {blockchainService} from '@docknetwork/wallet-sdk-wasm/src/services/blockchain';
+import {credentialService} from '@docknetwork/wallet-sdk-wasm/src/services/credential/service';
 
 const testAPIURL = process.env.TESTING_API_URL || null;
 
@@ -127,12 +126,15 @@ describe('BBS+ presentations', () => {
 
     const presentation = await controller.createPresentation();
 
-    const verificationResults = await verifyPresentation(presentation, {
-      compactProof: true,
-      resolver: blockchainService.resolver,
-      challenge: proofRequest.nonce,
-      unsignedPresentation: true,
-      domain: 'dock.io',
+    const verificationResults = await credentialService.verifyPresentation({
+      presentation,
+      options: {
+        compactProof: true,
+        resolver: blockchainService.resolver,
+        challenge: proofRequest.nonce,
+        unsignedPresentation: true,
+        domain: 'dock.io',
+      },
     });
 
     expect(verificationResults.verified).toBe(false);
