@@ -22,12 +22,6 @@ const cfg = {url: 'http://localhost'};
 const dom = new JSDOM('', cfg);
 global.window = dom.window;
 global.document = dom.window.document;
-//
-// Object.keys(global.window).forEach(property => {
-//   if (typeof global[property] === 'undefined') {
-//     global[property] = global.window[property];
-//   }
-// });
 
 global.navigator = {
   userAgent: 'node.js',
