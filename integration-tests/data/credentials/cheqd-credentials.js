@@ -1,6 +1,6 @@
 const testAPIURL = process.env.TESTING_API_URL || null;
 const testCredsURL = testAPIURL.replace('api-', 'creds-');
-const testTruveraUrl = testAPIURL.replace('truvera.io', 'dock.io');
+const testTruveraUrl = testCredsURL.replace('dock.io', 'truvera.io');
 
 export const CheqdCredentialNonZKP = {
   '@context': [
