@@ -8,6 +8,22 @@ import {getTestWallet} from '../../test/setup-test-state';
 describe('Credential Service', () => {
   beforeAll(async () => {
     await getTestWallet();
+    const mockAddCredentialToPresent = jest.fn(() => 0);
+    const mockAddAttributeToReveal = jest.fn();
+    const mockCreatePresentation = jest.fn();
+    const mockDeriveCredentials = jest.fn(() => []);
+
+    jest.spyOn(credentialUtils, 'Presentation').mockImplementation(() => {
+      return {
+        addCredentialToPresent: mockAddCredentialToPresent,
+        addAttributeToReveal: mockAddAttributeToReveal,
+        createPresentation: mockCreatePresentation,
+        deriveCredentials: mockDeriveCredentials,
+        presBuilder: {
+          enforceBounds: jest.fn(),
+        },
+      };
+    });
   });
   it('ServiceRpc', () => {
     assertRpcService(CredentialServiceRPC, service, validation);

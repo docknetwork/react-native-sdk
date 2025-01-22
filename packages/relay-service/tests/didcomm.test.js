@@ -6,11 +6,11 @@ import {
 } from '../lib/didcomm';
 import {ALICE_KEY_PAIR_DOC, BOB_KEY_PAIR_DOC} from './mock-data';
 import {blockchainService} from '@docknetwork/wallet-sdk-wasm/src/services/blockchain/service';
-import {ResolverRouter} from '@docknetwork/credential-sdk/resolver';
+// import {ResolverRouter} from '@docknetwork/credential-sdk/resolver';
 
 const didList = [ALICE_KEY_PAIR_DOC, BOB_KEY_PAIR_DOC];
 
-class WalletSDKResolver extends ResolverRouter {
+const mockDIDResolver = {
   async resolve(did) {
     const trimmedDID = did.split('#')[0];
     const document = didList.find(
@@ -22,10 +22,8 @@ class WalletSDKResolver extends ResolverRouter {
     }
 
     return document;
-  }
-}
-
-const mockDIDResolver = new WalletSDKResolver([]);
+  },
+};
 
 blockchainService.createDIDResolver = () => mockDIDResolver;
 blockchainService.resolver = mockDIDResolver;
