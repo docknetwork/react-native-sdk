@@ -60,7 +60,11 @@ function getAttributeName({field, selectedCredentials, index}) {
   return attributeName;
 }
 
-export function pexToBounds(pexRequest, selectedCredentials = [], removeFromRequest = false) {
+export function pexToBounds(
+  pexRequest,
+  selectedCredentials = [],
+  removeFromRequest = false,
+) {
   const descriptorBounds = [];
   const fieldsToRemove = [];
 
@@ -77,20 +81,24 @@ export function pexToBounds(pexRequest, selectedCredentials = [], removeFromRequ
       const schemaStartStr = 'data:application/json;charset=utf-8,';
 
       if (selectedCredential.credentialSchema.details) {
-        decodedSchema = JSON.parse(selectedCredential.credentialSchema.details).jsonSchema || {};
+        decodedSchema =
+          JSON.parse(selectedCredential.credentialSchema.details).jsonSchema ||
+          {};
       } else if (
         selectedCredential.credentialSchema.id &&
         selectedCredential.credentialSchema.id.startsWith(schemaStartStr)
       ) {
         // LEGACY embedded schema handling
         decodedSchema = JSON.parse(
-          decodeURIComponent(selectedCredential.credentialSchema.id.split(schemaStartStr)[1])
+          decodeURIComponent(
+            selectedCredential.credentialSchema.id.split(schemaStartStr)[1],
+          ),
         );
       }
     }
 
     const bounds = [];
-    inputDescriptor.constraints.fields.forEach((field) => {
+    inputDescriptor.constraints.fields.forEach(field => {
       const {
         exclusiveMaximum,
         exclusiveMinimum,
@@ -103,7 +111,9 @@ export function pexToBounds(pexRequest, selectedCredentials = [], removeFromRequ
       } = field.filter || {};
 
       if (!field.path || field.path.length === 0) {
-        throw new Error('Missing or empty field "path" property, expected array or string');
+        throw new Error(
+          'Missing or empty field "path" property, expected array or string',
+        );
       }
 
       let attributeName;
@@ -125,11 +135,20 @@ export function pexToBounds(pexRequest, selectedCredentials = [], removeFromRequ
       }
 
       if (!attributeName) {
-        throw new Error('Invalid "path" property, expected JSONPath into the credential');
+        throw new Error(
+          'Invalid "path" property, expected JSONPath into the credential',
+        );
       }
 
-      const schemaPath = `$.properties.${attributeName.replaceAll('.', '.properties.')}`;
-      const attributeSchema = JSONPath.query(decodedSchema, schemaPath, 1)[0] || { type };
+      const schemaPath = `$.properties.${attributeName.replaceAll(
+        '.',
+        '.properties.',
+      )}`;
+      const attributeSchema = JSONPath.query(
+        decodedSchema,
+        schemaPath,
+        1,
+      )[0] || {type};
 
       let max =
         maximum === undefined
@@ -203,7 +222,9 @@ export function pexToBounds(pexRequest, selectedCredentials = [], removeFromRequ
         min = Math.floor(min);
         max = Math.floor(max);
       } else {
-        throw new Error(`Unsupported format ${format} and type ${type} for enforce bounds`);
+        throw new Error(
+          `Unsupported format ${format} and type ${type} for enforce bounds`,
+        );
       }
 
       if (removeFromRequest) {
@@ -223,7 +244,7 @@ export function pexToBounds(pexRequest, selectedCredentials = [], removeFromRequ
     descriptorBounds.push(bounds);
   });
 
-  fieldsToRemove.forEach(({ fields, field }) => {
+  fieldsToRemove.forEach(({fields, field}) => {
     const idx = fields.indexOf(field);
     if (idx !== -1) {
       fields.splice(idx, 1);
