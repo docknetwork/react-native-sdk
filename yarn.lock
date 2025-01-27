@@ -4990,25 +4990,25 @@
     fix-esm "^1.0.1"
     jsonld digitalcredentials/jsonld.js#v10.x
 
-"@docknetwork/cheqd-blockchain-api@^0.21.0":
-  version "0.21.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/cheqd-blockchain-api/-/cheqd-blockchain-api-0.21.0.tgz#8634f26be989f3c1537983ad3781e71e32992b98"
-  integrity sha512-RdcZuLj8m604rJwfvQ+odGpc8fR3D8CajPdzT52cC2vl+ZqKZB5RPoKwEv3DjfQxxXE53zAwuH57wUU49T15Ww==
+"@docknetwork/cheqd-blockchain-api@0.26.0":
+  version "0.26.0"
+  resolved "https://registry.yarnpkg.com/@docknetwork/cheqd-blockchain-api/-/cheqd-blockchain-api-0.26.0.tgz#e2c5ece7527fd0a1c8dbbe6e5d83e6a5aa80e3ab"
+  integrity sha512-WRJ3ilyW8Y8O74cmtO5APzfzQDCnloIljhq6gpYyTxjCNdvpAmc59DJw6LF5MW61Znaw9jdHx19VJH7/beaDpg==
   dependencies:
     "@cheqd/sdk" cjs
-    "@docknetwork/credential-sdk" "0.27.0"
+    "@docknetwork/credential-sdk" "0.32.0"
 
-"@docknetwork/cheqd-blockchain-modules@^0.18.0":
-  version "0.18.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/cheqd-blockchain-modules/-/cheqd-blockchain-modules-0.18.0.tgz#1c426c62ca796ca7aacc0896ef47f5bcbb07460e"
-  integrity sha512-y2WMKgp3+YssTv4au/KD/onCeymUdtA5jkk8VHh7wH8EEAqON9UE0lj4U4gKxY7tmikyPxpSVaXH23wxR4cYzg==
+"@docknetwork/cheqd-blockchain-modules@0.23.0":
+  version "0.23.0"
+  resolved "https://registry.yarnpkg.com/@docknetwork/cheqd-blockchain-modules/-/cheqd-blockchain-modules-0.23.0.tgz#de1024ef8aa6a6ce69ceebf449e46b4aed87b930"
+  integrity sha512-OqT4DGuqvs1xHYO4DJU8IYI6c2gCLsfZIFDZbDnBTfoxJQVPWtTFTsJZIZZCcp+Os2Vo4a7DXPjL9WjhM3e2nQ==
   dependencies:
-    "@docknetwork/credential-sdk" "0.27.0"
+    "@docknetwork/credential-sdk" "0.32.0"
 
-"@docknetwork/credential-sdk@0.27.0":
-  version "0.27.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/credential-sdk/-/credential-sdk-0.27.0.tgz#04abefced38355d274076ba6f646c8d7f8a18069"
-  integrity sha512-qOl4oJVXoIiiS6x25hElDBJUbjs7WKykr1+/vQQQFNfzffUM0ERudTjZVuIc/BTGPryEGvC892cLoDfSHu3v8A==
+"@docknetwork/credential-sdk@0.32.0":
+  version "0.32.0"
+  resolved "https://registry.yarnpkg.com/@docknetwork/credential-sdk/-/credential-sdk-0.32.0.tgz#08050104c53e033a6540f974b969cb6aeb2c96bc"
+  integrity sha512-MCWjua/9hdS58F9kXrwcGVT7cN427pCU2WjkGKsv1ksH+wT3C4dXCyz0t0bNod974vbvROdr2+5Zt0eYo8Nmbw==
   dependencies:
     "@comunica/query-sparql-rdfjs" "^4.0.2"
     "@digitalcredentials/vc-status-list" "^8.0.0"
@@ -5055,12 +5055,12 @@
     semver "^7.6.0"
     typedoc-github-theme "^0.1.2"
 
-"@docknetwork/dock-blockchain-api@0.12.0":
-  version "0.12.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/dock-blockchain-api/-/dock-blockchain-api-0.12.0.tgz#ec9cc040bdb8a5e2dabcc0aef49794c680c1fadf"
-  integrity sha512-j0t86GX2csSUfnlwWCYHaG0VW27baivUYcJJzluLTAmrL1otFtIaXr4uUcss9atmVZi2IObOQSu8sC1jdkUPOw==
+"@docknetwork/dock-blockchain-api@0.17.0":
+  version "0.17.0"
+  resolved "https://registry.yarnpkg.com/@docknetwork/dock-blockchain-api/-/dock-blockchain-api-0.17.0.tgz#abeef5a13b180265d75650e693c8359c2cf3734b"
+  integrity sha512-oWx9efCeJe/A2+tAc5g6+3TJoYT8LyNikPRXHU/xi0CkS9sZC5qXI8gIpzgUTE80eqgQgAHVJ4t4G6bbVfbhPw==
   dependencies:
-    "@docknetwork/credential-sdk" "0.27.0"
+    "@docknetwork/credential-sdk" "0.32.0"
     "@docknetwork/node-types" "^0.17.0"
     "@juanelas/base64" "^1.0.5"
     "@polkadot/api" "10.12.4"
@@ -5085,12 +5085,12 @@
     rify "^0.7.1"
     semver "^7.6.0"
 
-"@docknetwork/dock-blockchain-modules@0.16.0":
-  version "0.16.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/dock-blockchain-modules/-/dock-blockchain-modules-0.16.0.tgz#bb4b6313015640c6c5d124aeea4bd5cc5f9a76aa"
-  integrity sha512-duIf19302GhYInK1bvt+6w3kZGk4dYA9tguhfRU2Gk4Wu457jWd1ZnqIw/HeAlCPWU4StfqPTWw7dodjaMamTw==
+"@docknetwork/dock-blockchain-modules@0.21.0":
+  version "0.21.0"
+  resolved "https://registry.yarnpkg.com/@docknetwork/dock-blockchain-modules/-/dock-blockchain-modules-0.21.0.tgz#e4486f024c09a15e844a0daedcbc51144e507886"
+  integrity sha512-+OCUrPixnwMfMFi436C57geXOnJvyOedau8ojAK+q3VdMMKmPNG8SFX/GzeXgT1Cl1OqU+LDAIK7aWNSQNkJIA==
   dependencies:
-    "@docknetwork/credential-sdk" "0.27.0"
+    "@docknetwork/credential-sdk" "0.32.0"
 
 "@docknetwork/minimal-cipher@^5.2.1":
   version "5.2.1"
