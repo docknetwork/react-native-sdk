@@ -110,7 +110,7 @@ describe('BBS+ presentations', () => {
     console.log(result);
 
     expect(result.length).toBeGreaterThan(0);
-    expect(result).toContain('did:dock:5Fv9Gxbf37DdiNrT31zKTM7ryf8H4psoP3XXxtmVuijNiTTS');
+    expect(result).toContain('did:dock:5CKsfvaE68mvRhdn3dDXG4KpWzuvaUNdBbiu6sFUuPK9rw66');
 
   });
 
