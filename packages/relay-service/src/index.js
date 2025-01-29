@@ -18,7 +18,7 @@ import {
 import jwtDecode from 'jwt-decode';
 import {blockchainService} from '@docknetwork/wallet-sdk-wasm/src/services/blockchain/service';
 
-let serviceURL = process.env.RELAY_SERVICE_URL || 'https://relay.dock.io';
+let serviceURL = process.env.RELAY_SERVICE_URL || 'https://relay.truvera.io';
 
 export const didcomm = {
   encrypt: didcommCreateEncrypted,

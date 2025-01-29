@@ -66,7 +66,7 @@ messagesCommand
     });
     const credential = await selectCredential();
     const message = {
-      domain: 'api.dock.io',
+      domain: 'api.truvera.io',
       credentials: [credential],
     };
 

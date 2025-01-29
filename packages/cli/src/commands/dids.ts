@@ -43,7 +43,7 @@ didsCommand
 
 /**
  * Resolve a DIDComm message
- * Ex.: didcomm://https://relay.dock.io/read/659ed4b1655cf81a6a35e140'
+ * Ex.: didcomm://https://relay.truvera.io/read/659ed4b1655cf81a6a35e140'
  */
 didsCommand
   .command('resolve-message')
