@@ -41,6 +41,7 @@ export class BlockchainService {
   cheqdApi;
   isBlockchainReady = false;
   resolver: any;
+  dockEnabled: boolean;
   static Events = {
     BLOCKCHAIN_READY: 'blockchain-ready',
   };
@@ -102,7 +103,13 @@ export class BlockchainService {
 
     Logger.info(`Attempt to initialized substrate at: ${params.address}`);
 
-    await this.dock.init(params);
+    this.dockEnabled = !!params.substrateAddress;
+
+    if (dockEnabled) {
+      await this.dock.init({
+        address: params.substrateAddress,
+      });
+    }
 
     Logger.info(`Substrate initialized at: ${params.address}`);
 

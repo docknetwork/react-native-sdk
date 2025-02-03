@@ -8,7 +8,7 @@ export const validation = {
 };
 
 export type InitParams = {
-  address: string,
+  substrateAddress: string,
   cheqdApiUrl?: string,
   networkId?: string,
   cheqdMnemonic?: string,
