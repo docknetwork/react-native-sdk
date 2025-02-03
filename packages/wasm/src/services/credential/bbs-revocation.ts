@@ -36,12 +36,13 @@ async function updateMembershipWitness({
 
   let updates = [];
   try {
-    // TODO: Ensure it will for cheqd 
+    // TODO: Ensure it will for cheqd
     // Will be handled on https://dock-team.atlassian.net/browse/DCKW-572
-    updates = await blockchainService.modules.accumulator.dockOnly.getUpdatesFromBlock(
-      registryId,
-      blockNo,
-    );
+    updates =
+      await blockchainService.modules.accumulator.dockOnly.getUpdatesFromBlock(
+        registryId,
+        blockNo,
+      );
   } catch (err) {
     if (err.code === UnknownBlockErrorCode) {
       console.error(err);
@@ -66,13 +67,12 @@ async function updateMembershipWitness({
     }
   }
 
-  
   const witness = new VBMembershipWitness(hexToU8a(membershipWitness));
 
   if (updates.length) {
     const queriedWitnessInfo = new VBWitnessUpdateInfo(
       hexToU8a(updates[0].witnessUpdateInfo),
-    )
+    );
 
     witness.updateUsingPublicInfoPostBatchUpdate(
       member,
@@ -94,21 +94,24 @@ export const getWitnessDetails = async (credential, _membershipWitness) => {
   } catch (err) {
     console.error(err);
   }
-  
+
   const {credentialStatus} = credential;
-  const registryId = credentialStatus?.id
+  const registryId = credentialStatus?.id;
   const revocationIndex = credentialStatus.revocationId;
 
-  const queriedAccumulator = await blockchainService.modules.accumulator.getAccumulator(
-    registryId,
-    false,
-  );
+  const queriedAccumulator =
+    await blockchainService.modules.accumulator.getAccumulator(
+      registryId,
+      false,
+    );
 
   if (!queriedAccumulator) {
     throw new Error('Accumulator not found');
   }
 
-  const accumulator = PositiveAccumulator.fromAccumulated(queriedAccumulator.accumulated.bytes);
+  const accumulator = PositiveAccumulator.fromAccumulated(
+    queriedAccumulator.accumulated.bytes,
+  );
 
   const encodedRevId = Encoder.defaultEncodeFunc()(revocationIndex.toString());
 
@@ -122,13 +125,17 @@ export const getWitnessDetails = async (credential, _membershipWitness) => {
 
   const membershipWitness = new VBMembershipWitness(hexToU8a(witness));
 
-  await blockchainService.modules.accumulator.updateWitness(
-    registryId,
-    encodedRevId,
-    membershipWitness,
-    blockNo || queriedAccumulator.created,
-    queriedAccumulator.lastModified,
-  );
+  try {
+    await blockchainService.modules.accumulator.updateWitness(
+      registryId,
+      encodedRevId,
+      membershipWitness,
+      queriedAccumulator.created,
+      queriedAccumulator.lastModified,
+    );
+  } catch (err) {
+    console.error(err);
+  }
 
   return {
     encodedRevId,
