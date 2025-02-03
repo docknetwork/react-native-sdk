@@ -87,9 +87,10 @@ async function updateMembershipWitness({
 
 export const getWitnessDetails = async (credential, _membershipWitness) => {
   let witness = _membershipWitness;
+  let blockNo;
 
   try {
-    ({witness} = JSON.parse(_membershipWitness));
+    ({witness, blockNo} = JSON.parse(_membershipWitness));
   } catch (err) {
     console.error(err);
   }
@@ -120,6 +121,14 @@ export const getWitnessDetails = async (credential, _membershipWitness) => {
   const pk = new AccumulatorPublicKey(publicKey.bytes);
 
   const membershipWitness = new VBMembershipWitness(hexToU8a(witness));
+
+  await blockchainService.modules.accumulator.updateWitness(
+    registryId,
+    encodedRevId,
+    membershipWitness,
+    blockNo || queriedAccumulator.created,
+    queriedAccumulator.lastModified,
+  );
 
   return {
     encodedRevId,
