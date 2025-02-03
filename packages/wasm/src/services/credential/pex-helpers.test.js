@@ -210,14 +210,14 @@ describe('pex helpers', () => {
                     type: 'number',
                     minimum: 0,
                   },
-                  path: ['$.age'],
+                  path: ['$.credentialSubject.age'],
                 },
                 {
                   filter: {
                     format: 'date',
                     minimum: '2021-01-01',
                   },
-                  path: ['$.dateOfBirth'],
+                  path: ['$.credentialSubject.dateOfBirth'],
                 },
               ],
             },
@@ -225,23 +225,30 @@ describe('pex helpers', () => {
         ],
       };
 
-      const bounds = pexToBounds(pexRequest);
+      const bounds = pexToBounds(pexRequest, [
+        {
+          credentialSubject: {
+            age: 10000000000,
+          },
+        },
+        {
+          credentialSubject: {
+            dateOfBirth: '2021-01-01',
+          },
+        },
+      ]);
 
       expect(bounds).toEqual([
         [
           {
-            attributeName: 'age',
+            attributeName: 'credentialSubject.age',
             min: 0,
             max: 10000000000,
-            type: 'number',
-            format: undefined,
           },
           {
-            attributeName: 'dateOfBirth',
+            attributeName: 'credentialSubject.dateOfBirth',
             min: new Date('2021-01-01'),
             max: new Date(884541351600000),
-            type: undefined,
-            format: 'date',
           },
         ],
       ]);
@@ -258,7 +265,7 @@ describe('pex helpers', () => {
                     type: 'number',
                     minimum: 0,
                   },
-                  path: ['$.age'],
+                  path: ['$.credentialSubject.age'],
                 },
               ],
             },
@@ -266,16 +273,24 @@ describe('pex helpers', () => {
         ],
       };
 
-      const bounds = pexToBounds(pexRequest, [], true);
+      const bounds = pexToBounds(
+        pexRequest,
+        [
+          {
+            credentialSubject: {
+              age: 2,
+            },
+          },
+        ],
+        true,
+      );
 
       expect(bounds).toEqual([
         [
           {
-            attributeName: 'age',
+            attributeName: 'credentialSubject.age',
             min: 0,
-            max: undefined,
-            type: 'number',
-            format: undefined,
+            max: 10000000000,
           },
         ],
       ]);
@@ -300,7 +315,11 @@ describe('pex helpers', () => {
         ],
       };
 
-      const bounds = pexToBounds(pexRequest);
+      const bounds = pexToBounds(pexRequest, [
+        {
+          expirationDate: '2021-01-01',
+        },
+      ]);
 
       expect(bounds).toEqual([
         [
@@ -308,8 +327,6 @@ describe('pex helpers', () => {
             attributeName: 'expirationDate',
             min: new Date('2021-01-01T00:00:00Z'),
             max: new Date('2022-01-01T00:00:00Z'),
-            type: undefined,
-            format: 'date-time',
           },
         ],
       ]);
@@ -335,7 +352,11 @@ describe('pex helpers', () => {
         ],
       };
 
-      const bounds = pexToBounds(pexRequest);
+      const bounds = pexToBounds(pexRequest, [
+        {
+          amount: 10,
+        },
+      ]);
 
       expect(bounds).toEqual([
         [
@@ -343,8 +364,6 @@ describe('pex helpers', () => {
             attributeName: 'amount',
             min: 0,
             max: 100,
-            type: 'number',
-            format: undefined,
           },
         ],
       ]);
@@ -378,7 +397,12 @@ describe('pex helpers', () => {
         ],
       };
 
-      const bounds = pexToBounds(pexRequest);
+      const bounds = pexToBounds(pexRequest, [
+        {
+          amount: 10,
+          date: '2021-01-01',
+        },
+      ]);
 
       expect(bounds).toEqual([
         [
@@ -386,15 +410,11 @@ describe('pex helpers', () => {
             attributeName: 'startDate',
             min: new Date('2021-01-01'),
             max: new Date('2022-01-01'),
-            type: undefined,
-            format: 'date',
           },
           {
             attributeName: 'amount',
             min: 0,
             max: 100,
-            type: 'number',
-            format: undefined,
           },
         ],
       ]);

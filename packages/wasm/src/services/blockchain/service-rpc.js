@@ -1,5 +1,5 @@
 import {RpcService} from '../rpc-service-client';
-import {InitParams, validation} from './configs';
+import {InitParams} from './configs';
 
 /**
  *
@@ -27,7 +27,6 @@ export class BlockchainServiceRpc extends RpcService {
    *
    */
   init(params: InitParams): Promise<any> {
-    validation.init(params);
     return this.call('init', params);
   }
 

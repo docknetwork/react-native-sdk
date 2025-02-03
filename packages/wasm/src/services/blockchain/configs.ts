@@ -1,14 +1,10 @@
 // @ts-nocheck
 import assert from 'assert';
 
-export const validation = {
-  init(params) {
-    assert(!!params.address, `invalid substrate address ${params.address}`);
-  },
-};
+export const validation = {};
 
 export type InitParams = {
-  address: string,
+  substrateUrl: string,
   cheqdApiUrl?: string,
   networkId?: string,
   cheqdMnemonic?: string,

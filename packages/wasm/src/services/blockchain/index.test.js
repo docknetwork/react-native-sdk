@@ -1,9 +1,5 @@
 import {NetworkManager} from '../../modules/network-manager';
-import {
-  assertRpcService,
-  getPromiseError,
-  mockDockSdkConnection,
-} from '../test-utils';
+import {assertRpcService, mockDockSdkConnection} from '../test-utils';
 import {validation} from './configs';
 import {blockchainService as service} from './service';
 import {BlockchainServiceRpc} from './service-rpc';
@@ -31,16 +27,6 @@ describe('DockService', () => {
       expect(result).toBe(true);
       expect(await service.isApiConnected()).toBeTruthy();
       await service.disconnect();
-      expect(await service.isApiConnected()).toBeFalsy();
-      mock.clear();
-    });
-
-    it('throw error for invalid address', async () => {
-      const mock = mockDockSdkConnection();
-      const error = await getPromiseError(async () => {
-        await doConnect(null);
-      });
-      expect(error.message).toBe('invalid substrate address null');
       expect(await service.isApiConnected()).toBeFalsy();
       mock.clear();
     });

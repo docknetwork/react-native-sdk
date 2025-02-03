@@ -21,8 +21,7 @@ import {EventEmitter} from 'events';
 import {Logger} from '../../core/logger';
 import {once} from '../../modules/event-manager';
 import {utilCryptoService} from '../util-crypto';
-import {InitParams, validation} from './configs';
-
+import {InitParams} from './configs';
 
 // Create a resolver in order to lookup DIDs for verifying
 export const universalResolverUrl = 'https://uniresolver.io';
@@ -41,6 +40,7 @@ export class BlockchainService {
   cheqdApi;
   isBlockchainReady = false;
   resolver: any;
+  dockEnabled: boolean;
   static Events = {
     BLOCKCHAIN_READY: 'blockchain-ready',
   };
@@ -90,8 +90,6 @@ export class BlockchainService {
    * @returns
    */
   async init(params: InitParams) {
-    validation.init(params);
-
     if (this.dock.isConnected) {
       await this.dock.disconnect();
     }
@@ -102,9 +100,15 @@ export class BlockchainService {
 
     Logger.info(`Attempt to initialized substrate at: ${params.address}`);
 
-    await this.dock.init(params);
+    this.dockEnabled = !!params.substrateUrl;
 
-    Logger.info(`Substrate initialized at: ${params.address}`);
+    if (this.dockEnabled) {
+      await this.dock.init({
+        address: params.substrateUrl,
+      });
+      Logger.info(`Substrate initialized at: ${params.address}`);
+    }
+
 
     if (params?.cheqdApiUrl) {
       const checkdApiUrl = params?.cheqdApiUrl;
