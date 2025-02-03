@@ -1,9 +1,5 @@
 import {NetworkManager} from '../../modules/network-manager';
-import {
-  assertRpcService,
-  getPromiseError,
-  mockDockSdkConnection,
-} from '../test-utils';
+import {assertRpcService, mockDockSdkConnection} from '../test-utils';
 import {validation} from './configs';
 import {blockchainService as service} from './service';
 import {BlockchainServiceRpc} from './service-rpc';
