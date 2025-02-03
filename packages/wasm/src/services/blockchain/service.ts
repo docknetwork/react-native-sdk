@@ -172,13 +172,18 @@ export class BlockchainService {
    * @returns
    */
   async disconnect() {
+    let result;
+
     if (this.dockEnabled) {
-      await this.dock.disconnect();
+      result = await this.dock.disconnect();
     }
 
-    const result = await this.cheqdApi.disconnect();
+    if (this.cheqdApi && this.cheqdApi.isInitialized()) {
+      result = await this.cheqdApi.disconnect();
+    }
 
     this._setBlockchainReady(false);
+
     return result;
   }
 
