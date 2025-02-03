@@ -19,7 +19,7 @@ export const SUBSTRATE_NETWORKS : Record<NetworkId, NetworkInfo> = {
   },
   testnet: {
     name: 'Dock PoS Testnet',
-    substrateUrl: 'wss://knox-1.dock.io',
+    substrateUrl: null,
     addressPrefix: 21,
     cheqdApiUrl: 'https://testnet.cheqd.docknode.io/',
   },

@@ -56,7 +56,7 @@ export async function setBlockchainNetwork(wallet: IWallet) {
 
   blockchainService
     .init({
-      address: networkConfigs.substrateUrl,
+      substrateUrl: networkConfigs.substrateUrl,
       cheqdApiUrl: networkConfigs.cheqdApiUrl,
       networkId: network.id,
       cheqdMnemonic: cheqdMnemonicDoc.value,
