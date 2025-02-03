@@ -34,15 +34,5 @@ describe('DockService', () => {
       expect(await service.isApiConnected()).toBeFalsy();
       mock.clear();
     });
-
-    it('throw error for invalid address', async () => {
-      const mock = mockDockSdkConnection();
-      const error = await getPromiseError(async () => {
-        await doConnect(null);
-      });
-      expect(error.message).toBe('invalid substrate address null');
-      expect(await service.isApiConnected()).toBeFalsy();
-      mock.clear();
-    });
   });
 });

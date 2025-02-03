@@ -135,9 +135,7 @@ export function pexToBounds(
       }
 
       if (!attributeName) {
-        throw new Error(
-          'Invalid "path" property, expected JSONPath into the credential',
-        );
+        return;
       }
 
       const schemaPath = `$.properties.${attributeName.replaceAll(
