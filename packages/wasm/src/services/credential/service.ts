@@ -414,7 +414,9 @@ class CredentialService {
         const chainModule =
           credential.credentialStatus.id.indexOf('dock:accumulator') === 0
             ? blockchainService.modules.accumulator.modules[0]
-            : blockchainService.modules.accumulator.modules[1];
+            : blockchainService.modules.accumulator.modules[
+                blockchainService.modules.accumulator.modules.length - 1
+              ];
         const accumulatorModuleClass = chainModule.constructor;
 
         presentation.presBuilder.addAccumInfoForCredStatus(

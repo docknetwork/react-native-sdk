@@ -60,7 +60,11 @@ export class BlockchainService {
     this.didModule = new DockDIDModule(this.dock);
     this.dockModules = new DockCoreModules(this.dock);
     this.cheqdModules = new CheqdCoreModules(this.cheqdApi);
-    this.modules = new MultiApiCoreModules([this.dockModules, this.cheqdModules]);
+    this.modules = new MultiApiCoreModules(
+      this.dockEnabled
+        ? [this.dockModules, this.cheqdModules]
+        : [this.cheqdModules],
+    );
     this.emitter = new EventEmitter();
     this.resolver = this.createDIDResolver();
   }
@@ -109,6 +113,11 @@ export class BlockchainService {
       Logger.info(`Substrate initialized at: ${params.address}`);
     }
 
+    this.modules = new MultiApiCoreModules(
+      this.dockEnabled
+        ? [this.dockModules, this.cheqdModules]
+        : [this.cheqdModules],
+    );
 
     if (params?.cheqdApiUrl) {
       const checkdApiUrl = params?.cheqdApiUrl;
@@ -163,8 +172,18 @@ export class BlockchainService {
    * @returns
    */
   async disconnect() {
-    const result = await this.dock.disconnect();
+    let result;
+
+    if (this.dockEnabled) {
+      result = await this.dock.disconnect();
+    }
+
+    if (this.cheqdApi && this.cheqdApi.isInitialized()) {
+      result = await this.cheqdApi.disconnect();
+    }
+
     this._setBlockchainReady(false);
+
     return result;
   }
 
