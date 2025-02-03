@@ -5,7 +5,7 @@ export const EPSILON_INT = 1;
 
 export const MAX_DATE_PLACEHOLDER = 884541351600000;
 export const MIN_DATE_PLACEHOLDER = -17592186044415;
-export const MAX_INTEGER = 100 ** 5;
+export const MAX_INTEGER = 100 ** 9;
 export const MIN_INTEGER = -4294967295;
 export const MAX_NUMBER = 100 ** 5;
 export const MIN_NUMBER = -4294967294;
