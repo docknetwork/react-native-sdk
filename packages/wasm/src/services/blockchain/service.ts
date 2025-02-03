@@ -23,7 +23,6 @@ import {once} from '../../modules/event-manager';
 import {utilCryptoService} from '../util-crypto';
 import {InitParams, validation} from './configs';
 
-
 // Create a resolver in order to lookup DIDs for verifying
 export const universalResolverUrl = 'https://uniresolver.io';
 
