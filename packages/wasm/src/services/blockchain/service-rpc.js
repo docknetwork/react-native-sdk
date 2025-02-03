@@ -27,7 +27,6 @@ export class BlockchainServiceRpc extends RpcService {
    *
    */
   init(params: InitParams): Promise<any> {
-    validation.init(params);
     return this.call('init', params);
   }
 

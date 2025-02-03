@@ -103,11 +103,11 @@ export class BlockchainService {
 
     Logger.info(`Attempt to initialized substrate at: ${params.address}`);
 
-    this.dockEnabled = !!params.substrateAddress;
+    this.dockEnabled = !!params.substrateUrl;
 
     if (dockEnabled) {
       await this.dock.init({
-        address: params.substrateAddress,
+        address: params.substrateUrl,
       });
     }
 
