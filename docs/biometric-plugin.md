@@ -68,7 +68,7 @@ export const biometricsPluginConfigs: BiometricsPluginConfigs = {
       did: "<The issuer DID>",
       apiKey:
         "<CERTS-API-KEY>",
-      apiUrl: "https://api-testnet.dock.io or https://api.dock.io",
+      apiUrl: "https://api-testnet.truvera.io or https://api.truvera.io",
     },
   ],
 };

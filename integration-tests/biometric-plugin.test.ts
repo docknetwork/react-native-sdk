@@ -41,7 +41,7 @@ const configs = {
       networkId: 'testnet',
       did: 'did:dock:5HLbQLSmirNuZVRsdWKbsgdajw9QTGzSFJABSVzMT5EBj5sb',
       apiKey: process.env.SALES_CERTS_API_KEY,
-      apiUrl: 'https://api-testnet.dock.io',
+      apiUrl: 'https://api-testnet.truvera.io',
     },
   ],
 };
