@@ -15,7 +15,7 @@ export const SUBSTRATE_NETWORKS : Record<NetworkId, NetworkInfo> = {
     name: 'Dock PoS Mainnet',
     substrateUrl: ['wss://mainnet-node.dock.io', 'wss://mainnet-node-2.dock.io'],
     addressPrefix: 22,
-    cheqdApiUrl: 'https://cheqd-mainnet-rpc.autostake.com/',
+    cheqdApiUrl: 'https://mainnet.cheqd.docknode.io/',
   },
   testnet: {
     name: 'Dock PoS Testnet',
