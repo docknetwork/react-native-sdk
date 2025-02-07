@@ -64,7 +64,7 @@ export const getWitnessDetails = async (credential, _membershipWitness) => {
       registryId,
       encodedRevId,
       membershipWitness,
-      queriedAccumulator.created,
+      blockNo,
       queriedAccumulator.lastModified,
     );
   } catch (err) {
