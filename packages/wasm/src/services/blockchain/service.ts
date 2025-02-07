@@ -12,6 +12,7 @@ import {
   WILDCARD,
 } from '@docknetwork/credential-sdk/resolver';
 import {initializeWasm} from '@docknetwork/crypto-wasm-ts/lib/index';
+
 import {DockAPI} from '@docknetwork/dock-blockchain-api';
 import {
   DockCoreModules,
@@ -26,6 +27,7 @@ import {InitParams} from './configs';
 // Create a resolver in order to lookup DIDs for verifying
 export const universalResolverUrl = 'https://uniresolver.io';
 
+export {DockAccumulatorId} from '@docknetwork/credential-sdk/types';
 class AnyDIDResolver extends ResolverRouter {
   method = WILDCARD;
 }
@@ -144,11 +146,12 @@ export class BlockchainService {
           url: checkdApiUrl,
           network: cheqdNetworkId,
         });
+        Logger.info(`Cheqd initialized at: ${checkdApiUrl}`);
+
       } catch (err) {
         Logger.error(`Failed to initialize cheqd at: ${checkdApiUrl}`);
       }
 
-      Logger.info(`Cheqd initialized at: ${checkdApiUrl}`);
     }
 
     this.address = params.address;

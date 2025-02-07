@@ -10,11 +10,20 @@ import {
   BasicCredentialMainnet,
   UniversityDegreeTestnet,
 } from './data/credentials';
-import {cleanup, closeWallet, createNewWallet, getWallet, setupEnvironent} from './helpers';
+import {
+  cleanup,
+  closeWallet,
+  createNewWallet,
+  getCredentialProvider,
+  getWallet,
+  setupEnvironent,
+} from './helpers';
 import {credentialService} from '@docknetwork/wallet-sdk-wasm/src/services/credential/service';
 import {IWallet} from '@docknetwork/wallet-sdk-core/src/types';
 import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
-import {API_MOCK_DISABLED} from "@docknetwork/wallet-sdk-wasm/src/services/test-utils";
+import {API_MOCK_DISABLED} from '@docknetwork/wallet-sdk-wasm/src/services/test-utils';
+import axios from 'axios';
+import {test} from '@docknetwork/wallet-sdk-wasm/src/services/blockchain/revocation';
 
 const allCredentials = [
   BasicCredential,
@@ -25,7 +34,7 @@ const allCredentials = [
 
 describe('Credentials', () => {
   let wallet;
-  beforeEach(async () => {
+  beforeAll(async () => {
     await cleanup();
     wallet = await getWallet();
   });
@@ -39,55 +48,20 @@ describe('Credentials', () => {
   });
 
   describe('credential status', () => {
-    // TODO: Fix this test
-    // it('expect testnet credential to have "Valid" status', async () => {
-    //   // There is a ticket to remove the API mock and spinup a substrate node for integration tests in CI
-    //   // For now these tests can be used for local testing, as it depends on the live APIs
-    //   if (!API_MOCK_DISABLED) {
-    //     return;
-    //   }
+    it('should get status of bbs revokable credential', async () => {
+      const credentialUrl =
+        'https://creds-testnet.truvera.io/317c361641e7311663329a7fffff13a14f161832a9590acfd5d80a966c1615eb';
+      const password = 'test';
+      const {data: credential} = await axios.get(
+        `${credentialUrl}?p=${btoa(password)}`,
+      );
 
-    //   await wallet.setNetwork('testnet');
-    //   const result = await credentialService.verifyCredential({
-    //     credential: UniversityDegreeCredential,
-    //   });
+      await getCredentialProvider().addCredential(credential);
 
-    //   expect(result.verified).toBeTruthy();
-    // });
+      const result: any = await getCredentialProvider().isValid(credential);
 
-    it('expect mainnet credential to have "Invalid" status on tesnet', async () => {
-      if (!API_MOCK_DISABLED) {
-        return;
-      }
-
-      await wallet.setNetwork('testnet');
-      const result = await credentialService.verifyCredential({
-        credential: BasicCredentialMainnet,
-      });
-
-      expect(result.verified).toBeFalsy();
+      expect(result.status).toBe('verified');
     });
-    // TODO: Fix this test
-    // it('expect to switch network from testnet to mainnet and get valid status on mainnet credential', async () => {
-    //   if (!API_MOCK_DISABLED) {
-    //     return;
-    //   }
-
-    //   // the default network is testnet
-    //   // switch to mainnet
-    //   await wallet.setNetwork('mainnet');
-
-    //   // Wait for network to be updated
-    //   await new Promise(resolve => {
-    //     wallet.eventManager.on(WalletEvents.networkConnected, resolve);
-    //   });
-
-    //   const result = await credentialService.verifyCredential({
-    //     credential: BasicCredentialMainnet,
-    //   });
-
-    //   expect(result.verified).toBeTruthy();
-    // });
   });
 
   afterAll(() => closeWallet());
