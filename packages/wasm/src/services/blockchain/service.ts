@@ -24,10 +24,12 @@ import {once} from '../../modules/event-manager';
 import {utilCryptoService} from '../util-crypto';
 import {InitParams} from './configs';
 
-// Create a resolver in order to lookup DIDs for verifying
-export const universalResolverUrl = 'https://uniresolver.io';
+export const universalResolverUrl = 'https://uniresolver.truvera.io';
 
-export {DockAccumulatorId} from '@docknetwork/credential-sdk/types';
+export {
+  DockAccumulatorId,
+  CheqdAccumulatorId,
+} from '@docknetwork/credential-sdk/types';
 class AnyDIDResolver extends ResolverRouter {
   method = WILDCARD;
 }

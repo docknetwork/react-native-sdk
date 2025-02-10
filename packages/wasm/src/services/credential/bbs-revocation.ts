@@ -9,7 +9,7 @@ import {
 } from '@docknetwork/crypto-wasm-ts';
 
 import {hexToU8a} from '@polkadot/util';
-import {blockchainService, DockAccumulatorId} from '../blockchain/service';
+import {blockchainService, DockAccumulatorId, CheqdAccumulatorId} from '../blockchain/service';
 
 const trimHexID = id => {
   if (id.substr(0, 2) !== '0x') {
