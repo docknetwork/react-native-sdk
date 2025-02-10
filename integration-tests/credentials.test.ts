@@ -49,7 +49,7 @@ describe('Credentials', () => {
   });
 
   describe('credential status', () => {
-    it('should get status of bbs revokable credential', async () => {
+    it('should get status of bbs revokable credential - dock issuer', async () => {
       const credentialUrl =
         'https://creds-testnet.truvera.io/317c361641e7311663329a7fffff13a14f161832a9590acfd5d80a966c1615eb';
       const password = 'test';
@@ -64,7 +64,7 @@ describe('Credentials', () => {
       expect(result.status).toBe('verified');
     });
 
-    it('should get status of bbs revokable credential', async () => {
+    it('should get status of bbs revokable credential - cheqd issuer', async () => {
       await getCredentialProvider().addCredential(CheqdRevocationCredential);
 
       const result: any = await getCredentialProvider().isValid(
