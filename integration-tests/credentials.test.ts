@@ -24,6 +24,7 @@ import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
 import {API_MOCK_DISABLED} from '@docknetwork/wallet-sdk-wasm/src/services/test-utils';
 import axios from 'axios';
 import {test} from '@docknetwork/wallet-sdk-wasm/src/services/blockchain/revocation';
+import {CheqdRevocationCredential} from './data/credentials/cheqd-credentials';
 
 const allCredentials = [
   BasicCredential,
@@ -59,6 +60,16 @@ describe('Credentials', () => {
       await getCredentialProvider().addCredential(credential);
 
       const result: any = await getCredentialProvider().isValid(credential);
+
+      expect(result.status).toBe('verified');
+    });
+
+    it('should get status of bbs revokable credential', async () => {
+      await getCredentialProvider().addCredential(CheqdRevocationCredential);
+
+      const result: any = await getCredentialProvider().isValid(
+        CheqdRevocationCredential,
+      );
 
       expect(result.status).toBe('verified');
     });

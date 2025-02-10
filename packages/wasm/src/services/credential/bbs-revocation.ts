@@ -9,7 +9,11 @@ import {
 } from '@docknetwork/crypto-wasm-ts';
 
 import {hexToU8a} from '@polkadot/util';
-import {blockchainService, DockAccumulatorId, CheqdAccumulatorId} from '../blockchain/service';
+import {
+  blockchainService,
+  DockAccumulatorId,
+  CheqdAccumulatorId,
+} from '../blockchain/service';
 
 const trimHexID = id => {
   if (id.substr(0, 2) !== '0x') {
@@ -60,9 +64,14 @@ export const getWitnessDetails = async (credential, _membershipWitness) => {
   const membershipWitness = new VBMembershipWitness(hexToU8a(witness));
 
   try {
+    const accumulatorId =
+      credentialStatus.id.indexOf('accumulator:dock:') === 0
+        ? DockAccumulatorId.from(credential.credentialStatus.id)
+        : CheqdAccumulatorId.from(credential.credentialStatus.id);
+
     const history =
       await blockchainService.modules.accumulator.modules[0].cheqdOnly.accumulatorHistory(
-        DockAccumulatorId.from(credential.credentialStatus.id),
+        accumulatorId,
       );
 
     const blockNoIndex = history.updates.findIndex(
