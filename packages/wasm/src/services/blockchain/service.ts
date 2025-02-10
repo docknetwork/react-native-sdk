@@ -26,13 +26,36 @@ import {InitParams} from './configs';
 
 export const universalResolverUrl = 'https://uniresolver.truvera.io';
 
-export {
-  DockAccumulatorId,
+import {
+  CheqdAccumulatorCommon,
   CheqdAccumulatorId,
+  CheqdAccumulatorPublicKey,
+  DockAccumulatorCommon,
+  DockAccumulatorId,
+  DockAccumulatorPublicKey,
 } from '@docknetwork/credential-sdk/types';
+
 class AnyDIDResolver extends ResolverRouter {
   method = WILDCARD;
 }
+
+const {AccumulatorModule: AccumulatorModuleDock} = DockCoreModules;
+const {AccumulatorModule: AccumulatorModuleCheqd} = CheqdCoreModules;
+
+const TYPES_FOR_DID = {
+  dock: {
+    PublicKey: DockAccumulatorPublicKey,
+    AccumulatorId: DockAccumulatorId,
+    AccumulatorCommon: DockAccumulatorCommon,
+    AccumulatorModule: AccumulatorModuleDock,
+  },
+  cheqd: {
+    PublicKey: CheqdAccumulatorPublicKey,
+    AccumulatorId: CheqdAccumulatorId,
+    AccumulatorCommon: CheqdAccumulatorCommon,
+    AccumulatorModule: AccumulatorModuleCheqd,
+  },
+};
 
 /**
  *
@@ -71,6 +94,19 @@ export class BlockchainService {
     );
     this.emitter = new EventEmitter();
     this.resolver = this.createDIDResolver();
+  }
+
+  getTypesForDIDOrAccumulator(did) {
+    const didType = did.split(':')[1];
+    const chainDidType =
+      !this.dock && didType === 'dock' ? 'cheqd' : didType;
+    const types = TYPES_FOR_DID[chainDidType];
+    if (!types) {
+      throw new APIError(
+        `Unable to use DID type ${didType} for this operation`,
+      );
+    }
+    return types;
   }
 
   /**
@@ -149,11 +185,9 @@ export class BlockchainService {
           network: cheqdNetworkId,
         });
         Logger.info(`Cheqd initialized at: ${checkdApiUrl}`);
-
       } catch (err) {
         Logger.error(`Failed to initialize cheqd at: ${checkdApiUrl}`);
       }
-
     }
 
     this.address = params.address;
