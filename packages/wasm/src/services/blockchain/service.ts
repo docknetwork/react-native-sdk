@@ -12,6 +12,7 @@ import {
   WILDCARD,
 } from '@docknetwork/credential-sdk/resolver';
 import {initializeWasm} from '@docknetwork/crypto-wasm-ts/lib/index';
+
 import {DockAPI} from '@docknetwork/dock-blockchain-api';
 import {
   DockCoreModules,
@@ -23,12 +24,38 @@ import {once} from '../../modules/event-manager';
 import {utilCryptoService} from '../util-crypto';
 import {InitParams} from './configs';
 
-// Create a resolver in order to lookup DIDs for verifying
-export const universalResolverUrl = 'https://uniresolver.io';
+export const universalResolverUrl = 'https://uniresolver.truvera.io';
+
+import {
+  CheqdAccumulatorCommon,
+  CheqdAccumulatorId,
+  CheqdAccumulatorPublicKey,
+  DockAccumulatorCommon,
+  DockAccumulatorId,
+  DockAccumulatorPublicKey,
+} from '@docknetwork/credential-sdk/types';
 
 class AnyDIDResolver extends ResolverRouter {
   method = WILDCARD;
 }
+
+const {AccumulatorModule: AccumulatorModuleDock} = DockCoreModules;
+const {AccumulatorModule: AccumulatorModuleCheqd} = CheqdCoreModules;
+
+const TYPES_FOR_DID = {
+  dock: {
+    PublicKey: DockAccumulatorPublicKey,
+    AccumulatorId: DockAccumulatorId,
+    AccumulatorCommon: DockAccumulatorCommon,
+    AccumulatorModule: AccumulatorModuleDock,
+  },
+  cheqd: {
+    PublicKey: CheqdAccumulatorPublicKey,
+    AccumulatorId: CheqdAccumulatorId,
+    AccumulatorCommon: CheqdAccumulatorCommon,
+    AccumulatorModule: AccumulatorModuleCheqd,
+  },
+};
 
 /**
  *
@@ -67,6 +94,20 @@ export class BlockchainService {
     );
     this.emitter = new EventEmitter();
     this.resolver = this.createDIDResolver();
+  }
+
+  getTypesForDIDOrAccumulator(didOrRegistryId) {
+    const didType = didOrRegistryId
+      .replace('dock:accumulator:', 'accumulator:dock:')
+      .split(':')[1];
+    const chainDidType = !this.dock && didType === 'dock' ? 'cheqd' : didType;
+    const types = TYPES_FOR_DID[chainDidType];
+    if (!types) {
+      throw new APIError(
+        `Unable to use DID type ${didType} for this operation`,
+      );
+    }
+    return types;
   }
 
   /**
@@ -144,11 +185,10 @@ export class BlockchainService {
           url: checkdApiUrl,
           network: cheqdNetworkId,
         });
+        Logger.info(`Cheqd initialized at: ${checkdApiUrl}`);
       } catch (err) {
         Logger.error(`Failed to initialize cheqd at: ${checkdApiUrl}`);
       }
-
-      Logger.info(`Cheqd initialized at: ${checkdApiUrl}`);
     }
 
     this.address = params.address;

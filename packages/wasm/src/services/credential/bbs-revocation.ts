@@ -9,7 +9,9 @@ import {
 } from '@docknetwork/crypto-wasm-ts';
 
 import {hexToU8a} from '@polkadot/util';
-import {blockchainService} from '../blockchain/service';
+import {
+  blockchainService,
+} from '../blockchain/service';
 
 const trimHexID = id => {
   if (id.substr(0, 2) !== '0x') {
@@ -60,13 +62,31 @@ export const getWitnessDetails = async (credential, _membershipWitness) => {
   const membershipWitness = new VBMembershipWitness(hexToU8a(witness));
 
   try {
-    await blockchainService.modules.accumulator.updateWitness(
-      registryId,
-      encodedRevId,
-      membershipWitness,
-      queriedAccumulator.created,
-      queriedAccumulator.lastModified,
+    const credentialStatusId = credential.credentialStatus.id;
+    const accumulatorId = blockchainService
+      .getTypesForDIDOrAccumulator(credentialStatusId)
+      .AccumulatorId.from(credentialStatusId);
+
+    const history =
+      await blockchainService.modules.accumulator.accumulatorHistory(
+        accumulatorId,
+      );
+
+    const blockNoIndex = history.updates.findIndex(
+      update => update.id.toString() === blockNo,
     );
+
+    const nextBlockNo = history.updates[blockNoIndex + 1]?.id?.toString();
+
+    if (nextBlockNo) {
+      await blockchainService.modules.accumulator.updateWitness(
+        registryId,
+        encodedRevId,
+        membershipWitness,
+        nextBlockNo,
+        queriedAccumulator.lastModified,
+      );
+    }
   } catch (err) {
     console.error(err);
   }
