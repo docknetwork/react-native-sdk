@@ -96,10 +96,11 @@ export class BlockchainService {
     this.resolver = this.createDIDResolver();
   }
 
-  getTypesForDIDOrAccumulator(did) {
-    const didType = did.split(':')[1];
-    const chainDidType =
-      !this.dock && didType === 'dock' ? 'cheqd' : didType;
+  getTypesForDIDOrAccumulator(didOrRegistryId) {
+    const didType = didOrRegistryId
+      .replace('dock:accumulator:', 'accumulator:dock:')
+      .split(':')[1];
+    const chainDidType = !this.dock && didType === 'dock' ? 'cheqd' : didType;
     const types = TYPES_FOR_DID[chainDidType];
     if (!types) {
       throw new APIError(
