@@ -126,6 +126,13 @@ export async function initializeCloudWallet({
   dataStore.events.on(DataStoreEvents.DocumentDeleted, removeDocumentHandler);
   dataStore.events.on(DataStoreEvents.DocumentUpdated, updateDocumentHandler);
 
+
+  function unsubscribeEventListeners() {
+    dataStore.events.off(DataStoreEvents.DocumentCreated, addDocumentHandler);
+    dataStore.events.off(DataStoreEvents.DocumentDeleted, removeDocumentHandler);
+    dataStore.events.off(DataStoreEvents.DocumentUpdated, updateDocumentHandler);
+  }
+
   async function getSyncMarkerDiff() {
     const edvSyncMaker = await findDocumentByContentId(SYNC_MARKER_TYPE);
     const localSyncMarker = await dataStore.documents.getDocumentById(
@@ -181,5 +188,6 @@ export async function initializeCloudWallet({
     updateDocumentByContentId,
     waitForEdvIdle,
     pullDocuments,
+    unsubscribeEventListeners,
   };
 }

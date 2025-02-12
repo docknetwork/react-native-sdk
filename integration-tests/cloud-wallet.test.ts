@@ -1,6 +1,6 @@
 import {IWallet} from '@docknetwork/wallet-sdk-core/lib/types';
 import {closeWallet, createNewWallet} from './helpers/wallet-helpers';
-import {DataStore} from '@docknetwork/wallet-sdk-data-store/src/types';
+import {DataStore, DataStoreEvents} from '@docknetwork/wallet-sdk-data-store/src/types';
 import {
   SYNC_MARKER_TYPE,
   initializeCloudWallet,
@@ -20,6 +20,7 @@ describe('Cloud wallet', () => {
   let pullDocuments: any;
   let getSyncMarkerDiff: any;
   let clearEdvDocuments: any;
+  let unsubscribeEventListeners: any;
   let wallet: IWallet;
 
   beforeAll(async () => {
@@ -40,6 +41,7 @@ describe('Cloud wallet', () => {
       pullDocuments,
       getSyncMarkerDiff,
       clearEdvDocuments,
+      unsubscribeEventListeners,
     } = await initializeCloudWallet({
       dataStore,
       edvUrl: EDV_URL,
@@ -146,6 +148,19 @@ describe('Cloud wallet', () => {
 
     const syncMarkerDiff = await getSyncMarkerDiff();
     expect(syncMarkerDiff > 0).toBeTruthy();
+  });
+
+  // This test should be run last as it unsubscribes from all event listeners
+  it('should unsubscribe from all events listeners', async () => {
+    expect(dataStore.events.listeners(DataStoreEvents.DocumentCreated)).toHaveLength(1);
+    expect(dataStore.events.listeners(DataStoreEvents.DocumentDeleted)).toHaveLength(1);
+    expect(dataStore.events.listeners(DataStoreEvents.DocumentUpdated)).toHaveLength(1);
+
+    unsubscribeEventListeners();
+
+    expect(dataStore.events.listeners(DataStoreEvents.DocumentCreated)).toHaveLength(0);
+    expect(dataStore.events.listeners(DataStoreEvents.DocumentDeleted)).toHaveLength(0);
+    expect(dataStore.events.listeners(DataStoreEvents.DocumentUpdated)).toHaveLength(0);
   });
 
   afterAll(() => closeWallet());
