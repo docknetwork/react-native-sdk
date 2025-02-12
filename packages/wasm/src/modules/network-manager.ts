@@ -13,7 +13,7 @@ export type NetworkId = 'mainnet' | 'testnet' | 'local' | 'custom';
 export const SUBSTRATE_NETWORKS : Record<NetworkId, NetworkInfo> = {
   mainnet: {
     name: 'Dock PoS Mainnet',
-    substrateUrl: ['wss://mainnet-node.dock.io', 'wss://mainnet-node-2.dock.io'],
+    substrateUrl: null,
     addressPrefix: 22,
     cheqdApiUrl: 'https://mainnet.cheqd.docknode.io/',
   },
