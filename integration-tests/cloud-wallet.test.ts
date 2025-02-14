@@ -114,6 +114,54 @@ describe('Cloud wallet', () => {
     expect(updatedEdvDocument.content.data).toBe('updated');
   });
 
+  it('should handle concurrent updates to the same document sequentially', async () => {
+    const doc = {
+      type: 'test',
+      data: 'initial',
+    };
+    const {id: addedDocId} = await wallet.addDocument(doc);
+    await waitForEdvIdle();
+
+    await wallet.updateDocument({
+      id: addedDocId,
+      ...doc,
+      data: 'updated-1',
+    });
+
+    await wallet.updateDocument({
+      id: addedDocId,
+      ...doc,
+      data: 'updated-2',
+    });
+
+    await waitForEdvIdle();
+
+    const updatedEdvDocument = await findDocumentByContentId(addedDocId);
+    expect(updatedEdvDocument.content.data).toBe('updated-2');
+  });
+
+  it('should handle updating and deleting a document', async () => {
+    const doc = {
+      type: 'test',
+      data: 'initial',
+    };
+    const {id: addedDocId} = await wallet.addDocument(doc);
+    await waitForEdvIdle();
+
+    await wallet.updateDocument({
+      id: addedDocId,
+      ...doc,
+      data: 'updated',
+    });
+
+    await wallet.removeDocument(addedDocId);
+
+    await waitForEdvIdle();
+
+    const removedEdvDocument = await findDocumentByContentId(addedDocId);
+    expect(removedEdvDocument).toBeUndefined();
+  });
+
   it('should remove a document from the wallet and see it removed from the EDV', async () => {
     const doc = {
       type: 'test',
