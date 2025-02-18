@@ -7,6 +7,17 @@ import {edvService} from '@docknetwork/wallet-sdk-wasm/src/services/edv';
 
 export const SYNC_MARKER_TYPE = 'SyncMarkerDocument';
 
+interface QueuedOperation {
+  operation: () => Promise<any>;
+  resolve: (value: any) => void;
+  reject: (error: any) => void;
+}
+
+interface DocumentQueue {
+  operations: QueuedOperation[];
+  isProcessing: boolean;
+}
+
 export async function initializeCloudWallet({
   dataStore,
   edvUrl,
@@ -31,15 +42,73 @@ export async function initializeCloudWallet({
     authKey
   });
 
-  let pendingOperations = 0;
-  let pendingOperationsResolvers = [];
+  const documentQueues = new Map<string, DocumentQueue>();
+  const activeOperations = new Set<Promise<any>>();
 
-  function waitForEdvIdle() {
-    if (pendingOperations === 0) {
-      return Promise.resolve();
+  async function processQueue(docId: string) {
+    const queue = documentQueues.get(docId);
+    if (!queue || queue.isProcessing) {
+      return;
     }
-    return new Promise(resolve => {
-      pendingOperationsResolvers.push(resolve);
+
+    queue.isProcessing = true;
+
+    while (queue.operations.length > 0) {
+      const item = queue.operations.shift();
+      if (!item) {
+        continue;
+      }
+
+      let operationPromise: Promise<any>;
+      try {
+        operationPromise = item.operation();
+        activeOperations.add(operationPromise);
+
+        const result = await operationPromise;
+        item.resolve(result);
+      } catch (error) {
+        item.reject(error);
+        logger.error(`Operation failed for document ${docId}: ${error.message}`);
+      } finally {
+        activeOperations.delete(operationPromise);
+      }
+    }
+
+    queue.isProcessing = false;
+    documentQueues.delete(docId);
+  }
+
+  async function enqueueOperation(docId: string, operation: () => Promise<any>): Promise<any> {
+    return new Promise((resolve, reject) => {
+      let queue = documentQueues.get(docId);
+      if (!queue) {
+        queue = { operations: [], isProcessing: false };
+        documentQueues.set(docId, queue);
+      }
+
+      queue.operations.push({ operation, resolve, reject });
+
+      // Ensure processQueue runs (even if it was already running)
+      if (!queue.isProcessing) {
+        setTimeout(() => processQueue(docId), 0);
+      }
+    });
+  }
+
+  function waitForEdvIdle(): Promise<void> {
+    return new Promise((resolve) => {
+      const checkIdle = () => {
+        const hasActiveOperations = activeOperations.size > 0;
+        const hasQueuedOperations = Array.from(documentQueues.values()).some(queue => queue.operations.length > 0);
+
+        if (!hasActiveOperations && !hasQueuedOperations) {
+          resolve();
+        } else {
+          setTimeout(checkIdle, 100); // Re-check until everything is idle
+        }
+      };
+
+      checkIdle();
     });
   }
 
@@ -73,58 +142,56 @@ export async function initializeCloudWallet({
   }
 
   async function addDocumentHandler(content) {
-    pendingOperations++;
-    try {
-      logger.debug(`Adding document to EDV: ${content.id}`);
-      await edvService.insert({
-        document: {
-          content: content,
-        },
-      });
-      logger.debug(`Document added to EDV: ${content.id}`);
-    } catch(err) {
-      console.error('Unable to add document', content);
-    } finally {
-      pendingOperations--;
-      if (pendingOperations === 0) {
-        pendingOperationsResolvers.forEach(resolve => resolve());
-        pendingOperationsResolvers = [];
+    return enqueueOperation(content.id, async () => {
+      try {
+        logger.debug(`Adding document to EDV: ${content.id}`);
+        await edvService.insert({
+          document: {
+            content: content,
+          },
+        });
+        logger.debug(`Document added to EDV: ${content.id}`);
+      } catch(error) {
+        logger.error(`Unable to add document ${content.id}: ${error.message}`);
       }
-    }
+    });
   }
 
   async function removeDocumentHandler(documentId) {
-    pendingOperations++;
-    try {
-      logger.debug(`Removing document from EDV: ${documentId}`);
-      const edvDocument = await findDocumentByContentId(documentId);
-      await edvService.delete({document: edvDocument});
-      logger.debug(`Document removed from EDV: ${documentId}`);
-    } finally {
-      pendingOperations--;
-      if (pendingOperations === 0) {
-        pendingOperationsResolvers.forEach(resolve => resolve());
-        pendingOperationsResolvers = [];
+    return enqueueOperation(documentId, async () => {
+      try {
+        logger.debug(`Removing document from EDV: ${documentId}`);
+        const edvDocument = await findDocumentByContentId(documentId);
+        await edvService.delete({document: edvDocument});
+        // TODO: Remove this once we figure out why the data store is empty after deleting a document
+        await pullDocuments();
+        logger.debug(`Document removed from EDV: ${documentId}`);
+      } catch (error) {
+        logger.error(`Unable to remove document ${documentId}: ${error.message}`);
       }
-    }
+    });
   }
 
   async function updateDocumentHandler(documentContent) {
-    pendingOperations++;
-    try {
-      await updateDocumentByContentId(documentContent);
-    } finally {
-      pendingOperations--;
-      if (pendingOperations === 0) {
-        pendingOperationsResolvers.forEach(resolve => resolve());
-        pendingOperationsResolvers = [];
+    return enqueueOperation(documentContent.id, async () => {
+      try {
+        await updateDocumentByContentId(documentContent);
+      } catch (error) {
+        logger.error(`Unable to update document ${documentContent.id}: ${error.message}`);
       }
-    }
+    });
   }
 
   dataStore.events.on(DataStoreEvents.DocumentCreated, addDocumentHandler);
   dataStore.events.on(DataStoreEvents.DocumentDeleted, removeDocumentHandler);
   dataStore.events.on(DataStoreEvents.DocumentUpdated, updateDocumentHandler);
+
+
+  function unsubscribeEventListeners() {
+    dataStore.events.off(DataStoreEvents.DocumentCreated, addDocumentHandler);
+    dataStore.events.off(DataStoreEvents.DocumentDeleted, removeDocumentHandler);
+    dataStore.events.off(DataStoreEvents.DocumentUpdated, updateDocumentHandler);
+  }
 
   async function getSyncMarkerDiff() {
     const edvSyncMaker = await findDocumentByContentId(SYNC_MARKER_TYPE);
@@ -181,5 +248,6 @@ export async function initializeCloudWallet({
     updateDocumentByContentId,
     waitForEdvIdle,
     pullDocuments,
+    unsubscribeEventListeners,
   };
 }

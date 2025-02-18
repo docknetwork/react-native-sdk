@@ -1,6 +1,6 @@
 import {IWallet} from '@docknetwork/wallet-sdk-core/lib/types';
 import {closeWallet, createNewWallet} from './helpers/wallet-helpers';
-import {DataStore} from '@docknetwork/wallet-sdk-data-store/src/types';
+import {DataStore, DataStoreEvents} from '@docknetwork/wallet-sdk-data-store/src/types';
 import {
   SYNC_MARKER_TYPE,
   initializeCloudWallet,
@@ -20,6 +20,7 @@ describe('Cloud wallet', () => {
   let pullDocuments: any;
   let getSyncMarkerDiff: any;
   let clearEdvDocuments: any;
+  let unsubscribeEventListeners: any;
   let wallet: IWallet;
 
   beforeAll(async () => {
@@ -40,6 +41,7 @@ describe('Cloud wallet', () => {
       pullDocuments,
       getSyncMarkerDiff,
       clearEdvDocuments,
+      unsubscribeEventListeners,
     } = await initializeCloudWallet({
       dataStore,
       edvUrl: EDV_URL,
@@ -112,6 +114,54 @@ describe('Cloud wallet', () => {
     expect(updatedEdvDocument.content.data).toBe('updated');
   });
 
+  it('should handle concurrent updates to the same document sequentially', async () => {
+    const doc = {
+      type: 'test',
+      data: 'initial',
+    };
+    const {id: addedDocId} = await wallet.addDocument(doc);
+    await waitForEdvIdle();
+
+    await wallet.updateDocument({
+      id: addedDocId,
+      ...doc,
+      data: 'updated-1',
+    });
+
+    await wallet.updateDocument({
+      id: addedDocId,
+      ...doc,
+      data: 'updated-2',
+    });
+
+    await waitForEdvIdle();
+
+    const updatedEdvDocument = await findDocumentByContentId(addedDocId);
+    expect(updatedEdvDocument.content.data).toBe('updated-2');
+  });
+
+  it('should handle updating and deleting a document', async () => {
+    const doc = {
+      type: 'test',
+      data: 'initial',
+    };
+    const {id: addedDocId} = await wallet.addDocument(doc);
+    await waitForEdvIdle();
+
+    await wallet.updateDocument({
+      id: addedDocId,
+      ...doc,
+      data: 'updated',
+    });
+
+    await wallet.removeDocument(addedDocId);
+
+    await waitForEdvIdle();
+
+    const removedEdvDocument = await findDocumentByContentId(addedDocId);
+    expect(removedEdvDocument).toBeUndefined();
+  });
+
   it('should remove a document from the wallet and see it removed from the EDV', async () => {
     const doc = {
       type: 'test',
@@ -146,6 +196,19 @@ describe('Cloud wallet', () => {
 
     const syncMarkerDiff = await getSyncMarkerDiff();
     expect(syncMarkerDiff > 0).toBeTruthy();
+  });
+
+  // This test should be run last as it unsubscribes from all event listeners
+  it('should unsubscribe from all events listeners', async () => {
+    expect(dataStore.events.listeners(DataStoreEvents.DocumentCreated)).toHaveLength(1);
+    expect(dataStore.events.listeners(DataStoreEvents.DocumentDeleted)).toHaveLength(1);
+    expect(dataStore.events.listeners(DataStoreEvents.DocumentUpdated)).toHaveLength(1);
+
+    unsubscribeEventListeners();
+
+    expect(dataStore.events.listeners(DataStoreEvents.DocumentCreated)).toHaveLength(0);
+    expect(dataStore.events.listeners(DataStoreEvents.DocumentDeleted)).toHaveLength(0);
+    expect(dataStore.events.listeners(DataStoreEvents.DocumentUpdated)).toHaveLength(0);
   });
 
   afterAll(() => closeWallet());
