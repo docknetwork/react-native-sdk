@@ -16,6 +16,8 @@ import {
   verifyPresentation,
   VerifiableCredential,
   getSuiteFromKeyDoc,
+  isAnoncredsProofType,
+  signPresentation,
 } from '@docknetwork/credential-sdk/vc';
 import {PEX} from '@sphereon/pex';
 import {keyDocToKeypair} from './utils';
@@ -53,6 +55,168 @@ export function isKvacCredential(credential) {
 
 export function isAnnonymousCredential(credential) {
   return isBBSPlusCredential(credential) || isKvacCredential(credential);
+}
+
+export async function createPresentationSDK(
+  vcs,
+  { challenge, domain, revealAttribs = [], witnesses = [], pexForBounds, presentationId, presentationOptions = {}, holderKey } = {}
+) {
+  const vcsArray = Array.isArray(vcs) ? vcs : [vcs];
+  // const resolver = new APIResolver();
+  console.log('vcArray', vcsArray.map(vc => vc.id));
+
+  const anoncredsVCs = vcsArray.filter(isAnoncredsProofType);
+  console.log('anoncredsVCs', anoncredsVCs.map(vc => vc.id));
+  const nonAnoncredsVCs = vcsArray.filter((vc) => !isAnoncredsProofType(vc));
+  const revealAttribsArray = Array.isArray(revealAttribs[0]) ? revealAttribs : [revealAttribs];
+
+  const presentation = new VerifiablePresentation(presentationId);
+
+  let pexRequiredAttributes = [];
+  if (pexForBounds?.request) {
+    pexRequiredAttributes = getPexRequiredAttributes(
+      pexForBounds.request,
+      vcsArray,
+    );
+  }
+  console.log('pexrequired');
+
+  await Promise.all(
+    anoncredsVCs.map(async (vc) => {
+      const presentationInstance = new Presentation();
+      console.log('create presentation');
+
+      const credIdx = vcsArray.indexOf(vc);
+      console.log('credIdx', credIdx, vc.id);
+      const revealAttribsForCredential = revealAttribsArray[credIdx] || [];
+      const witness = witnesses[credIdx];
+      const verifiableCredential = { ...vc };
+
+      const idx = await presentationInstance.addCredentialToPresent(verifiableCredential, {
+        resolver: blockchainService.resolver,
+      });
+      console.log('added credential');
+
+
+      const { credentialStatus } = verifiableCredential;
+      const isAccumulatorStatus =
+        credentialStatus && credentialStatus.type === 'DockVBAccumulator2022';
+      console.log('isAccumulatorStatus', isAccumulatorStatus, witness);
+      if (isAccumulatorStatus && witness) {
+        const details = await getWitnessDetails(verifiableCredential, witness);
+        console.log('got witness', details);
+
+        const chainModule =
+          verifiableCredential.credentialStatus.id.indexOf('dock:accumulator') === 0
+            ? blockchainService.modules.accumulator.modules[0]
+            : blockchainService.modules.accumulator.modules[
+                blockchainService.modules.accumulator.modules.length - 1
+              ];
+        const accumulatorModuleClass = chainModule.constructor;
+        console.log('details 123', details.pk, idx);
+
+        presentationInstance.presBuilder.addAccumInfoForCredStatus(
+          idx,
+          details.membershipWitness,
+          accumulatorModuleClass.accumulatedFromHex(
+            details.accumulator.accumulated,
+            AccumulatorType.VBPos,
+          ),
+          details.pk,
+          details.params,
+        );
+      }
+
+      let descriptorBounds = [];
+      if (pexForBounds && hasProvingKey(pexForBounds)) {
+        const { provingKey, provingKeyId } = await fetchProvingKey(pexForBounds);
+        try {
+          descriptorBounds = applyEnforceBounds({
+            builder: presentationInstance.presBuilder,
+            proofRequest: pexForBounds,
+            provingKeyId,
+            provingKey,
+            selectedCredentials: vcsArray,
+            credentialIdx: credIdx,
+          });
+          console.log('applied bounds');
+
+        } catch (e) {
+          console.error(e);
+          throw new Error(
+            `Unable to apply enforce bounds: ${e.message} - keyId: ${JSON.stringify(provingKeyId)}`
+          );
+        }
+      }
+
+      // If subject type exists, reveal that to prevent JSON-LD errors
+      const subjectType = verifiableCredential.credentialSubject.type;
+      if (subjectType) {
+        if (Array.isArray(subjectType)) {
+          await Promise.all(
+            subjectType.map((type, typeIdx) =>
+              presentationInstance.addAttributeToReveal(idx, [`credentialSubject.type.${typeIdx}`])
+            )
+          );
+        } else {
+          await presentationInstance.addAttributeToReveal(idx, ['credentialSubject.type']);
+        }
+      }
+      console.log('subject type');
+
+      const attributesToSkip = descriptorBounds[credIdx]
+        ? descriptorBounds[credIdx].map(bound => bound.attributeName)
+        : [];
+      const filteredAttributes = revealAttribsForCredential.filter(
+        attribute => !attributesToSkip.includes(attribute),
+      );
+      const _pexRequiredAttributes = pexRequiredAttributes[credIdx] || [];
+
+      _pexRequiredAttributes.forEach(attr => {
+        if (!filteredAttributes.includes(attr)) {
+          filteredAttributes.push(attr);
+        }
+      });
+
+      // Custom reveal attributes
+      if (Array.isArray(filteredAttributes) && filteredAttributes.length > 0) {
+        await Promise.all(
+          filteredAttributes.map((attrib) =>
+            presentationInstance.addAttributeToReveal(idx, [attrib])
+          )
+        );
+      }
+      console.log('error', credIdx, idx, filteredAttributes, attributesToSkip, descriptorBounds);
+      // Derive a W3C Verifiable Credential JSON from the above presentation
+      const credentials = await presentationInstance.deriveCredentials(presentationOptions);
+      console.log('derived credentials');
+      presentation.addCredentials(credentials);
+      console.log('added credentials');
+      return true;
+    }
+  ));
+  console.log('done with anoncreds');
+
+  // Any non-anonymous credentials should be added separately
+  if (nonAnoncredsVCs && nonAnoncredsVCs.length) {
+    presentation.addCredentials(nonAnoncredsVCs);
+  }
+
+  // Shouldnt sign with anonymous credentials
+  if (anoncredsVCs.length === 0) {
+    // Holder signing (optional)
+    const signedPres = await signPresentation(
+      presentation.toJSON(),
+      holderKey,
+      challenge,
+      domain,
+      blockchainService.resolver
+    );
+    return signedPres;
+  }
+  console.log('done with non-anoncreds');
+
+  return presentation.toJSON();
 }
 
 class CredentialService {
@@ -105,25 +269,17 @@ class CredentialService {
   }
   async createPresentation(params) {
     validation.createPresentation(params);
-    const {credentials, keyDoc, challenge, id, domain} = params;
-    const vp = new VerifiablePresentation(id);
-    let shouldSkipSigning = false;
-    for (const signedVC of credentials) {
-      vp.addCredential(signedVC);
-      shouldSkipSigning = shouldSkipSigning || isAnnonymousCredential(signedVC);
-    }
+    const {credentials, attributesToReveal, witnesses, keyDoc, challenge, id, domain, pexForBounds} = params;
 
-    if (!shouldSkipSigning) {
-      vp.setHolder(keyDoc.controller);
-    }
-
-    keyDoc.keypair = keyDocToKeypair(keyDoc, blockchainService.dock);
-
-    if (shouldSkipSigning) {
-      return vp.toJSON();
-    }
-
-    return vp.sign(keyDoc, challenge, domain, blockchainService.resolver);
+    return createPresentationSDK(credentials, {
+      revealAttribs: attributesToReveal,
+      challenge,
+      domain,
+      presentationId: id,
+      holderKey: keyDoc,
+      pexForBounds,
+      witnesses,
+    });
   }
 
   async verifyPresentation({ presentation, options }: any) {

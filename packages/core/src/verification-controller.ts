@@ -163,51 +163,78 @@ export function createVerificationController({
       assert(!!provingKey, 'No proving key found');
     }
 
-    const credentials = [];
+    // const credentials2 = [];
 
-    for (const credentialSelection of selectedCredentials.values()) {
-      const isBBS = await isBBSPlusCredential(credentialSelection.credential);
-      const isKVAC = await isKvacCredential(credentialSelection.credential);
+    // for (const credentialSelection of selectedCredentials.values()) {
+    //   const isBBS = await isBBSPlusCredential(credentialSelection.credential);
+    //   const isKVAC = await isKvacCredential(credentialSelection.credential);
 
-      if (isBBS || isKVAC) {
-        // derive credential
-        const derivedCredentials =
-          await credentialServiceRPC.deriveVCFromPresentation({
-            proofRequest: templateJSON,
-            
-            credentials: [
-              {
-                credential: credentialSelection.credential,
-                witness: await credentialProvider.getMembershipWitness(credentialSelection.credential.id),
-                attributesToReveal: [
-                  ...(credentialSelection.attributesToReveal || []),
-                  'id',
-                ],
-              },
-            ],
-          });
+    //   if (isBBS || isKVAC) {
+    //     // derive credential
+    //     const derivedCredentials =
+    //       await credentialServiceRPC.deriveVCFromPresentation({
+    //         proofRequest: templateJSON,
 
-        console.log('Credential derived');
+    //         credentials: [
+    //           {
+    //             credential: credentialSelection.credential,
+    //             witness: await credentialProvider.getMembershipWitness(credentialSelection.credential.id),
+    //             attributesToReveal: [
+    //               ...(credentialSelection.attributesToReveal || []),
+    //               'id',
+    //             ],
+    //           },
+    //         ],
+    //       });
 
-        credentials.push(derivedCredentials[0]);
-      } else {
-        credentials.push(credentialSelection.credential);
-      }
-    }
+    //     console.log('Credential derived');
+
+    //     credentials2.push(derivedCredentials[0]);
+    //   } else {
+    //     credentials2.push(credentialSelection.credential);
+    //   }
+    // }
+    // console.log(JSON.stringify(credentials2, null, 2));
 
     const didKeyPairList = await didProvider.getDIDKeyPairs();
     const keyDoc = didKeyPairList.find(doc => doc.controller === selectedDID);
 
     assert(keyDoc, `No key pair found for the selected DID ${selectedDID}`);
 
+    const credentials = [];
+    const attributesToReveal = [];
+    const witnesses = [];
+
+    for (const credentialSelection of selectedCredentials.values()) {
+      credentials.push(credentialSelection.credential);
+      attributesToReveal.push([
+        ...(credentialSelection.attributesToReveal || []),
+        'id',
+      ]);
+      witnesses.push(
+        await credentialProvider.getMembershipWitness(
+          credentialSelection.credential.id,
+        ),
+      );
+    }
+
+    console.log('Creating presentation');
+    console.log('credentials', credentials.map(c => c.id));
+    console.log('attributesToReveal', attributesToReveal);
+    console.log('witnesses', witnesses);
+    console.log('pexForBounds', JSON.stringify(templateJSON.request, null, 2));
+
     const presentation = await credentialServiceRPC.createPresentation({
       credentials,
+      attributesToReveal,
+      witnesses,
       challenge: templateJSON.nonce,
       keyDoc,
       id: keyDoc.controller.startsWith('did:key:')
         ? keyDoc.id
         : `${keyDoc.controller}#keys-1`,
       domain: 'dock.io',
+      pexForBounds: templateJSON,
     });
 
     return presentation;
@@ -252,6 +279,7 @@ export function createVerificationController({
   }
 
   function submitPresentation(presentation) {
+    console.log('Submitting presentation', templateJSON);
     return axios
       .post(templateJSON.response_url, presentation)
       .then(res => res.data);
