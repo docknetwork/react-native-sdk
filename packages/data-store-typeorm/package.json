@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@docknetwork/wallet-sdk-wasm": "^0.4.19",
+    "async-mutex": "^0.5.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
