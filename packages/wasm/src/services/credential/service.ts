@@ -176,7 +176,7 @@ export async function createPresentationSDK(
     vcsArray[credIdx] = credentials[0]; // overwrite in vcsarray to preserve order
   }
 
-  presentation.addCredentials(vcsArray);
+  vcsArray.forEach((vc) => vc && presentation.addCredential(vc));
 
   // Shouldnt sign with anonymous credentials
   if (anoncredsVCs.length === 0) {
