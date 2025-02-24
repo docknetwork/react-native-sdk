@@ -23,7 +23,6 @@ import {IWallet} from '@docknetwork/wallet-sdk-core/src/types';
 import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
 import {API_MOCK_DISABLED} from '@docknetwork/wallet-sdk-wasm/src/services/test-utils';
 import axios from 'axios';
-import {test} from '@docknetwork/wallet-sdk-wasm/src/services/blockchain/revocation';
 import {CheqdRevocationCredential} from './data/credentials/cheqd-credentials';
 
 const allCredentials = [
