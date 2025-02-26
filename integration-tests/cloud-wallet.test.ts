@@ -4,6 +4,8 @@ import {DataStore, DataStoreEvents} from '@docknetwork/wallet-sdk-data-store/src
 import {
   SYNC_MARKER_TYPE,
   initializeCloudWallet,
+  generateCloudWalletMasterKey,
+  recoverCloudWalletMasterKey,
 } from '@docknetwork/wallet-sdk-core/src/cloud-wallet';
 import {createDataStore} from '@docknetwork/wallet-sdk-data-store-typeorm/src';
 import {edvService} from '@docknetwork/wallet-sdk-wasm/src/services/edv';
@@ -24,8 +26,7 @@ describe('Cloud wallet', () => {
   let wallet: IWallet;
 
   beforeAll(async () => {
-    const {verificationKey, agreementKey, hmacKey} =
-      await edvService.generateKeys();
+    const { masterKey } = await generateCloudWalletMasterKey();
 
     dataStore = await createDataStore({
       databasePath: ':memory:',
@@ -45,9 +46,7 @@ describe('Cloud wallet', () => {
     } = await initializeCloudWallet({
       dataStore,
       edvUrl: EDV_URL,
-      agreementKey,
-      verificationKey,
-      hmacKey,
+      masterKey,
       authKey: EDV_AUTH_KEY,
     }));
 
@@ -57,6 +56,18 @@ describe('Cloud wallet', () => {
       dontWaitForNetwork: true,
       dataStore,
     });
+  });
+
+  it('should be able to generate a masterKey and a mnemonic', async () => {
+    const { masterKey, mnemonic } = await generateCloudWalletMasterKey();
+    expect(masterKey).toBeDefined();
+    expect(mnemonic).toBeDefined();
+  });
+
+  it('should be able to recover a masterKey from a mnemonic', async () => {
+    const { masterKey, mnemonic } = await generateCloudWalletMasterKey();
+    const recoveredMasterKey = await recoverCloudWalletMasterKey(mnemonic);
+    expect(recoveredMasterKey).toEqual(masterKey);
   });
 
   it('should see a document added directly to the EDV appear in the wallet after pulling', async () => {

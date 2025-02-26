@@ -3,11 +3,14 @@ import {InitializeEDVParams, serviceName} from './configs';
 import EDVHTTPStorageInterface from '@docknetwork/universal-wallet/storage/edv-http-storage';
 import HMAC from './hmac';
 import {Ed25519VerificationKey2018} from '@digitalbazaar/ed25519-verification-key-2018';
+import {Ed25519VerificationKey2020} from '@digitalbazaar/ed25519-verification-key-2020';
 import {X25519KeyAgreementKey2020} from '@digitalbazaar/x25519-key-agreement-key-2020';
 import {getKeypairFromDoc} from '@docknetwork/universal-wallet/methods/keypairs';
 import {logger} from '@docknetwork/wallet-sdk-data-store/src/logger';
 import {didService} from '@docknetwork/wallet-sdk-wasm/src/services/dids/service';
 import {keyringService} from '@docknetwork/wallet-sdk-wasm/src/services/keyring';
+import {ed25519PairFromSeed} from '@polkadot/util-crypto';
+import base64url from 'base64url-universal';
 
 /**
  * EDVService
@@ -19,6 +22,7 @@ export class EDVService {
 
   rpcMethods = [
     EDVService.prototype.generateKeys,
+    EDVService.prototype.deriveKeys,
     EDVService.prototype.initialize,
     EDVService.prototype.find,
     EDVService.prototype.update,
@@ -107,6 +111,24 @@ export class EDVService {
     const hmacKey = await HMAC.exportKey(await HMAC.generateKey());
 
     return {verificationKey, agreementKey, hmacKey};
+  }
+
+  async deriveKeys(masterKey: any) {
+    await keyringService.initialize({
+      ss58Format: 22,
+    });
+    const pair = ed25519PairFromSeed(base64url.decode(masterKey));
+
+    const keyPair = await didService.deriveKeyDoc({ pair });
+
+    const verificationKey = await Ed25519VerificationKey2018.from(keyPair);
+
+    const verificationKey2020 = await Ed25519VerificationKey2020.fromEd25519VerificationKey2018({ keyPair });
+    const agreementKey = await X25519KeyAgreementKey2020.fromEd25519VerificationKey2020({ keyPair: verificationKey2020 });
+
+    const hmacKey = await HMAC.exportKey(await HMAC.deriveKey(masterKey));
+
+    return { verificationKey, agreementKey, hmacKey };
   }
 
   find(params: any) {

@@ -5,6 +5,7 @@ import {
   AddFromJsonParams,
   AddFromMnemonicParams,
   CreateFromUriParams,
+  CreateFromPairParams,
   InitializeParams,
   serviceName,
   validation,
@@ -81,6 +82,18 @@ export class KeyringService {
 
     return this.keyring.createFromUri(
       `${mnemonic.trim()}${derivePath}`,
+      meta,
+      type,
+    );
+  }
+
+  createFromPair(params: CreateFromPairParams): KeyringPair {
+    validation.createFromPair(params);
+
+    const {pair, meta, type} = params;
+
+    return this.keyring.createFromPair(
+      pair,
       meta,
       type,
     );
