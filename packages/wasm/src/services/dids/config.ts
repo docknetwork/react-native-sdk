@@ -23,6 +23,16 @@ export const validation = {
       assert(typeof type === 'string', 'invalid type');
     }
   },
+
+  deriveKeyDoc: ({ pair, type }: DeriveKeyDocParams) => {
+    assert(typeof pair === 'object', 'invalid pair');
+    assert(pair.publicKey instanceof Uint8Array, 'invalid publicKey');
+    assert(pair.secretKey instanceof Uint8Array, 'invalid secretKey');
+
+    if (type) {
+      assert(typeof type === 'string', 'invalid type');
+    }
+  },
 };
 
 export type KeypairToDIDKeyDocumentParams = {
@@ -38,4 +48,9 @@ export type GenerateKeyDocParams = {
   type: string;
   derivePath: string;
   keyPairJSON: any;
+};
+
+export type DeriveKeyDocParams = {
+  pair: any;
+  type: string;
 };

@@ -47,6 +47,21 @@ export const validation = {
       assert(typeof meta === 'object', 'invalid meta');
     }
   },
+  createFromPair(params: CreateFromPairParams) {
+    const {pair, meta, type} = params;
+
+    assert(typeof pair === 'object', 'invalid pair');
+    assert(pair.publicKey instanceof Uint8Array, 'invalid publicKey');
+    assert(pair.secretKey instanceof Uint8Array, 'invalid secretKey');
+
+    if (type) {
+      assertKeyType(type);
+    }
+
+    if (meta) {
+      assert(typeof meta === 'object', 'invalid meta');
+    }
+  },
 
   signData(params: SignDataParams) {
     assert(!!params.keyPair, 'invalid keypair');
@@ -64,6 +79,12 @@ export type GetKeyringParams = {
   type?: string,
   derivePath?: string,
 };
+
+export type CreateFromPairParams = {
+  pair: any,
+  meta?: any,
+  type?: string,
+}
 
 export type AddressFromUriParams = GetKeyringParams;
 
