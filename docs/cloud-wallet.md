@@ -99,6 +99,22 @@ const document = {
 await wallet.addDocument(document);
 ```
 
+### Issuing Credentials to Cloud Wallet
+
+You can issue credentials directly to a cloud wallet using the Truvera Workspace/API. The credential will be automatically distributed to the holder's cloud wallet through the DIDComm protocol, eliminating the need for direct API calls or manual credential handling.
+
+#### Important Requirement
+
+For the DIDComm automatic distribution to work properly, the **subject ID of the credential must be set to the holder's DID** when issuing the credential. This enables the system to route the credential to the correct wallet.
+
+#### Receiving Credentials in Cloud Wallet
+
+After a credential has been issued to a holder's DID, the cloud wallet only needs to fetch and process DIDComm messages to receive it:
+
+```ts
+await messageProvider.fetchMessages();
+await messageProvider.processDIDCommMessages();
+```
 
 ### Full Example
 
