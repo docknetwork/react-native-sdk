@@ -112,6 +112,17 @@ For the DIDComm automatic distribution to work properly, the **subject ID of the
 After a credential has been issued to a holder's DID, the cloud wallet only needs to fetch and process DIDComm messages to receive it:
 
 ```ts
+import {createDIDProvider} from '@docknetwork/wallet-sdk-core/lib/did-provider';
+import {createMessageProvider} from '@docknetwork/wallet-sdk-core/lib/message-provider';
+
+const didProvider = createDIDProvider({ wallet });
+
+const messageProvider = createMessageProvider({
+  wallet,
+  didProvider,
+});
+
+// This will process the messages for all the DIDs in the wallet
 await messageProvider.fetchMessages();
 await messageProvider.processDIDCommMessages();
 ```
