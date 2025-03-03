@@ -51,9 +51,9 @@ The key generation returns an object with `agreementKey`, `verificationKey`, and
 
 **Note:** Encryption keys can be derived from biometric data through a third-party service, offering enhanced security by linking the keys to a user's unique biometric profile
 
-### Step 3: Initialize the Cloud Wallet
+### Step 3: Initialize the cloud storage
 
-After setting up the data store and generating keys, initialize the Cloud Wallet and connect it to the local data storage. This ensures continuous synchronization between the EDV and the wallet.
+After setting up the data store and generating keys, initialize the Cloud storage and connect it to the local data storage. This ensures continuous synchronization between the EDV and the wallet.
 
 ```ts
 import {initializeCloudWallet} from '@docknetwork/wallet-sdk-core/lib/cloud-wallet';
