@@ -6,6 +6,7 @@ import {
   cryptoWaitReady,
   keyExtractSuri,
   mnemonicGenerate,
+  mnemonicToMiniSecret,
   mnemonicValidate,
 } from '@polkadot/util-crypto';
 import assert from 'assert';
@@ -14,6 +15,7 @@ import {validation} from './configs';
 export class UtilCryptoService {
   rpcMethods = [
     UtilCryptoService.prototype.mnemonicGenerate,
+    UtilCryptoService.prototype.mnemonicToMiniSecret,
     UtilCryptoService.prototype.mnemonicValidate,
     UtilCryptoService.prototype.cryptoWaitReady,
     UtilCryptoService.prototype.cryptoIsReady,
@@ -31,6 +33,12 @@ export class UtilCryptoService {
     validation.mnemonicGenerate(numWords);
 
     return mnemonicGenerate(numWords);
+  }
+
+  mnemonicToMiniSecret(phrase) {
+    validation.mnemonicToMiniSecret(phrase);
+
+    return mnemonicToMiniSecret(phrase);
   }
 
   isBase64(value) {

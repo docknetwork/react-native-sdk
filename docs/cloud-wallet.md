@@ -39,21 +39,30 @@ const dataStore = await createDataStore({
 });
 ```
 
-### Step 2: Generate Wallet Keys
+### Step 2: Generate Wallet Key and Mnemonic
 
-Next, we generate keys for interacting with the cloud wallet. Use the same Cloud Wallet keys across multiple devices to access the same documents. These keys are used to encrypt, decrypt, and locate documents in the EDV.
+Next, we generate key and mnemonic for interacting with the cloud wallet. Use the same Cloud Wallet key across multiple devices to access the same documents. These keys are used to encrypt, decrypt, and locate documents in the EDV.
 
 ```ts
-const {verificationKey, agreementKey, hmacKey} = await edvService.generateKeys();
+import {generateCloudWalletMasterKey} from '@docknetwork/wallet-sdk-core/lib/cloud-wallet';
+
+const {masterKey, mnemonic} = await generateCloudWalletMasterKey();
 ```
 
-The key generation returns an object with `agreementKey`, `verificationKey`, and `hmacKey`. You will use these keys to initialize the Cloud Wallet.
+The `masterKey` is used to derive encryption keys for the EDV, while the `mnemonic` is used to recover the master key.
 
 **Note:** Encryption keys can be derived from biometric data through a third-party service, offering enhanced security by linking the keys to a user's unique biometric profile
 
+If the master key is lost, the mnemonic can be used to recover it. Store the mnemonic securely and do not share it with anyone.
+```ts
+import {recoverCloudWalletMasterKey} from '@docknetwork/wallet-sdk-core/lib/cloud-wallet';
+
+const masterKey = await recoverCloudWalletMasterKey(mnemonic);
+```
+
 ### Step 3: Initialize the Cloud Wallet
 
-After setting up the data store and generating keys, initialize the Cloud Wallet and connect it to the local data storage. This ensures continuous synchronization between the EDV and the wallet.
+After setting up the data store and generating key, initialize the Cloud Wallet and connect it to the local data storage. This ensures continuous synchronization between the EDV and the wallet.
 
 ```ts
 import {initializeCloudWallet} from '@docknetwork/wallet-sdk-core/lib/cloud-wallet';
@@ -62,9 +71,7 @@ const {pullDocuments} = await initializeCloudWallet({
   dataStore,
   edvUrl: EDV_URL, 
   authKey: EDV_AUTH_KEY,
-  agreementKey,
-  verificationKey,
-  hmacKey,
+  masterKey,
 });
 
 // Pull documents from the EDV and sync with the wallet
@@ -146,9 +153,7 @@ async function example() {
     dataStore,
     edvUrl: EDV_URL, 
     authKey: EDV_AUTH_KEY,
-    agreementKey,
-    verificationKey,
-    hmacKey,
+    masterKey,
   });
 
   // Pull documents from the EDV and sync with the wallet

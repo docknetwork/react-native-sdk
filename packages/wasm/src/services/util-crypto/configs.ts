@@ -17,6 +17,10 @@ export const validation = {
     }
   },
 
+  mnemonicToMiniSecret(phrase: string) {
+    assert(typeof phrase === 'string', 'invalid mnemonic phrase');
+  },
+
   mnemonicValidate(phrase: string) {
     assert(typeof phrase === 'string', 'invalid mnemonic phrase');
   },
