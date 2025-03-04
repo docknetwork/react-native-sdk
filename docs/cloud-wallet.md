@@ -149,3 +149,86 @@ async function example() {
 example();
 
 ```
+
+## Multi-Key Authentication
+
+The Cloud Wallet supports multiple authentication methods to unlock the same wallet, providing both security and convenience.
+
+### Available Authentication Methods
+
+1. **Mnemonic-based authentication**: The traditional recovery phrase approach
+2. **Biometric authentication**: Using fingerprints, facial recognition, or other biometric data
+3. **Future extensions**: Can be extended to support passkeys and other authentication methods
+
+### How Multi-Key Authentication Works
+
+The Cloud Wallet uses a key mapping system that allows a secondary key e.g. derived from biometrics) to unlock the same master key that was originally derived from a mnemonic phrase.
+
+#### Step 1: Generate Master Key from Mnemonic
+
+First, generate the primary master key from a mnemonic phrase:
+
+```ts
+import { generateCloudWalletMasterKey } from '@docknetwork/wallet-sdk-core/lib/cloud-wallet';
+
+// Generate a new wallet with mnemonic and master key
+const { mnemonic, masterKey } = await generateCloudWalletMasterKey();
+
+// IMPORTANT: Store the mnemonic securely for recovery purposes
+```
+
+#### Step 2: Create a Biometric Key
+
+Next, generate a secondary key from biometric data. In a real implementation, this would use platform-specific secure biometric APIs:
+
+```ts
+import { deriveBiometricKey } from '@docknetwork/wallet-sdk-core/lib/cloud-wallet';
+
+// In real implementation, this would use platform's secure biometric APIs
+// This is just a simplified example
+const biometricData = /* Biometric data from the platform */;
+const biometricKey = await deriveBiometricKey(biometricData);
+```
+
+#### Step 3: Create Key Mapping
+
+Create a mapping between the master key and biometric key:
+
+```ts
+import { createKeyMapping } from '@docknetwork/wallet-sdk-core/lib/cloud-wallet';
+
+// Create the key mapping
+const keyMapping = await createKeyMapping(masterKey, biometricKey);
+
+// Store the key mapping securely
+storeKeyMappingSecurely(keyMapping);
+```
+
+#### Step 4: Initialize Wallet with Different Keys
+
+The wallet can now be initialized using either the master key or the biometric key with mapping:
+
+```ts
+// Option 1: Initialize with master key (e.g., after mnemonic recovery)
+await initializeCloudWallet({
+  dataStore,
+  edvUrl: EDV_URL,
+  authKey: EDV_AUTH_KEY,
+  masterKey,
+});
+
+// Option 2: Initialize with biometric key
+const storedKeyMapping = /* Load the key mapping from secure storage */;
+const biometricKey = await deriveBiometricKey(biometricData);
+
+// Recover the master key using the biometric key and mapping
+const recoveredMasterKey = await recoverMasterKeyWithMapping(biometricKey, storedKeyMapping);
+
+// Initialize with the recovered master key
+await initializeCloudWallet({
+  dataStore,
+  edvUrl: EDV_URL,
+  authKey: EDV_AUTH_KEY,
+  masterKey: recoveredMasterKey,
+});
+```
