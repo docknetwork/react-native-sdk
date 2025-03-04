@@ -4,6 +4,9 @@ import {
 } from '@docknetwork/wallet-sdk-data-store/src/types';
 import {logger} from '@docknetwork/wallet-sdk-data-store/src/logger';
 import {edvService} from '@docknetwork/wallet-sdk-wasm/src/services/edv';
+import base64url from 'base64url-universal';
+
+import {utilCryptoService} from '@docknetwork/wallet-sdk-wasm/src/services/util-crypto';
 
 export const SYNC_MARKER_TYPE = 'SyncMarkerDocument';
 
@@ -18,21 +21,113 @@ interface DocumentQueue {
   isProcessing: boolean;
 }
 
+export async function generateCloudWalletMasterKey(): Promise<{ mnemonic: string; masterKey: string }> {
+  const mnemonic = await utilCryptoService.mnemonicGenerate(12);
+
+  const seedBytes = await utilCryptoService.mnemonicToMiniSecret(mnemonic);
+  const masterKey = base64url.encode(Buffer.from(seedBytes));
+
+  return {
+    mnemonic,
+    masterKey,
+  };
+}
+
+export async function recoverCloudWalletMasterKey(mnemonic: string): Promise<string> {
+  const seedBytes = await utilCryptoService.mnemonicToMiniSecret(mnemonic);
+  const masterKey = base64url.encode(Buffer.from(seedBytes));
+
+  return masterKey;
+}
+
+export async function deriveBiometricKey(biometricData: any): Promise<string> {
+  // This is a simplified implementation that wallet providers would replace
+  return base64url.encode(Buffer.from(JSON.stringify(biometricData)));
+}
+
+export async function createKeyMapping(masterKey: string, secondaryKey: string): Promise<string> {
+  if (!masterKey || !secondaryKey) {
+    throw new Error('Both masterKey and secondaryKey are required');
+  }
+
+  const masterKeyBytes = base64url.decode(masterKey);
+  const secondaryKeyBytes = base64url.decode(secondaryKey);
+
+  const mappingBytes = new Uint8Array(masterKeyBytes.length);
+
+  // Store the original lengths to handle recovery correctly
+  const lengthPrefix = new Uint8Array(2);
+  lengthPrefix[0] = masterKeyBytes.length;
+  lengthPrefix[1] = secondaryKeyBytes.length;
+
+  // XOR the overlapping parts of both keys
+  const overlapLength = Math.min(masterKeyBytes.length, secondaryKeyBytes.length);
+  for (let i = 0; i < overlapLength; i++) {
+    mappingBytes[i] = masterKeyBytes[i] ^ secondaryKeyBytes[i];
+  }
+
+  // Store any remaining master key bytes beyond the secondary key length directly (but obfuscated)
+  for (let i = overlapLength; i < masterKeyBytes.length; i++) {
+    mappingBytes[i] = masterKeyBytes[i] ^ 0xFF;
+  }
+
+  const result = new Uint8Array(lengthPrefix.length + mappingBytes.length);
+  result.set(lengthPrefix, 0);
+  result.set(mappingBytes, lengthPrefix.length);
+
+  return base64url.encode(Buffer.from(result));
+}
+
+export async function recoverMasterKeyWithMapping(secondaryKey: string, keyMapping: string): Promise<string> {
+  if (!secondaryKey || !keyMapping) {
+    throw new Error('Both secondaryKey and keyMapping are required');
+  }
+
+  const secondaryKeyBytes = base64url.decode(secondaryKey);
+  const mappingData = base64url.decode(keyMapping);
+
+  const masterKeyLength = mappingData[0];
+  const originalSecondaryKeyLength = mappingData[1];
+  const mappingBytes = mappingData.slice(2);
+
+  if (mappingBytes.length === 0 || mappingBytes.length !== masterKeyLength) {
+    throw new Error('Invalid key mapping format');
+  }
+
+  if (secondaryKeyBytes.length < originalSecondaryKeyLength) {
+    throw new Error('Secondary key is shorter than the one used for mapping creation');
+  }
+
+  const masterKeyBytes = new Uint8Array(masterKeyLength);
+
+  const overlapLength = Math.min(masterKeyLength, originalSecondaryKeyLength);
+  for (let i = 0; i < overlapLength; i++) {
+    masterKeyBytes[i] = secondaryKeyBytes[i] ^ mappingBytes[i];
+  }
+
+  for (let i = overlapLength; i < masterKeyLength; i++) {
+    masterKeyBytes[i] = mappingBytes[i] ^ 0xFF;
+  }
+
+  return base64url.encode(Buffer.from(masterKeyBytes));
+}
+
 export async function initializeCloudWallet({
   dataStore,
   edvUrl,
-  agreementKey,
-  verificationKey,
-  hmacKey,
   authKey,
+  masterKey,
 }: {
   dataStore?: DataStore;
   edvUrl: string;
-  agreementKey: any;
-  verificationKey: any;
-  hmacKey: any;
   authKey: string;
+  masterKey: any;
 }) {
+  const {
+    hmacKey,
+    agreementKey,
+    verificationKey,
+  } = await edvService.deriveKeys(masterKey);
 
   await edvService.initialize({
     hmacKey,

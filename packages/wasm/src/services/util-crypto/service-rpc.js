@@ -12,6 +12,12 @@ export class UtilCryptoServiceRpc extends RpcService {
     return this.call('mnemonicGenerate', numWords);
   }
 
+  mnemonicToMiniSecret(phrase: string): Promise<any> {
+    validation.mnemonicToMiniSecret(phrase);
+
+    return this.call('mnemonicToMiniSecret', phrase);
+  }
+
   mnemonicValidate(phrase: string): Promise<any> {
     validation.mnemonicValidate(phrase);
 
