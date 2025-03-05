@@ -84,6 +84,7 @@ class DIDService {
     DIDService.prototype.keypairToDIDKeyDocument,
     DIDService.prototype.getDIDResolution,
     DIDService.prototype.generateKeyDoc,
+    DIDService.prototype.deriveKeyDoc,
     DIDService.prototype.registerDidDock,
     DIDService.prototype.getDidDockDocument,
     DIDService.prototype.createSignedJWT,
@@ -116,6 +117,18 @@ class DIDService {
         type,
       });
     }
+
+    return polkadotToKeydoc(keyring, params.controller);
+  }
+
+  async deriveKeyDoc(params) {
+    validation.deriveKeyDoc(params);
+    const { pair, type = 'ed25519' } = params;
+
+    const keyring = keyringService.createFromPair({
+      pair,
+      type,
+    });
 
     return polkadotToKeydoc(keyring, params.controller);
   }

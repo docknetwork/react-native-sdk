@@ -4,6 +4,9 @@ import {
 } from '@docknetwork/wallet-sdk-data-store/src/types';
 import {logger} from '@docknetwork/wallet-sdk-data-store/src/logger';
 import {edvService} from '@docknetwork/wallet-sdk-wasm/src/services/edv';
+import base64url from 'base64url-universal';
+
+import {utilCryptoService} from '@docknetwork/wallet-sdk-wasm/src/services/util-crypto';
 
 export const SYNC_MARKER_TYPE = 'SyncMarkerDocument';
 
@@ -18,21 +21,41 @@ interface DocumentQueue {
   isProcessing: boolean;
 }
 
+export async function generateCloudWalletMasterKey(): Promise<{ mnemonic: string; masterKey: string }> {
+  const mnemonic = await utilCryptoService.mnemonicGenerate(12);
+
+  const seedBytes = await utilCryptoService.mnemonicToMiniSecret(mnemonic);
+  const masterKey = base64url.encode(Buffer.from(seedBytes));
+
+  return {
+    mnemonic,
+    masterKey,
+  };
+}
+
+export async function recoverCloudWalletMasterKey(mnemonic: string): Promise<string> {
+  const seedBytes = await utilCryptoService.mnemonicToMiniSecret(mnemonic);
+  const masterKey = base64url.encode(Buffer.from(seedBytes));
+
+  return masterKey;
+}
+
 export async function initializeCloudWallet({
   dataStore,
   edvUrl,
-  agreementKey,
-  verificationKey,
-  hmacKey,
   authKey,
+  masterKey,
 }: {
   dataStore?: DataStore;
   edvUrl: string;
-  agreementKey: any;
-  verificationKey: any;
-  hmacKey: any;
   authKey: string;
+  masterKey: any;
 }) {
+  const {
+    hmacKey,
+    agreementKey,
+    verificationKey,
+  } = await edvService.deriveKeys(masterKey);
 
   await edvService.initialize({
     hmacKey,
