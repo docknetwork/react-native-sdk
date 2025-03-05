@@ -58,7 +58,7 @@ jobs:
         run: echo "$GITHUB_CONTEXT"
 
       - name: Cache dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.npm
           key: npm-${{ hashFiles('package-lock.json') }}
