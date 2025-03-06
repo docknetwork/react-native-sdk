@@ -54,22 +54,51 @@ export async function setBlockchainNetwork(wallet: IWallet) {
     ss58Format: networkConfigs.addressPrefix,
   });
 
-  blockchainService
-    .init({
-      substrateUrl: networkConfigs.substrateUrl,
-      cheqdApiUrl: networkConfigs.cheqdApiUrl,
-      networkId: network.id,
-      cheqdMnemonic: cheqdMnemonicDoc.value,
-    })
-    .then(() => {
-      wallet.eventManager.emit(WalletEvents.networkConnected);
-    })
-    .catch(err => {
-      captureException(new Error('Unable to connect to substrate node'));
-      captureException(err);
-      console.error(err);
-      wallet.eventManager.emit(WalletEvents.networkError, err);
-    });
+  let connectionInProgress = false;
+
+  const initializeBlockchain = () => {
+    clearInterval(wallet.networkCheckInterval);
+  
+    if (connectionInProgress) {
+      return;
+    }
+  
+    connectionInProgress = true;
+  
+    blockchainService
+      .init({
+        substrateUrl: networkConfigs.substrateUrl,
+        cheqdApiUrl: networkConfigs.cheqdApiUrl,
+        networkId: network.id,
+        cheqdMnemonic: cheqdMnemonicDoc.value,
+      })
+      .then(() => {
+        wallet.eventManager.emit(WalletEvents.networkConnected);
+      })
+      .catch(err => {
+        const errorMessage = new Error('Unable to connect to blockchain');
+        captureException(errorMessage);
+        captureException(err);
+        console.error(err);
+        wallet.eventManager.emit(WalletEvents.networkError, err);
+      })
+      .finally(() => {
+        connectionInProgress = false;
+  
+        wallet.networkCheckInterval = setInterval(async () => {
+          try {
+            if (!await blockchainService.isApiConnected()) {
+              wallet.eventManager.emit(WalletEvents.networkError, new Error('Network not connected'));
+              initializeBlockchain();
+            }
+          } catch (err) {
+            console.error('Error during connectivity check:', err);
+          }
+        }, 10000);
+      });
+  };
+  
+  initializeBlockchain();
 }
 
 export async function initWalletWasm(wallet: IWallet) {
