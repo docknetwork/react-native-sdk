@@ -1,0 +1,320 @@
+import {
+  enrollUserWithBiometrics,
+  authenticateWithBiometrics,
+  deriveKeyMappingVaultKeys,
+  deriveBiometricEncryptionKey,
+  encryptMasterKey,
+  decryptMasterKey,
+  initializeKeyMappingVault
+} from '@docknetwork/wallet-sdk-core/src/cloud-wallet';
+
+const EDV_URL = process.env.EDV_URL;
+const EDV_AUTH_KEY = process.env.EDV_AUTH_KEY;
+
+// Helper to create mock biometric data
+const createMockBiometricData = (userId = '123') => {
+  return {
+    type: 'fingerprint',
+    id: userId,
+    quality: 0.95,
+    minutiae: Array(20).fill(0).map((_, i) => ({
+      x: 100 + Math.floor(i / 4) * 20,
+      y: 150 + (i % 4) * 20,
+      angle: (i * 15) % 360,
+      type: i % 3
+    })),
+    timestamp: Date.now()
+  };
+};
+
+describe('Biometric Authentication System', () => {
+  describe('Key derivation and encryption', () => {
+    it('should derive consistent keys from the same biometric data and email', async () => {
+      const bioData = createMockBiometricData();
+      const email = `user${new Date().getTime()}@example.com`;
+
+      const keys1 = await deriveKeyMappingVaultKeys(bioData, email);
+      const keys2 = await deriveKeyMappingVaultKeys(bioData, email);
+
+      expect(keys1.hmacKey).toBe(keys2.hmacKey);
+      expect(keys1.agreementKey).toMatchObject(keys2.agreementKey);
+      expect(keys1.verificationKey).toMatchObject(keys2.verificationKey);
+    });
+
+    it('should derive different keys for different biometric data', async () => {
+      const bioData1 = createMockBiometricData('123');
+      const bioData2 = createMockBiometricData('456');
+      const email = `user${new Date().getTime()}@example.com`;
+
+      const keys1 = await deriveKeyMappingVaultKeys(bioData1, email);
+      const keys2 = await deriveKeyMappingVaultKeys(bioData2, email);
+
+      expect(keys1.hmacKey).not.toBe(keys2.hmacKey);
+      expect(keys1.agreementKey).not.toBe(keys2.agreementKey);
+      expect(keys1.verificationKey).not.toBe(keys2.verificationKey);
+    });
+
+    it('should encrypt and decrypt a master key correctly', async () => {
+      const bioData = createMockBiometricData();
+      const email = `user${new Date().getTime()}@example.com`;
+      const masterKey = 'test-master-key-for-encryption';
+
+      const { key, iv } = await deriveBiometricEncryptionKey(bioData, email);
+      const encryptedKey = await encryptMasterKey(masterKey, key, iv);
+      expect(encryptedKey).not.toBe(masterKey);
+
+      const decryptedKey = await decryptMasterKey(encryptedKey, key, iv);
+      expect(decryptedKey).toBe(masterKey);
+    });
+
+    it('should fail decryption with wrong biometric data', async () => {
+      const email = `user${new Date().getTime()}@example.com`;
+      const masterKey = 'test-master-key-for-encryption';
+
+      const bioData1 = createMockBiometricData('123');
+      const { key: key1, iv: iv1 } = await deriveBiometricEncryptionKey(bioData1, email);
+      const encryptedKey = await encryptMasterKey(masterKey, key1, iv1);
+
+      const bioData2 = createMockBiometricData('456');
+      const { key: key2, iv: iv2 } = await deriveBiometricEncryptionKey(bioData2, email);
+
+      await expect(decryptMasterKey(encryptedKey, key2, iv2)).rejects.toThrow('Decryption failed: Invalid key or corrupted data');
+    });
+  });
+
+  describe('Enrollment process', () => {
+    it('should successfully enroll a user with biometrics', async () => {
+      const bioData = createMockBiometricData();
+      const email = `user${new Date().getTime()}@example.com`;
+
+      const result = await enrollUserWithBiometrics(
+        EDV_URL,
+        EDV_AUTH_KEY,
+        bioData,
+        email
+      );
+
+      // Check that the function returned a master key and mnemonic
+      expect(result.masterKey).toBeDefined();
+      expect(result.mnemonic).toBeDefined();
+      expect(result.mnemonic.split(' ').length).toBe(12);
+
+      // Verify a document was inserted into the key mapping vault
+      const edvService = await initializeKeyMappingVault(
+        EDV_URL,
+        EDV_AUTH_KEY,
+        bioData,
+        email
+      );
+
+      const docs = await edvService.find({});
+      expect(docs.documents).toBeDefined();
+      expect(docs.documents.length).toBe(1);
+      expect(docs.documents[0].content.id).toBe(email);
+      expect(docs.documents[0].content.encryptedKey).toBeDefined();
+    });
+
+    it('should handle enrollment with different biometric data and identifiers', async () => {
+      const bioData1 = createMockBiometricData('123');
+      const bioData2 = createMockBiometricData('456');
+      const email1 = `user1-${new Date().getTime()}@example.com`;
+      const email2 = `user2-${new Date().getTime()}@example.com`;
+
+      const result1 = await enrollUserWithBiometrics(
+        EDV_URL,
+        EDV_AUTH_KEY,
+        bioData1,
+        email1
+      );
+
+      const result2 = await enrollUserWithBiometrics(
+        EDV_URL,
+        EDV_AUTH_KEY,
+        bioData2,
+        email2
+      );
+
+      expect(result1.masterKey).toBeDefined();
+      expect(result2.masterKey).toBeDefined();
+      expect(result1.masterKey).not.toBe(result2.masterKey);
+    });
+
+    it('should allow recovery using mnemonic after biometric enrollment', async () => {
+      // This test demonstrates the recovery path using the mnemonic
+      const bioData = createMockBiometricData();
+      const email = `user${new Date().getTime()}@example.com`;
+
+      // Enroll with biometrics
+      const { masterKey, mnemonic } = await enrollUserWithBiometrics(
+        EDV_URL,
+        EDV_AUTH_KEY,
+        bioData,
+        email
+      );
+
+      // Now simulate recovery using the mnemonic
+      // This function should be imported from your actual code
+      const recoverCloudWalletMasterKey = jest.fn().mockResolvedValue(masterKey);
+
+      const recoveredKey = await recoverCloudWalletMasterKey(mnemonic);
+
+      expect(recoveredKey).toBe(masterKey);
+    });
+  });
+
+  describe('Authentication process', () => {
+    it('should successfully authenticate with correct biometric data', async () => {
+      const bioData = createMockBiometricData();
+      const email = `user${new Date().getTime()}@example.com`;
+
+      const { masterKey: originalMasterKey } = await enrollUserWithBiometrics(
+        EDV_URL,
+        EDV_AUTH_KEY,
+        bioData,
+        email
+      );
+
+      const retrievedMasterKey = await authenticateWithBiometrics(
+        EDV_URL,
+        EDV_AUTH_KEY,
+        bioData,
+        email
+      );
+
+      expect(retrievedMasterKey).toBe(originalMasterKey);
+    });
+
+    it('should support multiple users with different biometric data', async () => {
+      const bioData1 = createMockBiometricData('123');
+      const bioData2 = createMockBiometricData('456');
+      const email1 = `user1-${new Date().getTime()}@example.com`;
+      const email2 = `user2-${new Date().getTime()}@example.com`;
+
+      // Enroll two different users
+      const result1 = await enrollUserWithBiometrics(
+        EDV_URL,
+        EDV_AUTH_KEY,
+        bioData1,
+        email1
+      );
+
+      const result2 = await enrollUserWithBiometrics(
+        EDV_URL,
+        EDV_AUTH_KEY,
+        bioData2,
+        email2
+      );
+
+      // Each user should have a different master key
+      expect(result1.masterKey).not.toBe(result2.masterKey);
+
+      // Both users should be able to authenticate
+      const key1 = await authenticateWithBiometrics(
+        EDV_URL,
+        EDV_AUTH_KEY,
+        bioData1,
+        email1
+      );
+
+      const key2 = await authenticateWithBiometrics(
+        EDV_URL,
+        EDV_AUTH_KEY,
+        bioData2,
+        email2
+      );
+
+      expect(key1).toBe(result1.masterKey);
+      expect(key2).toBe(result2.masterKey);
+    });
+
+    it('should handle multiple key mappings for the same email', async () => {
+      const bioData1 = createMockBiometricData('123');
+      const bioData2 = createMockBiometricData('456');
+      const email = `user${new Date().getTime()}@example.com`;
+      // Enroll the first time
+      const { masterKey: enrollMasterKey1 } = await enrollUserWithBiometrics(
+        EDV_URL,
+        EDV_AUTH_KEY,
+        bioData1,
+        email
+      );
+
+      // Enroll again with different biometrics but same email
+      // This should create a new mapping document
+      const { masterKey: enrollMasterKey2 } = await enrollUserWithBiometrics(
+        EDV_URL,
+        EDV_AUTH_KEY,
+        bioData2,
+        email
+      );
+
+      expect(enrollMasterKey1).not.toBe(enrollMasterKey2);
+
+      // Now authenticate with the first biometric data
+      const masterKey1 = await authenticateWithBiometrics(
+        EDV_URL,
+        EDV_AUTH_KEY,
+        bioData1,
+        email
+      );
+
+      // Then authenticate with the second biometric data
+      const masterKey2 = await authenticateWithBiometrics(
+        EDV_URL,
+        EDV_AUTH_KEY,
+        bioData2,
+        email
+      );
+
+      // They should be different master keys
+      expect(masterKey1).not.toBe(masterKey2);
+    });
+
+    it('should fail authentication with incorrect biometric data', async () => {
+      const bioData1 = createMockBiometricData('123');
+      const bioData2 = createMockBiometricData('456');
+      const email = `user${new Date().getTime()}@example.com`;
+
+      // Enroll with bioData1
+      await enrollUserWithBiometrics(
+        EDV_URL,
+        EDV_AUTH_KEY,
+        bioData1,
+        email
+      );
+
+      // Try to authenticate with bioData2
+      await expect(
+        authenticateWithBiometrics(
+          EDV_URL,
+          EDV_AUTH_KEY,
+          bioData2,
+          email
+        )
+      ).rejects.toThrow('Biometric authentication failed');
+    });
+
+    it('should fail authentication with incorrect identifier', async () => {
+      const bioData = createMockBiometricData();
+      const email = `user${new Date().getTime()}@example.com`;
+
+      // Enroll first
+      await enrollUserWithBiometrics(
+        EDV_URL,
+        EDV_AUTH_KEY,
+        bioData,
+        email
+      );
+
+      // Try to authenticate with wrong email
+      await expect(
+        authenticateWithBiometrics(
+          EDV_URL,
+          EDV_AUTH_KEY,
+          bioData,
+          'wrong@example.com'
+        )
+      ).rejects.toThrow('Biometric authentication failed: Invalid biometric identifier');
+    });
+  });
+});

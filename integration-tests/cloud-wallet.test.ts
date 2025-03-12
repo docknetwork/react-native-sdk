@@ -6,9 +6,6 @@ import {
   initializeCloudWallet,
   generateCloudWalletMasterKey,
   recoverCloudWalletMasterKey,
-  createKeyMapping,
-  recoverMasterKeyWithMapping,
-  deriveBiometricKey,
 } from '@docknetwork/wallet-sdk-core/src/cloud-wallet';
 import {createDataStore} from '@docknetwork/wallet-sdk-data-store-typeorm/src';
 import {edvService} from '@docknetwork/wallet-sdk-wasm/src/services/edv';
@@ -61,72 +58,6 @@ describe('Cloud wallet', () => {
     });
   });
 
-  describe('Key Mapping', () => {
-    let masterKey: string;
-    let secondaryKey: string;
-
-    beforeEach(async () => {
-      const result = await generateCloudWalletMasterKey();
-      masterKey = result.masterKey;
-
-      // Create a mock biometric key
-      const mockBiometricData = { fingerprintId: '12345', timestamp: Date.now() };
-      secondaryKey = await deriveBiometricKey(mockBiometricData);
-    });
-
-    it('should recover the master key using secondary key and mapping', async () => {
-      const keyMapping = await createKeyMapping(masterKey, secondaryKey);
-
-      expect(keyMapping).toBeDefined();
-      expect(typeof keyMapping).toBe('string');
-
-      const recoveredKey = await recoverMasterKeyWithMapping(secondaryKey, keyMapping);
-
-      expect(recoveredKey).toBe(masterKey);
-    });
-
-    it('should work with different length keys', async () => {
-      const longBiometricData = {
-        fingerprintId: '12345',
-        facialData: Array(100).fill('x').join(''),
-        timestamp: Date.now()
-      };
-      const longSecondaryKey = await deriveBiometricKey(longBiometricData);
-
-      const keyMapping = await createKeyMapping(masterKey, longSecondaryKey);
-      const recoveredKey = await recoverMasterKeyWithMapping(longSecondaryKey, keyMapping);
-
-      expect(recoveredKey).toBe(masterKey);
-    });
-
-    it('should handle master key being longer than secondary key', async () => {
-      const shortBiometricData = { id: '123' };
-      const shortSecondaryKey = await deriveBiometricKey(shortBiometricData);
-
-      const keyMapping = await createKeyMapping(masterKey, shortSecondaryKey);
-      const recoveredKey = await recoverMasterKeyWithMapping(shortSecondaryKey, keyMapping);
-
-      expect(recoveredKey).toBe(masterKey);
-    });
-
-    it('should throw error when missing required parameters', async () => {
-      await expect(createKeyMapping('', secondaryKey)).rejects.toThrow();
-      await expect(createKeyMapping(masterKey, '')).rejects.toThrow();
-      await expect(recoverMasterKeyWithMapping('', 'mapping')).rejects.toThrow();
-      await expect(recoverMasterKeyWithMapping(secondaryKey, '')).rejects.toThrow();
-    });
-
-    it('should throw error when secondary key is too short for recovery', async () => {
-      const keyMapping = await createKeyMapping(masterKey, secondaryKey);
-
-      const shorterBiometricData = { id: '1' };
-      const shorterKey = await deriveBiometricKey(shorterBiometricData);
-
-      await expect(recoverMasterKeyWithMapping(shorterKey, keyMapping))
-        .rejects.toThrow('Secondary key is shorter than the one used for mapping creation');
-    });
-  });
-
   it('should generate a valid master key with mnemonic', async () => {
     const { mnemonic, masterKey } = await generateCloudWalletMasterKey();
 
@@ -144,23 +75,6 @@ describe('Cloud wallet', () => {
 
     expect(recoveredKey).toBe(masterKey);
   });
-
-  it('should allow unlocking the same wallet with different keys', async () => {
-    const { mnemonic, masterKey } = await generateCloudWalletMasterKey();
-
-    const biometricData = { deviceId: 'device123', timestamp: Date.now() };
-    const biometricKey = await deriveBiometricKey(biometricData);
-
-    const keyMapping = await createKeyMapping(masterKey, biometricKey);
-
-    const mnemonicRecoveredKey = await recoverCloudWalletMasterKey(mnemonic);
-    const biometricRecoveredKey = await recoverMasterKeyWithMapping(biometricKey, keyMapping);
-
-    expect(mnemonicRecoveredKey).toBe(masterKey);
-    expect(biometricRecoveredKey).toBe(masterKey);
-    expect(mnemonicRecoveredKey).toBe(biometricRecoveredKey);
-  });
-
 
   it('should see a document added directly to the EDV appear in the wallet after pulling', async () => {
     const newDocId = `${Date.now()}`;

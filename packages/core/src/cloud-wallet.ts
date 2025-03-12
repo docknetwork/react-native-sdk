@@ -2,13 +2,308 @@ import {
   DataStore,
   DataStoreEvents,
 } from '@docknetwork/wallet-sdk-data-store/src/types';
-import {logger} from '@docknetwork/wallet-sdk-data-store/src/logger';
-import {edvService} from '@docknetwork/wallet-sdk-wasm/src/services/edv';
+import { logger } from '@docknetwork/wallet-sdk-data-store/src/logger';
+import { edvService, EDVService } from '@docknetwork/wallet-sdk-wasm/src/services/edv/service';
 import base64url from 'base64url-universal';
+import crypto from '@docknetwork/universal-wallet/crypto';
 
-import {utilCryptoService} from '@docknetwork/wallet-sdk-wasm/src/services/util-crypto';
+import { utilCryptoService } from '@docknetwork/wallet-sdk-wasm/src/services/util-crypto';
 
 export const SYNC_MARKER_TYPE = 'SyncMarkerDocument';
+export const MNEMONIC_WORD_COUNT = 12;
+export const KEY_MAPPING_TYPE = 'KeyMappingDocument';
+
+/**
+ * Derives EDV keys from biometric data for the KeyMappingVault
+ * @param biometricData Biometric data from the provider
+ * @param identifier User's identifier as additional entropy (email, phone number, etc.)
+ * @returns Keys for accessing the KeyMappingVault
+ */
+export async function deriveKeyMappingVaultKeys(
+  biometricData: any,
+  identifier: string
+): Promise<{ hmacKey: string; agreementKey: string; verificationKey: string }> {
+  const processedData = JSON.stringify(biometricData);
+
+  const saltBytes = new TextEncoder().encode(identifier);
+  const bioDataBytes = new TextEncoder().encode(processedData);
+
+  const combinedBytes = new Uint8Array(saltBytes.length + bioDataBytes.length);
+  combinedBytes.set(saltBytes);
+  combinedBytes.set(bioDataBytes, saltBytes.length);
+
+  const hashBuffer = await crypto.subtle.digest('SHA-256', combinedBytes);
+  const seedBytes = new Uint8Array(hashBuffer);
+
+  const masterKey = base64url.encode(Buffer.from(seedBytes));
+
+  return edvService.deriveKeys(masterKey);
+}
+
+/**
+ * Generates a key for encrypting/decrypting the master key
+ * @param biometricData Biometric data from provider
+ * @param identifier User's identifier as salt (email, phone number, etc.)
+ * @returns Encryption key and IV for AES encryption
+ */
+export async function deriveBiometricEncryptionKey(
+  biometricData: any,
+  identifier: string
+): Promise<{ key: Buffer; iv: Buffer }> {
+  const processedData = JSON.stringify(biometricData);
+
+  const saltBytes = new TextEncoder().encode(identifier);
+  const bioDataBytes = new TextEncoder().encode(processedData);
+
+  const combinedBytes = new Uint8Array(saltBytes.length + bioDataBytes.length);
+  combinedBytes.set(saltBytes);
+  combinedBytes.set(bioDataBytes, saltBytes.length);
+
+  const keyBuffer = await crypto.subtle.digest('SHA-256', combinedBytes);
+  const key = Buffer.from(keyBuffer);
+
+  const ivInput = new TextEncoder().encode(key.toString('base64'));
+  const ivBuffer = await crypto.subtle.digest('SHA-256', ivInput);
+  const iv = Buffer.from(ivBuffer).subarray(0, 16);
+
+  return {
+    key,
+    iv
+  };
+}
+
+/**
+ * Encrypts the master key using a key derived from biometric data
+ * @param masterKey The CloudWalletVault master key to encrypt
+ * @param encryptionKey Key derived from biometric data
+ * @param iv Initialization vector
+ * @returns Encrypted master key
+ */
+export async function encryptMasterKey(
+  masterKey: string,
+  encryptionKey: Buffer,
+  iv: Buffer
+): Promise<string> {
+  const keyData = encryptionKey.buffer;
+  const ivData = iv.buffer;
+  const data = new TextEncoder().encode(masterKey);
+
+  // Import the key for use with AES-GCM
+  const key = await crypto.subtle.importKey(
+    'raw',
+    keyData,
+    { name: 'AES-GCM', length: 256 },
+    false,
+    ['encrypt']
+  );
+
+  const encryptedBuffer = await crypto.subtle.encrypt(
+    { name: 'AES-GCM', iv: ivData },
+    key,
+    data
+  );
+
+  const encryptedArray = new Uint8Array(encryptedBuffer);
+  const encryptedBase64 = base64url.encode(Buffer.from(encryptedArray));
+
+  return encryptedBase64;
+}
+
+/**
+ * Decrypts the master key using biometric-derived key
+ * @param encryptedKey The encrypted master key
+ * @param decryptionKey Key derived from biometric data
+ * @param iv Initialization vector
+ * @returns The decrypted master key
+ */
+export async function decryptMasterKey(
+  encryptedKey: string,
+  decryptionKey: Buffer,
+  iv: Buffer
+): Promise<string> {
+  try {
+    const keyData = decryptionKey.buffer;
+    const ivData = iv.buffer;
+
+    const encryptedData = base64url.decode(encryptedKey);
+
+    const key = await crypto.subtle.importKey(
+      'raw',
+      keyData,
+      { name: 'AES-GCM', length: 256 },
+      false,
+      ['decrypt']
+    );
+
+    const decryptedBuffer = await crypto.subtle.decrypt(
+      { name: 'AES-GCM', iv: ivData },
+      key,
+      encryptedData
+    );
+
+    const decrypted = new TextDecoder().decode(decryptedBuffer);
+
+    return decrypted;
+  } catch (error) {
+    throw new Error('Decryption failed: Invalid key or corrupted data');
+  }
+}
+
+/**
+ * Initializes the KeyMappingVault using biometric data
+ * @param edvUrl URL for the edv
+ * @param authKey Auth key for the edv
+ * @param biometricData User's biometric data
+ * @param identifier User's identifier (email, phone number, etc.)
+ * @returns Initialized EDV service
+ */
+export async function initializeKeyMappingVault(
+  edvUrl: string,
+  authKey: string,
+  biometricData: any,
+  identifier: string
+): Promise<any> {
+  const {
+    hmacKey,
+    agreementKey,
+    verificationKey
+  } = await deriveKeyMappingVaultKeys(biometricData, identifier);
+
+  const keyMappingEdvService = new EDVService();
+  await keyMappingEdvService.initialize({
+    hmacKey,
+    agreementKey,
+    verificationKey,
+    edvUrl,
+    authKey
+  });
+
+  return keyMappingEdvService;
+}
+
+/**
+ * Enrolls a user by creating necessary vaults and keys
+ * @param edvUrl URL for the edv
+ * @param authKey Auth key for the edv
+ * @param biometricData Biometric data from provider
+ * @param identifier User's identifier (email, phone number, etc.)
+ * @returns The master key and mnemonic for backup
+ */
+export async function enrollUserWithBiometrics(
+  edvUrl: string,
+  authKey: string,
+  biometricData: any,
+  identifier: string
+): Promise<{ masterKey: string; mnemonic: string }> {
+  const keyMappingEdv = await initializeKeyMappingVault(
+    edvUrl,
+    authKey,
+    biometricData,
+    identifier
+  );
+
+  const { mnemonic, masterKey } = await generateCloudWalletMasterKey();
+  const { key: encryptionKey, iv } = await deriveBiometricEncryptionKey(biometricData, identifier);
+  const encryptedMasterKey = await encryptMasterKey(masterKey, encryptionKey, iv);
+
+  await keyMappingEdv.insert({
+    document: {
+      content: {
+        id: identifier,
+        type: KEY_MAPPING_TYPE,
+        encryptedKey: encryptedMasterKey
+      }
+    }
+  });
+
+  return { masterKey, mnemonic };
+}
+
+/**
+ * Authenticates a user with biometric data and identifier
+ * @param edvUrl URL for the edv
+ * @param authKey Auth key for the edv
+ * @param biometricData Biometric data from the provider
+ * @param identifier User's identifier (email, phone number, etc.)
+ * @returns The decrypted master key for CloudWalletVault
+ */
+export async function authenticateWithBiometrics(
+  edvUrl: string,
+  authKey: string,
+  biometricData: any,
+  identifier: string
+): Promise<string> {
+  const keyMappingEdv = await initializeKeyMappingVault(
+    edvUrl,
+    authKey,
+    biometricData,
+    identifier
+  );
+
+  const result = await keyMappingEdv.find({
+    equals: {
+      'content.id': identifier
+    }
+  });
+
+  if (!result.documents || result.documents.length === 0) {
+    throw new Error('Biometric authentication failed: Invalid biometric identifier');
+  }
+
+  const { key: decryptionKey, iv } = await deriveBiometricEncryptionKey(biometricData, identifier);
+
+  // If there are multiple documents, try each one until one works
+  for (let i = 0; i < result.documents.length; i += 1) {
+    const keyMappingDoc = result.documents[i];
+    const encryptedKey = keyMappingDoc.content.encryptedKey;
+
+    try {
+      const masterKey = await decryptMasterKey(encryptedKey, decryptionKey, iv);
+
+      return masterKey;
+    } catch (error) {
+      if (i < result.documents.length - 1) {
+        // Try the next document
+        continue;
+      }
+
+      throw new Error('Biometric authentication failed: Invalid biometric data');
+    }
+  }
+}
+
+/**
+ * Initializes the Cloud Wallet using biometric authentication
+ * @param edvUrl Cloud wallet vault URL
+ * @param authKey Cloud wallet auth key
+ * @param biometricData User's biometric data
+ * @param identifier User's identifier (email, phone number, etc.)
+ * @param dataStore Optional data store for the wallet
+ * @returns Initialized cloud wallet
+ */
+export async function initializeCloudWalletWithBiometrics(
+  edvUrl: string,
+  authKey: string,
+  biometricData: any,
+  identifier: string,
+  dataStore?: any
+): Promise<any> {
+  // Step 1: Authenticate with biometrics to get master key
+  const masterKey = await authenticateWithBiometrics(
+    edvUrl,
+    authKey,
+    biometricData,
+    identifier
+  );
+
+  // Step 2: Initialize the cloud wallet with the master key
+  return initializeCloudWallet({
+    dataStore,
+    edvUrl,
+    authKey,
+    masterKey
+  });
+}
 
 interface QueuedOperation {
   operation: () => Promise<any>;
@@ -22,7 +317,7 @@ interface DocumentQueue {
 }
 
 export async function generateCloudWalletMasterKey(): Promise<{ mnemonic: string; masterKey: string }> {
-  const mnemonic = await utilCryptoService.mnemonicGenerate(12);
+  const mnemonic = await utilCryptoService.mnemonicGenerate(MNEMONIC_WORD_COUNT);
 
   const seedBytes = await utilCryptoService.mnemonicToMiniSecret(mnemonic);
   const masterKey = base64url.encode(Buffer.from(seedBytes));
@@ -38,78 +333,6 @@ export async function recoverCloudWalletMasterKey(mnemonic: string): Promise<str
   const masterKey = base64url.encode(Buffer.from(seedBytes));
 
   return masterKey;
-}
-
-export async function deriveBiometricKey(biometricData: any): Promise<string> {
-  // This is a simplified implementation that wallet providers would replace
-  return base64url.encode(Buffer.from(JSON.stringify(biometricData)));
-}
-
-export async function createKeyMapping(masterKey: string, secondaryKey: string): Promise<string> {
-  if (!masterKey || !secondaryKey) {
-    throw new Error('Both masterKey and secondaryKey are required');
-  }
-
-  const masterKeyBytes = base64url.decode(masterKey);
-  const secondaryKeyBytes = base64url.decode(secondaryKey);
-
-  const mappingBytes = new Uint8Array(masterKeyBytes.length);
-
-  // Store the original lengths to handle recovery correctly
-  const lengthPrefix = new Uint8Array(2);
-  lengthPrefix[0] = masterKeyBytes.length;
-  lengthPrefix[1] = secondaryKeyBytes.length;
-
-  // XOR the overlapping parts of both keys
-  const overlapLength = Math.min(masterKeyBytes.length, secondaryKeyBytes.length);
-  for (let i = 0; i < overlapLength; i++) {
-    mappingBytes[i] = masterKeyBytes[i] ^ secondaryKeyBytes[i];
-  }
-
-  // Store any remaining master key bytes beyond the secondary key length directly (but obfuscated)
-  for (let i = overlapLength; i < masterKeyBytes.length; i++) {
-    mappingBytes[i] = masterKeyBytes[i] ^ 0xFF;
-  }
-
-  const result = new Uint8Array(lengthPrefix.length + mappingBytes.length);
-  result.set(lengthPrefix, 0);
-  result.set(mappingBytes, lengthPrefix.length);
-
-  return base64url.encode(Buffer.from(result));
-}
-
-export async function recoverMasterKeyWithMapping(secondaryKey: string, keyMapping: string): Promise<string> {
-  if (!secondaryKey || !keyMapping) {
-    throw new Error('Both secondaryKey and keyMapping are required');
-  }
-
-  const secondaryKeyBytes = base64url.decode(secondaryKey);
-  const mappingData = base64url.decode(keyMapping);
-
-  const masterKeyLength = mappingData[0];
-  const originalSecondaryKeyLength = mappingData[1];
-  const mappingBytes = mappingData.slice(2);
-
-  if (mappingBytes.length === 0 || mappingBytes.length !== masterKeyLength) {
-    throw new Error('Invalid key mapping format');
-  }
-
-  if (secondaryKeyBytes.length < originalSecondaryKeyLength) {
-    throw new Error('Secondary key is shorter than the one used for mapping creation');
-  }
-
-  const masterKeyBytes = new Uint8Array(masterKeyLength);
-
-  const overlapLength = Math.min(masterKeyLength, originalSecondaryKeyLength);
-  for (let i = 0; i < overlapLength; i++) {
-    masterKeyBytes[i] = secondaryKeyBytes[i] ^ mappingBytes[i];
-  }
-
-  for (let i = overlapLength; i < masterKeyLength; i++) {
-    masterKeyBytes[i] = mappingBytes[i] ^ 0xFF;
-  }
-
-  return base64url.encode(Buffer.from(masterKeyBytes));
 }
 
 export async function initializeCloudWallet({
@@ -246,7 +469,7 @@ export async function initializeCloudWallet({
           },
         });
         logger.debug(`Document added to EDV: ${content.id}`);
-      } catch(error) {
+      } catch (error) {
         logger.error(`Unable to add document ${content.id}: ${error.message}`);
       }
     });
@@ -257,7 +480,7 @@ export async function initializeCloudWallet({
       try {
         logger.debug(`Removing document from EDV: ${documentId}`);
         const edvDocument = await findDocumentByContentId(documentId);
-        await edvService.delete({document: edvDocument});
+        await edvService.delete({ document: edvDocument });
         // TODO: Remove this once we figure out why the data store is empty after deleting a document
         await pullDocuments();
         logger.debug(`Document removed from EDV: ${documentId}`);
@@ -331,7 +554,7 @@ export async function initializeCloudWallet({
     const allDocs = await edvService.find({});
 
     for (const doc of allDocs.documents) {
-      await edvService.delete({document: doc});
+      await edvService.delete({ document: doc });
     }
   }
 

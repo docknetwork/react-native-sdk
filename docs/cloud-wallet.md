@@ -189,73 +189,73 @@ The Cloud Wallet supports multiple authentication methods to unlock the same wal
 
 ### How Multi-Key Authentication Works
 
-The Cloud Wallet uses a key mapping system that allows a secondary key e.g. derived from biometrics) to unlock the same master key that was originally derived from a mnemonic phrase.
+The Cloud Wallet uses a key mapping system that allows a secondary key (e.g. derived from biometrics) to unlock the same master key that was originally derived from a mnemonic phrase.
 
-#### Step 1: Generate Master Key from Mnemonic
+The system uses a two-vault architecture:
+- KeyMappingVault: Stores encrypted master keys that can only be accessed with proper biometric authentication
+- CloudWalletVault: The main vault containing wallet documents, secured by the master key
 
-First, generate the primary master key from a mnemonic phrase:
+#### Step 1: Enroll User with Biometric Data
+
+To set up biometric authentication, enroll the user with their biometric data and identifier (typically an email):
 
 ```ts
-import { generateCloudWalletMasterKey } from '@docknetwork/wallet-sdk-core/lib/cloud-wallet';
+import { enrollUserWithBiometrics } from '@docknetwork/wallet-sdk-core/lib/cloud-wallet';
 
-// Generate a new wallet with mnemonic and master key
-const { mnemonic, masterKey } = await generateCloudWalletMasterKey();
+// Biometric data would come from platform-specific biometric APIs
+const biometricData = await getPlatformBiometricData();
+const userEmail = 'user@example.com';
+
+// Enroll user and get master key + recovery mnemonic
+const { masterKey, mnemonic } = await enrollUserWithBiometrics(
+  EDV_URL,
+  EDV_AUTH_KEY,
+  biometricData,
+  userEmail
+);
 
 // IMPORTANT: Store the mnemonic securely for recovery purposes
 ```
+The enrollment process:
+1. Creates a unique master key and mnemonic
+2. Generates encryption keys from the biometric data
+3. Encrypts the master key with the biometric-derived keys
+4. Stores the encrypted master key in the KeyMappingVault, indexed by the user's email
 
-#### Step 2: Create a Biometric Key
+#### Step 2: Authenticate with Biometrics
 
-Next, generate a secondary key from biometric data. In a real implementation, this would use platform-specific secure biometric APIs:
-
-```ts
-import { deriveBiometricKey } from '@docknetwork/wallet-sdk-core/lib/cloud-wallet';
-
-// In real implementation, this would use platform's secure biometric APIs
-// This is just a simplified example
-const biometricData = /* Biometric data from the platform */;
-const biometricKey = await deriveBiometricKey(biometricData);
-```
-
-#### Step 3: Create Key Mapping
-
-Create a mapping between the master key and biometric key:
+Next, when the user wants to access their wallet, they can authenticate with their biometric data:
 
 ```ts
-import { createKeyMapping } from '@docknetwork/wallet-sdk-core/lib/cloud-wallet';
+import {
+  authenticateWithBiometrics,
+  initializeCloudWalletWithBiometrics
+} from '@docknetwork/wallet-sdk-core/lib/cloud-wallet';
 
-// Create the key mapping
-const keyMapping = await createKeyMapping(masterKey, biometricKey);
+// Get current biometric data from platform APIs
+const biometricData = await getPlatformBiometricData();
+const userEmail = 'user@example.com';
 
-// Store the key mapping securely
-storeKeyMappingSecurely(keyMapping);
+// Method 1: Get the master key directly
+const masterKey = await authenticateWithBiometrics(
+  EDV_URL,
+  EDV_AUTH_KEY,
+  biometricData,
+  userEmail
+);
+
+// Method 2: Initialize cloud wallet in one step
+const cloudWallet = await initializeCloudWalletWithBiometrics(
+  EDV_URL,
+  EDV_AUTH_KEY,
+  biometricData,
+  userEmail,
+  dataStore
+);
 ```
-
-#### Step 4: Initialize Wallet with Different Keys
-
-The wallet can now be initialized using either the master key or the biometric key with mapping:
-
-```ts
-// Option 1: Initialize with master key (e.g., after mnemonic recovery)
-await initializeCloudWallet({
-  dataStore,
-  edvUrl: EDV_URL,
-  authKey: EDV_AUTH_KEY,
-  masterKey,
-});
-
-// Option 2: Initialize with biometric key
-const storedKeyMapping = /* Load the key mapping from secure storage */;
-const biometricKey = await deriveBiometricKey(biometricData);
-
-// Recover the master key using the biometric key and mapping
-const recoveredMasterKey = await recoverMasterKeyWithMapping(biometricKey, storedKeyMapping);
-
-// Initialize with the recovered master key
-await initializeCloudWallet({
-  dataStore,
-  edvUrl: EDV_URL,
-  authKey: EDV_AUTH_KEY,
-  masterKey: recoveredMasterKey,
-});
-```
+The authentication process:
+1. Uses biometric data and email to access the KeyMappingVault
+2. Finds the encrypted master key associated with the user's email
+3. Derives decryption keys from the provided biometric data
+4. Decrypts the master key
+5. Uses the master key to access the CloudWalletVault
