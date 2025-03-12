@@ -88,7 +88,6 @@ export async function encryptMasterKey(
   const ivData = iv.buffer;
   const data = new TextEncoder().encode(masterKey);
 
-  // Import the key for use with AES-GCM
   const key = await crypto.subtle.importKey(
     'raw',
     keyData,
@@ -288,7 +287,6 @@ export async function initializeCloudWalletWithBiometrics(
   identifier: string,
   dataStore?: any
 ): Promise<any> {
-  // Step 1: Authenticate with biometrics to get master key
   const masterKey = await authenticateWithBiometrics(
     edvUrl,
     authKey,
@@ -296,7 +294,6 @@ export async function initializeCloudWalletWithBiometrics(
     identifier
   );
 
-  // Step 2: Initialize the cloud wallet with the master key
   return initializeCloudWallet({
     dataStore,
     edvUrl,
