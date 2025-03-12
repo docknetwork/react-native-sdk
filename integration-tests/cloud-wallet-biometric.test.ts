@@ -5,7 +5,8 @@ import {
   deriveBiometricEncryptionKey,
   encryptMasterKey,
   decryptMasterKey,
-  initializeKeyMappingVault
+  initializeKeyMappingVault,
+  recoverCloudWalletMasterKey
 } from '@docknetwork/wallet-sdk-core/src/cloud-wallet';
 
 const EDV_URL = process.env.EDV_URL;
@@ -94,7 +95,6 @@ describe('Biometric Authentication System', () => {
         email
       );
 
-      // Check that the function returned a master key and mnemonic
       expect(result.masterKey).toBeDefined();
       expect(result.mnemonic).toBeDefined();
       expect(result.mnemonic.split(' ').length).toBe(12);
@@ -140,11 +140,9 @@ describe('Biometric Authentication System', () => {
     });
 
     it('should allow recovery using mnemonic after biometric enrollment', async () => {
-      // This test demonstrates the recovery path using the mnemonic
       const bioData = createMockBiometricData();
       const email = `user${new Date().getTime()}@example.com`;
 
-      // Enroll with biometrics
       const { masterKey, mnemonic } = await enrollUserWithBiometrics(
         EDV_URL,
         EDV_AUTH_KEY,
@@ -152,12 +150,7 @@ describe('Biometric Authentication System', () => {
         email
       );
 
-      // Now simulate recovery using the mnemonic
-      // This function should be imported from your actual code
-      const recoverCloudWalletMasterKey = jest.fn().mockResolvedValue(masterKey);
-
       const recoveredKey = await recoverCloudWalletMasterKey(mnemonic);
-
       expect(recoveredKey).toBe(masterKey);
     });
   });
@@ -190,7 +183,6 @@ describe('Biometric Authentication System', () => {
       const email1 = `user1-${new Date().getTime()}@example.com`;
       const email2 = `user2-${new Date().getTime()}@example.com`;
 
-      // Enroll two different users
       const result1 = await enrollUserWithBiometrics(
         EDV_URL,
         EDV_AUTH_KEY,
@@ -205,10 +197,8 @@ describe('Biometric Authentication System', () => {
         email2
       );
 
-      // Each user should have a different master key
       expect(result1.masterKey).not.toBe(result2.masterKey);
 
-      // Both users should be able to authenticate
       const key1 = await authenticateWithBiometrics(
         EDV_URL,
         EDV_AUTH_KEY,
@@ -231,7 +221,6 @@ describe('Biometric Authentication System', () => {
       const bioData1 = createMockBiometricData('123');
       const bioData2 = createMockBiometricData('456');
       const email = `user${new Date().getTime()}@example.com`;
-      // Enroll the first time
       const { masterKey: enrollMasterKey1 } = await enrollUserWithBiometrics(
         EDV_URL,
         EDV_AUTH_KEY,
@@ -239,8 +228,6 @@ describe('Biometric Authentication System', () => {
         email
       );
 
-      // Enroll again with different biometrics but same email
-      // This should create a new mapping document
       const { masterKey: enrollMasterKey2 } = await enrollUserWithBiometrics(
         EDV_URL,
         EDV_AUTH_KEY,
@@ -250,7 +237,6 @@ describe('Biometric Authentication System', () => {
 
       expect(enrollMasterKey1).not.toBe(enrollMasterKey2);
 
-      // Now authenticate with the first biometric data
       const masterKey1 = await authenticateWithBiometrics(
         EDV_URL,
         EDV_AUTH_KEY,
@@ -258,7 +244,6 @@ describe('Biometric Authentication System', () => {
         email
       );
 
-      // Then authenticate with the second biometric data
       const masterKey2 = await authenticateWithBiometrics(
         EDV_URL,
         EDV_AUTH_KEY,
@@ -266,7 +251,6 @@ describe('Biometric Authentication System', () => {
         email
       );
 
-      // They should be different master keys
       expect(masterKey1).not.toBe(masterKey2);
     });
 
