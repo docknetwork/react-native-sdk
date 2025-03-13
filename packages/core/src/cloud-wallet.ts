@@ -5,6 +5,7 @@ import {
 import { logger } from '@docknetwork/wallet-sdk-data-store/src/logger';
 import { edvService, EDVService } from '@docknetwork/wallet-sdk-wasm/src/services/edv/service';
 import base64url from 'base64url-universal';
+import hkdf from 'futoin-hkdf';
 import crypto from '@docknetwork/universal-wallet/crypto';
 
 import { utilCryptoService } from '@docknetwork/wallet-sdk-wasm/src/services/util-crypto';
@@ -12,6 +13,24 @@ import { utilCryptoService } from '@docknetwork/wallet-sdk-wasm/src/services/uti
 export const SYNC_MARKER_TYPE = 'SyncMarkerDocument';
 export const MNEMONIC_WORD_COUNT = 12;
 export const KEY_MAPPING_TYPE = 'KeyMappingDocument';
+export const HKDF_LENGTH = 32;
+export const HKDF_HASH = 'SHA-256';
+
+/**
+ * Derives a key from biometric data using HKDF
+ * @param biometricData Biometric data from provider
+ * @param identifier User's identifier as salt (email, phone number, etc.)
+ * @returns Derived key
+ */
+export function deriveBiometricKey(
+  biometricData: any,
+  identifier: string,
+): Buffer {
+  const ikm = JSON.stringify(biometricData);
+  const salt = identifier;
+
+  return hkdf(ikm, HKDF_LENGTH, { salt, hash: HKDF_HASH });
+}
 
 /**
  * Derives EDV keys from biometric data for the KeyMappingVault
@@ -23,19 +42,8 @@ export async function deriveKeyMappingVaultKeys(
   biometricData: any,
   identifier: string
 ): Promise<{ hmacKey: string; agreementKey: string; verificationKey: string }> {
-  const processedData = JSON.stringify(biometricData);
-
-  const saltBytes = new TextEncoder().encode(identifier);
-  const bioDataBytes = new TextEncoder().encode(processedData);
-
-  const combinedBytes = new Uint8Array(saltBytes.length + bioDataBytes.length);
-  combinedBytes.set(saltBytes);
-  combinedBytes.set(bioDataBytes, saltBytes.length);
-
-  const hashBuffer = await crypto.subtle.digest('SHA-256', combinedBytes);
-  const seedBytes = new Uint8Array(hashBuffer);
-
-  const masterKey = base64url.encode(Buffer.from(seedBytes));
+  const seedBuffer = deriveBiometricKey(biometricData, identifier);
+  const masterKey = base64url.encode(seedBuffer);
 
   return edvService.deriveKeys(masterKey);
 }
@@ -50,20 +58,9 @@ export async function deriveBiometricEncryptionKey(
   biometricData: any,
   identifier: string
 ): Promise<{ key: Buffer; iv: Buffer }> {
-  const processedData = JSON.stringify(biometricData);
+  const key = deriveBiometricKey(biometricData, identifier);
 
-  const saltBytes = new TextEncoder().encode(identifier);
-  const bioDataBytes = new TextEncoder().encode(processedData);
-
-  const combinedBytes = new Uint8Array(saltBytes.length + bioDataBytes.length);
-  combinedBytes.set(saltBytes);
-  combinedBytes.set(bioDataBytes, saltBytes.length);
-
-  const keyBuffer = await crypto.subtle.digest('SHA-256', combinedBytes);
-  const key = Buffer.from(keyBuffer);
-
-  const ivInput = new TextEncoder().encode(key.toString('base64'));
-  const ivBuffer = await crypto.subtle.digest('SHA-256', ivInput);
+  const ivBuffer = await crypto.subtle.digest('SHA-256', key);
   const iv = Buffer.from(ivBuffer).subarray(0, 16);
 
   return {
@@ -84,14 +81,14 @@ export async function encryptMasterKey(
   encryptionKey: Buffer,
   iv: Buffer
 ): Promise<string> {
-  const keyData = encryptionKey.buffer;
-  const ivData = iv.buffer;
+  const keyData = new Uint8Array(encryptionKey);
+  const ivData = new Uint8Array(iv);
   const data = new TextEncoder().encode(masterKey);
 
   const key = await crypto.subtle.importKey(
     'raw',
     keyData,
-    { name: 'AES-GCM', length: 256 },
+    { name: 'AES-GCM' },
     false,
     ['encrypt']
   );
@@ -121,15 +118,15 @@ export async function decryptMasterKey(
   iv: Buffer
 ): Promise<string> {
   try {
-    const keyData = decryptionKey.buffer;
-    const ivData = iv.buffer;
+    const keyData = new Uint8Array(decryptionKey);
+    const ivData = new Uint8Array(iv);
 
     const encryptedData = base64url.decode(encryptedKey);
 
     const key = await crypto.subtle.importKey(
       'raw',
       keyData,
-      { name: 'AES-GCM', length: 256 },
+      { name: 'AES-GCM' },
       false,
       ['decrypt']
     );
