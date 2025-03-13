@@ -58,16 +58,22 @@ describe('Cloud wallet', () => {
     });
   });
 
-  it('should be able to generate a masterKey and a mnemonic', async () => {
-    const { masterKey, mnemonic } = await generateCloudWalletMasterKey();
-    expect(masterKey).toBeDefined();
+  it('should generate a valid master key with mnemonic', async () => {
+    const { mnemonic, masterKey } = await generateCloudWalletMasterKey();
+
     expect(mnemonic).toBeDefined();
+    expect(typeof mnemonic).toBe('string');
+    expect(mnemonic.split(' ').length).toBe(12);
+
+    expect(masterKey).toBeDefined();
+    expect(typeof masterKey).toBe('string');
   });
 
-  it('should be able to recover a masterKey from a mnemonic', async () => {
-    const { masterKey, mnemonic } = await generateCloudWalletMasterKey();
-    const recoveredMasterKey = await recoverCloudWalletMasterKey(mnemonic);
-    expect(recoveredMasterKey).toEqual(masterKey);
+  it('should recover the same master key from a mnemonic', async () => {
+    const { mnemonic, masterKey } = await generateCloudWalletMasterKey();
+    const recoveredKey = await recoverCloudWalletMasterKey(mnemonic);
+
+    expect(recoveredKey).toBe(masterKey);
   });
 
   it('should see a document added directly to the EDV appear in the wallet after pulling', async () => {
