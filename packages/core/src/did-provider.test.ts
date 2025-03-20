@@ -1,7 +1,6 @@
 import {IWallet} from './types';
 import {createWallet} from './wallet';
 import {
-  createDIDock,
   createDIDKey,
   createDIDProvider,
   IDIDProvider,
@@ -93,65 +92,6 @@ describe('DID Provider', () => {
           password,
         }),
       ).rejects.toThrowError('DID already exists in wallet');
-    });
-  });
-
-  describe('create DID Dock', () => {
-    it('expect to create a DID Dock', async () => {
-      const account = await accountProvider.create({
-        name: 'test',
-      });
-
-      jest.spyOn(didServiceRPC, 'registerDidDock').mockResolvedValueOnce({
-        dockDID: 'did:dock:abcde',
-        keyPairWalletId: account.address,
-      });
-
-      jest.spyOn(didServiceRPC, 'generateKeyDoc').mockResolvedValueOnce({
-        id: 'did:dock:abcde#key-1',
-        type: 'KeyDocument',
-      });
-
-      jest.spyOn(didServiceRPC, 'getDidDockDocument').mockResolvedValueOnce({
-        id: 'did:dock:abcde#key-2',
-        type: 'DidDocument',
-      });
-
-      await didProvider.createDIDock({
-        address: account.address,
-        name: 'Test DID',
-      });
-
-      const keyDocuments = await wallet.getDocumentsByType('KeyDocument');
-      const didDocument = await wallet.getDocumentsByType(
-        'DIDResolutionResponse',
-      );
-
-      expect(keyDocuments.length).toBe(1);
-      expect(didDocument.length).toBe(2);
-    });
-    it('expect to assert parameters', async () => {
-      await expect(
-        didProvider.createDIDock({
-          address: null,
-          name: 'Test DID',
-        }),
-      ).rejects.toThrowError('address is required');
-
-      await expect(
-        didProvider.createDIDock({
-          address: 'some-address',
-          name: '',
-        }),
-      ).rejects.toThrowError('name is required');
-
-      await expect(
-        createDIDock({
-          address: 'some-address',
-          name: 'Some name',
-          wallet: null,
-        }),
-      ).rejects.toThrowError('wallet is required');
     });
   });
 

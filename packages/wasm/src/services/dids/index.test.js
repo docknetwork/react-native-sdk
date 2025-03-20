@@ -99,47 +99,6 @@ describe('DID Service', () => {
     spy.mockReset();
   });
 
-  it('expect to register did dock', async () => {
-    blockchainService.modules = {
-      did: {
-        dockOnly: {
-          rawTx: {
-            newOnchain: jest.fn(),
-          },
-        },
-      },
-    };
-
-    jest.spyOn(DockDid, 'fromQualifiedString').mockReturnValueOnce('');
-
-    const result = await service.registerDidDock(
-      TestFixtures.account1.getKeyring().toJson(''),
-    );
-    expect(result.dockDID).toBeDefined();
-    expect(result.keyPairWalletId).toBeDefined();
-  });
-
-  it('expect to fail to register did dock', async () => {
-    blockchainService.modules = {
-      did: {
-        dockOnly: {
-          rawTx: {
-            newOnchain: () => {
-              throw new Error('');
-            },
-          },
-        },
-      },
-    };
-
-    const error = await getPromiseError(() =>
-      service.registerDidDock(
-        TestFixtures.noBalanceAccount.getKeyring().toJson(''),
-      ),
-    );
-    expect(error.message).toBeDefined();
-  });
-
   it('expect to get did document', async () => {
     const document = 'document';
     jest

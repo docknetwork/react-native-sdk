@@ -28,24 +28,6 @@ import {
   EcdsaSecp256k1Signature2019,
 } from '@docknetwork/credential-sdk/vc/crypto';
 
-async function createDockDID({keyPair}) {
-  const dockDID = DockDid.random();
-  const dockController = dockDID.toString();
-  const publicKey = keyPair.publicKey();
-  const verRels = new VerificationRelationship();
-  const didKey = new DidKey(publicKey, verRels);
-
-  await blockchainService.modules.did.dockOnly.rawTx.newOnchain(
-    dockDID.did,
-    [didKey],
-    dockController === dockDID.toString()
-      ? []
-      : [DockDid.fromQualifiedString(dockController)],
-  );
-
-  return {did: dockDID.toString(), controller: dockController};
-}
-
 async function getSignerKeypair(privateKeyDoc) {
   const privateKey =
     privateKeyDoc.keypair || keyDocToKeypair(privateKeyDoc, blockchainService.dock);
@@ -85,7 +67,6 @@ class DIDService {
     DIDService.prototype.getDIDResolution,
     DIDService.prototype.generateKeyDoc,
     DIDService.prototype.deriveKeyDoc,
-    DIDService.prototype.registerDidDock,
     DIDService.prototype.getDidDockDocument,
     DIDService.prototype.createSignedJWT,
   ];
@@ -158,17 +139,6 @@ class DIDService {
     const dock = blockchainService.dock;
     const result = await blockchainService.didModule.getDocument(did);
     return result;
-  }
-
-  async registerDidDock(keyPairJSON) {
-    assert(!!keyPairJSON, 'keyPair is required');
-    const keyPair = Ed25519Keypair.random();
-    const dockDID = await createDockDID({keyPair});
-
-    return {
-      dockDID,
-      keyPairWalletId: keyPairJSON.address,
-    };
   }
 }
 
