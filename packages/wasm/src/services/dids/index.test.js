@@ -1,12 +1,10 @@
-import {assertRpcService, getPromiseError} from '../test-utils';
+import {assertRpcService} from '../test-utils';
 import {DIDServiceRPC} from './service-rpc';
 import {didService as service} from './service';
 import {validation} from './config';
 import {DIDKeyManager} from '@docknetwork/wallet-sdk-dids/src';
-import {TestFixtures} from '../../fixtures';
 import {getTestWallet} from '../../test/setup-test-state';
 import {blockchainService} from '../blockchain/service';
-import {DockDid} from '@docknetwork/credential-sdk/types';
 
 describe('DID Service', () => {
   beforeAll(async () => {
@@ -97,47 +95,6 @@ describe('DID Service', () => {
     expect(res).toBeDefined();
     expect(res).toHaveProperty('id');
     spy.mockReset();
-  });
-
-  it('expect to register did dock', async () => {
-    blockchainService.modules = {
-      did: {
-        dockOnly: {
-          rawTx: {
-            newOnchain: jest.fn(),
-          },
-        },
-      },
-    };
-
-    jest.spyOn(DockDid, 'fromQualifiedString').mockReturnValueOnce('');
-
-    const result = await service.registerDidDock(
-      TestFixtures.account1.getKeyring().toJson(''),
-    );
-    expect(result.dockDID).toBeDefined();
-    expect(result.keyPairWalletId).toBeDefined();
-  });
-
-  it('expect to fail to register did dock', async () => {
-    blockchainService.modules = {
-      did: {
-        dockOnly: {
-          rawTx: {
-            newOnchain: () => {
-              throw new Error('');
-            },
-          },
-        },
-      },
-    };
-
-    const error = await getPromiseError(() =>
-      service.registerDidDock(
-        TestFixtures.noBalanceAccount.getKeyring().toJson(''),
-      ),
-    );
-    expect(error.message).toBeDefined();
   });
 
   it('expect to get did document', async () => {

@@ -1,6 +1,5 @@
-import { useCallback, useMemo } from 'react';
-import { didServiceRPC } from '@docknetwork/wallet-sdk-wasm/src/services/dids';
-import { createDIDKeyDocument, createDIDProvider } from '@docknetwork/wallet-sdk-core/src/did-provider';
+import { useMemo } from 'react';
+import { createDIDProvider } from '@docknetwork/wallet-sdk-core/src/did-provider';
 import { useWallet } from './index';
 
 export function useDIDManagement() {
@@ -20,10 +19,8 @@ export function useDIDManagement() {
   }, [documents]);
 
   const createDID = async didParams => {
-    const { derivePath, type = 'ed25519', name, didType, address } = didParams;
+    const { derivePath, type = 'ed25519', name, didType } = didParams;
     switch (didType) {
-      case 'diddock':
-        return didProvider.createDIDock({ address, name });
       case 'didkey':
         return didProvider.createDIDKey({ derivePath, name, type });
       default:
