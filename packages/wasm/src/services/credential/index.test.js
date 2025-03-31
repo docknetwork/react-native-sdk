@@ -445,7 +445,7 @@ describe('Credential Service', () => {
     ).toBe(true);
   });
 
-  describe('OID Credential Acquisition', () => {
+  describe('acquireOIDCredential', () => {
     const mockHolderKeyDocument = {
       id: 'did:example:123#key-1',
       controller: 'did:example:123',
