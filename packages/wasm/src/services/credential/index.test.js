@@ -5,7 +5,7 @@ import * as credentialUtils from '@docknetwork/credential-sdk/vc';
 import {CredentialServiceRPC} from './service-rpc';
 import {getTestWallet} from '../../test/setup-test-state';
 import {OpenID4VCIClientV1_0_13} from '@sphereon/oid4vci-client';
-import { didService } from '../dids/service';
+import {didService} from '../dids/service';
 
 describe('Credential Service', () => {
   beforeAll(async () => {
@@ -454,7 +454,8 @@ describe('Credential Service', () => {
     const mockCredential = {
       '@context': ['https://www.w3.org/2018/credentials/v1'],
       type: ['VerifiableCredential', 'MyCredential'],
-      issuer: 'https://api-testnet.truvera.io/openid/issuers/7eff516f-69fb-4b9d-94dc-e88308ec0c4c',
+      issuer:
+        'https://api-testnet.truvera.io/openid/issuers/7eff516f-69fb-4b9d-94dc-e88308ec0c4c',
       credentialSubject: {
         id: 'did:example:123',
         name: 'John Doe',
@@ -473,18 +474,25 @@ describe('Credential Service', () => {
     });
 
     it('should handle credential_offer parameter', async () => {
-      const uri = 'openid-credential-offer://?credential_offer=%7B%22credential_issuer%22%3A%22https%3A%2F%2Fapi-testnet.truvera.io%2Fopenid%2Fissuers%2F7eff516f-69fb-4b9d-94dc-e88308ec0c4c%22%2C%22credentials%22%3A%5B%22ldp_vc%3AMyCredential%22%5D%2C%22grants%22%3A%7B%22urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Apre-authorized_code%22%3A%7B%22pre-authorized_code%22%3A%22AAL4MPpEpWY6daBxVxJ8Q3chxOhvc9qIV3EAyj7dvps%22%2C%22user_pin_required%22%3Afalse%7D%7D%7D';
-      
+      const uri =
+        'openid-credential-offer://?credential_offer=%7B%22credential_issuer%22%3A%22https%3A%2F%2Fapi-testnet.truvera.io%2Fopenid%2Fissuers%2F7eff516f-69fb-4b9d-94dc-e88308ec0c4c%22%2C%22credentials%22%3A%5B%22ldp_vc%3AMyCredential%22%5D%2C%22grants%22%3A%7B%22urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Apre-authorized_code%22%3A%7B%22pre-authorized_code%22%3A%22AAL4MPpEpWY6daBxVxJ8Q3chxOhvc9qIV3EAyj7dvps%22%2C%22user_pin_required%22%3Afalse%7D%7D%7D';
+
       const mockClient = {
         credentialOffer: {
           preAuthorizedCode: 'AAL4MPpEpWY6daBxVxJ8Q3chxOhvc9qIV3EAyj7dvps',
         },
         acquireAccessToken: jest.fn(),
-        acquireCredentials: jest.fn().mockResolvedValue({ credential: mockCredential }),
+        acquireCredentials: jest
+          .fn()
+          .mockResolvedValue({credential: mockCredential}),
       };
 
-      jest.spyOn(OpenID4VCIClientV1_0_13, 'fromURI').mockResolvedValue(mockClient);
-      jest.spyOn(didService, 'createSignedJWT').mockResolvedValue('mock.jwt.token');
+      jest
+        .spyOn(OpenID4VCIClientV1_0_13, 'fromURI')
+        .mockResolvedValue(mockClient);
+      jest
+        .spyOn(didService, 'createSignedJWT')
+        .mockResolvedValue('mock.jwt.token');
 
       const result = await service.acquireOIDCredential({
         uri,
@@ -497,20 +505,26 @@ describe('Credential Service', () => {
     });
 
     it('should handle credential_offer_uri parameter', async () => {
-      const uri = 'openid-credential-offer://?credential_offer_uri=%7B%22credential_issuer%22%3A%22https%3A%2F%2Fapi-testnet.truvera.io%2Fopenid%2Fissuers%2F7eff516f-69fb-4b9d-94dc-e88308ec0c4c%22%2C%22credentials%22%3A%5B%22ldp_vc%3AMyCredential%22%5D%2C%22grants%22%3A%7B%22urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Apre-authorized_code%22%3A%7B%22pre-authorized_code%22%3A%22AAL4MPpEpWY6daBxVxJ8Q3chxOhvc9qIV3EAyj7dvps%22%2C%22user_pin_required%22%3Afalse%7D%7D%7D';
-    
-      
+      const uri =
+        'openid-credential-offer://?credential_offer_uri=%7B%22credential_issuer%22%3A%22https%3A%2F%2Fapi-testnet.truvera.io%2Fopenid%2Fissuers%2F7eff516f-69fb-4b9d-94dc-e88308ec0c4c%22%2C%22credentials%22%3A%5B%22ldp_vc%3AMyCredential%22%5D%2C%22grants%22%3A%7B%22urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Apre-authorized_code%22%3A%7B%22pre-authorized_code%22%3A%22AAL4MPpEpWY6daBxVxJ8Q3chxOhvc9qIV3EAyj7dvps%22%2C%22user_pin_required%22%3Afalse%7D%7D%7D';
+
       // Mock OpenID4VCIClientV1_0_13
       const mockClient = {
         credentialOffer: {
           preAuthorizedCode: 'AAL4MPpEpWY6daBxVxJ8Q3chxOhvc9qIV3EAyj7dvps',
         },
         acquireAccessToken: jest.fn(),
-        acquireCredentials: jest.fn().mockResolvedValue({ credential: mockCredential }),
+        acquireCredentials: jest
+          .fn()
+          .mockResolvedValue({credential: mockCredential}),
       };
 
-      jest.spyOn(OpenID4VCIClientV1_0_13, 'fromURI').mockResolvedValue(mockClient);
-      jest.spyOn(didService, 'createSignedJWT').mockResolvedValue('mock.jwt.token');
+      jest
+        .spyOn(OpenID4VCIClientV1_0_13, 'fromURI')
+        .mockResolvedValue(mockClient);
+      jest
+        .spyOn(didService, 'createSignedJWT')
+        .mockResolvedValue('mock.jwt.token');
 
       const result = await service.acquireOIDCredential({
         uri,
@@ -523,13 +537,17 @@ describe('Credential Service', () => {
     });
 
     it('should return authorization URL when no pre-authorized code is available', async () => {
-      const uri = 'openid-credential-offer://?credential_offer=%7B%22credential_issuer%22%3A%22https%3A%2F%2Fapi-testnet.truvera.io%2Fopenid%2Fissuers%2F7eff516f-69fb-4b9d-94dc-e88308ec0c4c%22%2C%22credentials%22%3A%5B%22ldp_vc%3AMyCredential%22%5D%7D';
+      const uri =
+        'openid-credential-offer://?credential_offer=%7B%22credential_issuer%22%3A%22https%3A%2F%2Fapi-testnet.truvera.io%2Fopenid%2Fissuers%2F7eff516f-69fb-4b9d-94dc-e88308ec0c4c%22%2C%22credentials%22%3A%5B%22ldp_vc%3AMyCredential%22%5D%7D';
       const mockClient = {
         credentialOffer: {},
-        authorizationURL: 'https://api-testnet.truvera.io/openid/authorize?response_type=code&client_id=dock.wallet&redirect_uri=dock-wallet%3A%2F%2Fcredentials%2Fcallback&scope=ldp_vc%3AMyCredential',
+        authorizationURL:
+          'https://api-testnet.truvera.io/openid/authorize?response_type=code&client_id=dock.wallet&redirect_uri=dock-wallet%3A%2F%2Fcredentials%2Fcallback&scope=ldp_vc%3AMyCredential',
       };
 
-      jest.spyOn(OpenID4VCIClientV1_0_13, 'fromURI').mockResolvedValue(mockClient);
+      jest
+        .spyOn(OpenID4VCIClientV1_0_13, 'fromURI')
+        .mockResolvedValue(mockClient);
 
       const result = await service.acquireOIDCredential({
         uri,
