@@ -199,7 +199,7 @@ class CredentialService {
   }) {
     const searchParams = new URL(uri).searchParams;
     const params = new URLSearchParams(searchParams);
-    const credentialOfferEncoded = params.get('credential_offer');
+    const credentialOfferEncoded = params.get('credential_offer') || params.get('credential_offer_uri');
     const credentialOfferDecoded = decodeURIComponent(credentialOfferEncoded);
     const credentialOffer = JSON.parse(credentialOfferDecoded);
     const scope = credentialOffer.credentials[0];
