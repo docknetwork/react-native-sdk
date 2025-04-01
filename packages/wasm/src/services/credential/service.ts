@@ -199,12 +199,6 @@ class CredentialService {
   }) {
     const searchParams = new URL(uri).searchParams;
     const params = new URLSearchParams(searchParams);
-    const credentialOfferEncoded = params.get('credential_offer') || params.get('credential_offer_uri');
-    const credentialOfferDecoded = decodeURIComponent(credentialOfferEncoded);
-    const credentialOffer = JSON.parse(credentialOfferDecoded);
-    const scope = credentialOffer.credentials[0];
-    const format = 'ldp_vc';
-    const credentialTypes = scope.replace('ldp_vc:', '');
 
     const client = await OpenID4VCIClientV1_0_13.fromURI({
       uri: uri,
@@ -212,9 +206,11 @@ class CredentialService {
       authorizationRequest: {
         redirectUri: 'dock-wallet://credentials/callback',
         clientId: 'dock.wallet',
-        scope: credentialOffer.credentials[0],
       },
     });
+
+    const format = 'ldp_vc';
+    const credentialTypes = client.getCredentialsSupported()[0].scope.replace(`${format}:`, '');
 
     let code;
 
@@ -249,6 +245,7 @@ class CredentialService {
             return jwt;
           },
         },
+        context: 'truverawallet',
         format: format,
         alg: Alg.EdDSA,
         kid: holderKeyDocument.id,
