@@ -210,7 +210,9 @@ class CredentialService {
     });
 
     const format = 'ldp_vc';
-    const credentialTypes = client.getCredentialsSupported()[0].scope.replace(`${format}:`, '');
+    const { scope }  = client.getCredentialsSupported()[0];
+    const scopeSplit = scope.split(':');
+    const credentialTypes = scopeSplit[scopeSplit.length - 1];
 
     let code;
 
