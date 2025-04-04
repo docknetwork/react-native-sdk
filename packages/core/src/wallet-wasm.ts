@@ -113,6 +113,20 @@ export async function initWalletWasm(wallet: IWallet) {
     });
   }
 
+  wallet.ensureNetwork = async () => {
+    try {
+      const isConnected = await blockchainService.isApiConnected();
+
+      if (!isConnected) {
+        await setBlockchainNetwork(wallet);
+        wallet.eventManager.emit(WalletEvents.networkConnected);
+      }
+    } catch (err) {
+      console.error('Error checking network connection:', err);
+      wallet.eventManager.emit(WalletEvents.networkError, err);
+    }
+  }
+
   wallet.setStatus('ready');
 
   wallet.eventManager.emit(WalletEvents.ready);
