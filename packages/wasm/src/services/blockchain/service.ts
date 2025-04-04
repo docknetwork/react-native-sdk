@@ -242,7 +242,7 @@ export class BlockchainService {
    * @returns
    */
   async isApiConnected() {
-    return this.isBlockchainReady;
+    return this.cheqdApi.isInitialized();
   }
 
   async getAddress() {
