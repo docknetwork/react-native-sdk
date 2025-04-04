@@ -25,9 +25,9 @@ describe('DockService', () => {
       const mock = mockDockSdkConnection();
       const result = await doConnect();
       expect(result).toBe(true);
-      expect(await service.isApiConnected()).toBeTruthy();
+      expect(service.isBlockchainReady).toBeTruthy();
       await service.disconnect();
-      expect(await service.isApiConnected()).toBeFalsy();
+      expect(service.isBlockchainReady).toBeFalsy();
       mock.clear();
     });
   });
