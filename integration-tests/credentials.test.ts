@@ -7,23 +7,14 @@ import {
   PolygonIDCredential,
   UniversityDegreeCredential,
   UniversityDegreeCredentialBBS,
-  BasicCredentialMainnet,
-  UniversityDegreeTestnet,
 } from './data/credentials';
 import {
   cleanup,
   closeWallet,
-  createNewWallet,
   getCredentialProvider,
   getWallet,
-  setupEnvironent,
 } from './helpers';
-import {credentialService} from '@docknetwork/wallet-sdk-wasm/src/services/credential/service';
-import {IWallet} from '@docknetwork/wallet-sdk-core/src/types';
-import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
-import {API_MOCK_DISABLED} from '@docknetwork/wallet-sdk-wasm/src/services/test-utils';
 import axios from 'axios';
-import {test} from '@docknetwork/wallet-sdk-wasm/src/services/blockchain/revocation';
 import {CheqdRevocationCredential} from './data/credentials/cheqd-credentials';
 
 const allCredentials = [
