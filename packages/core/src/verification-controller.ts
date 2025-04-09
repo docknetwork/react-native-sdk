@@ -195,7 +195,7 @@ export function createVerificationController({
         ? keyDoc.id
         : `${keyDoc.controller}#keys-1`,
       domain: 'dock.io',
-      pexForBounds: templateJSON,
+      ...(isRangeProofTemplate(templateJSON) ? { pexForBounds: templateJSON } : {}),
     });
 
     return presentation;
