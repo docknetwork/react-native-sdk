@@ -268,7 +268,7 @@ export function getPexRequiredAttributes(pexRequest, selectedCredentials = []) {
     .map((inputDescriptor, index) => {
       return inputDescriptor.constraints.fields
         .filter(field => {
-          if (field.filter) {
+          if (field.filter || field.optional) {
             return false;
           }
 
