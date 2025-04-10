@@ -1,6 +1,6 @@
 import {WalletDocument} from '@docknetwork/wallet-sdk-wasm/src/types';
 import {IWallet} from './types';
-import {createCredentialProvider} from './credential-provider';
+import {createCredentialProvider, CredentialStatus} from './credential-provider';
 import assert from 'assert';
 
 export type BiometricsPluginIssuerConfig = {
@@ -74,6 +74,14 @@ export function createBiometricBindingProvider({
         }
 
         await wallet.addDocument(matchConfirmationCredential);
+        // make the biometric credential valid by default
+        await wallet.addDocument({
+          id: `${matchConfirmationCredential.id}#status`,
+          status: CredentialStatus.Verified,
+          type: 'CredentialStatus',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        })
       }
 
       return matchConfirmationCredential;
