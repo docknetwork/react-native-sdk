@@ -99,8 +99,7 @@ export async function encryptMasterKey(
     data
   );
 
-  const encryptedArray = new Uint8Array(encryptedBuffer);
-  const encryptedBase64 = base64url.encode(Buffer.from(encryptedArray));
+  const encryptedBase64 = base64url.encode(encryptedBuffer);
 
   return encryptedBase64;
 }
@@ -216,6 +215,48 @@ export async function enrollUserWithBiometrics(
 }
 
 /**
+ * Gets the master key from the key mapping vault using provided decryption keys
+ * @param keyMappingEdv Initialized key mapping vault service
+ * @param identifier User's identifier (email, phone number, etc.)
+ * @param decryptionKey Key for decrypting the master key
+ * @param iv Initialization vector for decryption
+ * @returns The decrypted master key for CloudWalletVault
+ */
+export async function getKeyMappingMasterKey(
+  keyMappingEdv: any,
+  identifier: string,
+  decryptionKey: Buffer,
+  iv: Buffer
+): Promise<string> {
+  const result = await keyMappingEdv.find({
+    equals: {
+      'content.id': identifier
+    }
+  });
+
+  if (!result.documents || result.documents.length === 0) {
+    throw new Error('Authentication failed: Invalid identifier');
+  }
+
+  // If there are multiple documents, try each one until one works
+  for (let i = 0; i < result.documents.length; i += 1) {
+    const keyMappingDoc = result.documents[i];
+    const encryptedKey = keyMappingDoc.content.encryptedKey;
+
+    try {
+      const masterKey = await decryptMasterKey(encryptedKey, decryptionKey, iv);
+      return masterKey;
+    } catch (error) {
+      if (i < result.documents.length - 1) {
+        // Try the next document
+        continue;
+      }
+      throw new Error('Authentication failed: Invalid decryption key');
+    }
+  }
+}
+
+/**
  * Authenticates a user with biometric data and identifier
  * @param edvUrl URL for the edv
  * @param authKey Auth key for the edv
@@ -236,36 +277,9 @@ export async function authenticateWithBiometrics(
     identifier
   );
 
-  const result = await keyMappingEdv.find({
-    equals: {
-      'content.id': identifier
-    }
-  });
-
-  if (!result.documents || result.documents.length === 0) {
-    throw new Error('Biometric authentication failed: Invalid biometric identifier');
-  }
-
   const { key: decryptionKey, iv } = await deriveBiometricEncryptionKey(biometricData, identifier);
 
-  // If there are multiple documents, try each one until one works
-  for (let i = 0; i < result.documents.length; i += 1) {
-    const keyMappingDoc = result.documents[i];
-    const encryptedKey = keyMappingDoc.content.encryptedKey;
-
-    try {
-      const masterKey = await decryptMasterKey(encryptedKey, decryptionKey, iv);
-
-      return masterKey;
-    } catch (error) {
-      if (i < result.documents.length - 1) {
-        // Try the next document
-        continue;
-      }
-
-      throw new Error('Biometric authentication failed: Invalid biometric data');
-    }
-  }
+  return getKeyMappingMasterKey(keyMappingEdv, identifier, decryptionKey, iv);
 }
 
 /**

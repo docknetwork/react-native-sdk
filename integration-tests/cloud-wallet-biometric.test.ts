@@ -275,7 +275,7 @@ describe('Biometric Authentication System', () => {
           bioData2,
           email
         )
-      ).rejects.toThrow('Biometric authentication failed');
+      ).rejects.toThrow('Authentication failed: Invalid identifier');
     });
 
     it('should fail authentication with incorrect identifier', async () => {
@@ -298,7 +298,7 @@ describe('Biometric Authentication System', () => {
           bioData,
           'wrong@example.com'
         )
-      ).rejects.toThrow('Biometric authentication failed: Invalid biometric identifier');
+      ).rejects.toThrow('Authentication failed: Invalid identifier');
     });
   });
 });

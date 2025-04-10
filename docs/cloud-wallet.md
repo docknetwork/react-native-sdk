@@ -185,14 +185,15 @@ The Cloud Wallet supports multiple authentication methods to unlock the same wal
 
 1. **Mnemonic-based authentication**: The traditional recovery phrase approach
 2. **Biometric authentication**: Using fingerprints, facial recognition, or other biometric data
-3. **Future extensions**: Can be extended to support passkeys and other authentication methods
+3. **Custom authentication mechanisms**: Support for custom key derivation and authentication approaches
+4. **Future extensions**: Can be extended to support passkeys and other authentication methods
 
 ### How Multi-Key Authentication Works
 
 The Cloud Wallet uses a key mapping system that allows a secondary key (e.g. derived from biometrics) to unlock the same master key that was originally derived from a mnemonic phrase.
 
 The system uses a two-vault architecture:
-- KeyMappingVault: Stores encrypted master keys that can only be accessed with proper biometric authentication
+- KeyMappingVault: Stores encrypted master keys that can only be accessed with proper authentication
 - CloudWalletVault: The main vault containing wallet documents, secured by the master key
 
 #### Step 1: Enroll User with Biometric Data
@@ -216,15 +217,10 @@ const { masterKey, mnemonic } = await enrollUserWithBiometrics(
 
 // IMPORTANT: Store the mnemonic securely for recovery purposes
 ```
-The enrollment process:
-1. Creates a unique master key and mnemonic
-2. Generates encryption keys from the biometric data
-3. Encrypts the master key with the biometric-derived keys
-4. Stores the encrypted master key in the KeyMappingVault, indexed by the user's email
 
-#### Step 2: Authenticate with Biometrics
+#### Step 2: Authenticate with Biometrics or Custom Method
 
-Next, when the user wants to access their wallet, they can authenticate with their biometric data:
+When the user wants to access their wallet, they can authenticate with their biometric data:
 
 ```ts
 import {
@@ -253,9 +249,43 @@ const cloudWallet = await initializeCloudWalletWithBiometrics(
   dataStore
 );
 ```
-The authentication process:
-1. Uses biometric data and email to access the KeyMappingVault
-2. Finds the encrypted master key associated with the user's email
-3. Derives decryption keys from the provided biometric data
-4. Decrypts the master key
-5. Uses the master key to access the CloudWalletVault
+
+#### Step 3: Using Custom Authentication Mechanisms
+
+For custom authentication methods, you can use the generic key mapping functions:
+
+```ts
+import {
+  initializeKeyMappingVault,
+  getKeyMappingMasterKey
+} from '@docknetwork/wallet-sdk-core/lib/cloud-wallet';
+
+// Initialize the key mapping vault using your custom keys
+const keyMappingEdv = await initializeKeyMappingVault(
+  edvUrl,
+  authKey,
+  customAuthData,
+  userIdentifier
+);
+
+// Derive your decryption key and IV using your custom method
+const { decryptionKey, iv } = await yourCustomKeyDerivationFunction(customAuthData, userIdentifier);
+
+// Get the master key using the generic method
+const masterKey = await getKeyMappingMasterKey(
+  keyMappingEdv,
+  userIdentifier,
+  decryptionKey,
+  iv
+);
+
+// Initialize the cloud wallet with the retrieved master key
+const cloudWallet = await initializeCloudWallet({
+  dataStore,
+  edvUrl,
+  authKey,
+  masterKey
+});
+```
+
+This approach allows for flexible authentication mechanisms while maintaining the security of the key mapping system.
