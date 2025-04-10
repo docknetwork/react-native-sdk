@@ -23,13 +23,12 @@ export const HKDF_HASH = 'SHA-256';
  * @returns Derived key
  */
 export function deriveBiometricKey(
-  biometricData: any,
+  biometricData: Buffer,
   identifier: string,
 ): Buffer {
-  const ikm = JSON.stringify(biometricData);
   const salt = identifier;
 
-  return hkdf(ikm, HKDF_LENGTH, { salt, hash: HKDF_HASH });
+  return hkdf(biometricData, HKDF_LENGTH, { salt, hash: HKDF_HASH });
 }
 
 /**
@@ -39,7 +38,7 @@ export function deriveBiometricKey(
  * @returns Keys for accessing the KeyMappingVault
  */
 export async function deriveKeyMappingVaultKeys(
-  biometricData: any,
+  biometricData: Buffer,
   identifier: string
 ): Promise<{ hmacKey: string; agreementKey: string; verificationKey: string }> {
   const seedBuffer = deriveBiometricKey(biometricData, identifier);
@@ -55,7 +54,7 @@ export async function deriveKeyMappingVaultKeys(
  * @returns Encryption key and IV for AES encryption
  */
 export async function deriveBiometricEncryptionKey(
-  biometricData: any,
+  biometricData: Buffer,
   identifier: string
 ): Promise<{ key: Buffer; iv: Buffer }> {
   const key = deriveBiometricKey(biometricData, identifier);
@@ -155,7 +154,7 @@ export async function decryptMasterKey(
 export async function initializeKeyMappingVault(
   edvUrl: string,
   authKey: string,
-  biometricData: any,
+  biometricData: Buffer,
   identifier: string
 ): Promise<any> {
   const {
@@ -187,7 +186,7 @@ export async function initializeKeyMappingVault(
 export async function enrollUserWithBiometrics(
   edvUrl: string,
   authKey: string,
-  biometricData: any,
+  biometricData: Buffer,
   identifier: string
 ): Promise<{ masterKey: string; mnemonic: string }> {
   const keyMappingEdv = await initializeKeyMappingVault(
@@ -267,7 +266,7 @@ export async function getKeyMappingMasterKey(
 export async function authenticateWithBiometrics(
   edvUrl: string,
   authKey: string,
-  biometricData: any,
+  biometricData: Buffer,
   identifier: string
 ): Promise<string> {
   const keyMappingEdv = await initializeKeyMappingVault(

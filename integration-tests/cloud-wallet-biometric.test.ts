@@ -14,7 +14,7 @@ const EDV_AUTH_KEY = process.env.EDV_AUTH_KEY;
 
 // Helper to create mock biometric data
 const createMockBiometricData = (userId = '123') => {
-  return {
+  return Buffer.from(JSON.stringify({
     type: 'fingerprint',
     id: userId,
     quality: 0.95,
@@ -25,7 +25,7 @@ const createMockBiometricData = (userId = '123') => {
       type: i % 3
     })),
     timestamp: Date.now()
-  };
+  }));
 };
 
 describe('Biometric Authentication System', () => {
