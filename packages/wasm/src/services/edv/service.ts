@@ -10,7 +10,6 @@ import {logger} from '@docknetwork/wallet-sdk-data-store/src/logger';
 import {didService} from '@docknetwork/wallet-sdk-wasm/src/services/dids/service';
 import {keyringService} from '@docknetwork/wallet-sdk-wasm/src/services/keyring';
 import {ed25519PairFromSeed} from '@polkadot/util-crypto';
-import base64url from 'base64url-universal';
 
 /**
  * EDVService
@@ -113,11 +112,11 @@ export class EDVService {
     return {verificationKey, agreementKey, hmacKey};
   }
 
-  async deriveKeys(masterKey: any) {
+  async deriveKeys(masterKey: Uint8Array) {
     await keyringService.initialize({
       ss58Format: 22,
     });
-    const pair = ed25519PairFromSeed(base64url.decode(masterKey));
+    const pair = ed25519PairFromSeed(masterKey);
 
     const keyPair = await didService.deriveKeyDoc({ pair });
 

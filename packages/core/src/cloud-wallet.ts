@@ -4,7 +4,6 @@ import {
 } from '@docknetwork/wallet-sdk-data-store/src/types';
 import { logger } from '@docknetwork/wallet-sdk-data-store/src/logger';
 import { edvService, EDVService } from '@docknetwork/wallet-sdk-wasm/src/services/edv/service';
-import base64url from 'base64url-universal';
 import hkdf from 'futoin-hkdf';
 import crypto from '@docknetwork/universal-wallet/crypto';
 
@@ -42,9 +41,8 @@ export async function deriveKeyMappingVaultKeys(
   identifier: string
 ): Promise<{ hmacKey: string; agreementKey: string; verificationKey: string }> {
   const seedBuffer = deriveBiometricKey(biometricData, identifier);
-  const masterKey = base64url.encode(seedBuffer);
 
-  return edvService.deriveKeys(masterKey);
+  return edvService.deriveKeys(new Uint8Array(seedBuffer));
 }
 
 /**
@@ -59,8 +57,8 @@ export async function deriveBiometricEncryptionKey(
 ): Promise<{ key: Buffer; iv: Buffer }> {
   const key = deriveBiometricKey(biometricData, identifier);
 
-  const ivBuffer = await crypto.subtle.digest('SHA-256', key);
-  const iv = Buffer.from(ivBuffer).subarray(0, 16);
+  const randomBytes = crypto.getRandomValues(new Uint8Array(16));
+  const iv = Buffer.from(randomBytes);
 
   return {
     key,
@@ -76,13 +74,12 @@ export async function deriveBiometricEncryptionKey(
  * @returns Encrypted master key
  */
 export async function encryptMasterKey(
-  masterKey: string,
+  masterKey: Uint8Array,
   encryptionKey: Buffer,
   iv: Buffer
-): Promise<string> {
+): Promise<Uint8Array> {
   const keyData = new Uint8Array(encryptionKey);
   const ivData = new Uint8Array(iv);
-  const data = new TextEncoder().encode(masterKey);
 
   const key = await crypto.subtle.importKey(
     'raw',
@@ -95,12 +92,10 @@ export async function encryptMasterKey(
   const encryptedBuffer = await crypto.subtle.encrypt(
     { name: 'AES-GCM', iv: ivData },
     key,
-    data
+    masterKey
   );
 
-  const encryptedBase64 = base64url.encode(encryptedBuffer);
-
-  return encryptedBase64;
+  return new Uint8Array(encryptedBuffer);
 }
 
 /**
@@ -111,15 +106,13 @@ export async function encryptMasterKey(
  * @returns The decrypted master key
  */
 export async function decryptMasterKey(
-  encryptedKey: string,
+  encryptedKey: Uint8Array,
   decryptionKey: Buffer,
   iv: Buffer
-): Promise<string> {
+): Promise<Uint8Array> {
   try {
     const keyData = new Uint8Array(decryptionKey);
     const ivData = new Uint8Array(iv);
-
-    const encryptedData = base64url.decode(encryptedKey);
 
     const key = await crypto.subtle.importKey(
       'raw',
@@ -132,12 +125,10 @@ export async function decryptMasterKey(
     const decryptedBuffer = await crypto.subtle.decrypt(
       { name: 'AES-GCM', iv: ivData },
       key,
-      encryptedData
+      encryptedKey
     );
 
-    const decrypted = new TextDecoder().decode(decryptedBuffer);
-
-    return decrypted;
+    return new Uint8Array(decryptedBuffer);
   } catch (error) {
     throw new Error('Decryption failed: Invalid key or corrupted data');
   }
@@ -156,7 +147,7 @@ export async function initializeKeyMappingVault(
   authKey: string,
   biometricData: Buffer,
   identifier: string
-): Promise<any> {
+): Promise<EDVService> {
   const {
     hmacKey,
     agreementKey,
@@ -188,7 +179,7 @@ export async function enrollUserWithBiometrics(
   authKey: string,
   biometricData: Buffer,
   identifier: string
-): Promise<{ masterKey: string; mnemonic: string }> {
+): Promise<{ masterKey: Uint8Array; mnemonic: string }> {
   const keyMappingEdv = await initializeKeyMappingVault(
     edvUrl,
     authKey,
@@ -200,12 +191,17 @@ export async function enrollUserWithBiometrics(
   const { key: encryptionKey, iv } = await deriveBiometricEncryptionKey(biometricData, identifier);
   const encryptedMasterKey = await encryptMasterKey(masterKey, encryptionKey, iv);
 
+  const encryptedData = {
+    data: Array.from(encryptedMasterKey),
+    iv: Array.from(iv)
+  };
+
   await keyMappingEdv.insert({
     document: {
       content: {
         id: identifier,
         type: KEY_MAPPING_TYPE,
-        encryptedKey: encryptedMasterKey
+        encryptedKey: encryptedData
       }
     }
   });
@@ -222,11 +218,10 @@ export async function enrollUserWithBiometrics(
  * @returns The decrypted master key for CloudWalletVault
  */
 export async function getKeyMappingMasterKey(
-  keyMappingEdv: any,
+  keyMappingEdv: EDVService,
   identifier: string,
   decryptionKey: Buffer,
-  iv: Buffer
-): Promise<string> {
+): Promise<Uint8Array> {
   const result = await keyMappingEdv.find({
     equals: {
       'content.id': identifier
@@ -240,10 +235,13 @@ export async function getKeyMappingMasterKey(
   // If there are multiple documents, try each one until one works
   for (let i = 0; i < result.documents.length; i += 1) {
     const keyMappingDoc = result.documents[i];
-    const encryptedKey = keyMappingDoc.content.encryptedKey;
+    const { data: encryptedKey, iv: storedIv } = keyMappingDoc.content.encryptedKey;
+    const encryptedKeyArray = new Uint8Array(encryptedKey);
+    const ivBuffer = Buffer.from(storedIv);
 
     try {
-      const masterKey = await decryptMasterKey(encryptedKey, decryptionKey, iv);
+      const masterKey = await decryptMasterKey(encryptedKeyArray, decryptionKey, ivBuffer);
+
       return masterKey;
     } catch (error) {
       if (i < result.documents.length - 1) {
@@ -268,17 +266,16 @@ export async function authenticateWithBiometrics(
   authKey: string,
   biometricData: Buffer,
   identifier: string
-): Promise<string> {
+): Promise<Uint8Array> {
   const keyMappingEdv = await initializeKeyMappingVault(
     edvUrl,
     authKey,
     biometricData,
     identifier
   );
+  const { key: decryptionKey } = await deriveBiometricEncryptionKey(biometricData, identifier);
 
-  const { key: decryptionKey, iv } = await deriveBiometricEncryptionKey(biometricData, identifier);
-
-  return getKeyMappingMasterKey(keyMappingEdv, identifier, decryptionKey, iv);
+  return getKeyMappingMasterKey(keyMappingEdv, identifier, decryptionKey);
 }
 
 /**
@@ -293,7 +290,7 @@ export async function authenticateWithBiometrics(
 export async function initializeCloudWalletWithBiometrics(
   edvUrl: string,
   authKey: string,
-  biometricData: any,
+  biometricData: Buffer,
   identifier: string,
   dataStore?: any
 ): Promise<any> {
@@ -323,11 +320,10 @@ interface DocumentQueue {
   isProcessing: boolean;
 }
 
-export async function generateCloudWalletMasterKey(): Promise<{ mnemonic: string; masterKey: string }> {
+export async function generateCloudWalletMasterKey(): Promise<{ mnemonic: string; masterKey: Uint8Array }> {
   const mnemonic = await utilCryptoService.mnemonicGenerate(MNEMONIC_WORD_COUNT);
 
-  const seedBytes = await utilCryptoService.mnemonicToMiniSecret(mnemonic);
-  const masterKey = base64url.encode(Buffer.from(seedBytes));
+  const masterKey = await utilCryptoService.mnemonicToMiniSecret(mnemonic);
 
   return {
     mnemonic,
@@ -335,9 +331,8 @@ export async function generateCloudWalletMasterKey(): Promise<{ mnemonic: string
   };
 }
 
-export async function recoverCloudWalletMasterKey(mnemonic: string): Promise<string> {
-  const seedBytes = await utilCryptoService.mnemonicToMiniSecret(mnemonic);
-  const masterKey = base64url.encode(Buffer.from(seedBytes));
+export async function recoverCloudWalletMasterKey(mnemonic: string): Promise<Uint8Array> {
+  const masterKey = await utilCryptoService.mnemonicToMiniSecret(mnemonic);
 
   return masterKey;
 }
@@ -351,7 +346,7 @@ export async function initializeCloudWallet({
   dataStore?: DataStore;
   edvUrl: string;
   authKey: string;
-  masterKey: any;
+  masterKey: Uint8Array;
 }) {
   const {
     hmacKey,

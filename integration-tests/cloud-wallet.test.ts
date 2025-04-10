@@ -26,6 +26,10 @@ describe('Cloud wallet', () => {
   let wallet: IWallet;
 
   beforeAll(async () => {
+    if (!EDV_URL || !EDV_AUTH_KEY) {
+      throw new Error("Missing required environment variables: EDV_URL and EDV_AUTH_KEY");
+    }
+
     const { masterKey } = await generateCloudWalletMasterKey();
 
     dataStore = await createDataStore({
@@ -66,14 +70,14 @@ describe('Cloud wallet', () => {
     expect(mnemonic.split(' ').length).toBe(12);
 
     expect(masterKey).toBeDefined();
-    expect(typeof masterKey).toBe('string');
+    expect(masterKey).toBeInstanceOf(Uint8Array);
   });
 
   it('should recover the same master key from a mnemonic', async () => {
     const { mnemonic, masterKey } = await generateCloudWalletMasterKey();
     const recoveredKey = await recoverCloudWalletMasterKey(mnemonic);
 
-    expect(recoveredKey).toBe(masterKey);
+    expect(recoveredKey).toStrictEqual(masterKey);
   });
 
   it('should see a document added directly to the EDV appear in the wallet after pulling', async () => {

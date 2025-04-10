@@ -58,19 +58,19 @@ describe('Biometric Authentication System', () => {
     it('should encrypt and decrypt a master key correctly', async () => {
       const bioData = createMockBiometricData();
       const email = `user${new Date().getTime()}@example.com`;
-      const masterKey = 'test-master-key-for-encryption';
+      const masterKey = new Uint8Array(Buffer.from('test-master-key-for-encryption'));
 
       const { key, iv } = await deriveBiometricEncryptionKey(bioData, email);
       const encryptedKey = await encryptMasterKey(masterKey, key, iv);
-      expect(encryptedKey).not.toBe(masterKey);
+      expect(encryptedKey).not.toStrictEqual(masterKey);
 
       const decryptedKey = await decryptMasterKey(encryptedKey, key, iv);
-      expect(decryptedKey).toBe(masterKey);
+      expect(decryptedKey).toStrictEqual(masterKey);
     });
 
     it('should fail decryption with wrong biometric data', async () => {
       const email = `user${new Date().getTime()}@example.com`;
-      const masterKey = 'test-master-key-for-encryption';
+      const masterKey = new Uint8Array(Buffer.from('test-master-key-for-encryption'));
 
       const bioData1 = createMockBiometricData('123');
       const { key: key1, iv: iv1 } = await deriveBiometricEncryptionKey(bioData1, email);
@@ -151,7 +151,7 @@ describe('Biometric Authentication System', () => {
       );
 
       const recoveredKey = await recoverCloudWalletMasterKey(mnemonic);
-      expect(recoveredKey).toBe(masterKey);
+      expect(recoveredKey).toStrictEqual(masterKey);
     });
   });
 
@@ -174,7 +174,7 @@ describe('Biometric Authentication System', () => {
         email
       );
 
-      expect(retrievedMasterKey).toBe(originalMasterKey);
+      expect(retrievedMasterKey).toStrictEqual(originalMasterKey);
     });
 
     it('should support multiple users with different biometric data', async () => {
@@ -197,7 +197,7 @@ describe('Biometric Authentication System', () => {
         email2
       );
 
-      expect(result1.masterKey).not.toBe(result2.masterKey);
+      expect(result1.masterKey).not.toStrictEqual(result2.masterKey);
 
       const key1 = await authenticateWithBiometrics(
         EDV_URL,
@@ -213,8 +213,8 @@ describe('Biometric Authentication System', () => {
         email2
       );
 
-      expect(key1).toBe(result1.masterKey);
-      expect(key2).toBe(result2.masterKey);
+      expect(key1).toStrictEqual(result1.masterKey);
+      expect(key2).toStrictEqual(result2.masterKey);
     });
 
     it('should handle multiple key mappings for the same email', async () => {
@@ -235,7 +235,7 @@ describe('Biometric Authentication System', () => {
         email
       );
 
-      expect(enrollMasterKey1).not.toBe(enrollMasterKey2);
+      expect(enrollMasterKey1).not.toStrictEqual(enrollMasterKey2);
 
       const masterKey1 = await authenticateWithBiometrics(
         EDV_URL,
@@ -251,7 +251,7 @@ describe('Biometric Authentication System', () => {
         email
       );
 
-      expect(masterKey1).not.toBe(masterKey2);
+      expect(masterKey1).not.toStrictEqual(masterKey2);
     });
 
     it('should fail authentication with incorrect biometric data', async () => {
