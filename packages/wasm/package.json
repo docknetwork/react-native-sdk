@@ -37,7 +37,7 @@
         "@polkadot/wasm-crypto": "6.3.1",
         "@docknetwork/credential-sdk": "0.44.0",
         "@docknetwork/dock-blockchain-modules": "0.26.2",
-        "axios": "^0.25.0",
+        "axios": "^0.30.0",
         "babel-node": "^0.0.1-security",
         "bignumber.js": "^9.0.1",
         "json-rpc-2.0": "^0.2.16",
