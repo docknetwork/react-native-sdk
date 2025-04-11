@@ -232,24 +232,20 @@ export async function getKeyMappingMasterKey(
     throw new Error('Authentication failed: Invalid identifier');
   }
 
-  // If there are multiple documents, try each one until one works
-  for (let i = 0; i < result.documents.length; i += 1) {
-    const keyMappingDoc = result.documents[i];
-    const { data: encryptedKey, iv: storedIv } = keyMappingDoc.content.encryptedKey;
-    const encryptedKeyArray = new Uint8Array(encryptedKey);
-    const ivBuffer = Buffer.from(storedIv);
+  // The KeyMappingVault keys are derived from the biometric data so each
+  // vault should have a unique key for the user
 
-    try {
-      const masterKey = await decryptMasterKey(encryptedKeyArray, decryptionKey, ivBuffer);
+  const keyMappingDoc = result.documents[0];
+  const { data: encryptedKey, iv: storedIv } = keyMappingDoc.content.encryptedKey;
+  const encryptedKeyArray = new Uint8Array(encryptedKey);
+  const ivBuffer = Buffer.from(storedIv);
 
-      return masterKey;
-    } catch (error) {
-      if (i < result.documents.length - 1) {
-        // Try the next document
-        continue;
-      }
-      throw new Error('Authentication failed: Invalid decryption key');
-    }
+  try {
+    const masterKey = await decryptMasterKey(encryptedKeyArray, decryptionKey, ivBuffer);
+
+    return masterKey;
+  } catch (error) {
+    throw new Error('Authentication failed: Invalid decryption key');
   }
 }
 
