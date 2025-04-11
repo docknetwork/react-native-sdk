@@ -1,6 +1,5 @@
 import * as base64url from 'base64url-universal';
 import crypto from '@docknetwork/universal-wallet/crypto';
-import {hexToU8a} from '@polkadot/util';
 
 export default class HMAC {
   key: CryptoKey;
@@ -38,10 +37,10 @@ export default class HMAC {
     return key;
   }
 
-  static async deriveKey(baseKey: string) {
+  static async deriveKey(baseKey: Uint8Array) {
     const key = await crypto.subtle.importKey(
       'raw',
-      hexToU8a(baseKey),
+      baseKey,
       {name: 'HMAC', hash: {name: 'SHA-256'}},
       true,
       ['sign', 'verify'],
