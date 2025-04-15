@@ -271,7 +271,6 @@ export function WalletSDKProvider({onError, customUri, children, onReady, config
       originWhitelist={['*']}
       source={{
         uri: `${baseUrl}/sandbox.html`,
-        baseUrl: baseUrl,
       }}
       onError={err => {
         console.error(err);
