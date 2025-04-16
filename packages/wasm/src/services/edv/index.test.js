@@ -47,5 +47,29 @@ describe('EDVService', () => {
         expect(JSON.stringify(agreementKey)).toBe(derivedTestAgreementKey);
       });
     });
+
+    describe('generateContentId', () => {
+      it('should deterministically derive the same did and fingerprint from the same biometric key', async () => {
+        const biometricKey = Buffer.from('a'.repeat(32), 'utf-8');
+
+        const result1 = await service.generateContentId(biometricKey);
+        const result2 = await service.generateContentId(biometricKey);
+
+        expect(result1).toBeDefined();
+        expect(result2).toBeDefined();
+        expect(result1).toEqual(result2);
+        expect(result1).toMatch(/^did:key:/);
+      });
+
+      it('should derive different dids and fingerprints for different biometric keys', async () => {
+        const biometricKey1 = Buffer.from('a'.repeat(32), 'utf-8');
+        const biometricKey2 = Buffer.from('b'.repeat(32), 'utf-8');
+
+        const result1 = await service.generateContentId(biometricKey1);
+        const result2 = await service.generateContentId(biometricKey2);
+
+        expect(result1).not.toEqual(result2);
+      });
+    });
   });
 });

@@ -22,6 +22,7 @@ export class EDVService {
   rpcMethods = [
     EDVService.prototype.generateKeys,
     EDVService.prototype.deriveKeys,
+    EDVService.prototype.generateContentId,
     EDVService.prototype.initialize,
     EDVService.prototype.find,
     EDVService.prototype.update,
@@ -128,6 +129,16 @@ export class EDVService {
     const hmacKey = await HMAC.exportKey(await HMAC.deriveKey(masterKey));
 
     return { verificationKey, agreementKey, hmacKey };
+  }
+
+  async generateContentId(key: Uint8Array) {
+    await keyringService.initialize({
+      ss58Format: 22,
+    });
+    const pair = ed25519PairFromSeed(key);
+    const keyDoc = await didService.deriveKeyDoc({ pair });
+
+    return keyDoc.id;
   }
 
   find(params: any) {

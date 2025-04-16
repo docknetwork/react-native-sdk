@@ -6,7 +6,6 @@ import { logger } from '@docknetwork/wallet-sdk-data-store/src/logger';
 import { edvService, EDVService } from '@docknetwork/wallet-sdk-wasm/src/services/edv/service';
 import hkdf from 'futoin-hkdf';
 import crypto from '@docknetwork/universal-wallet/crypto';
-
 import { utilCryptoService } from '@docknetwork/wallet-sdk-wasm/src/services/util-crypto';
 
 export const SYNC_MARKER_TYPE = 'SyncMarkerDocument';
@@ -186,7 +185,6 @@ export async function enrollUserWithBiometrics(
     biometricData,
     identifier
   );
-
   const { mnemonic, masterKey } = await generateCloudWalletMasterKey();
   const { key: encryptionKey, iv } = await deriveBiometricEncryptionKey(biometricData, identifier);
   const encryptedMasterKey = await encryptMasterKey(masterKey, encryptionKey, iv);
@@ -196,10 +194,13 @@ export async function enrollUserWithBiometrics(
     iv: Array.from(iv)
   };
 
+  const seedBuffer = deriveBiometricKey(biometricData, identifier);
+  const contentId = await edvService.generateContentId(new Uint8Array(seedBuffer));
+
   await keyMappingEdv.insert({
     document: {
       content: {
-        id: identifier,
+        id: contentId,
         type: KEY_MAPPING_TYPE,
         encryptedKey: encryptedData
       }
@@ -271,7 +272,10 @@ export async function authenticateWithBiometrics(
   );
   const { key: decryptionKey } = await deriveBiometricEncryptionKey(biometricData, identifier);
 
-  return getKeyMappingMasterKey(keyMappingEdv, identifier, decryptionKey);
+  const seedBuffer = deriveBiometricKey(biometricData, identifier);
+  const contentId = await edvService.generateContentId(new Uint8Array(seedBuffer));
+
+  return getKeyMappingMasterKey(keyMappingEdv, contentId, decryptionKey);
 }
 
 /**

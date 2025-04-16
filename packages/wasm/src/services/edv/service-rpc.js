@@ -19,6 +19,10 @@ export class EDVServiceRpc extends RpcService {
     return this.call('deriveKeys');
   }
 
+  generateContentId() {
+    return this.call('generateContentId');
+  }
+
   find(params: any) {
     return this.call('find', params);
   }
