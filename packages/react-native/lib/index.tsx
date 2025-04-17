@@ -236,7 +236,7 @@ export function WalletSDKProvider({onError, customUri, children, onReady, config
   const webviewContainer = (
     <WebView
       style={{
-        display: 'none',
+        height: 0,
       }}
       ref={webViewRef}
       originWhitelist={['*']}
@@ -247,11 +247,10 @@ export function WalletSDKProvider({onError, customUri, children, onReady, config
             }
           : {
               uri: `${baseUrl}/index.html`,
-              baseUrl: baseUrl,
             }
       }
       onError={err => {
-        console.error(err);
+        console.log(err);
         if (onError) {
           onError(err);
         }
@@ -259,19 +258,19 @@ export function WalletSDKProvider({onError, customUri, children, onReady, config
       onMessage={event => {
         eventHandler.handleEvent(event);
       }}
+      javaScriptEnabled={true}
     />
   );
 
   const sandboxContainer = (
     <WebView
       style={{
-        display: 'none',
+        height: 0,
       }}
       ref={sandboxWebViewRef}
       originWhitelist={['*']}
       source={{
         uri: `${baseUrl}/sandbox.html`,
-        baseUrl: baseUrl,
       }}
       onError={err => {
         console.error(err);
@@ -282,6 +281,7 @@ export function WalletSDKProvider({onError, customUri, children, onReady, config
       onMessage={event => {
         eventHandler.handleSandboxEvent(event);
       }}
+      javaScriptEnabled={true}
     />
   );
 
