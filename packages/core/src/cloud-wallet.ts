@@ -13,6 +13,7 @@ export const MNEMONIC_WORD_COUNT = 12;
 export const KEY_MAPPING_TYPE = 'KeyMappingDocument';
 export const HKDF_LENGTH = 32;
 export const HKDF_HASH = 'SHA-256';
+const MASTER_KEY_SUFFIX = 'master-key';
 
 /**
  * Derives a key from biometric data using HKDF
@@ -194,8 +195,7 @@ export async function enrollUserWithBiometrics(
     iv: Array.from(iv)
   };
 
-  const seedBuffer = deriveBiometricKey(biometricData, identifier);
-  const contentId = await edvService.generateContentId(new Uint8Array(seedBuffer));
+  const contentId = `${await keyMappingEdv.getController()}#${MASTER_KEY_SUFFIX}`;
 
   await keyMappingEdv.insert({
     document: {
@@ -272,8 +272,7 @@ export async function authenticateWithBiometrics(
   );
   const { key: decryptionKey } = await deriveBiometricEncryptionKey(biometricData, identifier);
 
-  const seedBuffer = deriveBiometricKey(biometricData, identifier);
-  const contentId = await edvService.generateContentId(new Uint8Array(seedBuffer));
+  const contentId = `${await keyMappingEdv.getController()}#${MASTER_KEY_SUFFIX}`;
 
   return getKeyMappingMasterKey(keyMappingEdv, contentId, decryptionKey);
 }

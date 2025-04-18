@@ -18,11 +18,12 @@ export class EDVService {
   storageInterface: EDVHTTPStorageInterface;
 
   private insertQueue: Promise<any> = Promise.resolve();
+  public controller: string;
 
   rpcMethods = [
     EDVService.prototype.generateKeys,
     EDVService.prototype.deriveKeys,
-    EDVService.prototype.generateContentId,
+    EDVService.prototype.getController,
     EDVService.prototype.initialize,
     EDVService.prototype.find,
     EDVService.prototype.update,
@@ -51,6 +52,7 @@ export class EDVService {
     };
 
     const {controller} = verificationKey;
+    this.controller = controller;
     const invocationSigner = getKeypairFromDoc(verificationKey);
     invocationSigner.sign = invocationSigner.signer().sign;
 
@@ -131,14 +133,8 @@ export class EDVService {
     return { verificationKey, agreementKey, hmacKey };
   }
 
-  async generateContentId(key: Uint8Array) {
-    await keyringService.initialize({
-      ss58Format: 22,
-    });
-    const pair = ed25519PairFromSeed(key);
-    const keyDoc = await didService.deriveKeyDoc({ pair });
-
-    return keyDoc.id;
+  async getController() {
+    return this.controller;
   }
 
   find(params: any) {
