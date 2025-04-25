@@ -1,6 +1,5 @@
 import {Command} from 'commander';
-import {typedHexDID} from '@docknetwork/sdk/utils/did/typed-did/helpers';
-import {dockService} from '@docknetwork/wallet-sdk-wasm/src/services/dock/service';
+import {blockchainService} from '@docknetwork/wallet-sdk-wasm/src/services/blockchain/service';
 import {getWallet} from '../helpers';
 import {getDIDKeyPairs} from '@docknetwork/wallet-sdk-core/src/did-provider';
 import {randomAsHex} from '@polkadot/util-crypto';
@@ -18,50 +17,26 @@ ecosystemCommands
     const didKeyPairs = await getDIDKeyPairs({wallet});
     const didKeyPair = didKeyPairs[0];
 
-    await dockService.init({
+    await blockchainService.init({
       address: 'wss://knox-1.dock.io',
     });
 
-    await dockService.waitDockReady();
-    await dockService.ensureDockReady();
+    await blockchainService.waitBlockchainReady();
+    await blockchainService.ensureBlockchainReady();
 
     const trustRegistryId = randomAsHex(32);
 
-    const trustRegistry = await dockService.dock.trustRegistry.initOrUpdate(
+    const trustRegistry = await blockchainService.dock.trustRegistry.initOrUpdate(
       didKeyPair.id,
       trustRegistryId,
       'Test Registry II',
       'Gov framework II',
       didKeyPair,
-      dockService.dock,
+      blockchainService.dock,
     );
     console.log(trustRegistry);
 
-    await dockService.disconnect();
-  });
-
-ecosystemCommands
-  .command('getEcosystemFromDID')
-  .option('-d, --did <did>', 'DID')
-  .description('Get ecosystem from issuer DID')
-  .action(async ({did}) => {
-    await dockService.init({
-      address: 'wss://knox-1.dock.io',
-    });
-
-    await dockService.waitDockReady();
-    await dockService.ensureDockReady();
-
-    const issuerDIDMethodKey = typedHexDID(
-      dockService.dock.api,
-      did,
-    );
-    const registryInfo = await dockService.dock.trustRegistry?.registriesInfo({
-      Issuer: issuerDIDMethodKey,
-    });
-    console.log(registryInfo);
-
-    await dockService.disconnect();
+    await blockchainService.disconnect();
   });
 
 export {ecosystemCommands};

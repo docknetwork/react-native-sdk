@@ -4,11 +4,11 @@ import BigNumber from 'bignumber.js';
 import {DOCK_TOKEN_UNIT} from '../core/format-utils';
 import {TestFixtures} from '../fixtures';
 import {NetworkManager} from '../modules/network-manager';
-import {dockService, getDock, setDock} from './dock/service';
 import {keyringService} from './keyring';
 import {RpcService} from './rpc-service-client';
 import {walletService} from './wallet';
 import Keyring from '@polkadot/keyring';
+import {blockchainService} from './blockchain/service';
 
 export async function initializeWalletService() {
   await cryptoWaitReady();
@@ -50,21 +50,21 @@ export async function mockDockService() {
   let sdkMock;
 
   if (API_MOCK_DISABLED) {
-    return dockService.init({
+    return blockchainService.init({
       address: NetworkManager.getInstance().getNetworkInfo().substrateUrl,
     });
   } else {
     sdkMock = mockDockSdkConnection();
-    await dockService.init({
+    await blockchainService.init({
       address: NetworkManager.getInstance().getNetworkInfo().substrateUrl,
     });
   }
 
-  const _dockSdk = dockService.dock;
+  const _dockSdk = blockchainService.dock;
 
-  dockService.isDockReady = true;
+  blockchainService.isDockReady = true;
 
-  dockService.dock = {
+  blockchainService.dock = {
     api: {
       events: {
         system: {
@@ -125,11 +125,11 @@ export async function mockDockService() {
   };
 
   return () => {
-    dockService.dock = _dockSdk;
+    blockchainService.dock = _dockSdk;
     if (sdkMock) {
       sdkMock.clear();
     }
-    dockService.disconnect();
+    blockchainService.disconnect();
   };
 }
 
@@ -164,7 +164,7 @@ export async function setupTestWallet() {
 
 export function mockDockSdkConnection(connectionError) {
   const result = 'result';
-  const dock = getDock();
+  const dock = blockchainService.dock;
   const mocks = [
     jest.spyOn(dock, 'init').mockImplementation(() => {
       if (connectionError) {
@@ -178,7 +178,7 @@ export function mockDockSdkConnection(connectionError) {
 
   let currentAccount;
 
-  setDock({
+  blockchainService.dock = {
     ...dock,
     setAccount(account) {
       currentAccount = account;
@@ -229,7 +229,7 @@ export function mockDockSdkConnection(connectionError) {
         return kr.createFromUri('//Alice');
       }),
     },
-  });
+  };
 
   return {
     result,
@@ -254,6 +254,8 @@ export function assertRpcService(
 
   const rpcService = new ServiceClass();
   const validationTmp = {};
+
+  assert(rpcService.serviceName === service.name, 'service name mismatch');
 
   Object.keys(validation).forEach(key => {
     validationTmp[key] = validation[key];

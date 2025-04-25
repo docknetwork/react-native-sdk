@@ -16,9 +16,9 @@ import {
   toBase64,
 } from './payloads';
 import jwtDecode from 'jwt-decode';
-import {dockService} from '@docknetwork/wallet-sdk-wasm/src/services/dock/service';
+import {blockchainService} from '@docknetwork/wallet-sdk-wasm/src/services/blockchain/service';
 
-let serviceURL = process.env.RELAY_SERVICE_URL || 'https://relay.dock.io';
+let serviceURL = process.env.RELAY_SERVICE_URL || 'https://relay.truvera.io';
 
 export const didcomm = {
   encrypt: didcommCreateEncrypted,
@@ -68,7 +68,7 @@ const getMessages = async ({
   assert(Array.isArray(keyPairDocs), 'keyPairDocs must be an array');
   assert(!!keyPairDocs.length, 'keyPairDocs must not be empty');
 
-  await dockService.waitDockReady();
+  await blockchainService.waitBlockchainReady();
 
   const {payload, dids} = await generateSignedPayloadFromList(keyPairDocs, {
     limit,

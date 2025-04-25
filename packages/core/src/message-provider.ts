@@ -139,7 +139,7 @@ export function createMessageProvider({
         return;
       }
 
-      console.log(`Fetched ${encryptedMessages.length} messages`);
+      logger.debug(`Fetched ${encryptedMessages.length} messages`);
 
       for (const message of encryptedMessages) {
         try {
@@ -157,13 +157,20 @@ export function createMessageProvider({
 
           recentlyFetchedMessages.push(message._id);
         } catch (err) {
+          logger.debug(
+            `Failed to store message in wallet: ${JSON.stringify(message)}`,
+          );
           // this message will be lost if it fails to be stored in the wallet
           captureException(err);
         }
       }
 
       for (const [did, messageIds] of Object.entries(messageIdsPerDid)) {
-        logger.debug(`Acknowledging messages for ${did}`);
+        logger.debug(
+          `Acknowledging ${
+            (messageIds as string[])?.length
+          } messages for ${did}`,
+        );
         let startTime = new Date().getTime();
         relayService
           .ackMessages({

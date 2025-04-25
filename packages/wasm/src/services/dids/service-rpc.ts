@@ -18,8 +18,8 @@ export class DIDServiceRPC extends RpcService {
   generateKeyDoc(params) {
     return this.call('generateKeyDoc', params);
   }
-  registerDidDock(keyPair) {
-    return this.call('registerDidDock', keyPair);
+  deriveKeyDoc(params) {
+    return this.call('deriveKeyDoc', params);
   }
   getDidDockDocument(did) {
     return this.call('getDidDockDocument', did);

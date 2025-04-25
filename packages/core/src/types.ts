@@ -70,6 +70,7 @@ export type IWallet = {
   getNetworkId: () => string;
   resolveDocumentNetwork: (document: any) => Promise<DocumentResolverResult>;
   dataStore: DataStore;
+  networkCheckInterval?: NodeJS.Timeout;
 } & IV1Wallet;
 
 export type CrateWalletWithDataStore = {

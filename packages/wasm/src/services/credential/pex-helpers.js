@@ -1,12 +1,14 @@
 import {JSONPath} from '@astronautlabs/jsonpath';
 
-export const EPSILON_NUMBER = 0.0001;
+export const EPSILON_NUMBER = 0.001;
 export const EPSILON_INT = 1;
 
 export const MAX_DATE_PLACEHOLDER = 884541351600000;
 export const MIN_DATE_PLACEHOLDER = -17592186044415;
-export const MAX_NUMBER = 100 ** 9;
-export const MIN_NUMBER = -4294967295;
+export const MAX_INTEGER = 100 ** 9;
+export const MIN_INTEGER = -4294967295;
+export const MAX_NUMBER = 100 ** 5;
+export const MIN_NUMBER = -4294967294;
 
 /*
   PEX Filter rules:
@@ -19,6 +21,15 @@ export const MIN_NUMBER = -4294967295;
 function correctFieldPath(path) {
   // NOTE: may not work for advanced jsonpath selectors, needs investigation
   return path.replace('$.', '');
+}
+
+function getNumDecimalPlaces(n) {
+  const parts = n.toString().split('.');
+  return parts.length > 1 && parts[1].length;
+}
+
+function toMaxDecimalPlaces(n, maxDecimalPlaces) {
+  return +n.toFixed(maxDecimalPlaces);
 }
 
 function getAttributeName({field, selectedCredentials, index}) {
@@ -52,18 +63,40 @@ function getAttributeName({field, selectedCredentials, index}) {
 export function pexToBounds(
   pexRequest,
   selectedCredentials = [],
-  isRawBoundies = false,
+  removeFromRequest = false,
 ) {
   const descriptorBounds = [];
-  const [MIN_DATE_ADJ, MAX_DATE_ADJ, MIN_NUMBER_ADJ, MAX_NUMBER_ADJ] = [
-    MIN_DATE_PLACEHOLDER,
-    MAX_DATE_PLACEHOLDER,
-    MIN_NUMBER,
-    MAX_NUMBER,
-  ].map(value => (isRawBoundies ? undefined : value));
+  const fieldsToRemove = [];
 
   // One list of bounds per descriptor/credential
   pexRequest.input_descriptors.forEach((inputDescriptor, index) => {
+    const selectedCredential = selectedCredentials[index];
+    if (!selectedCredential) {
+      return;
+    }
+
+    // Get embedded schema if existing
+    let decodedSchema = {};
+    if (selectedCredential.credentialSchema) {
+      const schemaStartStr = 'data:application/json;charset=utf-8,';
+
+      if (selectedCredential.credentialSchema.details) {
+        decodedSchema =
+          JSON.parse(selectedCredential.credentialSchema.details).jsonSchema ||
+          {};
+      } else if (
+        selectedCredential.credentialSchema.id &&
+        selectedCredential.credentialSchema.id.startsWith(schemaStartStr)
+      ) {
+        // LEGACY embedded schema handling
+        decodedSchema = JSON.parse(
+          decodeURIComponent(
+            selectedCredential.credentialSchema.id.split(schemaStartStr)[1],
+          ),
+        );
+      }
+    }
+
     const bounds = [];
     inputDescriptor.constraints.fields.forEach(field => {
       const {
@@ -76,6 +109,44 @@ export function pexToBounds(
         format,
         type,
       } = field.filter || {};
+
+      if (!field.path || field.path.length === 0) {
+        throw new Error(
+          'Missing or empty field "path" property, expected array or string',
+        );
+      }
+
+      let attributeName;
+      if (Array.isArray(field.path) && field.path.length > 1) {
+        // Must find a path that matches in selectedcredential, and choose that for bounds
+        const pathCount = field.path.length;
+        for (let i = 0; i < pathCount; i++) {
+          const path = field.path[i];
+          const paths = JSONPath.paths(selectedCredential, path);
+          if (paths.length) {
+            // First come first served
+            attributeName = correctFieldPath(JSONPath.stringify(paths[0]));
+            break;
+          }
+        }
+      } else {
+        const path = Array.isArray(field.path) ? field.path[0] : field.path;
+        attributeName = correctFieldPath(path);
+      }
+
+      if (!attributeName) {
+        return;
+      }
+
+      const schemaPath = `$.properties.${attributeName.replaceAll(
+        '.',
+        '.properties.',
+      )}`;
+      const attributeSchema = JSONPath.query(
+        decodedSchema,
+        schemaPath,
+        1,
+      )[0] || {type};
 
       let max =
         maximum === undefined
@@ -95,60 +166,87 @@ export function pexToBounds(
         return;
       }
 
+      const attributeType = attributeSchema.type || type;
+
       // Get min/max bounds values, if using exclusive we must apply an epsilon so equality isnt true
       if (format === 'date-time' || format === 'date') {
-        max = max === undefined ? MAX_DATE_ADJ : max;
-        max = max ? new Date(max) : undefined;
-        min = min === undefined ? MIN_DATE_ADJ : min;
-        min = min ? new Date(min) : undefined;
-      } else if (type === 'number') {
+        max = new Date(max === undefined ? MAX_DATE_PLACEHOLDER : max);
+        min = new Date(min === undefined ? MIN_DATE_PLACEHOLDER : min);
+      } else if (attributeType === 'number') {
+        const epsilon = attributeSchema.multipleOf || EPSILON_NUMBER;
+        const attribDecimalPlaces = getNumDecimalPlaces(epsilon);
+
         max =
           max === undefined
-            ? MAX_NUMBER_ADJ
-            : exclusiveMaximum === undefined || isRawBoundies
+            ? attributeSchema.maximum === undefined
+              ? MAX_NUMBER
+              : attributeSchema.maximum
+            : exclusiveMaximum === undefined
             ? max
-            : max - EPSILON_NUMBER;
+            : max - epsilon;
         min =
           min === undefined
-            ? MIN_NUMBER_ADJ
-            : exclusiveMinimum === undefined || isRawBoundies
+            ? attributeSchema.minimum === undefined
+              ? MIN_NUMBER
+              : attributeSchema.minimum
+            : exclusiveMinimum === undefined
             ? min
-            : min + EPSILON_NUMBER;
-      } else if (type === 'integer') {
+            : min + epsilon;
+
+        // Because of floating point math sucks, sometimes we can get extra decimal points
+        // the bounds must also match the same decimal points as the input
+        // for this we read from the embedded schema
+        min = toMaxDecimalPlaces(min, attribDecimalPlaces);
+        max = toMaxDecimalPlaces(max, attribDecimalPlaces);
+      } else if (attributeType === 'integer') {
         max =
           max === undefined
-            ? MAX_NUMBER_ADJ
-            : exclusiveMaximum === undefined || isRawBoundies
+            ? attributeSchema.maximum === undefined
+              ? MAX_INTEGER
+              : attributeSchema.maximum
+            : exclusiveMaximum === undefined
             ? max
             : max - EPSILON_INT;
         min =
           min === undefined
-            ? MIN_NUMBER_ADJ
-            : exclusiveMinimum === undefined || isRawBoundies
+            ? attributeSchema.minimum === undefined
+              ? MIN_INTEGER
+              : attributeSchema.minimum
+            : exclusiveMinimum === undefined
             ? min
             : min + EPSILON_INT;
+
+        // Ensure that input values are not decimals otherwise crypto-wasm-ts will complain
+        min = Math.floor(min);
+        max = Math.floor(max);
       } else {
         throw new Error(
           `Unsupported format ${format} and type ${type} for enforce bounds`,
         );
       }
 
-      const attributeName = getAttributeName({
-        field,
-        selectedCredentials,
-        index,
-      });
+      if (removeFromRequest) {
+        fieldsToRemove.push({
+          fields: inputDescriptor.constraints.fields,
+          field,
+        });
+      }
 
       bounds.push({
         attributeName,
         min,
         max,
-        type,
-        format,
       });
     });
 
     descriptorBounds.push(bounds);
+  });
+
+  fieldsToRemove.forEach(({fields, field}) => {
+    const idx = fields.indexOf(field);
+    if (idx !== -1) {
+      fields.splice(idx, 1);
+    }
   });
 
   return descriptorBounds;
@@ -170,7 +268,7 @@ export function getPexRequiredAttributes(pexRequest, selectedCredentials = []) {
     .map((inputDescriptor, index) => {
       return inputDescriptor.constraints.fields
         .filter(field => {
-          if (field.filter) {
+          if (field.filter || field.optional) {
             return false;
           }
 

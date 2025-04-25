@@ -1,16 +1,13 @@
 import {
   applyEnforceBounds,
-  MAX_DATE_PLACEHOLDER,
-  MIN_DATE_PLACEHOLDER,
-  MAX_NUMBER,
   fetchProvingKey,
   isBase64OrDataUrl,
-  MIN_INTEGER,
 } from './bound-check';
 import {PresentationBuilder} from '@docknetwork/crypto-wasm-ts/lib';
 import proofRequest from './proof-request.json';
 import { replaceResponseURL } from '@docknetwork/wallet-sdk-core/src/helpers';
 import assert from 'assert';
+import { MAX_DATE_PLACEHOLDER, MAX_NUMBER, MIN_DATE_PLACEHOLDER, MIN_NUMBER } from './pex-helpers';
 
 const testAPIURL = process.env.TESTING_API_URL || null;
 
@@ -218,7 +215,7 @@ describe('Bound check', () => {
 
     const credIdx = 0;
     const attributeName = 'credentialSubject.income';
-    const min = MIN_INTEGER;
+    const min = MIN_NUMBER;
     const max = 20000;
 
     expect(builder.enforceBounds).toHaveBeenCalledWith(

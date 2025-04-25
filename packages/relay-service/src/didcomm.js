@@ -6,7 +6,7 @@ import {v1 as uuidv1} from 'uuid';
 import base64url from 'base64url';
 import * as bs58 from 'base58-universal';
 
-import {resolveDID} from './did/dids';
+import {blockchainService} from '@docknetwork/wallet-sdk-wasm/src/services/blockchain/service';
 
 export const DIDCOMM_TYPE_BASIC =
   'https://didcomm.org/basicmessage/1.0/message';
@@ -34,7 +34,7 @@ function potentialToArray(a) {
 }
 
 export async function getKeydocFromDID(didUrl) {
-  const didDocument = await resolveDID(didUrl);
+  const didDocument = await blockchainService.resolver.resolve(didUrl);
   const possibleKeys = [
     ...potentialToArray(didDocument.verificationMethod),
     ...potentialToArray(didDocument.keyAgreement),
@@ -201,7 +201,7 @@ export async function getAgreementKeydocFromDID(did) {
 
   // Resolve actual DID document and get key agreement keys
   const isDIDUrl = did.indexOf('#') !== -1;
-  const didDocument = await resolveDID(did);
+  const didDocument = await blockchainService.resolver.resolve(did);
   const keyAgreements = didDocument.keyAgreement
     ? Array.isArray(didDocument.keyAgreement)
       ? didDocument.keyAgreement

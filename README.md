@@ -1,13 +1,15 @@
-# Dock Wallet SDK
+# Truvera Wallet SDK
 
 The [Wallet SDK](https://github.com/docknetwork/react-native-sdk) enables you to build a Verifiable Credentials wallet inside your app and allows your users to receive, store, and manage their DOCK tokens too. This was built for mobile applications with added support for Polkadot-JS.
 
 To use the wallet-sdk, all you need to do is wrap your app in a `WalletSDKProvider` and start building your wallet.
 
 Using [polkadot-js](https://polkadot.js.org/) libraries in React Native is a challenge, due to the lack of WebAssembly support.
-The Dock Wallet SDK handles all the Polkadot Web Assembly in a WebView, sending messages to the React Native thread through a JSON RPC layer.
+The Truvera Wallet SDK handles all the Polkadot Web Assembly in a WebView, sending messages to the React Native thread through a JSON RPC layer.
 
-Dock Mobile SDK supports devices that have Android 8.1 or higher and iOS 11 or higher.
+Truvera Mobile SDK supports:
+- Devices that have Android 8.1 or higher and iOS 11 or higher.
+- Minimum supported version of Node.js is 20.2.0
 
 ## Installation
 ```js
@@ -65,20 +67,20 @@ export default App;
 
 ```
 
-For more details you can check the [getting started guide](docs/getting-started.md).
-
-
 ## Running on other platforms
 
-Check the following repository for detailed examples for running the Dock Wallet SDK on NodeJS, Web, and Flutter.
+Check the following repository for detailed examples for running the Truvera Wallet SDK on NodeJS, Web, and Flutter.
 
-https://github.com/docknetwork/wallet-sdk-examples
+[See the examples](https://github.com/docknetwork/wallet-sdk-examples)
 
 
 ## Docs
 
-https://docknetwork.github.io/react-native-sdk/
+For more details you can check the [getting started guide](https://github.com/docknetwork/react-native-sdk/blob/master/docs/getting-started.md)
+
+[See the Github repository](https://docknetwork.github.io/react-native-sdk/)
 
 ## Features
-- [Biometric Plugin](docs/biometric-plugin.md)
-- [Ecosystem Tools](docs/ecosystem-tools.md)
+- [Biometric Plugin](https://github.com/docknetwork/react-native-sdk/blob/master/docs/biometric-plugin.md)
+- [Ecosystem Tools](https://github.com/docknetwork/react-native-sdk/blob/master/docs/ecosystem-tools.md)
+- [Cloud Wallet](https://github.com/docknetwork/react-native-sdk/blob/master/docs/cloud-wallet.md)

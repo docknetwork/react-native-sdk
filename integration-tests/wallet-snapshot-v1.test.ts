@@ -27,7 +27,7 @@ describe('Wallet Snapshot V1', () => {
 
   it('expect to have load all documents', async () => {
     const documents = await wallet.query({});
-    expect(documents.length).toBe(9);
+    expect(documents.length).toBe(10);
   });
 
   it('expect to have load accounts', async () => {

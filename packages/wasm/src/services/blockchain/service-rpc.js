@@ -1,12 +1,12 @@
 import {RpcService} from '../rpc-service-client';
-import {InitParams, validation} from './configs';
+import {InitParams} from './configs';
 
 /**
  *
  */
-export class DockServiceRpc extends RpcService {
+export class BlockchainServiceRpc extends RpcService {
   constructor() {
-    super('dock');
+    super('blockchain');
   }
 
   /**
@@ -19,15 +19,14 @@ export class DockServiceRpc extends RpcService {
   /**
    *
    */
-  ensureDockReady(): Promise<any> {
-    return this.call('ensureDockReady');
+  ensureBlockchainReady(): Promise<any> {
+    return this.call('ensureBlockchainReady');
   }
 
   /**
    *
    */
   init(params: InitParams): Promise<any> {
-    validation.init(params);
     return this.call('init', params);
   }
 

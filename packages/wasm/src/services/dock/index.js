@@ -1,1 +1,0 @@
-export {dockService} from './service';

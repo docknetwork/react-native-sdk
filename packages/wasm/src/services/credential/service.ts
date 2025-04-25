@@ -2,24 +2,24 @@
 import {serviceName, validation} from './config';
 import {
   Accumulator,
-  PositiveAccumulator,
-  dockAccumulatorParams,
   VB_ACCUMULATOR_22 as AccumulatorType,
   WitnessUpdatePublicInfo,
   MembershipWitness,
 } from '@docknetwork/crypto-wasm-ts';
 import {OpenID4VCIClientV1_0_13} from '@sphereon/oid4vci-client';
 import {Alg} from '@sphereon/oid4vci-common';
-import {getDockRevIdFromCredential} from '@docknetwork/sdk/utils/revocation';
-import VerifiableCredential from '@docknetwork/sdk/verifiable-credential';
 import {getKeypairFromDoc} from '@docknetwork/universal-wallet/methods/keypairs';
-import {getSuiteFromKeyDoc} from '@docknetwork/sdk/utils/vc/helpers';
-import VerifiablePresentation from '@docknetwork/sdk/verifiable-presentation';
-import Presentation from '@docknetwork/sdk/presentation';
-import {verifyCredential} from '@docknetwork/sdk/utils/vc/credentials';
+import {
+  VerifiablePresentation,
+  Presentation,
+  verifyCredential,
+  verifyPresentation,
+  VerifiableCredential,
+  getSuiteFromKeyDoc,
+} from '@docknetwork/credential-sdk/vc';
 import {PEX} from '@sphereon/pex';
 import {keyDocToKeypair} from './utils';
-import {dockService, getDock} from '../dock/service';
+import {blockchainService, getDock} from '../blockchain/service';
 import {
   applyEnforceBounds,
   hasProvingKey,
@@ -117,20 +117,25 @@ class CredentialService {
       vp.setHolder(keyDoc.controller);
     }
 
-    keyDoc.keypair = keyDocToKeypair(keyDoc, getDock());
+    keyDoc.keypair = keyDocToKeypair(keyDoc, blockchainService.dock);
 
     if (shouldSkipSigning) {
       return vp.toJSON();
     }
 
-    return vp.sign(keyDoc, challenge, domain, dockService.resolver);
+    return vp.sign(keyDoc, challenge, domain, blockchainService.resolver);
   }
+
+  async verifyPresentation({ presentation, options }: any) {
+    return verifyPresentation(presentation, options);
+  }
+
   async verifyCredential(params) {
     validation.verifyCredential(params);
     const {credential, membershipWitness} = params;
     const result = await verifyCredential(credential, {
-      resolver: dockService.resolver,
-      revocationApi: {dock: getDock()},
+      resolver: blockchainService.resolver,
+      revocationApi: {dock: blockchainService.dock},
     });
 
     const {credentialStatus} = credential;
@@ -194,12 +199,6 @@ class CredentialService {
   }) {
     const searchParams = new URL(uri).searchParams;
     const params = new URLSearchParams(searchParams);
-    const credentialOfferEncoded = params.get('credential_offer');
-    const credentialOfferDecoded = decodeURIComponent(credentialOfferEncoded);
-    const credentialOffer = JSON.parse(credentialOfferDecoded);
-    const scope = credentialOffer.credentials[0];
-    const format = 'ldp_vc';
-    const credentialTypes = scope.replace('ldp_vc:', '');
 
     const client = await OpenID4VCIClientV1_0_13.fromURI({
       uri: uri,
@@ -207,9 +206,13 @@ class CredentialService {
       authorizationRequest: {
         redirectUri: 'dock-wallet://credentials/callback',
         clientId: 'dock.wallet',
-        scope: credentialOffer.credentials[0],
       },
     });
+
+    const format = 'ldp_vc';
+    const { scope }  = client.getCredentialsSupported()[0];
+    const scopeSplit = scope.split(':');
+    const credentialTypes = scopeSplit[scopeSplit.length - 1];
 
     let code;
 
@@ -229,7 +232,6 @@ class CredentialService {
       code,
     });
 
-
     try {
       const response = await client.acquireCredentials({
         credentialTypes,
@@ -245,6 +247,7 @@ class CredentialService {
             return jwt;
           },
         },
+        context: 'truverawallet',
         format: format,
         alg: Alg.EdDSA,
         kid: holderKeyDocument.id,
@@ -265,7 +268,7 @@ class CredentialService {
     const bbsPlusPresentation = new Presentation();
     for (const {credential, attributesToReveal} of credentials) {
       const idx = await bbsPlusPresentation.addCredentialToPresent(credential, {
-        resolver: dockService.resolver,
+        resolver: blockchainService.resolver,
       });
       if (Array.isArray(attributesToReveal) && attributesToReveal.length > 0) {
         await bbsPlusPresentation.addAttributeToReveal(idx, attributesToReveal);
@@ -280,7 +283,7 @@ class CredentialService {
       return null;
     }
 
-    return credential?.credentialStatus.id.replace('dock:accumulator:', '');
+    return credential?.credentialStatus.id;
   }
 
   async getAccumulatorData({credential}) {
@@ -291,7 +294,10 @@ class CredentialService {
       return null;
     }
 
-    return getDock().accumulatorModule.getAccumulator(accumulatorId, false);
+    return blockchainService.dock.accumulatorModule.getAccumulator(
+      accumulatorId,
+      false,
+    );
   }
 
   /**
@@ -359,7 +365,7 @@ class CredentialService {
 
     for (const {credential} of credentials) {
       await presentation.addCredentialToPresent(credential, {
-        resolver: dockService.resolver,
+        resolver: blockchainService.resolver,
       });
     }
 
@@ -404,10 +410,21 @@ class CredentialService {
 
       if (witness) {
         const details = await getWitnessDetails(credential, witness);
+        const chainModule =
+          credential.credentialStatus.id.indexOf('dock:accumulator') === 0
+            ? blockchainService.modules.accumulator.modules[0]
+            : blockchainService.modules.accumulator.modules[
+                blockchainService.modules.accumulator.modules.length - 1
+              ];
+        const accumulatorModuleClass = chainModule.constructor;
+
         presentation.presBuilder.addAccumInfoForCredStatus(
           idx,
           details.membershipWitness,
-          details.accumulator.accumulated,
+          accumulatorModuleClass.accumulatedFromHex(
+            details.accumulator.accumulated,
+            AccumulatorType.VBPos,
+          ),
           details.pk,
           details.params,
         );

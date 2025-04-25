@@ -1,6 +1,6 @@
 import {closeWallet, createNewWallet} from './helpers';
 import {WalletBackupJSON, WalletBackupPasssword} from './data/wallet-backup';
-import { dockService } from '@docknetwork/wallet-sdk-wasm/lib/services/dock';
+import {blockchainService} from '@docknetwork/wallet-sdk-wasm/lib/services/blockchain';
 
 describe('Wallet backups', () => {
   it('expect to import wallet from backup', async () => {
@@ -15,7 +15,7 @@ describe('Wallet backups', () => {
 
     const documents = await wallet.getAllDocuments();
 
-    expect(documents.length).toBe(6);
+    expect(documents.length).toBe(7);
   });
 
   it('expect to export wallet backup', async () => {
@@ -32,10 +32,6 @@ describe('Wallet backups', () => {
 
     expect(backup.credentialSubject).toBeDefined();
   });
-
-  afterEach(async () => {
-    await dockService.disconnect();
-  })
 
   afterAll(() => closeWallet());
 });

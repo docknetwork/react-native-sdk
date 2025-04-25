@@ -1,6 +1,6 @@
-import {IWallet} from '@docknetwork/wallet-sdk-core/lib/types';
-import {closeWallet, getWallet} from './helpers/wallet-helpers';
-import {getEcosystems, getVerifiers} from '@docknetwork/wallet-sdk-core/src/ecosystem-tools';
+import { IWallet } from '@docknetwork/wallet-sdk-core/lib/types';
+import { closeWallet, getWallet } from './helpers/wallet-helpers';
+import { getEcosystems, getVerifiers } from '@docknetwork/wallet-sdk-core/src/ecosystem-tools';
 
 const biometricCredential = {
   '@context': [
@@ -96,21 +96,21 @@ describe('BBS+ presentations', () => {
         '0xc5671b2d1552db9b47a3501109ddbeb861a55fe3f7a0cb7a26791203abe9fcc8'
       ].name,
     ).toBe('clarity partners');
-    
+
   });
 
   it('should fetch verifiers for the given registry', async () => {
-   
+
     const result = await getVerifiers({
-      trustRegistryId: '0xdbba3dec1cb5523760480d430c3f18d96848f93a95662944a296a1753ef2860d',
-      schemaId: 'https://schema.dock.io/BankIdentity-V5-1721219465285.json',
+      trustRegistryId: '0xc5671b2d1552db9b47a3501109ddbeb861a55fe3f7a0cb7a26791203abe9fcc8',
+      schemaId: 'https://schema.dock.io/QuotientBankIdentity-V4-1708715398120.json',
       networkId: 'testnet',
     });
 
     console.log(result);
 
     expect(result.length).toBeGreaterThan(0);
-    expect(result).toContain('did:dock:5Fv9Gxbf37DdiNrT31zKTM7ryf8H4psoP3XXxtmVuijNiTTS');
+    expect(result).toContain('did:dock:5CKsfvaE68mvRhdn3dDXG4KpWzuvaUNdBbiu6sFUuPK9rw66');
 
   });
 

@@ -17,7 +17,8 @@
     "typeorm": "^0.3.15"
   },
   "dependencies": {
-    "@docknetwork/wallet-sdk-wasm": "^1.4.0",
+    "@docknetwork/wallet-sdk-wasm": "^0.4.19",
+    "async-mutex": "^0.5.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

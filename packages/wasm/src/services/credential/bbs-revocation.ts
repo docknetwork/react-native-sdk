@@ -9,7 +9,9 @@ import {
 } from '@docknetwork/crypto-wasm-ts';
 
 import {hexToU8a} from '@polkadot/util';
-import { dockService } from '../dock/service';
+import {
+  blockchainService,
+} from '../blockchain/service';
 
 const trimHexID = id => {
   if (id.substr(0, 2) !== '0x') {
@@ -19,100 +21,37 @@ const trimHexID = id => {
   return id.substr(2);
 };
 
-// "-32000: Client error: UnknownBlock: State already discarded for BlockId::Hash(<hash>)"
-// This means that the node has discarded old blocks to preserve space. This should not happen with a full node
-const UnknownBlockErrorCode = -32000;
-
-async function updateMembershipWitness({
-  credential,
-  membershipWitness,
-  registryId,
-  blockNo,
-}) {
-  const revocationId = credential.credentialStatus.revocationId;
-  const member = Accumulator.encodePositiveNumberAsAccumulatorMember(
-    Number(revocationId),
-  );
-
-  let updates = [];
-  try {
-    // TODO: Ensure it will for cheqd 
-    // Will be handled on https://dock-team.atlassian.net/browse/DCKW-572
-    updates = await dockService.modules.accumulator.dockOnly.getUpdatesFromBlock(
-      registryId,
-      blockNo,
-    );
-  } catch (err) {
-    if (err.code === UnknownBlockErrorCode) {
-      console.error(err);
-      updates = [];
-    } else {
-      throw err;
-    }
-  }
-
-  const additions = [];
-  const removals = [];
-
-  if (updates.length && updates[0].additions !== null) {
-    for (const a of updates[0].additions) {
-      additions.push(hexToU8a(a));
-    }
-  }
-
-  if (updates.length && updates[0].removals !== null) {
-    for (const a of updates[0].removals) {
-      removals.push(hexToU8a(a));
-    }
-  }
-
-  
-  const witness = new VBMembershipWitness(hexToU8a(membershipWitness));
-
-  if (updates.length) {
-    const queriedWitnessInfo = new VBWitnessUpdateInfo(
-      hexToU8a(updates[0].witnessUpdateInfo),
-    )
-
-    witness.updateUsingPublicInfoPostBatchUpdate(
-      member,
-      additions,
-      removals,
-      queriedWitnessInfo,
-    );
-  }
-
-  return witness;
-}
-
 export const getWitnessDetails = async (credential, _membershipWitness) => {
   let witness = _membershipWitness;
   let blockNo;
 
   try {
-    ({blockNo, witness} = JSON.parse(_membershipWitness));
+    ({witness, blockNo} = JSON.parse(_membershipWitness));
   } catch (err) {
     console.error(err);
   }
-  
+
   const {credentialStatus} = credential;
-  const registryId = credentialStatus?.id.replace('dock:accumulator:', '');
+  const registryId = credentialStatus?.id;
   const revocationIndex = credentialStatus.revocationId;
 
-  const queriedAccumulator = await dockService.modules.accumulator.getAccumulator(
-    registryId,
-    false,
-  );
+  const queriedAccumulator =
+    await blockchainService.modules.accumulator.getAccumulator(
+      registryId,
+      false,
+    );
 
   if (!queriedAccumulator) {
     throw new Error('Accumulator not found');
   }
 
-  const accumulator = PositiveAccumulator.fromAccumulated(queriedAccumulator.accumulated.bytes);
+  const accumulator = PositiveAccumulator.fromAccumulated(
+    queriedAccumulator.accumulated.bytes,
+  );
 
   const encodedRevId = Encoder.defaultEncodeFunc()(revocationIndex.toString());
 
-  const publicKey = await dockService.modules.accumulator.getPublicKey(
+  const publicKey = await blockchainService.modules.accumulator.getPublicKey(
     queriedAccumulator.keyRef[0],
     queriedAccumulator.keyRef[1],
   );
@@ -120,23 +59,36 @@ export const getWitnessDetails = async (credential, _membershipWitness) => {
   const params = dockAccumulatorParams();
   const pk = new AccumulatorPublicKey(publicKey.bytes);
 
-  let membershipWitness = new VBMembershipWitness(
-    hexToU8a(witness),
-  );
+  const membershipWitness = new VBMembershipWitness(hexToU8a(witness));
 
-  if(blockNo){
-    try {
-      const updatedWitness = await updateMembershipWitness({
-        credential,
-        membershipWitness: witness,
+  try {
+    const credentialStatusId = credential.credentialStatus.id;
+    const accumulatorId = blockchainService
+      .getTypesForDIDOrAccumulator(credentialStatusId)
+      .AccumulatorId.from(credentialStatusId);
+
+    const history =
+      await blockchainService.modules.accumulator.accumulatorHistory(
+        accumulatorId,
+      );
+
+    const blockNoIndex = history.updates.findIndex(
+      update => update.id.toString() === blockNo,
+    );
+
+    const nextBlockNo = history.updates[blockNoIndex + 1]?.id?.toString();
+
+    if (nextBlockNo) {
+      await blockchainService.modules.accumulator.updateWitness(
         registryId,
-        blockNo,
-      });
-      membershipWitness = updatedWitness;
-
-    } catch (err) {
-      console.error(err);
+        encodedRevId,
+        membershipWitness,
+        nextBlockNo,
+        queriedAccumulator.lastModified,
+      );
     }
+  } catch (err) {
+    console.error(err);
   }
 
   return {

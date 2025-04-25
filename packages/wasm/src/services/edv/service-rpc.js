@@ -15,6 +15,10 @@ export class EDVServiceRpc extends RpcService {
     return this.call('generateKeys');
   }
 
+  deriveKeys() {
+    return this.call('deriveKeys');
+  }
+
   find(params: any) {
     return this.call('find', params);
   }

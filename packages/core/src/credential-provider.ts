@@ -1,7 +1,7 @@
 import {credentialServiceRPC} from '@docknetwork/wallet-sdk-wasm/src/services/credential';
 import {IWallet} from './types';
 import assert from 'assert';
-import {dockService} from '@docknetwork/wallet-sdk-wasm/src/services/dock';
+import {blockchainService} from '@docknetwork/wallet-sdk-wasm/src/services/blockchain';
 import {acquireOpenIDCredentialFromURI} from './credentials/oidvc';
 import {IDIDProvider} from './did-provider';
 
@@ -260,7 +260,7 @@ async function syncCredentialStatus({
     }
 
     if (!isApiConnected) {
-      await dockService.ensureDockReady();
+      await blockchainService.ensureBlockchainReady();
       isApiConnected = true;
     }
 

@@ -1,11 +1,9 @@
-import {dockService} from '@docknetwork/wallet-sdk-wasm/src/services/dock';
-import {trustRegistryService} from '@docknetwork/wallet-sdk-wasm/src/services/trust-registry';
 import assert from 'assert';
 import axios from 'axios';
 
-
+// TODO: FIXME: this wont work for other staging envs
 function getApiURL(networkId) {
-  return networkId === 'mainnet' ? 'https://api.dock.io' : 'https://api-testnet.dock.io';
+  return networkId === 'mainnet' ? 'https://api.truvera.io' : 'https://api-testnet.truvera.io';
 }
 
 export async function getEcosystems({
