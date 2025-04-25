@@ -6449,24 +6449,7 @@
     uuidv4 "^6.2.13"
     varint "^6.0.0"
 
-"@docknetwork/crypto-wasm-ts@0.58.0":
-  version "0.58.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/crypto-wasm-ts/-/crypto-wasm-ts-0.58.0.tgz#fe3cceaf5bcf02903af88ec43d59b1af39fe8550"
-  integrity sha512-afKdcbBMRmA8ZFiAUTjox7sZuKt3nZcHawhS5rquD5Qh1HdTQ1UGa0F0SxH1zlNzJ2OMiuGWnjgCguRMqtdSPA==
-  dependencies:
-    "@types/flat" "^5.0.2"
-    "@types/lodash" "^4.14.195"
-    bs58 "5.0.0"
-    crypto-wasm-new "npm:@docknetwork/crypto-wasm@0.27.0"
-    crypto-wasm-old "npm:@docknetwork/crypto-wasm@0.23.0"
-    flat "^5.0.2"
-    json-pointer "^0.6.2"
-    json-stringify-deterministic "^1.0.11"
-    lodash "^4.17.21"
-    lzutf8 "0.6.3"
-    semver "^7.6.0"
-
-"@docknetwork/crypto-wasm-ts@0.63.0", "@docknetwork/crypto-wasm-ts@^0.63.0":
+"@docknetwork/crypto-wasm-ts@^0.63.0":
   version "0.63.0"
   resolved "https://registry.yarnpkg.com/@docknetwork/crypto-wasm-ts/-/crypto-wasm-ts-0.63.0.tgz#f1ab39693b63e70d682d362e9eacd85842ae56e0"
   integrity sha512-KryDPIf6suwi5NS1iqA76vpuLmZv4PLV1Dt7I6Z4YS3rDKK43m7j8mox6lhQgkVL7QZdJ1DdZGxcPLekXZYQ1w==
@@ -6565,71 +6548,6 @@
   resolved "https://registry.yarnpkg.com/@docknetwork/node-types/-/node-types-0.17.0.tgz#ca0ddb5b819e012e8f2f112353008325de4f3e33"
   integrity sha512-aSRFtCwLhdhcY1wqX3WfhPpY2QXVqaB9kNB3e5+ajCWXtc0wuKJePpnSZEO4RqUEUKV5Y3LcsQ52ZB+aJ1PpFw==
 
-"@docknetwork/sdk@8.0.0":
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/sdk/-/sdk-8.0.0.tgz#0a98da8bdb8282c726435134bccd455bdb12e4a6"
-  integrity sha512-nyPnkblbZWDQCPEJPJDAwiUdTdCMoRYPkrEGAdVhcS7sIklN5eSF0I+Pyrl7eoOZYcLk9FcxImnNU49qLYZU1A==
-  dependencies:
-    "@digitalcredentials/vc-status-list" "^8.0.0"
-    "@docknetwork/crypto-wasm-ts" "0.58.0"
-    "@docknetwork/node-types" "^0.17.0"
-    "@juanelas/base64" "^1.0.5"
-    "@polkadot/api" "10.12.4"
-    "@transmute/json-web-signature" "^0.7.0-unstable.80"
-    base64url "3.0.1"
-    blake2b "2.1.4"
-    bs58 "5.0.0"
-    cross-fetch "3.1.6"
-    deep-equal "2.0.5"
-    dotenv "16.0.1"
-    elliptic "6.5.4"
-    flat "^5.0.2"
-    js-sha256 "0.9.0"
-    json-canonicalize "1.0.4"
-    json-stringify-deterministic "^1.0.11"
-    jsonld "^5.0.0"
-    jsonld-signatures "^9.3.1"
-    jsonschema "1.4.1"
-    key-did-resolver "^1.4.0"
-    mrklt "^0.2.0"
-    multiformats "^9.5.4"
-    n3 "1.16.2"
-    pako "^2.1.0"
-    rify "^0.7.1"
-
-"@docknetwork/sdk@8.6.0":
-  version "8.6.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/sdk/-/sdk-8.6.0.tgz#aac2e0097ff79c74ea9d8836eea2cb8a2b8a71c7"
-  integrity sha512-aPW6f915n5fl4a1/kxe4J52Polqxg7/H0LJSRCeGbLpQntKRVkJ3u9x1aaKSRPnYvsFEgao/skuiFetupn64hg==
-  dependencies:
-    "@digitalcredentials/vc-status-list" "^8.0.0"
-    "@docknetwork/crypto-wasm-ts" "0.63.0"
-    "@docknetwork/node-types" "^0.17.0"
-    "@juanelas/base64" "^1.0.5"
-    "@polkadot/api" "10.12.4"
-    "@transmute/json-web-signature" "^0.7.0-unstable.80"
-    base64url "3.0.1"
-    blake2b "2.1.4"
-    bs58 "5.0.0"
-    cross-fetch "3.1.6"
-    deep-equal "2.0.5"
-    dotenv "16.0.1"
-    elliptic "6.5.4"
-    flat "^5.0.2"
-    js-sha256 "0.9.0"
-    json-canonicalize "1.0.4"
-    json-stringify-deterministic "^1.0.11"
-    jsonld "^5.0.0"
-    jsonld-signatures "^9.3.1"
-    jsonschema "1.4.1"
-    key-did-resolver "^1.4.0"
-    mrklt "^0.2.0"
-    multiformats "^9.5.4"
-    n3 "1.16.2"
-    pako "^2.1.0"
-    rify "^0.7.1"
-    semver "^7.6.0"
-
 "@docknetwork/universal-wallet@2.1.1":
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/@docknetwork/universal-wallet/-/universal-wallet-2.1.1.tgz#e51122dacfeb65eb883ddf1b7b5b3f2996e7068a"
@@ -6660,106 +6578,6 @@
     "@peculiar/webcrypto" "^1.1.6"
     babel-polyfill "^6.26.0"
     base58-universal "1.0.0"
-
-"@docknetwork/wallet-sdk-core@^0.4.19":
-  version "0.4.22"
-  resolved "https://registry.yarnpkg.com/@docknetwork/wallet-sdk-core/-/wallet-sdk-core-0.4.22.tgz#7104874ae6ca17a254a86a3747db439b7044c15a"
-  integrity sha512-9jqKvyRG298m6F4h97TS92cnwrTmhJrghWBDTB8CAw/PW1f4bvysipquFrLSJvJ4c98qO4zKHJ8N7OYeeBpeuw==
-  dependencies:
-    "@docknetwork/wallet-sdk-wasm" "^0.4.19"
-
-"@docknetwork/wallet-sdk-credentials@^0.4.19":
-  version "0.4.19"
-  resolved "https://registry.yarnpkg.com/@docknetwork/wallet-sdk-credentials/-/wallet-sdk-credentials-0.4.19.tgz#c331324d26ea1224ac6f2f33fc05a0d207361e77"
-  integrity sha512-+Tqn8Jukgpq93gtF5h/BSp9b37oY6PpUq9oBNqYhouxaLnw+sQckT7WytAVaQnt/6NE77OlulWchokUasIn+FA==
-  dependencies:
-    "@docknetwork/wallet-sdk-core" "^0.4.19"
-    axios "^0.25.0"
-
-"@docknetwork/wallet-sdk-data-store-typeorm@^0.4.19":
-  version "0.4.19"
-  resolved "https://registry.yarnpkg.com/@docknetwork/wallet-sdk-data-store-typeorm/-/wallet-sdk-data-store-typeorm-0.4.19.tgz#b761e1e9f3ff5142ef19bc7e35ea27a4efc59c78"
-  integrity sha512-3/l62jB4KrcKXxHn70uigIPKd0JWk1brMXz5DUnlSq0qlfxIDb8xhSMHsYWl/XqHSHPyWSMIHvO27FNVTJuOhQ==
-  dependencies:
-    "@docknetwork/wallet-sdk-wasm" "^0.4.19"
-    uuid "^8.3.2"
-
-"@docknetwork/wallet-sdk-dids@^0.4.19":
-  version "0.4.22"
-  resolved "https://registry.yarnpkg.com/@docknetwork/wallet-sdk-dids/-/wallet-sdk-dids-0.4.22.tgz#5e79408c3bc860d6a2bb7ebe07a51b9e29e7e39f"
-  integrity sha512-mtRSpMFfJ48oL1f61nUqI4kv6qaahhVjkYLlOtpwv97G2UNpcL4w8jUKZxNmzUEfPQ6ZyGM1Vzf0KJwXccT+mg==
-  dependencies:
-    "@digitalbazaar/did-method-key" "^2.0.0"
-    uuid "^8.3.2"
-
-"@docknetwork/wallet-sdk-transactions@^0.4.19":
-  version "0.4.19"
-  resolved "https://registry.yarnpkg.com/@docknetwork/wallet-sdk-transactions/-/wallet-sdk-transactions-0.4.19.tgz#eabf747024276f0448ca404565e185ccb7129522"
-  integrity sha512-iFIOGkbeX8s9RoflY+cPGOlCRo5idSwkrhp5REWACxHeLEjBz4+LoJk31mDJY1m5JjlnCLep0aanCby+QqiDuQ==
-  dependencies:
-    "@polkadot/keyring" "^7.2.1"
-    "@polkadot/types-known" "5.6.1"
-    "@polkadot/ui-shared" "^0.87.5"
-    "@polkadot/util-crypto" "^7.2.1"
-    "@polkadot/wasm-crypto" "^4.5.1"
-
-"@docknetwork/wallet-sdk-wasm@0.4.19":
-  version "0.4.19"
-  resolved "https://registry.yarnpkg.com/@docknetwork/wallet-sdk-wasm/-/wallet-sdk-wasm-0.4.19.tgz#d591b1c1d88453542a11adfeca51b79127512187"
-  integrity sha512-du4a945CK0dzceOStCneF9xdtS/PSxeGY+YlBDqKWLpZ0vz0mKoWCu5BW55Kog1FpjpJvXEKrffHWPgG0iRfIw==
-  dependencies:
-    "@docknetwork/sdk" "8.0.0"
-    "@docknetwork/universal-wallet" "^2.0.1"
-    "@polkadot/api" "9.7.1"
-    "@polkadot/keyring" "10.1.11"
-    "@polkadot/rpc-core" "9.7.1"
-    "@polkadot/rpc-provider" "9.7.1"
-    "@polkadot/types" "9.7.1"
-    "@polkadot/types-known" "9.7.1"
-    "@polkadot/ui-shared" "3.4.1"
-    "@polkadot/util" "10.1.11"
-    "@polkadot/util-crypto" "10.1.11"
-    "@polkadot/wasm-crypto" "6.3.1"
-    "@sphereon/pex" "^1.1.4"
-    axios "^0.25.0"
-    axios-retry "^3.2.5"
-    babel-node "^0.0.1-security"
-    bignumber.js "^9.0.1"
-    cwait "1.1.2"
-    json-rpc-2.0 "^0.2.16"
-    react-native-keychain "^8.0.0"
-    uuid "^8.3.2"
-    winston "^3.3.3"
-
-"@docknetwork/wallet-sdk-wasm@^0.4.19":
-  version "0.4.22"
-  resolved "https://registry.yarnpkg.com/@docknetwork/wallet-sdk-wasm/-/wallet-sdk-wasm-0.4.22.tgz#01e738cd1bba40c70ca88b9c4e3905aa0a5dec6a"
-  integrity sha512-XdTlF6oKhUeWESAbWWGKUxB0Y1SrpvVA5TRvQvH1YHUSlCRB0WiPRFWfRr4NFmcbmDpJupKIStnYeR3rl/VakA==
-  dependencies:
-    "@docknetwork/sdk" "8.6.0"
-    "@docknetwork/universal-wallet" "^2.0.1"
-    "@polkadot/api" "9.7.1"
-    "@polkadot/keyring" "10.1.11"
-    "@polkadot/rpc-core" "9.7.1"
-    "@polkadot/rpc-provider" "9.7.1"
-    "@polkadot/types" "9.7.1"
-    "@polkadot/types-known" "9.7.1"
-    "@polkadot/ui-shared" "3.4.1"
-    "@polkadot/util" "10.1.11"
-    "@polkadot/util-crypto" "10.1.11"
-    "@polkadot/wasm-crypto" "6.3.1"
-    "@sphereon/oid4vci-client" "^0.16.0"
-    "@sphereon/oid4vci-common" "^0.16.0"
-    "@sphereon/pex" "^1.1.4"
-    axios "^0.25.0"
-    axios-retry "^3.2.5"
-    babel-node "^0.0.1-security"
-    bignumber.js "^9.0.1"
-    cwait "1.1.2"
-    json-rpc-2.0 "^0.2.16"
-    react-native-keychain "^8.0.0"
-    uuid "^8.3.2"
-    winston "^3.3.3"
 
 "@eslint/eslintrc@^0.4.3":
   version "0.4.3"
@@ -12680,24 +12498,10 @@ crypto-ld@^6.0.0:
   resolved "https://registry.yarnpkg.com/crypto-ld/-/crypto-ld-6.0.0.tgz#cf8dcf566cb3020bdb27f0279e6cc9b46d031cd7"
   integrity sha512-XWL1LslqggNoaCI/m3I7HcvaSt9b2tYzdrXO+jHLUj9G1BvRfvV7ZTFDVY5nifYuIGAPdAGu7unPxLRustw3VA==
 
-"crypto-wasm-new@npm:@docknetwork/crypto-wasm@0.27.0":
-  version "0.27.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/crypto-wasm/-/crypto-wasm-0.27.0.tgz#a7ac6c28fc1d42e2c9853e8ba4a0d78fa1e88015"
-  integrity sha512-s1UyqhIm9MB+KaVJVfP7JAGLDaQfN11TtHvhdW5xi637AbYBJGPlBH8WM7tOFTVMaRMbNCEPIrv1ISo7Di5pFA==
-  dependencies:
-    buffer "^6.0.3"
-
 "crypto-wasm-new@npm:@docknetwork/crypto-wasm@0.30.0":
   version "0.30.0"
   resolved "https://registry.yarnpkg.com/@docknetwork/crypto-wasm/-/crypto-wasm-0.30.0.tgz#d54a56989cf98847e6e4ebe8119b6eb6012d8da4"
   integrity sha512-xwDtakDBaiOf0Cm6H74JsJ2I610rc+d9tSrgjuACE7QBpmkTug6QX4Q4OzxXA12wp86K5QqRMHoCzc6geS1Z0g==
-  dependencies:
-    buffer "^6.0.3"
-
-"crypto-wasm-old@npm:@docknetwork/crypto-wasm@0.23.0":
-  version "0.23.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/crypto-wasm/-/crypto-wasm-0.23.0.tgz#5ae04db0f7990fb6fc9c7ad3f0a1cb7255518169"
-  integrity sha512-/bDSy05HkIZIZL9HDHowjCKxTDf9Cf04e1ElIY0o/q9ewbxHQ4/r8Ppv5V5bOnVkxcFG9lWQQstKXQDV86UWRw==
   dependencies:
     buffer "^6.0.3"
 
@@ -13442,19 +13246,6 @@ electron-to-chromium@^1.4.668:
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.728.tgz#ac54d9d1b38752b920ec737a48c83dec2bf45ea1"
   integrity sha512-Ud1v7hJJYIqehlUJGqR6PF1Ek8l80zWwxA6nGxigBsGJ9f9M2fciHyrIiNMerSHSH3p+0/Ia7jIlnDkt41h5cw==
 
-elliptic@6.5.4, elliptic@^6.5.3, elliptic@^6.5.4:
-  version "6.5.4"
-  resolved "https://registry.yarnpkg.com/elliptic/-/elliptic-6.5.4.tgz#da37cebd31e79a1367e941b592ed1fbebd58abbb"
-  integrity sha512-iLhC6ULemrljPZb+QutR5TQGB+pdW6KGD5RSegS+8sorOZT+rdQFbsQFJgvN3eRqNALqJer4oQ16YvJHlU8hzQ==
-  dependencies:
-    bn.js "^4.11.9"
-    brorand "^1.1.0"
-    hash.js "^1.0.0"
-    hmac-drbg "^1.0.1"
-    inherits "^2.0.4"
-    minimalistic-assert "^1.0.1"
-    minimalistic-crypto-utils "^1.0.1"
-
 elliptic@6.6.0:
   version "6.6.0"
   resolved "https://registry.yarnpkg.com/elliptic/-/elliptic-6.6.0.tgz#5919ec723286c1edf28685aa89261d4761afa210"
@@ -13472,6 +13263,19 @@ elliptic@6.6.1, elliptic@^6.5.2, elliptic@^6.5.7:
   version "6.6.1"
   resolved "https://registry.yarnpkg.com/elliptic/-/elliptic-6.6.1.tgz#3b8ffb02670bf69e382c7f65bf524c97c5405c06"
   integrity sha512-RaddvvMatK2LJHqFJ+YA4WysVN5Ita9E35botqIYspQ4TkRAlCicdzKOjlyv/1Za5RyTNn7di//eEV0uTAfe3g==
+  dependencies:
+    bn.js "^4.11.9"
+    brorand "^1.1.0"
+    hash.js "^1.0.0"
+    hmac-drbg "^1.0.1"
+    inherits "^2.0.4"
+    minimalistic-assert "^1.0.1"
+    minimalistic-crypto-utils "^1.0.1"
+
+elliptic@^6.5.3, elliptic@^6.5.4:
+  version "6.5.4"
+  resolved "https://registry.yarnpkg.com/elliptic/-/elliptic-6.5.4.tgz#da37cebd31e79a1367e941b592ed1fbebd58abbb"
+  integrity sha512-iLhC6ULemrljPZb+QutR5TQGB+pdW6KGD5RSegS+8sorOZT+rdQFbsQFJgvN3eRqNALqJer4oQ16YvJHlU8hzQ==
   dependencies:
     bn.js "^4.11.9"
     brorand "^1.1.0"

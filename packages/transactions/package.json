@@ -1,6 +1,6 @@
 {
     "name": "@docknetwork/wallet-sdk-transactions",
-    "version": "1.4.0",
+    "version": "1.5.0",
     "license": "https://github.com/docknetwork/react-native-sdk/LICENSE",
     "repository": {
         "type": "git",
