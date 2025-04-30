@@ -1,6 +1,6 @@
 {
     "name": "@docknetwork/wallet-sdk-wasm",
-    "version": "1.5.0",
+    "version": "1.5.6",
     "license": "https://github.com/docknetwork/react-native-sdk/LICENSE",
     "repository": {
         "type": "git",
@@ -27,7 +27,7 @@
     "dependencies": {
         "@astronautlabs/jsonpath": "^1.1.2",
         "@docknetwork/universal-wallet": "^2.0.1",
-        "@docknetwork/wallet-sdk-dids": "^1.5.0",
+        "@docknetwork/wallet-sdk-dids": "^1.5.6",
         "@cosmjs/proto-signing": "^0.32.4",
         "@docknetwork/cheqd-blockchain-api": "0.30.2",
         "@docknetwork/cheqd-blockchain-modules": "0.30.2",
