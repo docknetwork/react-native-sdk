@@ -30,6 +30,7 @@
         "@docknetwork/wallet-sdk-dids": "^1.5.6",
         "@cosmjs/proto-signing": "^0.32.4",
         "@docknetwork/cheqd-blockchain-api": "0.30.2",
+       "@docknetwork/dock-blockchain-api": "0.20.2",
         "@docknetwork/cheqd-blockchain-modules": "0.30.2",
         "@polkadot/api": "9.7.1",
         "@polkadot/keyring": "10.1.11",
@@ -54,8 +55,7 @@
         "winston": "^3.3.3",
         "cwait": "1.1.2",
         "axios-retry": "^3.2.5",
-        "@sphereon/pex": "^1.1.4",
-        "@docknetwork/dock-blockchain-api": "0.6.1"
+        "@sphereon/pex": "^1.1.4"
     },
     "devDependencies": {
         "@babel/node": "^7.16.0",
