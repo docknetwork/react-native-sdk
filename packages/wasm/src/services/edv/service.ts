@@ -10,7 +10,6 @@ import {logger} from '@docknetwork/wallet-sdk-data-store/src/logger';
 import {didService} from '@docknetwork/wallet-sdk-wasm/src/services/dids/service';
 import {keyringService} from '@docknetwork/wallet-sdk-wasm/src/services/keyring';
 import {ed25519PairFromSeed} from '@polkadot/util-crypto';
-import base64url from 'base64url-universal';
 
 /**
  * EDVService
@@ -19,10 +18,12 @@ export class EDVService {
   storageInterface: EDVHTTPStorageInterface;
 
   private insertQueue: Promise<any> = Promise.resolve();
+  public controller: string;
 
   rpcMethods = [
     EDVService.prototype.generateKeys,
     EDVService.prototype.deriveKeys,
+    EDVService.prototype.getController,
     EDVService.prototype.initialize,
     EDVService.prototype.find,
     EDVService.prototype.update,
@@ -51,6 +52,7 @@ export class EDVService {
     };
 
     const {controller} = verificationKey;
+    this.controller = controller;
     const invocationSigner = getKeypairFromDoc(verificationKey);
     invocationSigner.sign = invocationSigner.signer().sign;
 
@@ -113,11 +115,11 @@ export class EDVService {
     return {verificationKey, agreementKey, hmacKey};
   }
 
-  async deriveKeys(masterKey: any) {
+  async deriveKeys(masterKey: Uint8Array) {
     await keyringService.initialize({
       ss58Format: 22,
     });
-    const pair = ed25519PairFromSeed(base64url.decode(masterKey));
+    const pair = ed25519PairFromSeed(masterKey);
 
     const keyPair = await didService.deriveKeyDoc({ pair });
 
@@ -129,6 +131,10 @@ export class EDVService {
     const hmacKey = await HMAC.exportKey(await HMAC.deriveKey(masterKey));
 
     return { verificationKey, agreementKey, hmacKey };
+  }
+
+  async getController() {
+    return this.controller;
   }
 
   find(params: any) {
