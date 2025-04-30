@@ -2,7 +2,7 @@
 
 import assert from 'assert';
 import {v4 as uuidv4} from 'uuid';
-import { getLocalStorage } from '@docknetwork/wallet-sdk-data-store/src';
+import { getLocalStorage } from '@docknetwork/wallet-sdk-data-store/lib';
 
 
 async function getAllLogs() {
