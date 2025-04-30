@@ -196,6 +196,40 @@ describe('pex helpers', () => {
       ]);
       expect(result.length).toBe(1);
     });
+
+    it('should not include fields marked as optional', () => {
+      const result = getPexRequiredAttributes(
+        {
+          id: 'test-optional',
+          input_descriptors: [
+            {
+              id: 'Credential Optional',
+              constraints: {
+                fields: [
+                  {
+                    path: ['$.credentialSubject.id'],
+                  },
+                  {
+                    path: ['$.credentialSubject.optionalField'],
+                    optional: true,
+                  },
+                ],
+              },
+            },
+          ],
+        },
+        [
+          {
+            credentialSubject: {
+              id: 'abc',
+              optionalField: 'shouldNotAppear',
+            },
+          },
+        ],
+      )[0];
+
+      expect(result).toEqual(['credentialSubject.id']);
+    });
   });
 
   describe('pexToBounds', () => {
