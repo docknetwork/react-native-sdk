@@ -28,13 +28,6 @@ export function createTrustXIDVProviderFactory({
 }): IDVProvider {
   return {
     async enroll(walletDID, proofRequest) {
-      
-      // TODO: get start URL from TrustX API
-      // Will send the walletDID and processID to TrustX API
-      // call: https://bank-demo.truvera.io/api/create-trustx-process-token
-      // with body: {
-      //   "dock_wallet_id": "did:key:z6MkqRTahJwYmu7eHc88yoAcjksgd8Jv7nYPsirnGz98vHmN"
-      // }
       const {data: {uiUrl}} = await axios.post(`${configs.walletApiUrl}/create-trustx-process-token`, {
         dock_wallet_id: walletDID,
       });
@@ -56,7 +49,6 @@ export function createTrustXIDVProviderFactory({
       await performBiometricCheck();
 
       const biometric_enrollment_id = enrollmentCredential.credentialSubject.biometric_enrollment_id;
-      // get uiUrl
       const {data: {uiUrl}} = await axios.post(`${configs.walletApiUrl}/create-trustx-process-token`, {
         dock_wallet_id: walletDID,
         biometric_enrollment_id,
