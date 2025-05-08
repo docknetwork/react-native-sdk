@@ -296,19 +296,12 @@ export async function removeCredential({
   // Remove the main credential document
   await wallet.removeDocument(credentialId);
   
-  // Remove related documents
-  try {
-    // Remove the witness document if it exists
+  if (await wallet.getDocumentById(`${credentialId}#witness`)) {
     await wallet.removeDocument(`${credentialId}#witness`);
-  } catch (err) {
-    // Witness document might not exist, which is fine
   }
-  
-  try {
-    // Remove the status document if it exists
+
+  if (await wallet.getDocumentById(`${credentialId}#status`)) {
     await wallet.removeDocument(`${credentialId}#status`);
-  } catch (err) {
-    // Status document might not exist, which is fine
   }
 }
 
