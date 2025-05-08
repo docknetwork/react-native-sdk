@@ -63,6 +63,24 @@ class TruveraIDVProviderFactory implements IDVProviderFactory {
   }
 }
 
+// Mock proof request for biometric verification
+const MOCK_PROOF_REQUEST = {
+  input_descriptors: [
+    {
+      constraints: {
+        fields: [
+          {
+            path: ['$.credentialSubject.biometric.id'],
+          },
+          {
+            path: ['$.credentialSubject.biometric.created'],
+          },
+        ],
+      },
+    },
+  ],
+};
+
 describe('Biometric Provider with Truvera Integration', () => {
   let wallet: IWallet;
   let biometricProvider: any;
@@ -108,22 +126,8 @@ describe('Biometric Provider with Truvera Integration', () => {
         await credentialProvider.removeCredential(credential.id);
       }
       
-      const proofRequest = {
-        input_descriptors: [
-          {
-            constraints: {
-              fields: [
-                {
-                  path: ['$.credentialSubject.biometric.id'],
-                },
-                {
-                  path: ['$.credentialSubject.biometric.created'],
-                },
-              ],
-            },
-          },
-        ],
-      };
+      // Use the mock proof request
+      const proofRequest = MOCK_PROOF_REQUEST;
 
       // Create a listener for the onComplete event
       let enrollmentComplete = false;
@@ -179,24 +183,8 @@ describe('Biometric Provider with Truvera Integration', () => {
       // If there's no enrollment credential, create one first
       if (enrollmentCredentials.length === 0) {
         const walletDID = await getDIDProvider().getDefaultDID();
-        const proofRequest = {
-          input_descriptors: [
-            {
-              constraints: {
-                fields: [
-                  {
-                    path: ['$.credentialSubject.biometric.id'],
-                  },
-                  {
-                    path: ['$.credentialSubject.biometric.created'],
-                  },
-                ],
-              },
-            },
-          ],
-        };
         
-        const result = await idvProvider.enroll(walletDID, proofRequest);
+        const result = await idvProvider.enroll(walletDID, MOCK_PROOF_REQUEST);
         await credentialProvider.addCredential(result.enrollmentCredential);
         enrollmentCredentials = await credentialProvider.getCredentials(biometricConfigs.enrollmentCredentialType);
       }
@@ -207,22 +195,8 @@ describe('Biometric Provider with Truvera Integration', () => {
         await credentialProvider.removeCredential(credential.id);
       }
       
-      const proofRequest = {
-        input_descriptors: [
-          {
-            constraints: {
-              fields: [
-                {
-                  path: ['$.credentialSubject.biometric.id'],
-                },
-                {
-                  path: ['$.credentialSubject.biometric.created'],
-                },
-              ],
-            },
-          },
-        ],
-      };
+      // Use the mock proof request
+      const proofRequest = MOCK_PROOF_REQUEST;
       
       // Start the IDV process
       const startIDVPromise = biometricProvider.startIDV(proofRequest);
@@ -256,7 +230,9 @@ describe('Biometric Provider with Truvera Integration', () => {
         new Error('Biometric check failed')
       );
 
+      // Use the mock proof request
       const proofRequest = {
+        ...MOCK_PROOF_REQUEST,
         input_descriptors: [
           {
             constraints: {

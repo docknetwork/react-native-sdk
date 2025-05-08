@@ -94,6 +94,8 @@ export function createBiometricProvider({
       currentConfigs.enrollmentCredentialType,
     );
 
+    let matchCredential: Credential;
+
     if (!existingEnrollmentCredential) {
       // call IDV to start enrollment process and issue the enrollment credential + match credential
       const credentials = await idvProvider.enroll(
@@ -102,7 +104,7 @@ export function createBiometricProvider({
       );
 
       await credentialProvider.addCredential(credentials.enrollmentCredential);
-      await credentialProvider.addCredential(credentials.matchCredential);
+      matchCredential = credentials.matchCredential;
     } else {
       // call IDV to match the enrollment credential and issue the match credential
       const credentials = await idvProvider.match(
@@ -112,7 +114,10 @@ export function createBiometricProvider({
       );
 
       await credentialProvider.addCredential(credentials.matchCredential);
+      matchCredential = credentials.matchCredential;
     }
+
+    return matchCredential;
   }
 
   return {
