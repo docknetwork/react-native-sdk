@@ -30,10 +30,8 @@ export const getIssuanceDate = () => {
   return dateObject.toISOString();
 };
 
-function getBiometricCreatedDate() {
-  // The biometric schema is defined with date format instead of date-time
-  // We will be using that for now, and we can remove this later 
-  return getIssuanceDate().split('T')[0];
+export function convertDateTimeToDate(dt: string) {
+  return dt.split('T')[0];
 }
 
 /**
@@ -47,6 +45,7 @@ async function issueEnrollmentCredential(walletDID: string, truveraConfig: Truve
   const biometricId = uuid();
   
   try {
+    const issuanceDate = getIssuanceDate();
     const body = {
       anchor: false,
       persist: false,
@@ -55,13 +54,13 @@ async function issueEnrollmentCredential(walletDID: string, truveraConfig: Truve
         name: getBiometricConfigs().enrollmentCredentialType,
         type: ['VerifiableCredential', getBiometricConfigs().enrollmentCredentialType],
         issuer: truveraConfig.issuerDID,
-        issuanceDate: getIssuanceDate(),
+        issuanceDate,
         subject: {
           id: walletDID,
           biometric: {
             id: biometricId,
             data: JSON.stringify({id: biometricId}),
-            created: getBiometricCreatedDate(),
+            created: convertDateTimeToDate(issuanceDate),
           },
         },
       },
@@ -102,6 +101,7 @@ async function issueMatchCredential(walletDID: string, enrollmentCredential: any
       Date.now() + 1000 * 60 * expirationMinutes,
     ).toISOString();
     
+    const issuanceDate = getIssuanceDate();
     const body = {
       anchor: false,
       persist: false,
@@ -110,13 +110,13 @@ async function issueMatchCredential(walletDID: string, enrollmentCredential: any
         name: getBiometricConfigs().biometricMatchCredentialType,
         type: ['VerifiableCredential', getBiometricConfigs().biometricMatchCredentialType],
         issuer: truveraConfig.issuerDID,
-        issuanceDate: getIssuanceDate(),
-        expirationDate: expirationDate,
+        issuanceDate,
+        expirationDate,
         subject: {
           id: walletDID,
           biometric: {
             id: biometricId,
-            created: getBiometricCreatedDate(),
+            created: convertDateTimeToDate(issuanceDate),
           },
         },
       },
