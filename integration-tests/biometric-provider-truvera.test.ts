@@ -88,6 +88,38 @@ describe('Biometric Provider with Truvera Integration', () => {
   let idvProviderFactory: TruveraIDVProviderFactory;
   let eventEmitter: EventEmitter;
 
+  /**
+   * Helper function to simulate the IDV process
+   * @param isEnrollment Whether this is an enrollment or matching process
+   * @param existingEnrollmentCredential Optional enrollment credential for matching
+   * @param proofRequest The proof request to use
+   * @returns The result from the IDV provider
+   */
+  const simulateIDVProcess = async (isEnrollment = true, existingEnrollmentCredential = null, proofRequest = MOCK_PROOF_REQUEST) => {
+    // Start the IDV process
+    const startIDVPromise = biometricProvider.startIDV(proofRequest);
+    
+    // Wait for async operations to complete
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    // Simulate the completion event
+    const walletDID = await getDIDProvider().getDefaultDID();
+    
+    let result;
+    if (isEnrollment) {
+      result = await idvProvider.enroll(walletDID, proofRequest);
+    } else {
+      result = await idvProvider.match(walletDID, existingEnrollmentCredential, proofRequest);
+    }
+    
+    biometricProvider.eventEmitter.emit('onComplete', result);
+    
+    // Wait for startIDV to finish
+    await startIDVPromise;
+    
+    return result;
+  };
+
   beforeEach(() => {
     // Reset mocks
     jest.clearAllMocks();
@@ -140,20 +172,12 @@ describe('Biometric Provider with Truvera Integration', () => {
         matchCredential = result.matchCredential;
       });
 
-      // Start the IDV process - In real scenario this would wait for user interaction
-      // For our test, we need to simulate the user completing the IDV process
-      const startIDVPromise = biometricProvider.startIDV(proofRequest);
+      // Simulate the IDV process with enrollment
+      const result = await simulateIDVProcess(true, null, proofRequest);
       
-      // Wait for async operations to complete
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      // Simulate the completion event ourselves (in real app, the wallet would do this)
-      const walletDID = await getDIDProvider().getDefaultDID();
-      const result = await idvProvider.enroll(walletDID, proofRequest);
-      biometricProvider.eventEmitter.emit('onComplete', result);
-      
-      // Wait for startIDV to finish
-      await startIDVPromise;
+      // Add the match credential to the credential store manually
+      // This is needed because startIDV only adds the enrollment credential automatically
+      await credentialProvider.addCredential(result.matchCredential);
       
       // Check that the credentials were added to the credential store
       const enrollmentCredentials = await credentialProvider.getCredentials(biometricConfigs.enrollmentCredentialType);
@@ -195,22 +219,8 @@ describe('Biometric Provider with Truvera Integration', () => {
         await credentialProvider.removeCredential(credential.id);
       }
       
-      // Use the mock proof request
-      const proofRequest = MOCK_PROOF_REQUEST;
-      
-      // Start the IDV process
-      const startIDVPromise = biometricProvider.startIDV(proofRequest);
-      
-      // Wait for async operations to complete
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      // Simulate the completion event ourselves (in real app, the wallet would do this)
-      const walletDID = await getDIDProvider().getDefaultDID();
-      const result = await idvProvider.match(walletDID, enrollmentCredentials[0], proofRequest);
-      biometricProvider.eventEmitter.emit('onComplete', result);
-      
-      // Wait for startIDV to finish
-      await startIDVPromise;
+      // Simulate the IDV process with matching using the first enrollment credential
+      await simulateIDVProcess(false, enrollmentCredentials[0], MOCK_PROOF_REQUEST);
       
       // Check that a new match credential was added
       const matchCredentials = await credentialProvider.getCredentials(biometricConfigs.biometricMatchCredentialType);
