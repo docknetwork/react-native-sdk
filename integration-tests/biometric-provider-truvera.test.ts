@@ -42,7 +42,7 @@ jest.mock('uuid', () => ({
 // Configuration for the Truvera provider
 const truveraConfig: TruveraIDVConfig = {
   issuerDID: 'did:dock:5HLbQLSmirNuZVRsdWKbsgdajw9QTGzSFJABSVzMT5EBj5sb',
-  walletApiUrl: process.env.WALLET_API_URL || 'https://bank-demo.truvera.io/api',
+  walletApiUrl: process.env.WALLET_API_URL || '',
   biometricMatchExpirationMinutes: 2,
 };
 
