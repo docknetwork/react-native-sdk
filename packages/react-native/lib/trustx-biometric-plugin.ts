@@ -8,9 +8,6 @@ import * as Keychain from 'react-native-keychain';
 import axios from 'axios';
 
 export type TrustXIDVConfig = {
-  // TrustX API URL
-  // process token will be: https://bank-demo.truvera.io/api/create-trustx-process-token
-  // for integration tests we should use 
   walletApiUrl: string;
 };
 
