@@ -55,8 +55,6 @@ export const IDV_EVENTS = {
   onError: 'onError',
   onCancel: 'onCancel',
   onComplete: 'onComplete',
-  onMatchCredential: 'onMatchCredential',
-  onEnrollmentCredential: 'onEnrollmentCredential',
 };
 
 export interface IDVProvider {
@@ -89,15 +87,6 @@ export function createBiometricProvider({
   const eventEmitter = new EventEmitter();
   const idvProvider = idvProviderFactory.create(eventEmitter, wallet);
 
-  // Listen for match credential
-  eventEmitter.on(IDV_EVENTS.onMatchCredential, async (credential: string) => {
-    await credentialProvider.addCredential(credential);
-  });
-
-  // Listen for enrollment credential
-  eventEmitter.on(IDV_EVENTS.onEnrollmentCredential, async (credential: string) => {
-    await credentialProvider.addCredential(credential);
-  });
 
   async function startIDV(proofRequest: any) {
     const walletDID = await didProvider.getDefaultDID();
@@ -107,35 +96,23 @@ export function createBiometricProvider({
 
     if (!existingEnrollmentCredential) {
       // call IDV to start enrollment process and issue the enrollment credential + match credential
-      await idvProvider.enroll(
+      const credentials = await idvProvider.enroll(
         walletDID,
         proofRequest,
       );
 
-      // wait for the enrollment credential to be received
-      await new Promise((resolve) => {
-        eventEmitter.on(IDV_EVENTS.onEnrollmentCredential, resolve);
-      });
-
-      // wait for the match credential to be received
-      await new Promise((resolve) => {
-        eventEmitter.on(IDV_EVENTS.onMatchCredential, resolve);
-      });
+      await credentialProvider.addCredential(credentials.enrollmentCredential);
+      await credentialProvider.addCredential(credentials.matchCredential);
     } else {
       // call IDV to match the enrollment credential and issue the match credential
-      await idvProvider.match(
+      const credentials = await idvProvider.match(
         walletDID,
         existingEnrollmentCredential,
         proofRequest,
       );
 
-      // wait for the match credential to be received
-      await new Promise((resolve) => {
-        eventEmitter.on(IDV_EVENTS.onMatchCredential, resolve);
-      });
+      await credentialProvider.addCredential(credentials.matchCredential);
     }
-
-    eventEmitter.emit(IDV_EVENTS.onComplete);
   }
 
   return {
