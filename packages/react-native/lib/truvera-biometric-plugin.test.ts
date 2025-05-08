@@ -141,7 +141,7 @@ describe('Truvera Biometric Plugin Unit Tests', () => {
     });
   });
 
-  describe('createTruveraIDVProviderFactory', () => {
+  describe('createTruveraIDVFactory', () => {
     let provider: any;
     let eventEmitter: EventEmitter;
 
