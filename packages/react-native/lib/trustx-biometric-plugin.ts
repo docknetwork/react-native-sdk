@@ -5,12 +5,14 @@ import {
 import {IWallet} from '@docknetwork/wallet-sdk-core/src/types';
 import {EventEmitter} from 'stream';
 import * as Keychain from 'react-native-keychain';
+import axios from 'axios';
 
 export type TrustXIDVConfig = {
   // TrustX API URL
-  apiURL: string;
+  // process token will be: https://bank-demo.truvera.io/api/create-trustx-process-token
+  // for integration tests we should use 
+  walletApiUrl: string;
 };
-
 
 async function performBiometricCheck() {
   await Keychain.getGenericPassword({
@@ -32,43 +34,49 @@ export function createTrustXIDVProviderFactory({
       
       // TODO: get start URL from TrustX API
       // Will send the walletDID and processID to TrustX API
-      const startURL = 'https://trustx.com/start-url';
-
+      // call: https://bank-demo.truvera.io/api/create-trustx-process-token
+      // with body: {
+      //   "dock_wallet_id": "did:key:z6MkqRTahJwYmu7eHc88yoAcjksgd8Jv7nYPsirnGz98vHmN"
+      // }
+      const {data: {uiUrl}} = await axios.post(`${configs.walletApiUrl}/create-trustx-process-token`, {
+        dock_wallet_id: walletDID,
+      });
 
       // Emit the deep link event to the event emitter
-      // The Wallet App should open the URL in the browser
-      eventEmitter.emit(IDV_EVENTS.onDeepLink, startURL);
+      // The Wallet App should open the URL in the WebView
+      // When the user completes the biometric check, the IDV will issue the biometric credential
+      // The wallet will receive the credential via DID distribution
+      // The wallet will emit the onComplete event with the enrollment credential + match credential
+      eventEmitter.emit(IDV_EVENTS.onDeepLink, uiUrl);
 
-
-      // Now we need to listen for a onComplete event from trustx webivew
-      // and wait for the credential to be received via DID distribution
-
-      // TrustX will issue the credentials and send to the wallet via DID distribution
-      // We need to listen for new credentials sent to the wallet
-
-
-      // Listen for 
-      // await performBiometricCheck();
-
-      // TODO: issue enrollment credential
-      // const enrollmentCredential = {};
-      // TODO: issue match credential
-      // const matchCredential = {};
-
-      // return {
-      //   enrollmentCredential,
-      //   matchCredential,
-      // };
+      return new Promise((resolve, reject) => {
+        eventEmitter.on(IDV_EVENTS.onComplete, ({ enrollmentCredential, matchCredential }) => {
+          resolve({ enrollmentCredential, matchCredential });
+        });
+      });
     },
     async match(walletDID, enrollmentCredential, proofRequest) {
       await performBiometricCheck();
 
-      // TODO: issue match credential
-      const matchCredential = {};
+      const biometric_enrollment_id = enrollmentCredential.credentialSubject.biometric_enrollment_id;
+      // get uiUrl
+      const {data: {uiUrl}} = await axios.post(`${configs.walletApiUrl}/create-trustx-process-token`, {
+        dock_wallet_id: walletDID,
+        biometric_enrollment_id,
+      });
 
-      return {
-        matchCredential,
-      };
+      // Emit the deep link event to the event emitter
+      // The Wallet App should open the URL in the WebView
+      // When the user completes the biometric check, the IDV will issue the biometric credential
+      // The wallet will receive the credential via DID distribution
+      // The wallet will emit the onComplete event with the match credential
+      eventEmitter.emit(IDV_EVENTS.onDeepLink, uiUrl);
+
+      return new Promise((resolve, reject) => {
+        eventEmitter.on(IDV_EVENTS.onComplete, ({ matchCredential }) => {
+          resolve({ matchCredential });
+        });
+      });
     },
   };
 }

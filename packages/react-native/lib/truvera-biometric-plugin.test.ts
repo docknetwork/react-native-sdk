@@ -102,7 +102,7 @@ const mockMatchCredential = {
 
 const truveraConfig = {
   issuerDID: 'did:dock:issuer123',
-  idvApiURL: 'https://api-testnet.truvera.io',
+  walletApiUrl: 'https://api-testnet.truvera.io',
   biometricMatchExpirationMinutes: 2,
 };
 

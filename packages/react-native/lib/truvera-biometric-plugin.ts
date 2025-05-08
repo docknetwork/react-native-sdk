@@ -10,7 +10,7 @@ import {v4 as uuid} from 'uuid';
 
 export type TruveraIDVConfig = {
   issuerDID: string;
-  idvApiURL: string;
+  walletApiUrl: string;
   biometricMatchExpirationMinutes: number;
 };
 
@@ -59,7 +59,7 @@ async function issueEnrollmentCredential(walletDID: string, truveraConfig: Truve
     };
 
     const response = await axios.post(
-      `${truveraConfig.idvApiURL}/issue-credential`,
+      `${truveraConfig.walletApiUrl}/issue-credential`,
       body,
       {
         headers: {
@@ -114,7 +114,7 @@ async function issueMatchCredential(walletDID: string, enrollmentCredential: any
     };
 
     const response = await axios.post(
-      `${truveraConfig.idvApiURL}/issue-credential`,
+      `${truveraConfig.walletApiUrl}/issue-credential`,
       body,
       {
         headers: {
