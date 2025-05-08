@@ -30,6 +30,12 @@ export const getIssuanceDate = () => {
   return dateObject.toISOString();
 };
 
+function getBiometricCreatedDate() {
+  // The biometric schema is defined with date format instead of date-time
+  // We will be using that for now, and we can remove this later 
+  return getIssuanceDate().split('T')[0];
+}
+
 /**
  * Issues enrollment credential
  * @param walletDID - DID of the wallet
@@ -44,8 +50,8 @@ async function issueEnrollmentCredential(walletDID: string, truveraConfig: Truve
     const body = {
       anchor: false,
       persist: false,
-      schema: truveraConfig.enrollmentCredentialSchema,
       credential: {
+        schema: truveraConfig.enrollmentCredentialSchema,
         name: getBiometricConfigs().enrollmentCredentialType,
         type: ['VerifiableCredential', getBiometricConfigs().enrollmentCredentialType],
         issuer: truveraConfig.issuerDID,
@@ -55,7 +61,7 @@ async function issueEnrollmentCredential(walletDID: string, truveraConfig: Truve
           biometric: {
             id: biometricId,
             data: JSON.stringify({id: biometricId}),
-            created: getIssuanceDate(),
+            created: getBiometricCreatedDate(),
           },
         },
       },
@@ -99,8 +105,8 @@ async function issueMatchCredential(walletDID: string, enrollmentCredential: any
     const body = {
       anchor: false,
       persist: false,
-      schema: truveraConfig.biometricMatchCredentialSchema,
       credential: {
+        schema: truveraConfig.biometricMatchCredentialSchema,
         name: getBiometricConfigs().biometricMatchCredentialType,
         type: ['VerifiableCredential', getBiometricConfigs().biometricMatchCredentialType],
         issuer: truveraConfig.issuerDID,
@@ -110,7 +116,7 @@ async function issueMatchCredential(walletDID: string, enrollmentCredential: any
           id: walletDID,
           biometric: {
             id: biometricId,
-            created: getIssuanceDate(),
+            created: getBiometricCreatedDate(),
           },
         },
       },
