@@ -113,13 +113,19 @@ export function createBiometricProvider({
 
     if (!enrollmentCredential) {
       // call IDV to start enrollment process and issue the enrollment credential + match credential
-      const credentials = await idvProvider.enroll(
-        walletDID,
-        proofRequest,
+      const credentials = await idvProvider.enroll(walletDID, proofRequest);
+
+      // check if credential is already in the credential store
+      const receivedViaDistribution = await credentialProvider.getById(
+        credentials.matchCredential.id,
       );
 
-      await credentialProvider.addCredential(credentials.enrollmentCredential);
-      await credentialProvider.addCredential(credentials.matchCredential);
+      if (!receivedViaDistribution) {
+        await credentialProvider.addCredential(
+          credentials.enrollmentCredential,
+        );
+        await credentialProvider.addCredential(credentials.matchCredential);
+      }
 
       matchCredential = credentials.matchCredential;
       enrollmentCredential = credentials.enrollmentCredential;
@@ -131,7 +137,15 @@ export function createBiometricProvider({
         proofRequest,
       );
 
-      await credentialProvider.addCredential(credentials.matchCredential);
+      // check if credential is already in the credential store
+      const receivedViaDistribution = await credentialProvider.getById(
+        credentials.matchCredential.id,
+      );
+
+      if (!receivedViaDistribution) {
+        await credentialProvider.addCredential(credentials.matchCredential);
+      }
+
       matchCredential = credentials.matchCredential;
     }
 

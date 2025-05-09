@@ -175,10 +175,6 @@ describe('Biometric Provider with Truvera Integration', () => {
       // Simulate the IDV process with enrollment
       const result = await simulateIDVProcess(true, null, proofRequest);
       
-      // Add the match credential to the credential store manually
-      // This is needed because startIDV only adds the enrollment credential automatically
-      await credentialProvider.addCredential(result.matchCredential);
-      
       // Check that the credentials were added to the credential store
       const enrollmentCredentials = await credentialProvider.getCredentials(biometricConfigs.enrollmentCredentialType);
       const matchCredentials = await credentialProvider.getCredentials(biometricConfigs.biometricMatchCredentialType);
