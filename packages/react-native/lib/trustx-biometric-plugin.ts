@@ -28,7 +28,6 @@ export function createTrustXIDVProvider({
 }): IDVProvider {
   return {
     async enroll(walletDID, proofRequest) {
-      console.log('Start biometric enrollment');
       const {data: {uiUrl}} = await axios.post(`${configs.walletApiUrl}/create-trustx-process-token`, {
         dock_wallet_id: walletDID,
       });
@@ -47,13 +46,10 @@ export function createTrustXIDVProvider({
       });
     },
     async match(walletDID, enrollmentCredential, proofRequest) {
-      console.log('Start biometric match');
       await performBiometricCheck();
 
       const biometric_enrollment_id = enrollmentCredential.credentialSubject.biometric_enrollment_id;
 
-      console.log('biometric_enrollment_id', biometric_enrollment_id);
-      debugger;
       const {data: {uiUrl}} = await axios.post(`${configs.walletApiUrl}/create-trustx-process-token`, {
         dock_wallet_id: walletDID,
         biometric_enrollment_id,
