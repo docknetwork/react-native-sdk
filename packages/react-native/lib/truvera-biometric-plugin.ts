@@ -101,6 +101,7 @@ async function issueMatchCredential(walletDID: string, enrollmentCredential: any
         issuer: truveraConfig.issuerDID,
         issuanceDate: getIssuanceDate(),
         expirationDate: expirationDate,
+        // schema: 'https://schema.dock.io/ForSurBiometricCheck-V4-1709846734949.json',
         subject: {
           id: walletDID,
           biometric: {
