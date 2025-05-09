@@ -91,6 +91,7 @@ export function createBiometricProvider({
   const eventEmitter = new EventEmitter();
   const idvProvider = idvProviderFactory.create(eventEmitter, wallet);
 
+
   async function startIDV(proofRequest: any): Promise<{
     enrollmentCredential: Credential;
     matchCredential: Credential;
