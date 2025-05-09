@@ -24,6 +24,7 @@ export interface ICredentialProvider {
   getCredentialStatus(
     credential: Credential,
   ): Promise<{status: string; error?: string}>;
+  removeCredential(credential: Credential): Promise<void>;
 }
 
 export function isBBSPlusCredential(credential) {
@@ -275,6 +276,35 @@ async function syncCredentialStatus({
   return statusDocs;
 }
 
+/**
+ * Removes a credential and its related documents from the wallet
+ * @param param0 
+ * @returns 
+ */
+export async function removeCredential({
+  wallet, 
+  credential,
+}: {
+  wallet: IWallet;
+  credential: Credential | string;
+}): Promise<void> {
+  // Allow passing either a credential object or a credential ID
+  const credentialId = typeof credential === 'string' ? credential : credential.id;
+  
+  assert(!!credentialId, 'credential ID is required');
+  
+  // Remove the main credential document
+  await wallet.removeDocument(credentialId);
+  
+  if (await wallet.getDocumentById(`${credentialId}#witness`)) {
+    await wallet.removeDocument(`${credentialId}#witness`);
+  }
+
+  if (await wallet.getDocumentById(`${credentialId}#status`)) {
+    await wallet.removeDocument(`${credentialId}#status`);
+  }
+}
+
 export function createCredentialProvider({
   wallet,
 }: {
@@ -320,6 +350,7 @@ export function createCredentialProvider({
       return syncCredentialStatus({wallet, ...props});
     },
     addCredential: credential => addCredential({wallet, credential}),
+    removeCredential: credential => removeCredential({wallet, credential}),
     // TODO: move import credential from json or URL to this provider
   };
 }
