@@ -6,7 +6,7 @@ import {
   CredentialStatus,
 } from './credential-provider';
 import assert from 'assert';
-import {EventEmitter} from 'stream';
+import {EventEmitter} from 'events';
 import {createDIDProvider} from './did-provider';
 
 export type BiometricsProviderConfigs<E> = {
@@ -37,6 +37,10 @@ let currentConfigs: BiometricsProviderConfigs<unknown> = null;
 
 export function setConfigs(configs: BiometricsProviderConfigs<unknown>) {
   currentConfigs = configs;
+}
+
+export function isBiometricPluginEnabled() {
+  return !!currentConfigs?.biometricMatchCredentialType;
 }
 
 export function assertConfigs() {
@@ -87,37 +91,67 @@ export function createBiometricProvider({
   const eventEmitter = new EventEmitter();
   const idvProvider = idvProviderFactory.create(eventEmitter, wallet);
 
-
-  async function startIDV(proofRequest: any) {
+  async function startIDV(proofRequest: any): Promise<{
+    enrollmentCredential: Credential;
+    matchCredential: Credential;
+  }> {
     const walletDID = await didProvider.getDefaultDID();
-    let [existingEnrollmentCredential] = await credentialProvider.getCredentials(
+    let [enrollmentCredential] = await credentialProvider.getCredentials(
       currentConfigs.enrollmentCredentialType,
     );
 
+    // Remove any existing match credentials
+    const existingMatchCredentials = await credentialProvider.getCredentials(
+      currentConfigs.biometricMatchCredentialType,
+    );
+    for (const credential of existingMatchCredentials) {
+      await credentialProvider.removeCredential(credential.id);
+    }
+
     let matchCredential: Credential;
 
-    if (!existingEnrollmentCredential) {
+    if (!enrollmentCredential) {
       // call IDV to start enrollment process and issue the enrollment credential + match credential
-      const credentials = await idvProvider.enroll(
-        walletDID,
-        proofRequest,
+      const credentials = await idvProvider.enroll(walletDID, proofRequest);
+
+      // check if credential is already in the credential store
+      const receivedViaDistribution = await credentialProvider.getById(
+        credentials.matchCredential.id,
       );
 
-      await credentialProvider.addCredential(credentials.enrollmentCredential);
+      if (!receivedViaDistribution) {
+        await credentialProvider.addCredential(
+          credentials.enrollmentCredential,
+        );
+        await credentialProvider.addCredential(credentials.matchCredential);
+      }
+
       matchCredential = credentials.matchCredential;
+      enrollmentCredential = credentials.enrollmentCredential;
     } else {
       // call IDV to match the enrollment credential and issue the match credential
       const credentials = await idvProvider.match(
         walletDID,
-        existingEnrollmentCredential,
+        enrollmentCredential,
         proofRequest,
       );
 
-      await credentialProvider.addCredential(credentials.matchCredential);
+      // check if credential is already in the credential store
+      const receivedViaDistribution = await credentialProvider.getById(
+        credentials.matchCredential.id,
+      );
+
+      if (!receivedViaDistribution) {
+        await credentialProvider.addCredential(credentials.matchCredential);
+      }
+
       matchCredential = credentials.matchCredential;
     }
 
-    return matchCredential;
+    return {
+      enrollmentCredential,
+      matchCredential,
+    };
   }
 
   return {
