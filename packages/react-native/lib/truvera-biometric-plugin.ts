@@ -46,6 +46,7 @@ async function issueEnrollmentCredential(walletDID: string, truveraConfig: Truve
         type: ['VerifiableCredential', getBiometricConfigs().enrollmentCredentialType],
         issuer: truveraConfig.issuerDID,
         issuanceDate: getIssuanceDate(),
+        // TODO: add credential schema here, will be added as part of DCKA-3245-ecosystem-configuration-for-biometric-plugin
         subject: {
           id: walletDID,
           biometric: {
@@ -101,7 +102,7 @@ async function issueMatchCredential(walletDID: string, enrollmentCredential: any
         issuer: truveraConfig.issuerDID,
         issuanceDate: getIssuanceDate(),
         expirationDate: expirationDate,
-        // schema: 'https://schema.dock.io/ForSurBiometricCheck-V4-1709846734949.json',
+        // TODO: add credential schema here, will be added as part of DCKA-3245-ecosystem-configuration-for-biometric-plugin
         subject: {
           id: walletDID,
           biometric: {
