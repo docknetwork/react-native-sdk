@@ -17,7 +17,7 @@ async function performBiometricCheck() {
   });
 }
 
-export function createTrustXIDVProviderFactory({
+export function createTrustXIDVProvider({
   wallet,
   eventEmitter,
   configs,
@@ -49,6 +49,7 @@ export function createTrustXIDVProviderFactory({
       await performBiometricCheck();
 
       const biometric_enrollment_id = enrollmentCredential.credentialSubject.biometric_enrollment_id;
+
       const {data: {uiUrl}} = await axios.post(`${configs.walletApiUrl}/create-trustx-process-token`, {
         dock_wallet_id: walletDID,
         biometric_enrollment_id,
