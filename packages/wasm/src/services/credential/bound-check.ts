@@ -58,12 +58,14 @@ export function applyEnforceBounds({
   provingKeyId,
   provingKey,
   selectedCredentials,
+  credentialIdx = 0,
 }: {
   builder: PresentationBuilder;
   proofRequest: ProofRequest;
   selectedCredentials: any[];
   provingKeyId: string;
   provingKey: LegoProvingKey;
+  credentialIdx?: number;
 }) {
   const descriptorBounds = pexToBounds(
     proofRequest.request,
@@ -72,21 +74,17 @@ export function applyEnforceBounds({
 
   let skipProvingKey = false;
 
-  descriptorBounds.forEach((items, credentialIdx) => {
-    if (!selectedCredentials[credentialIdx]) {
-      return;
-    }
-    items.forEach((bound) => {
-      builder.enforceBounds(
-        credentialIdx,
-        bound.attributeName,
-        bound.min,
-        bound.max,
-        provingKeyId,
-        skipProvingKey ? undefined : provingKey,
-      );
-      skipProvingKey = true;
-   });
+  const items = descriptorBounds[credentialIdx];
+  items.forEach((bound) => {
+    builder.enforceBounds(
+      0,
+      bound.attributeName,
+      bound.min,
+      bound.max,
+      provingKeyId,
+      skipProvingKey ? undefined : provingKey
+    );
+    skipProvingKey = true;
   });
 
   return descriptorBounds;
