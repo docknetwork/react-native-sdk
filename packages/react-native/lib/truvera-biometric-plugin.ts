@@ -9,7 +9,10 @@ import axios from 'axios';
 import {v4 as uuid} from 'uuid';
 
 export type TruveraIDVConfig = {
+  ecosystemID: string;
   issuerDID: string;
+  enrollmentCredentialSchema: string;
+  biometricMatchCredentialSchema: string;
   walletApiUrl: string;
   biometricMatchExpirationMinutes: number;
 };
@@ -46,7 +49,7 @@ async function issueEnrollmentCredential(walletDID: string, truveraConfig: Truve
         type: ['VerifiableCredential', getBiometricConfigs().enrollmentCredentialType],
         issuer: truveraConfig.issuerDID,
         issuanceDate: getIssuanceDate(),
-        // TODO: add credential schema here, will be added as part of DCKA-3245-ecosystem-configuration-for-biometric-plugin
+        schema: truveraConfig.enrollmentCredentialSchema,
         subject: {
           id: walletDID,
           biometric: {
@@ -102,13 +105,12 @@ async function issueMatchCredential(walletDID: string, enrollmentCredential: any
         issuer: truveraConfig.issuerDID,
         issuanceDate: getIssuanceDate(),
         expirationDate: expirationDate,
-        // TODO: add credential schema here, will be added as part of DCKA-3245-ecosystem-configuration-for-biometric-plugin
+        schema: truveraConfig.biometricMatchCredentialSchema,
         subject: {
           id: walletDID,
           biometric: {
             id: biometricId,
             created: getIssuanceDate(),
-            data: 'hidden',
           },
         },
       },
