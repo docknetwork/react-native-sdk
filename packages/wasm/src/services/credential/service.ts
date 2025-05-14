@@ -196,7 +196,7 @@ class CredentialService {
     uri: string;
     authorizationCode?: string;
     holderKeyDocument: any;
-  }) {
+  }): Promise<any> {
     const searchParams = new URL(uri).searchParams;
     const params = new URLSearchParams(searchParams);
 
