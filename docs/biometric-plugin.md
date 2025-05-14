@@ -4,6 +4,50 @@
 
 The biometrics plugin provides a way to perform credential verification using the user's biometric data. It is useful to guarantee that only the biometric holder can perform the verification.
 
+## Flow
+
+The biometric plugin flow is the following:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant User
+    participant MobileWallet as Mobile Wallet<br/>(Wallet SDK + App)
+    participant WalletAPI as Wallet API
+    
+    %% --- BEGIN FLOW ---
+    User ->> MobileWallet: Scan QR code
+    note over User, MobileWallet: Poof Request from Truvera 
+    activate MobileWallet
+    MobileWallet ->> MobileWallet: Initialize Biometric Plugin
+    MobileWallet ->> MobileWallet: Check for existing EnrollmentCredential VC
+    
+    alt Enrollment VC not found
+        MobileWallet ->> MobileWallet: Fetch Wallet DID
+        MobileWallet ->> MobileWallet: Perform Biometric Check
+        activate WalletAPI
+        MobileWallet -->> WalletAPI: Issue EnrollmentCredential VC
+        MobileWallet -->> WalletAPI: Issue BiometricMatchCredential VC
+        deactivate WalletAPI
+        MobileWallet ->> MobileWallet: Store EnrollmentCredential VC
+        MobileWallet ->> MobileWallet: Store BiometricMatchCredential VC
+    else Enrollment VC exists
+        MobileWallet ->> MobileWallet: Fetch Wallet DID
+        MobileWallet ->> MobileWallet: Perform Biometric Check
+        MobileWallet ->> MobileWallet: Fetch existing BiometricMatchCredential VC
+        activate WalletAPI
+        MobileWallet -->> WalletAPI: Issue BiometricMatchCredential VC
+        deactivate WalletAPI
+        MobileWallet ->> MobileWallet: Store BiometricMatchCredential VC
+    end
+    MobileWallet ->> MobileWallet: Redirect user to the verification flow
+    MobileWallet ->> MobileWallet: User selects the biometric check credential
+    MobileWallet ->> TruveraAPI: Verify BiometricMatchCredential VC
+    TruveraAPI ->> MobileWallet: Return verification result
+    deactivate MobileWallet
+
+```
+
 ## How to trigger a biometric verification
 
 To trigger a biometric verification, you need to use a verification template that asks for the biometric attributes. Check the following example:
@@ -120,17 +164,6 @@ At the time of verification, the verifier can request the biometric check creden
 
 The biometric ID should not contain the user's actual biometric information. When enrolling a holder in the biometric service, it might be useful to issue an enrolment credential containing the biometric template, the generated biometric ID and any other needed information to identify a returning user. This credential can be verified to get the user's information before checking their biometric. By storing this information with the holder, it avoids the biometric service having to store that PII outside of the control of the holder. The holder should only share a biometric enrollment credential with the biometric service that issued it.
 
-## Using the Biometric Service Plugin
-
-* Setup the biometric provider configs in the wallet.
-* When a specific installation does a biometric check, call your mobile API to issue a biometric credential.
-  * The biometric binding nested attributes in the primary credential should include the ecosystem and biometric issuer alongside the biometric ID.
-  * Your mobile API calls the Truvera API to do issuance to the DID.
-    * In order to use the ecosystem definition of the credentials, the Truvera API should be used to query the ecosystem that is found in the credential for the "\*biometric check" schema.
-    * Mobile API should include the DID that the credential is pushed to.
-    * This allows the biometric check credential to be managed in the ecosystem where other participants can rely on it and VPI can be enforced.
-* Biometric Service Plugin monitors credentials received. When a new biometric check credential is received, old ones can be deleted from wallet storage.
-* If biometric data should not leave the device, then the biometric service provider plugin can do a local verification of the biometric enrollment credential using the credential SDK. The biometric enrollment credential is managed independent from the ecosystem, as it should only be verified by the biometric provider.
 
 ## TrustX Biometric Plugin
 
