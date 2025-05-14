@@ -1,5 +1,5 @@
 import {
-  createTrustXIDVProviderFactory,
+  createTrustXIDVProvider,
   TrustXIDVConfig,
 } from './trustx-biometric-plugin';
 import { IDV_EVENTS, IDVProvider } from '@docknetwork/wallet-sdk-core/src/biometric-provider';
@@ -89,7 +89,7 @@ describe('TrustX Biometric Plugin Unit Tests', () => {
     eventEmitter.setMaxListeners(20); // Prevent memory leak warnings
     
     // Initialize the provider
-    provider = createTrustXIDVProviderFactory({
+    provider = createTrustXIDVProvider({
       wallet: mockWallet,
       eventEmitter,
       configs: trustXConfig,

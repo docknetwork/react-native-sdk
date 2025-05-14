@@ -58,26 +58,50 @@ The presence of the following fields should trigger the biometric check:
 To enable the biometric plugin in a white-label wallet, you need to edit the following file src/wallet-sdk-configs.ts and add your configuration:
 
 ```typescript
-import { BiometricsPluginConfigs } from "@docknetwork/wallet-sdk-react-native/lib/default-biometrics-plugin";
-export const biometricsPluginConfigs: BiometricsPluginConfigs = {
-  enrollmentCredentialType: "ForSurBiometricEnrollment",
-  biometricMatchCredentialType: "ForSurBiometric",
-  issuerConfigs: [
-    {
-      networkId: "testnet or mainnet",
-      did: "<The issuer DID>",
-      apiKey:
-        "<CERTS-API-KEY>",
-      apiUrl: "https://api-testnet.truvera.io or https://api.truvera.io",
-    },
-  ],
+import { BiometricsProviderConfigs, IDVProviderFactory, setConfigs } from '@docknetwork/wallet-sdk-core/src/biometric-provider';
+import { createTruveraIDVProvider, TruveraIDVConfig } from '@docknetwork/wallet-sdk-react-native/lib/truvera-biometric-plugin';
+import { IWallet } from '@docknetwork/wallet-sdk-core/src/types';
+import { EventEmitter } from 'events';
+
+export const biometricProviderConfigs: BiometricsProviderConfigs<TruveraIDVConfig> = {
+  enrollmentCredentialType: 'ForSurBiometricEnrollment',
+  biometricMatchCredentialType: 'ForSurBiometric',
+  idvConfigs: {
+    ecosystemID: '<Ecosystem ID>',
+    issuerDID: '<Issuer DID>',
+    enrollmentCredentialSchema: '<Enrollment Credential Schema>',
+    biometricMatchCredentialSchema: '<Biometric Match Credential Schema>',
+    biometricMatchExpirationMinutes: 2,
+    walletApiUrl: '<Wallet API URL>',
+  },
+};
+
+setConfigs(biometricProviderConfigs);
+
+export const idvProviderFactory: IDVProviderFactory = {
+  create: (eventEmitter: EventEmitter, wallet: IWallet) => {
+    return createTruveraIDVProvider({
+      eventEmitter,
+      wallet,
+      configs: biometricProviderConfigs.idvConfigs,
+    });
+  },
 };
 
 ```
 
+The truvera biometric plugin requires the following configs:
+
+* walletApiUrl: The URL of the wallet API that will be used to issue the credentials
+* ecosystemID: The ecosystem ID of the biometric service
+* issuerDID: The DID of the issuer
+* enrollmentCredentialSchema: The schema of the enrollment credential
+* biometricMatchCredentialSchema: The schema of the biometric match credential
+* biometricMatchExpirationMinutes: The expiration time of the biometric match credential
+
 ## Credential expiration
 
-Credential expiration allows the biometric service provider to specify a maximum length to the validity of a biometric check credential. If the verifier wants to force a refresh of the biometric check more frequently, the verifier can check the credential creation timestamp during verification to ensure it’s within their business rules.
+Credential expiration allows the biometric service provider to specify a maximum length to the validity of a biometric check credential. If the verifier wants to force a refresh of the biometric check more frequently, the verifier can check the credential creation timestamp during verification to ensure it's within their business rules.
 
 ## Credential types
 
@@ -98,21 +122,57 @@ The biometric ID should not contain the user's actual biometric information. Whe
 
 ## Using the Biometric Service Plugin
 
-* Create a [Truvera API key](https://docs.truvera.io/workspace/creating-api-keys-and-webhook-endpoints)
-* Wrap the Truvera API in your mobile API (which is usually protected with an app username / password)
-* When a specific install does a biometric check, call your mobile API to issue a biometric credential
-  * The biometric binding nested attributes in the primary credential should include the ecosystem and biometric issuer alongside the biometric ID
-  * Your mobile API calls the Truvera API to do issuance to the DID
-    * In order to use the ecosystem definition of the credentials, the Truvera API should be used to query the ecosystem that is found in the credential for the “\*biometric check” schema
-    * Mobile API should include the DID that the credential is pushed to
-    * This allows the biometric check credential to be managed in the ecosystem where other participants can rely on it and VPI can be enforced
+* Setup the biometric provider configs in the wallet.
+* When a specific installation does a biometric check, call your mobile API to issue a biometric credential.
+  * The biometric binding nested attributes in the primary credential should include the ecosystem and biometric issuer alongside the biometric ID.
+  * Your mobile API calls the Truvera API to do issuance to the DID.
+    * In order to use the ecosystem definition of the credentials, the Truvera API should be used to query the ecosystem that is found in the credential for the "\*biometric check" schema.
+    * Mobile API should include the DID that the credential is pushed to.
+    * This allows the biometric check credential to be managed in the ecosystem where other participants can rely on it and VPI can be enforced.
 * Biometric Service Plugin monitors credentials received. When a new biometric check credential is received, old ones can be deleted from wallet storage.
 * If biometric data should not leave the device, then the biometric service provider plugin can do a local verification of the biometric enrollment credential using the credential SDK. The biometric enrollment credential is managed independent from the ecosystem, as it should only be verified by the biometric provider.
 
+## TrustX Biometric Plugin
+
+The TrustX biometric plugin uses the TrustX API to perform biometric verification and implements the IDVProvider interface.
+
+```typescript
+import { BiometricsProviderConfigs, IDVProviderFactory, setConfigs } from '@docknetwork/wallet-sdk-core/src/biometric-provider';
+import { createTrustXIDVProvider, TrustXIDVConfig } from '@docknetwork/wallet-sdk-react-native/lib/trustx-biometric-plugin';
+import { DataStoreConfigs } from '@docknetwork/wallet-sdk-data-store/src/types';
+import { DEFAULT_WALLET_CONFIGS } from '@docknetwork/wallet-sdk-react-native/lib/wallet';
+import { IWallet } from '@docknetwork/wallet-sdk-core/src/types';
+import { EventEmitter } from 'events';
+
+export const biometricProviderConfigs: BiometricsProviderConfigs<TrustXIDVConfig> = {
+  enrollmentCredentialType: 'ForSurBiometricEnrollment',
+  biometricMatchCredentialType: 'ForSurBiometric',
+  idvConfigs: {
+    walletApiUrl: 'https://bank-demo.truvera.io/api',
+  },
+};
+
+setConfigs(biometricProviderConfigs);
+
+export const idvProviderFactory: IDVProviderFactory = {
+  create: (eventEmitter: EventEmitter, wallet: IWallet) => {
+    return createTrustXIDVProvider({
+      eventEmitter,
+      wallet,
+      configs: biometricProviderConfigs.idvConfigs,
+    });
+  },
+};
+
+export const dataStoreConfigs: DataStoreConfigs = DEFAULT_WALLET_CONFIGS;
+
+```
+
 ## Adding a custom biometric provider
 
-Adding a custom biometric provider will require the development of the plugin following the interface defined at [packages/react-native/lib/default-biometrics-plugin.ts](https://github.com/docknetwork/react-native-sdk/blob/master/packages/react-native/lib/default-biometrics-plugin.ts). The plugin should implement the following methods:
+Adding a custom biometric provider will require the development of the plugin following the IDVProvider interface defined at [packages/core/src/biometric-provider.ts](https://github.com/docknetwork/react-native-sdk/blob/master/packages/core/src/biometric-provider.ts). The plugin should implement the following methods:
 
-* hasProofOfBiometrics: Checks if the verification template is asking for biometric attributes.
-* enrollBiometrics: Enrolls the biometric data.
-* matchBiometrics: Performs the biometric match and if it is valid, returns a biometric match credential. It will try to reuse an existing biometric match credential if it is still valid, otherwise it will remove the expired credential and issue a new one.
+* enroll: Enrolls the biometric data. It should issue an enrollment credential and a match credential.
+* match: Performs the biometric match and if it is valid, returns a biometric match credential.
+
+The plugin should be registered in the wallet-sdk-configs.ts file.
