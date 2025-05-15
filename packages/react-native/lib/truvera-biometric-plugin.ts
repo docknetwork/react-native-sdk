@@ -44,12 +44,12 @@ async function issueEnrollmentCredential(walletDID: string, truveraConfig: Truve
     const body = {
       anchor: false,
       persist: false,
+      schema: truveraConfig.enrollmentCredentialSchema,
       credential: {
         name: getBiometricConfigs().enrollmentCredentialType,
         type: ['VerifiableCredential', getBiometricConfigs().enrollmentCredentialType],
         issuer: truveraConfig.issuerDID,
         issuanceDate: getIssuanceDate(),
-        schema: truveraConfig.enrollmentCredentialSchema,
         subject: {
           id: walletDID,
           biometric: {
@@ -99,13 +99,13 @@ async function issueMatchCredential(walletDID: string, enrollmentCredential: any
     const body = {
       anchor: false,
       persist: false,
+      schema: truveraConfig.biometricMatchCredentialSchema,
       credential: {
         name: getBiometricConfigs().biometricMatchCredentialType,
         type: ['VerifiableCredential', getBiometricConfigs().biometricMatchCredentialType],
         issuer: truveraConfig.issuerDID,
         issuanceDate: getIssuanceDate(),
         expirationDate: expirationDate,
-        schema: truveraConfig.biometricMatchCredentialSchema,
         subject: {
           id: walletDID,
           biometric: {
@@ -135,7 +135,7 @@ async function issueMatchCredential(walletDID: string, enrollmentCredential: any
   }
 }
 
-export function createTruveraIDVProviderFactory({
+export function createTruveraIDVProvider({
   wallet,
   eventEmitter,
   configs,

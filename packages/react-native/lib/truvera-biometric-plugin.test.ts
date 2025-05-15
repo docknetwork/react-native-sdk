@@ -1,5 +1,5 @@
 import {
-  createTruveraIDVProviderFactory,
+  createTruveraIDVProvider,
   getIssuanceDate,
 } from './truvera-biometric-plugin';
 import axios from 'axios';
@@ -104,6 +104,9 @@ const truveraConfig = {
   issuerDID: 'did:dock:issuer123',
   walletApiUrl: 'https://api-testnet.truvera.io',
   biometricMatchExpirationMinutes: 2,
+  ecosystemID: 'clarity-partners-16',
+  enrollmentCredentialSchema: 'https://schema.dock.io/ForSurBiometricEnrollment-V4-1709846932138.json',
+  biometricMatchCredentialSchema: 'https://schema.dock.io/ForSurBiometricCheck-V4-1709846734949.json',
 };
 
 describe('Truvera Biometric Plugin Unit Tests', () => {
@@ -143,7 +146,7 @@ describe('Truvera Biometric Plugin Unit Tests', () => {
 
     beforeEach(() => {
       eventEmitter = new EventEmitter();
-      provider = createTruveraIDVProviderFactory({
+      provider = createTruveraIDVProvider({
         wallet: mockWallet,
         eventEmitter,
         configs: truveraConfig,

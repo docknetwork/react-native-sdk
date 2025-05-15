@@ -5,7 +5,7 @@ import {
   createBiometricProvider,
   setConfigs
 } from '@docknetwork/wallet-sdk-core/src/biometric-provider';
-import { createTruveraIDVProviderFactory, TruveraIDVConfig } from '@docknetwork/wallet-sdk-react-native/lib/truvera-biometric-plugin';
+import { createTruveraIDVProvider, TruveraIDVConfig } from '@docknetwork/wallet-sdk-react-native/lib/truvera-biometric-plugin';
 import { EventEmitter } from 'stream';
 import { IWallet } from '@docknetwork/wallet-sdk-core/src/types';
 import {
@@ -44,6 +44,9 @@ const truveraConfig: TruveraIDVConfig = {
   issuerDID: 'did:dock:5HLbQLSmirNuZVRsdWKbsgdajw9QTGzSFJABSVzMT5EBj5sb',
   walletApiUrl: process.env.WALLET_API_URL || '',
   biometricMatchExpirationMinutes: 2,
+  ecosystemID: 'clarity-partners-16',
+  enrollmentCredentialSchema: 'https://schema.dock.io/ForSurBiometricEnrollment-V4-1709846932138.json',
+  biometricMatchCredentialSchema: 'https://schema.dock.io/ForSurBiometricCheck-V4-1709846734949.json',
 };
 
 const biometricConfigs: BiometricsProviderConfigs<TruveraIDVConfig> = {
@@ -55,7 +58,7 @@ const biometricConfigs: BiometricsProviderConfigs<TruveraIDVConfig> = {
 // Create a TruveraIDVProviderFactory that implements IDVProviderFactory
 class TruveraIDVProviderFactory implements IDVProviderFactory {
   create(eventEmitter: EventEmitter, wallet: IWallet): IDVProvider {
-    return createTruveraIDVProviderFactory({
+    return createTruveraIDVProvider({
       wallet,
       eventEmitter,
       configs: truveraConfig,
@@ -190,7 +193,7 @@ describe('Biometric Provider with Truvera Integration', () => {
       
       const storedMatchCredential = matchCredentials[0];
       expect(storedMatchCredential.type).toContain(biometricConfigs.biometricMatchCredentialType);
-      expect(storedMatchCredential.credentialSubject.biometric.data).toBe('hidden');
+      expect(storedMatchCredential.credentialSubject.biometric.data).toBeUndefined();
     }, 30000);
   });
 
