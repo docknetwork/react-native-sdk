@@ -12,34 +12,35 @@ The biometric plugin flow is the following:
 sequenceDiagram
     autonumber
     participant User
-    participant MobileWallet as Mobile Wallet<br/>(Wallet SDK + App)
+    participant BiometricPlugin as Biometric Plugin
+    participant MobileWallet as Mobile Wallet
     participant WalletAPI as Wallet API
-    
-    %% --- BEGIN FLOW ---
+
     User ->> MobileWallet: Scan QR code
     note over User, MobileWallet: Poof Request from Truvera 
     activate MobileWallet
-    MobileWallet ->> MobileWallet: Initialize Biometric Plugin
-    MobileWallet ->> MobileWallet: Check for existing EnrollmentCredential VC
+    MobileWallet ->> BiometricPlugin: Initialize Biometric Plugin
+    deactivate MobileWallet
+    activate BiometricPlugin
+    BiometricPlugin ->> MobileWallet: Check for existing EnrollmentCredential VC
     
     alt Enrollment VC not found
-        MobileWallet ->> MobileWallet: Fetch Wallet DID
-        MobileWallet ->> MobileWallet: Perform Biometric Check
-        activate WalletAPI
-        MobileWallet -->> WalletAPI: Issue EnrollmentCredential VC
-        MobileWallet -->> WalletAPI: Issue BiometricMatchCredential VC
-        deactivate WalletAPI
-        MobileWallet ->> MobileWallet: Store EnrollmentCredential VC
-        MobileWallet ->> MobileWallet: Store BiometricMatchCredential VC
+        BiometricPlugin ->> MobileWallet: Fetch Wallet DID
+        BiometricPlugin ->> BiometricPlugin: Perform Biometric Check
+        BiometricPlugin -->> WalletAPI: Issue EnrollmentCredential VC
+        BiometricPlugin -->> WalletAPI: Issue BiometricMatchCredential VC
+        BiometricPlugin ->> MobileWallet: Store EnrollmentCredential VC
+        BiometricPlugin ->> MobileWallet: Store BiometricMatchCredential VC
+       
     else Enrollment VC exists
-        MobileWallet ->> MobileWallet: Fetch Wallet DID
-        MobileWallet ->> MobileWallet: Perform Biometric Check
-        MobileWallet ->> MobileWallet: Fetch existing BiometricMatchCredential VC
-        activate WalletAPI
-        MobileWallet -->> WalletAPI: Issue BiometricMatchCredential VC
-        deactivate WalletAPI
-        MobileWallet ->> MobileWallet: Store BiometricMatchCredential VC
+        BiometricPlugin ->> MobileWallet: Fetch Wallet DID
+        BiometricPlugin ->> BiometricPlugin: Perform Biometric Check
+        BiometricPlugin ->> MobileWallet: Fetch existing BiometricMatchCredential VC
+        BiometricPlugin -->> WalletAPI: Issue BiometricMatchCredential VC
+        BiometricPlugin ->> MobileWallet: Store BiometricMatchCredential VC
     end
+    deactivate BiometricPlugin
+    activate MobileWallet
     MobileWallet ->> MobileWallet: Redirect user to the verification flow
     MobileWallet ->> MobileWallet: User selects the biometric check credential
     MobileWallet ->> TruveraAPI: Verify BiometricMatchCredential VC
