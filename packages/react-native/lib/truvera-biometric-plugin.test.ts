@@ -1,4 +1,5 @@
 import {
+  convertDateTimeToDate,
   createTruveraIDVProvider,
   getIssuanceDate,
 } from './truvera-biometric-plugin';
@@ -140,7 +141,7 @@ describe('Truvera Biometric Plugin Unit Tests', () => {
     });
   });
 
-  describe('createTruveraIDVProviderFactory', () => {
+  describe('createTruveraIDVFactory', () => {
     let provider: any;
     let eventEmitter: EventEmitter;
 
@@ -252,4 +253,17 @@ describe('Truvera Biometric Plugin Unit Tests', () => {
       });
     });
   });
+
+  describe('convertDateTimeToDate', () => {
+    it('should convert ISO datetime string to date string', () => {
+      const input = '2024-03-20T15:30:45.123Z';
+      const expected = '2024-03-20';
+      expect(convertDateTimeToDate(input)).toBe(expected);
+    });
+  
+    it('should return the same string if input is already a date', () => {
+      const input = '2024-03-20';
+      expect(convertDateTimeToDate(input)).toBe(input);
+    });
+  }); 
 });

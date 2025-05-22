@@ -3,7 +3,7 @@ import {
   IDVProvider,
   setConfigs
 } from '@docknetwork/wallet-sdk-core/src/biometric-provider';
-import { createTruveraIDVProviderFactory, TruveraIDVConfig } from '@docknetwork/wallet-sdk-react-native/lib/truvera-biometric-plugin';
+import { createTruveraIDVProvider, TruveraIDVConfig } from '@docknetwork/wallet-sdk-react-native/lib/truvera-biometric-plugin';
 import { EventEmitter } from 'stream';
 
 import { IWallet } from '@docknetwork/wallet-sdk-core/src/types';
@@ -41,6 +41,10 @@ const truveraConfig = {
   issuerDID: 'did:dock:5HLbQLSmirNuZVRsdWKbsgdajw9QTGzSFJABSVzMT5EBj5sb',
   walletApiUrl: process.env.WALLET_API_URL || '',
   biometricMatchExpirationMinutes: 2,
+  ecosystemID: 'clarity-partners-16',
+  enrollmentCredentialSchema: 'https://schema.dock.io/ForSurBiometricEnrollment-V4-1709846932138.json',
+  biometricMatchCredentialSchema: 'https://schema.dock.io/ForSurBiometricCheck-V4-1709846734949.json',
+
 };
 
 const biometricConfigs: BiometricsProviderConfigs<TruveraIDVConfig> = {
@@ -73,7 +77,7 @@ describe('Truvera Biometric Plugin', () => {
     setWallet(wallet as any);
 
     // Initialize Truvera provider
-    truveraProvider = createTruveraIDVProviderFactory({
+    truveraProvider = createTruveraIDVProvider({
       wallet,
       eventEmitter,
       configs: truveraConfig,
@@ -120,7 +124,7 @@ describe('Truvera Biometric Plugin', () => {
     expect(result.matchCredential.credentialSubject).toBeDefined();
     expect(result.matchCredential.credentialSubject.biometric).toBeDefined();
     expect(result.matchCredential.credentialSubject.biometric.id).toBe('test-biometric-id-123');
-    expect(result.matchCredential.credentialSubject.biometric.data).toBe('hidden');
+    expect(result.matchCredential.credentialSubject.biometric.data).toBeUndefined();
     expect(result.matchCredential.expirationDate).toBeDefined();
   }, 30000); // Increased timeout for real API calls
 
@@ -158,7 +162,7 @@ describe('Truvera Biometric Plugin', () => {
     // Verify returned credential
     expect(result).toHaveProperty('matchCredential');
     expect(result.matchCredential.type).toContain('ForSurBiometric');
-    expect(result.matchCredential.credentialSubject.biometric.data).toBe('hidden');
+    expect(result.matchCredential.credentialSubject.biometric.data).toBeUndefined();
     expect(result.matchCredential.credentialSubject.biometric.id).toBe('test-biometric-id-123');
     expect(result.matchCredential.expirationDate).toBeDefined();
   }, 30000); // Increased timeout for real API calls
