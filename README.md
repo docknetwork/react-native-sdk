@@ -71,7 +71,7 @@ export default App;
 
 Check the following repository for detailed examples for running the Truvera Wallet SDK on NodeJS, Web, and Flutter.
 
-[See the examples](https://github.com/docknetwork/wallet-sdk-examples)
+[See the examples](https://github.com/docknetwork/react-native-sdk/tree/master/examples)
 
 
 ## Docs

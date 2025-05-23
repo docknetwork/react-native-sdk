@@ -1,0 +1,6 @@
+{
+  "appTitle": "dock_wallet_sdk",
+  "@appTitle": {
+    "description": "The title of the application"
+  }
+}
