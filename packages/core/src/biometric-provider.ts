@@ -52,6 +52,17 @@ export function getBiometricConfigs() {
   return currentConfigs;
 }
 
+export function hasProofOfBiometrics(proofRequest) {
+  const fields = proofRequest.input_descriptors
+    ?.map(input => input.constraints?.fields)
+    .flat();
+  const paths = fields.map(field => field.path).flat();
+  return (
+    paths?.includes('$.credentialSubject.biometric.id') &&
+    paths?.includes('$.credentialSubject.biometric.created')
+  );
+}
+
 // map for events
 export const IDV_EVENTS = {
   onDeepLink: 'onDeepLink',
