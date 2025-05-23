@@ -30,6 +30,10 @@ export const getIssuanceDate = () => {
   return dateObject.toISOString();
 };
 
+export function convertDateTimeToDate(dt: string) {
+  return dt.split('T')[0];
+}
+
 /**
  * Issues enrollment credential
  * @param walletDID - DID of the wallet
@@ -41,21 +45,22 @@ async function issueEnrollmentCredential(walletDID: string, truveraConfig: Truve
   const biometricId = uuid();
   
   try {
+    const issuanceDate = getIssuanceDate();
     const body = {
       anchor: false,
       persist: false,
       credential: {
+        schema: truveraConfig.enrollmentCredentialSchema,
         name: getBiometricConfigs().enrollmentCredentialType,
         type: ['VerifiableCredential', getBiometricConfigs().enrollmentCredentialType],
         issuer: truveraConfig.issuerDID,
-        issuanceDate: getIssuanceDate(),
-        schema: truveraConfig.enrollmentCredentialSchema,
+        issuanceDate,
         subject: {
           id: walletDID,
           biometric: {
             id: biometricId,
             data: JSON.stringify({id: biometricId}),
-            created: getIssuanceDate(),
+            created: convertDateTimeToDate(issuanceDate),
           },
         },
       },
@@ -96,21 +101,22 @@ async function issueMatchCredential(walletDID: string, enrollmentCredential: any
       Date.now() + 1000 * 60 * expirationMinutes,
     ).toISOString();
     
+    const issuanceDate = getIssuanceDate();
     const body = {
       anchor: false,
       persist: false,
       credential: {
+        schema: truveraConfig.biometricMatchCredentialSchema,
         name: getBiometricConfigs().biometricMatchCredentialType,
         type: ['VerifiableCredential', getBiometricConfigs().biometricMatchCredentialType],
         issuer: truveraConfig.issuerDID,
-        issuanceDate: getIssuanceDate(),
-        expirationDate: expirationDate,
-        schema: truveraConfig.biometricMatchCredentialSchema,
+        issuanceDate,
+        expirationDate,
         subject: {
           id: walletDID,
           biometric: {
             id: biometricId,
-            created: getIssuanceDate(),
+            created: convertDateTimeToDate(issuanceDate),
           },
         },
       },
@@ -135,7 +141,7 @@ async function issueMatchCredential(walletDID: string, enrollmentCredential: any
   }
 }
 
-export function createTruveraIDVProviderFactory({
+export function createTruveraIDVProvider({
   wallet,
   eventEmitter,
   configs,
