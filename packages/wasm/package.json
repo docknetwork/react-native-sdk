@@ -46,7 +46,7 @@
         "@docknetwork/dock-blockchain-modules": "0.26.2",
         "@sphereon/oid4vci-client": "^0.16.0",
         "@sphereon/oid4vci-common": "^0.16.0",
-        "axios": "^0.25.0",
+        "axios": "^0.30.0",
         "babel-node": "^0.0.1-security",
         "bignumber.js": "^9.0.1",
         "json-rpc-2.0": "^0.2.16",
