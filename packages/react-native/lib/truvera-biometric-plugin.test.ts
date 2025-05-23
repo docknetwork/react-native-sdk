@@ -1,5 +1,6 @@
 import {
-  createTruveraIDVProviderFactory,
+  convertDateTimeToDate,
+  createTruveraIDVProvider,
   getIssuanceDate,
 } from './truvera-biometric-plugin';
 import axios from 'axios';
@@ -104,6 +105,9 @@ const truveraConfig = {
   issuerDID: 'did:dock:issuer123',
   walletApiUrl: 'https://api-testnet.truvera.io',
   biometricMatchExpirationMinutes: 2,
+  ecosystemID: 'clarity-partners-16',
+  enrollmentCredentialSchema: 'https://schema.dock.io/ForSurBiometricEnrollment-V4-1709846932138.json',
+  biometricMatchCredentialSchema: 'https://schema.dock.io/ForSurBiometricCheck-V4-1709846734949.json',
 };
 
 describe('Truvera Biometric Plugin Unit Tests', () => {
@@ -137,13 +141,13 @@ describe('Truvera Biometric Plugin Unit Tests', () => {
     });
   });
 
-  describe('createTruveraIDVProviderFactory', () => {
+  describe('createTruveraIDVFactory', () => {
     let provider: any;
     let eventEmitter: EventEmitter;
 
     beforeEach(() => {
       eventEmitter = new EventEmitter();
-      provider = createTruveraIDVProviderFactory({
+      provider = createTruveraIDVProvider({
         wallet: mockWallet,
         eventEmitter,
         configs: truveraConfig,
@@ -249,4 +253,17 @@ describe('Truvera Biometric Plugin Unit Tests', () => {
       });
     });
   });
+
+  describe('convertDateTimeToDate', () => {
+    it('should convert ISO datetime string to date string', () => {
+      const input = '2024-03-20T15:30:45.123Z';
+      const expected = '2024-03-20';
+      expect(convertDateTimeToDate(input)).toBe(expected);
+    });
+  
+    it('should return the same string if input is already a date', () => {
+      const input = '2024-03-20';
+      expect(convertDateTimeToDate(input)).toBe(input);
+    });
+  }); 
 });

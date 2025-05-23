@@ -1,0 +1,21 @@
+{
+  "id": "income_test",
+  "input_descriptors": [
+    {
+      "id": "Credential 1",
+      "name": "Basic Credential",
+      "purpose": "Basic Credential",
+      "constraints": {
+        "fields": [
+          {
+            "path": ["$.type[*]"],
+            "filter": {
+              "type": "string",
+              "pattern": "BasicCredential"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
