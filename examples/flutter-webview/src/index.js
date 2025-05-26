@@ -3,8 +3,10 @@ import "./shim";
 import { createWallet } from "@docknetwork/wallet-sdk-core/lib/wallet";
 import { createDataStore } from "@docknetwork/wallet-sdk-data-store-web/lib/index";
 import { createCredentialProvider } from "@docknetwork/wallet-sdk-core/lib/credential-provider";
+import { createVerificationController } from "@docknetwork/wallet-sdk-core/lib/verification-controller";
 import { createDIDProvider } from "@docknetwork/wallet-sdk-core/lib/did-provider";
 import { setLocalStorageImpl } from "@docknetwork/wallet-sdk-data-store-web/lib/localStorageJSON";
+import { basicCredential } from './credentials/basic-credential';
 
 // Here you can define a JSON-RPC storage implementation
 // So that all data will be stored in the Flutter App instead of the browser
@@ -94,6 +96,51 @@ const rpcMethods = {
     }
   },
 
+  async verifyCredential({ credentialJson, proofRequestJson }) {
+    const credentialProvider = createCredentialProvider({
+      wallet,
+    });
+
+    let credential = await credentialProvider.getById(credentialJson.id);
+
+    if (!credential) {
+      credential = await credentialProvider.addCredential(credentialJson);
+    }
+
+    console.log("Credential:");
+    console.log(credential);
+
+    const verificationController = createVerificationController({
+      wallet,
+    })
+  
+    await verificationController.start({
+      template: proofRequestJson,
+    });
+  
+    verificationController.selectedCredentials.set(credential.id, {
+      credential: credential,
+      attributesToReveal: ['credentialSubject.name']
+    });
+  
+    const presentation = await verificationController.createPresentation();
+  
+    console.log('Presentation created...')
+    // For debugging purposes, we can log the presentation
+    // Logging a full presentation in production is a bad idea because of potential PII leaking into logs
+    console.log(presentation);
+
+    const apiResult = await fetch(proofRequestJson.response_url, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify(presentation),
+    }).then(res => res.json());
+
+    return apiResult;
+  },
+
   async clearData({ id }) {
     try {
       await dataStore.documents.removeAllDocuments();
@@ -155,7 +202,23 @@ async function initializeWallet() {
   sendMessageToFlutter({
     body: {
       type: "WALLET_INITIALIZED",
-      data: { defaultDID, otherData: "testing demo 33" },
+      data: { defaultDID, otherData: "testing demo" },
+    },
+  });
+
+  // Starts a credential verification
+
+  const proofRequestJson = await fetch('https://creds-testnet.truvera.io/proof/be02aed0-0eba-42ed-b938-a33c111189ca').then(res => res.json());
+
+  const verificationResult = await rpcMethods.verifyCredential({
+    credentialJson: basicCredential
+    proofRequestJson,
+  });
+
+  sendMessageToFlutter({
+    body: {
+      type: "WALLET_INITIALIZED",
+      data: { defaultDID, verificationResult },
     },
   });
 }
