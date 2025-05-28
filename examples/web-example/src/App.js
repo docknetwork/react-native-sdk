@@ -8,7 +8,6 @@ import { setLocalStorageImpl } from "@docknetwork/wallet-sdk-data-store-web/lib/
 import { edvService } from "@docknetwork/wallet-sdk-wasm/lib/services/edv";
 
 import useCloudWallet from './hooks/useCloudWallet';
-import ClarityModal from './components/ClarityModal';
 
 setLocalStorageImpl(global.localStorage);
 
@@ -24,7 +23,6 @@ function App() {
   const [selectedCredential, setSelectedCredential] = useState(null);
   const [walletKeys, setWalletKeys] = useState(null);
   const [uploadError, setUploadError] = useState(null);
-  const [clarityModalOpen, setClarityModalOpen] = useState(false);
 
   // Styles for the modals
   const modalStyle = {
@@ -246,20 +244,7 @@ function App() {
           >
             Create New Wallet
           </Button>
-          <Button
-            variant="contained"
-            onClick={() => setClarityModalOpen(true)}
-          >
-            Open Clarity Modal
-          </Button>
         </Box>
-        <ClarityModal
-          open={clarityModalOpen}
-          onClose={() => setClarityModalOpen(false)}
-          onComplete={() => {
-            alert("Identity verification successful!");
-          }}
-        />
       </div>
     );
   }
