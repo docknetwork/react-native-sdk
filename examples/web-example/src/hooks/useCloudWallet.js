@@ -66,9 +66,7 @@ function useCloudWallet(walletKeys) {
         const _cloudWallet = await initializeCloudWallet({
           dataStore: _dataStore,
           edvUrl: EDV_URL,
-          agreementKey: walletKeys.agreementKey,
-          verificationKey: walletKeys.verificationKey,
-          hmacKey: walletKeys.hmacKey,
+          masterKey: walletKeys,
           authKey: EDV_AUTH_KEY,
         });
         setCloudWallet(_cloudWallet);
