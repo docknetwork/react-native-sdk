@@ -3,7 +3,7 @@ import crypto from './crypto.js';
 // Based on https://github.com/decentralized-identity/confidential-storage/blob/master/packages/data-vault-example/src/client/Sha256HmacKey2019/Sha256HmacKey2019.ts
 
 export default class Sha256HmacKey2019 {
-  constructor({ id, algorithm, key }) {
+  constructor({id, algorithm, key}) {
     this.id = id;
     this.algorithm = algorithm;
     this.key = key;
@@ -31,9 +31,9 @@ export default class Sha256HmacKey2019 {
     const key = await crypto.subtle.importKey(
       'raw',
       rawKey,
-      { name: 'HMAC', hash: { name: 'SHA-256' } },
+      {name: 'HMAC', hash: {name: 'SHA-256'}},
       extractable,
-      ['sign', 'verify']
+      ['sign', 'verify'],
     );
     const fingerprint = await crypto.subtle.digest('SHA-256', rawKey);
     // https://tools.ietf.org/html/draft-multiformats-multibase-00
@@ -46,20 +46,22 @@ export default class Sha256HmacKey2019 {
         Buffer.from('12', 'hex'),
         // sha256 digest of key
         Buffer.from(fingerprint),
-      ])
+      ]),
     )}`;
-    const hmac = new Sha256HmacKey2019({ id, algorithm, key });
+    const hmac = new Sha256HmacKey2019({id, algorithm, key});
     return hmac;
   }
 
-  async sign({ data }) {
-    const { key } = this;
-    const signature = new Uint8Array(await crypto.subtle.sign(key.algorithm, key, data));
+  async sign({data}) {
+    const {key} = this;
+    const signature = new Uint8Array(
+      await crypto.subtle.sign(key.algorithm, key, data),
+    );
     return base64url.encode(Buffer.from(signature));
   }
 
-  async verify({ data, signature }) {
-    const { key } = this;
+  async verify({data, signature}) {
+    const {key} = this;
     signature = base64url.decode(signature);
     return crypto.subtle.verify(key.algorithm, key, signature, data);
   }

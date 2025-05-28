@@ -1,3 +1,3 @@
-import { Crypto } from '@peculiar/webcrypto';
+import {Crypto} from '@peculiar/webcrypto';
 
 export default new Crypto();
