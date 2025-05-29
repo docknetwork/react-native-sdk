@@ -21,7 +21,7 @@ export const SUBSTRATE_NETWORKS : Record<NetworkId, NetworkInfo> = {
     name: 'Cheqd Testnet',
     substrateUrl: null,
     addressPrefix: 21,
-    cheqdApiUrl: 'https://testnet.cheqd.docknode.io/',
+    cheqdApiUrl: 'https://api.cheqd.network/',
   },
   local: {
     name: 'Local Node',
