@@ -32,7 +32,12 @@ export async function deriveKeyAgreementKey(masterKeypair) {
   return agreementKey;
 }
 
-export async function createOrGetEDVWallet(edvKeyBuffer, edvUrl, edvAuthKey) {
+export async function createOrGetEDVWallet(
+  edvKeyBuffer,
+  edvUrl,
+  edvAuthKey,
+  referenceId,
+) {
   // Create a HMAC and master ed25519 keypair for the client's EDV
   const hmac = await Sha256HmacKey2019.create(edvKeyBuffer.toString('utf8'));
   const masterKeypair = await Ed25519VerificationKey2018.generate({
@@ -67,8 +72,7 @@ export async function createOrGetEDVWallet(edvKeyBuffer, edvUrl, edvAuthKey) {
     controller,
     'primary',
   );
-  if (!existingConfigLegacy) {
-    const referenceId = 'tcrinternal';
+  if (!existingConfigLegacy && referenceId) {
     const existingConfig = await storageInterface.findConfigFor(
       controller,
       referenceId,
