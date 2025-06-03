@@ -5,8 +5,6 @@ import { createDataStore } from '@docknetwork/wallet-sdk-data-store-web';
 import { generateCloudWalletMasterKey } from '@docknetwork/wallet-sdk-core/lib/cloud-wallet';
 import { initializeCloudWallet } from '@docknetwork/wallet-sdk-core/lib/cloud-wallet';
 import { setLocalStorageImpl } from "@docknetwork/wallet-sdk-data-store-web/lib/localStorageJSON";
-// @ts-ignore
-import { edvService } from "@docknetwork/wallet-sdk-wasm/lib/services/edv";
 
 setLocalStorageImpl(global.localStorage);
 
