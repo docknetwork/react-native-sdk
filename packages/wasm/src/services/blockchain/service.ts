@@ -12,12 +12,6 @@ import {
   WILDCARD,
 } from '@docknetwork/credential-sdk/resolver';
 import {initializeWasm} from '@docknetwork/crypto-wasm-ts/lib/index';
-
-import {DockAPI} from '@docknetwork/dock-blockchain-api';
-import {
-  DockCoreModules,
-  DockDIDModule,
-} from '@docknetwork/dock-blockchain-modules';
 import {EventEmitter} from 'events';
 import {Logger} from '../../core/logger';
 import {once} from '../../modules/event-manager';
@@ -30,25 +24,15 @@ import {
   CheqdAccumulatorCommon,
   CheqdAccumulatorId,
   CheqdAccumulatorPublicKey,
-  DockAccumulatorCommon,
-  DockAccumulatorId,
-  DockAccumulatorPublicKey,
 } from '@docknetwork/credential-sdk/types';
 
 class AnyDIDResolver extends ResolverRouter {
   method = WILDCARD;
 }
 
-const {AccumulatorModule: AccumulatorModuleDock} = DockCoreModules;
 const {AccumulatorModule: AccumulatorModuleCheqd} = CheqdCoreModules;
 
 const TYPES_FOR_DID = {
-  dock: {
-    PublicKey: DockAccumulatorPublicKey,
-    AccumulatorId: DockAccumulatorId,
-    AccumulatorCommon: DockAccumulatorCommon,
-    AccumulatorModule: AccumulatorModuleDock,
-  },
   cheqd: {
     PublicKey: CheqdAccumulatorPublicKey,
     AccumulatorId: CheqdAccumulatorId,
@@ -65,9 +49,9 @@ export class BlockchainService {
   modules;
   didModule;
   cheqdApi;
+  cheqdApiUrl;
   isBlockchainReady = false;
   resolver: any;
-  dockEnabled: boolean;
   static Events = {
     BLOCKCHAIN_READY: 'blockchain-ready',
   };
@@ -82,16 +66,9 @@ export class BlockchainService {
 
   constructor() {
     this.name = 'blockchain';
-    this.dock = new DockAPI();
     this.cheqdApi = new CheqdAPI();
-    this.didModule = new DockDIDModule(this.dock);
-    this.dockModules = new DockCoreModules(this.dock);
     this.cheqdModules = new CheqdCoreModules(this.cheqdApi);
-    this.modules = new MultiApiCoreModules(
-      this.dockEnabled
-        ? [this.dockModules, this.cheqdModules]
-        : [this.cheqdModules],
-    );
+    this.modules = new MultiApiCoreModules([this.cheqdModules]);
     this.emitter = new EventEmitter();
     this.resolver = this.createDIDResolver();
   }
@@ -135,63 +112,45 @@ export class BlockchainService {
    * @returns
    */
   async init(params: InitParams) {
-    if (this.dock.isConnected) {
-      await this.dock.disconnect();
+    if (!params?.cheqdApiUrl) {
+      throw new Error('cheqdApiUrl is required');
     }
 
     if (this.cheqdApi && this.cheqdApi.isInitialized()) {
       await this.cheqdApi.disconnect();
     }
 
-    Logger.info(`Attempt to initialized substrate at: ${params.address}`);
+    this.modules = new MultiApiCoreModules([this.cheqdModules]);
 
-    this.dockEnabled = !!params.substrateUrl;
+    const checkdApiUrl = params?.cheqdApiUrl;
+    const cheqdNetworkId = params?.networkId;
+    const cheqdMnemonic =
+      params?.cheqdMnemonic || (await utilCryptoService.mnemonicGenerate(12));
 
-    if (this.dockEnabled) {
-      await this.dock.init({
-        address: params.substrateUrl,
-      });
-      Logger.info(`Substrate initialized at: ${params.address}`);
-    }
+    const wallet = await DirectSecp256k1HdWallet.fromMnemonic(cheqdMnemonic, {
+      prefix: 'cheqd',
+    });
 
-    this.modules = new MultiApiCoreModules(
-      this.dockEnabled
-        ? [this.dockModules, this.cheqdModules]
-        : [this.cheqdModules],
+    const walletAccounts = await wallet.getAccounts();
+    const [{address}] = walletAccounts;
+    console.log('Using cheqd account:', address);
+
+    Logger.info(
+      `Attempt to initialized cheqd at: ${checkdApiUrl} with networkId: ${cheqdNetworkId}`,
     );
+    Logger.info(`Using cheqd account: ${address}`);
 
-    if (params?.cheqdApiUrl) {
-      const checkdApiUrl = params?.cheqdApiUrl;
-      const cheqdNetworkId = params?.networkId;
-      const cheqdMnemonic =
-        params?.cheqdMnemonic || (await utilCryptoService.mnemonicGenerate(12));
-
-      const wallet = await DirectSecp256k1HdWallet.fromMnemonic(cheqdMnemonic, {
-        prefix: 'cheqd',
+    try {
+      await this.cheqdApi.init({
+        wallet,
+        url: checkdApiUrl,
+        network: cheqdNetworkId,
       });
-
-      const walletAccounts = await wallet.getAccounts();
-      const [{address}] = walletAccounts;
-      console.log('Using cheqd account:', address);
-
-      Logger.info(
-        `Attempt to initialized cheqd at: ${checkdApiUrl} with networkId: ${cheqdNetworkId}`,
-      );
-      Logger.info(`Using cheqd account: ${address}`);
-
-      try {
-        await this.cheqdApi.init({
-          wallet,
-          url: checkdApiUrl,
-          network: cheqdNetworkId,
-        });
-        Logger.info(`Cheqd initialized at: ${checkdApiUrl}`);
-      } catch (err) {
-        Logger.error(`Failed to initialize cheqd at: ${checkdApiUrl}`);
-      }
+      Logger.info(`Cheqd initialized at: ${checkdApiUrl}`);
+    } catch (err) {
+      Logger.error(`Failed to initialize cheqd at: ${checkdApiUrl}`);
     }
 
-    this.address = params.address;
 
     this.resolver = this.createDIDResolver();
 
@@ -213,10 +172,6 @@ export class BlockchainService {
    */
   async disconnect() {
     let result;
-
-    if (this.dockEnabled) {
-      result = await this.dock.disconnect();
-    }
 
     if (this.cheqdApi && this.cheqdApi.isInitialized()) {
       result = await this.cheqdApi.disconnect();
@@ -246,7 +201,7 @@ export class BlockchainService {
   }
 
   async getAddress() {
-    return this.dock.address;
+    return this.cheqdApiUrl;
   }
 
   _setBlockchainReady(isBlockchainReady) {
