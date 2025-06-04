@@ -66,9 +66,14 @@ describe('Relay service', () => {
 
     it('expect to get messages', async () => {
       // Mock the blockchain service to avoid timeout
-      jest.spyOn(require('@docknetwork/wallet-sdk-wasm/lib/services/blockchain/service').blockchainService, 'waitBlockchainReady')
+      jest
+        .spyOn(
+          require('@docknetwork/wallet-sdk-wasm/lib/services/blockchain/service')
+            .blockchainService,
+          'waitBlockchainReady',
+        )
         .mockResolvedValue(true);
-      
+
       jest.spyOn(axios, 'get').mockResolvedValue({
         data: [
           {
@@ -170,8 +175,8 @@ describe('Relay service', () => {
       // Mock the JWT decode functionality to return an object with credentials
       jest.spyOn(require('jwt-decode'), 'default').mockImplementation(() => ({
         payload: {
-          credentials: [{ id: 'test-credential' }]
-        }
+          credentials: [{id: 'test-credential'}],
+        },
       }));
 
       const result = await RelayService.resolveDidcommMessage({

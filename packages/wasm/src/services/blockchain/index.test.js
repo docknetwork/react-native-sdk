@@ -4,7 +4,6 @@ import {validation} from './configs';
 import {blockchainService as service} from './service';
 import {BlockchainServiceRpc} from './service-rpc';
 
-
 describe('DockService', () => {
   it('ServiceRpc', () => {
     assertRpcService(BlockchainServiceRpc, service, validation);
