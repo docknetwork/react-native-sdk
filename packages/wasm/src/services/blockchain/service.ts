@@ -47,7 +47,6 @@ const TYPES_FOR_DID = {
 export class BlockchainService {
   dock;
   modules;
-  didModule;
   cheqdApi;
   cheqdApiUrl;
   isBlockchainReady = false;
@@ -148,6 +147,8 @@ export class BlockchainService {
       });
       Logger.info(`Cheqd initialized at: ${checkdApiUrl}`);
     } catch (err) {
+      console.error(err);
+      debugger;
       Logger.error(`Failed to initialize cheqd at: ${checkdApiUrl}`);
     }
 

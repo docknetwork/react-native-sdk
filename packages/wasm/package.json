@@ -25,6 +25,7 @@
         "@polkadot/util-crypto": "10.1.11"
     },
     "dependencies": {
+        "p-limit": "2.3.0",
         "@astronautlabs/jsonpath": "^1.1.2",
         "@docknetwork/universal-wallet": "^2.0.1",
         "@docknetwork/wallet-sdk-dids": "^1.5.6",
