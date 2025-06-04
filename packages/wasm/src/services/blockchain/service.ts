@@ -61,14 +61,6 @@ export class BlockchainService {
     this.resolver = this.createDIDResolver();
   }
 
-  // async doTest() {
-
-  //   const accumulatorId = await CheqdAccumulatorId.from('accumulator:dock:0x2b059532b6f40ed7cbf33e689df8588bbbfba96ec9629f120f0c51821948fb21')
-  //   console.log('accumulatorId', accumulatorId);
-
-  //   debugger;
-  // }
-
   getTypesForDIDOrAccumulator(didOrRegistryId) {
     return {
         PublicKey: AccumulatorPublicKey,
