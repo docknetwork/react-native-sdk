@@ -113,7 +113,7 @@ export async function getPresentationSubmision({
     holderDID,
   });
 
-  return presentation.presentation_submission;
+  return presentation?.presentation_submission;
 }
 
 pexService.evaluatePresentation;
