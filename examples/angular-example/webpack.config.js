@@ -16,18 +16,21 @@ module.exports = {
   },
   module: {
     rules: [
-      // JS/JSX loader with fullySpecified false for ESM interop
       {
         test: /\.m?js$/,
         resolve: {
           fullySpecified: false,
         },
       },
+      {
+        test: /\.wasm$/,
+        type: 'javascript/auto',
+        use: ['wasm-loader'],
+      },
     ],
   },
   experiments: {
     asyncWebAssembly: true,
-    syncWebAssembly: true,
   },
   plugins: [
     new webpack.ProvidePlugin({

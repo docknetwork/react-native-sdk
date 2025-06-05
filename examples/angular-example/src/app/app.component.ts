@@ -31,14 +31,6 @@ export class AppComponent {
 
     console.log(dataStore);
 
-    try {
-      // const newKeys = await edvService.generateKeys();
-      // console.log("generated new keys for the wallet");
-      // console.log(newKeys);
-    } catch (error) {
-      console.error('Error generating EDV keys:', error);
-    }
-
     const { masterKey, mnemonic } = await generateCloudWalletMasterKey();
     console.log('Master Key:', masterKey);
 
