@@ -42,7 +42,7 @@ describe('Credentials', () => {
   describe('credential status', () => {
     it('should get status of bbs revokable credential - dock issuer', async () => {
       const credentialUrl =
-        'https://creds-testnet.truvera.io/317c361641e7311663329a7fffff13a14f161832a9590acfd5d80a966c1615eb';
+        'https://creds-testnet.truvera.io/84b3cbe48c2e2e487c0c896615566b81b2e2e41ab818d3de3956cf1895ec4815';
       const password = 'test';
       const {data: credential} = await axios.get(
         `${credentialUrl}?p=${btoa(password)}`,

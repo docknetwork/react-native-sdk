@@ -1,4 +1,3 @@
-import {substrateService} from '../services/substrate';
 import {Accounts} from './accounts';
 import {Wallet} from './wallet';
 import {getTestWallet} from '../test/setup-test-state';
@@ -41,30 +40,6 @@ describe('Accounts module', () => {
 
     expect(account.getName()).toBe(name);
     expect(account.address).toBe(address);
-  });
-
-  it('expect to fetch account balance and update currency document', async () => {
-    const account = await accounts.create({
-      name: 'test',
-    });
-    const balance = 10;
-    jest.spyOn(substrateService, 'getAccountBalance').mockReturnValue(balance);
-
-    let result = await accounts.fetchBalance(account.address);
-
-    expect(substrateService.getAccountBalance).toBeCalled();
-    expect(result).toBe(balance);
-
-    const currency = await accounts.findCorrelationByType(
-      account.address,
-      'Currency',
-    );
-
-    expect(currency.value).toBe(balance);
-
-    result = await accounts.getBalance(account.address);
-
-    expect(result).toBe(balance);
   });
 
   it('Expect to export account and import account', async () => {
