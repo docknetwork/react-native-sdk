@@ -28,7 +28,6 @@
         "@docknetwork/wallet-sdk-data-store-typeorm": "^1.5.9",
         "@docknetwork/wallet-sdk-wasm": "^1.5.9",
         "@docknetwork/wallet-sdk-credentials": "^1.5.9",
-        "@docknetwork/wallet-sdk-transactions": "^1.5.9",
         "@docknetwork/wallet-sdk-dids": "^1.5.9"
     },
     "devDependencies": {
