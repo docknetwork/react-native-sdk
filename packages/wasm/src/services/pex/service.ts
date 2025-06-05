@@ -105,9 +105,15 @@ class PEXService {
 
   presentationFrom(params: CreatePresentationParams) {
     const {credentials, presentationDefinition, holderDID} = params;
-    const result: IPresentation = pex.presentationFrom(
+    const evaluateResult = pex.evaluateCredentials(
       removeOptionalAttribute(presentationDefinition),
       credentials,
+      holderDID,
+    );
+
+    const result: IPresentation = pex.presentationFrom(
+      presentationDefinition,
+      evaluateResult.verifiableCredential,
       holderDID,
     );
 

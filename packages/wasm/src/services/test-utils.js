@@ -1,14 +1,10 @@
 import {cryptoWaitReady} from '@polkadot/util-crypto';
 import assert from 'assert';
-import BigNumber from 'bignumber.js';
-import {DOCK_TOKEN_UNIT} from '../core/format-utils';
 import {TestFixtures} from '../fixtures';
 import {NetworkManager} from '../modules/network-manager';
 import {keyringService} from './keyring';
 import {RpcService} from './rpc-service-client';
 import {walletService} from './wallet';
-import Keyring from '@polkadot/keyring';
-import {blockchainService} from './blockchain/service';
 
 export async function initializeWalletService() {
   await cryptoWaitReady();
@@ -33,105 +29,6 @@ export const TEST_SCHEMA_METADATA = {
     verifiers: [],
   },
 };
-
-let mockTransactionError;
-
-export const setMockTransactionError = error => {
-  mockTransactionError = error;
-};
-
-export async function mockDockService() {
-  await cryptoWaitReady();
-
-  await keyringService.initialize({
-    ss58Format: NetworkManager.getInstance().getNetworkInfo().addressPrefix,
-  });
-
-  let sdkMock;
-
-  if (API_MOCK_DISABLED) {
-    return blockchainService.init({
-      address: NetworkManager.getInstance().getNetworkInfo().substrateUrl,
-    });
-  } else {
-    sdkMock = mockDockSdkConnection();
-    await blockchainService.init({
-      address: NetworkManager.getInstance().getNetworkInfo().substrateUrl,
-    });
-  }
-
-  const _dockSdk = blockchainService.dock;
-
-  blockchainService.isDockReady = true;
-
-  blockchainService.dock = {
-    api: {
-      events: {
-        system: {
-          ExtrinsicFailed: {
-            is: event => !!mockTransactionError,
-          },
-        },
-      },
-      query: {
-        system: {
-          account: jest.fn().mockImplementation(() => ({
-            data: {
-              free: BigNumber(TestFixtures.account1.balance * DOCK_TOKEN_UNIT),
-            },
-          })),
-        },
-      },
-      revocation: {
-        getIsRevoked: jest.fn().mockImplementation(() => false),
-      },
-      tx: {
-        balances: {
-          transfer: jest.fn().mockImplementation(() => ({
-            paymentInfo: () => ({
-              partialFee: BigNumber(TEST_FEE_AMOUNT * DOCK_TOKEN_UNIT),
-            }),
-            signAndSend: (account, callback) => {
-              callback({
-                status: {
-                  isInBlock: true,
-                  isFinalized: true,
-                  toHex: () => 'hash',
-                },
-                events: [
-                  {
-                    event: {
-                      data: [mockTransactionError],
-                    },
-                  },
-                ],
-              });
-
-              return Promise.resolve({});
-            },
-          })),
-        },
-      },
-    },
-    trustRegistry: {
-      registriesInfo: jest.fn().mockImplementation(() => TEST_TRUST_REGISTRIES),
-      registrySchemasMetadata: jest
-        .fn()
-        .mockImplementation(() => TEST_SCHEMA_METADATA),
-    },
-    init: jest.fn().mockImplementation(() => Promise.resolve({})),
-    disconnect: jest.fn(),
-    setAccount: jest.fn(),
-  };
-
-  return () => {
-    blockchainService.dock = _dockSdk;
-    if (sdkMock) {
-      sdkMock.clear();
-    }
-    blockchainService.disconnect();
-  };
-}
 
 let walletCreated;
 
@@ -160,81 +57,6 @@ export async function setupTestWallet() {
   });
 
   walletCreated = true;
-}
-
-export function mockDockSdkConnection(connectionError) {
-  const result = 'result';
-  const dock = blockchainService.dock;
-  const mocks = [
-    jest.spyOn(dock, 'init').mockImplementation(() => {
-      if (connectionError) {
-        return Promise.reject(connectionError);
-      }
-
-      return Promise.resolve(result);
-    }),
-    jest.spyOn(dock, 'disconnect').mockReturnValue(Promise.resolve(true)),
-  ];
-
-  let currentAccount;
-
-  blockchainService.dock = {
-    ...dock,
-    setAccount(account) {
-      currentAccount = account;
-    },
-    did: {
-      new: () => {
-        if (
-          currentAccount &&
-          currentAccount.address === TestFixtures.noBalanceAccount.address
-        ) {
-          throw new Error(
-            '1010: Invalid Transaction: Inability to pay some fees , e.g. account balance too low',
-          );
-        }
-        return {
-          txHash: 'hash',
-        };
-      },
-      getDocument: () => ({
-        '@context': ['https://www.w3.org/ns/did/v1'],
-        assertionMethod: [
-          'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi#keys-1',
-        ],
-        authentication: [
-          'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi#keys-1',
-        ],
-        capabilityInvocation: [
-          'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi#keys-1',
-        ],
-        controller: [
-          'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi',
-        ],
-        id: 'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi',
-        publicKey: [
-          {
-            controller:
-              'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi',
-            id: 'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi#keys-1',
-            publicKeyBase58: '8UDojkFBh5RopLKZredz8uVZV5U579voUwQFyYDmgBM3',
-            type: 'Sr25519VerificationKey2020',
-          },
-        ],
-      }),
-    },
-    keyring: {
-      createFromPair: jest.fn(() => {
-        const kr = new Keyring();
-        return kr.createFromUri('//Alice');
-      }),
-    },
-  };
-
-  return {
-    result,
-    clear: () => mocks.forEach(mock => mock.mockClear()),
-  };
 }
 
 export async function getPromiseError(func) {

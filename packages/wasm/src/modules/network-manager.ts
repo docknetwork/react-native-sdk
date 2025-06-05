@@ -15,13 +15,13 @@ export const SUBSTRATE_NETWORKS : Record<NetworkId, NetworkInfo> = {
     name: 'Cheqd Mainnet',
     substrateUrl: null,
     addressPrefix: 22,
-    cheqdApiUrl: 'https://mainnet.cheqd.docknode.io/',
+    cheqdApiUrl: 'https://mainnet.cheqd.docknode.io',
   },
   testnet: {
     name: 'Cheqd Testnet',
     substrateUrl: null,
     addressPrefix: 21,
-    cheqdApiUrl: 'https://testnet.cheqd.docknode.io/',
+    cheqdApiUrl: 'https://testnet.cheqd.docknode.io',
   },
   local: {
     name: 'Local Node',
