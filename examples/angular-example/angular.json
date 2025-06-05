@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "trustd-example": {
+    "angular-example": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -28,7 +28,7 @@
               "@docknetwork/wallet-sdk-core/lib/cloud-wallet",
               "@docknetwork/wallet-sdk-data-store-web/lib"
             ],
-            "outputPath": "dist/trustd-example",
+            "outputPath": "dist/angular-example",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [
@@ -76,10 +76,10 @@
           "builder": "@angular-builders/custom-webpack:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "trustd-example:build:production"
+              "buildTarget": "angular-example:build:production"
             },
             "development": {
-              "buildTarget": "trustd-example:build:development"
+              "buildTarget": "angular-example:build:development"
             }
           },
           "defaultConfiguration": "development"
