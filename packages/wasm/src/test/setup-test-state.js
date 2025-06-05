@@ -2,14 +2,12 @@ import {TestFixtures} from '../fixtures';
 import {NetworkManager} from '../modules/network-manager';
 import {Wallet} from '../modules/wallet';
 import {blockchainService} from '../services/blockchain';
-import {mockDockService} from '../services/test-utils';
 import promiseMemoize from 'promise-memoize';
 import {setStorage} from '../core/storage';
 
 export const getTestWallet: Wallet = promiseMemoize(async () => {
   setStorage(global.localStorage);
 
-  await mockDockService();
   const wallet = Wallet.getInstance();
 
   await wallet.load();
@@ -30,7 +28,7 @@ export const getTestWallet: Wallet = promiseMemoize(async () => {
   });
 
   await blockchainService.init({
-    address: NetworkManager.getInstance().getNetworkInfo().substrateUrl,
+    cheqdApiUrl: NetworkManager.getInstance().getNetworkInfo().cheqdApiUrl,
   });
 
   return wallet;

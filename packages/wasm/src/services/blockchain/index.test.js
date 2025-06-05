@@ -1,15 +1,8 @@
 import {NetworkManager} from '../../modules/network-manager';
-import {assertRpcService, mockDockSdkConnection} from '../test-utils';
+import {assertRpcService} from '../test-utils';
 import {validation} from './configs';
 import {blockchainService as service} from './service';
 import {BlockchainServiceRpc} from './service-rpc';
-
-const doConnect = (
-  address = NetworkManager.getInstance().getNetworkInfo().substrateUrl,
-) =>
-  service.init({
-    address,
-  });
 
 describe('DockService', () => {
   it('ServiceRpc', () => {
@@ -17,18 +10,14 @@ describe('DockService', () => {
   });
 
   describe('init', () => {
-    afterEach(async () => {
-      await service.disconnect();
-    });
-
     it('connect and disconnect substrate node', async () => {
-      const mock = mockDockSdkConnection();
-      const result = await doConnect();
+      const result = await service.init({
+        cheqdApiUrl: NetworkManager.getInstance().getNetworkInfo().cheqdApiUrl,
+      });
       expect(result).toBe(true);
       expect(service.isBlockchainReady).toBeTruthy();
       await service.disconnect();
       expect(service.isBlockchainReady).toBeFalsy();
-      mock.clear();
     });
   });
 });
