@@ -5,7 +5,7 @@ import { createVerificationController } from "@docknetwork/wallet-sdk-core/lib/v
 import { getVCData } from "@docknetwork/prettyvc";
 import axios from "axios";
 import { setLocalStorageImpl } from "@docknetwork/wallet-sdk-data-store-web/lib/localStorageJSON";
-import { generateCloudWalletMasterKey } from '@docknetwork/wallet-sdk-core/lib/cloud-wallet';
+import { edvService } from "@docknetwork/wallet-sdk-wasm/lib/services/edv";
 
 import useCloudWallet from './hooks/useCloudWallet';
 
@@ -38,9 +38,9 @@ function App() {
 
   useEffect(() => {
     try {
-      const key = localStorage.getItem("key");
-      if (key) {
-        setWalletKeys(key);
+      const keys = localStorage.getItem("keys");
+      if (keys) {
+        setWalletKeys(JSON.parse(keys));
       }
     } catch (err) {
       console.error("Error fetching wallet keys:", err);
@@ -193,10 +193,10 @@ function App() {
   const handleCreateWallet = async () => {
     setLoading(true);
     try {
-      const { masterKey } = await generateCloudWalletMasterKey();
+      const newKeys = await edvService.generateKeys();
       console.log("generated new keys for the wallet");
-      localStorage.setItem("key", masterKey);
-      setWalletKeys(masterKey);
+      localStorage.setItem("keys", JSON.stringify(newKeys));
+      setWalletKeys(newKeys);
     } catch (err) {
       console.error("Error generating keys", err);
     }
