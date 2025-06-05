@@ -1,6 +1,6 @@
 {
     "name": "@docknetwork/wallet-sdk-scripts",
-    "version": "1.5.6",
+    "version": "1.5.9",
     "license": "https://github.com/docknetwork/react-native-sdk/LICENSE",
     "repository": {
         "type": "git",
