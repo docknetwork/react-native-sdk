@@ -5473,19 +5473,6 @@
     lzutf8 "0.6.3"
     semver "^7.6.0"
 
-"@docknetwork/dock-blockchain-api@0.23.0":
-  version "0.23.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/dock-blockchain-api/-/dock-blockchain-api-0.23.0.tgz#f623e2cb9aff14e4528bcd4025500b7e3e6610e9"
-  integrity sha512-PJVqNoDRRvLaUbsdxEIzkBdZVMmRDGu9BROOwpX4o2fxIVP5nH5MTo1nZgaS6RAQ5YbgJDkZWl1W3+JHPSvoEw==
-  dependencies:
-    "@docknetwork/node-types" "^0.17.0"
-    "@polkadot/api" "10.12.4"
-
-"@docknetwork/dock-blockchain-modules@0.30.0":
-  version "0.30.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/dock-blockchain-modules/-/dock-blockchain-modules-0.30.0.tgz#af85586b04b7a459dffc3ddb524655ff5d5f7b9c"
-  integrity sha512-t0U8T44NQtryptQuEColRNropvQRPB+pTPm52TFQTWeiApbGM6L10iarY7PHaiQdgAlczxNYR9SY8+UWg6oEZA==
-
 "@docknetwork/minimal-cipher@^5.2.1":
   version "5.2.1"
   resolved "https://registry.yarnpkg.com/@docknetwork/minimal-cipher/-/minimal-cipher-5.2.1.tgz#0a965117e326a97d9a2c8435d13f7a186ec746b8"
@@ -5496,11 +5483,6 @@
     "@stablelib/chacha20poly1305" "^1.0.1"
     base58-universal "^1.0.0"
     base64url-universal "^1.1.0"
-
-"@docknetwork/node-types@^0.17.0":
-  version "0.17.0"
-  resolved "https://registry.yarnpkg.com/@docknetwork/node-types/-/node-types-0.17.0.tgz#ca0ddb5b819e012e8f2f112353008325de4f3e33"
-  integrity sha512-aSRFtCwLhdhcY1wqX3WfhPpY2QXVqaB9kNB3e5+ajCWXtc0wuKJePpnSZEO4RqUEUKV5Y3LcsQ52ZB+aJ1PpFw==
 
 "@docknetwork/universal-wallet@2.1.1":
   version "2.1.1"
@@ -6425,7 +6407,7 @@
     "@polkadot/util-crypto" "^10.1.11"
     rxjs "^7.5.7"
 
-"@polkadot/api@10.12.4", "@polkadot/api@9.7.1":
+"@polkadot/api@9.7.1":
   version "9.7.1"
   resolved "https://registry.yarnpkg.com/@polkadot/api/-/api-9.7.1.tgz#b374b89f8f6f19c4c084f9450433cdfd6f72c388"
   integrity sha512-hTOJqG5bAv8b276SuK22tJAJATg/DnaB25AiImQt365EHObQDWlaG9mC/U0SY6RQi1tAS9orRrEA1lOhHybbZA==
@@ -17308,19 +17290,19 @@ p-finally@^1.0.0:
   resolved "https://registry.yarnpkg.com/p-finally/-/p-finally-1.0.0.tgz#3fbcfb15b899a44123b34b6dcc18b724336a2cae"
   integrity sha512-LICb2p9CB7FS+0eR1oqWnHhp0FljGLZCWBE9aix0Uye9W8LTQPwMTYVGWQWIw9RdQiDg4+epXQODwIYJtSJaow==
 
+p-limit@2.3.0, p-limit@^2.0.0, p-limit@^2.2.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/p-limit/-/p-limit-2.3.0.tgz#3dd33c647a214fdfffd835933eb086da0dc21db1"
+  integrity sha512-//88mFWSJx8lxCzwdAABTJL2MyWB12+eIY7MDL2SqLmAkeKU9qxRvWuSyTjm3FUmpBEMuFfckAIqEaVGUDxb6w==
+  dependencies:
+    p-try "^2.0.0"
+
 p-limit@^1.1.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/p-limit/-/p-limit-1.3.0.tgz#b86bd5f0c25690911c7590fcbfc2010d54b3ccb8"
   integrity sha512-vvcXsLAJ9Dr5rQOPk7toZQZJApBl2K4J6dANSsEuh6QI41JYcsS/qhTGa9ErIUUgK3WNQoJYvylxvjqmiqEA9Q==
   dependencies:
     p-try "^1.0.0"
-
-p-limit@^2.0.0, p-limit@^2.2.0:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/p-limit/-/p-limit-2.3.0.tgz#3dd33c647a214fdfffd835933eb086da0dc21db1"
-  integrity sha512-//88mFWSJx8lxCzwdAABTJL2MyWB12+eIY7MDL2SqLmAkeKU9qxRvWuSyTjm3FUmpBEMuFfckAIqEaVGUDxb6w==
-  dependencies:
-    p-try "^2.0.0"
 
 p-limit@^3.0.2, p-limit@^3.1.0:
   version "3.1.0"
