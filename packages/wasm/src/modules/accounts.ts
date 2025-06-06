@@ -3,7 +3,6 @@ import assert from 'assert';
 import {walletService as _walletService} from '../services/wallet';
 import {utilCryptoService} from '../services/util-crypto';
 import {keyringService} from '../services/keyring';
-import {substrateService} from '../services/substrate';
 import {polkadotService} from '../services/polkadot';
 import {Wallet, WalletEvents} from './wallet';
 import {Errors} from '../errors';
@@ -68,38 +67,6 @@ export class Accounts {
       json,
       password,
     });
-  }
-
-  async fetchBalance(address) {
-    assert(isAddressValid(address), 'invalid address');
-    console.log('fetching balance from substrate');
-    let balance;
-
-    try {
-      balance = await substrateService.getAccountBalance({address});
-
-      console.log('balance found', balance.toString());
-
-      console.log('updating cache');
-      const currency = await this.findCorrelationByType(
-        address,
-        'Currency',
-        true,
-      );
-
-      console.log('currency', currency);
-
-      if (currency.value !== balance) {
-        currency.value = balance;
-
-        await this.wallet.update(currency);
-      }
-    } catch(err) {
-      console.log('Unable to update cache');
-      console.error(err); 
-    }
-
-    return balance;
   }
 
   async getBalance(address, skipFetch?) {

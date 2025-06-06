@@ -1,1 +1,0 @@
-export {substrateService} from './service';

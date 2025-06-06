@@ -3,18 +3,16 @@ import {
   getAuthURL,
   decodeRequestJWT,
   getPresentationSubmision,
-} from './oidvc'; // replace with your actual file path
+} from './oidvc';
 import {credentialServiceRPC} from '@docknetwork/wallet-sdk-wasm/src/services/credential';
 import {MetadataClient} from '@sphereon/oid4vci-client';
 import jwtDecode from 'jwt-decode';
 import axios from 'axios';
-import {pexService} from '@docknetwork/wallet-sdk-wasm/src/services/pex';
 
 jest.mock('@docknetwork/wallet-sdk-wasm/src/services/credential');
 jest.mock('@sphereon/oid4vci-client');
 jest.mock('jwt-decode');
 jest.mock('axios');
-jest.mock('@docknetwork/wallet-sdk-wasm/src/services/pex');
 
 describe('acquireOpenIDCredentialFromURI', () => {
   const didProvider: any = {
@@ -99,14 +97,71 @@ describe('decodeRequestJWT', () => {
 
 describe('getPresentationSubmision', () => {
   it('should get presentation submission', async () => {
-    const credentials = [{id: 'credential-1'}];
-    const presentationDefinition = {id: 'presentation-definition-1'};
-    const holderDID = 'did:example:123';
-    const presentationSubmission = {definition_id: 'presentation-submission-1'};
+    const credentials = [
+      {
+        '@context': [
+          'https://www.w3.org/2018/credentials/v1',
+          'https://ld.truvera.io/credentials/extensions-v1',
+          {
+            BasicCredential: 'dk:BasicCredential',
+            dk: 'https://ld.truvera.io/credentials#',
+          },
+        ],
+        id: 'https://creds-testnet.truvera.io/8afcb0925ad0d31c6afcc7fdec040f3b6c8260c20cdc6da5042307a9fa0dd7a6',
+        type: ['VerifiableCredential', 'BasicCredential'],
+        credentialSubject: {
+          id: 'did:key:z6MkkS7LbdxSqP8WM5GfsXiNwZC6Ve33aj83eEyzsFGphepp',
+          name: 'Test Credential',
+        },
+        issuanceDate: '2025-02-22T19:14:04.108Z',
+        issuer: {
+          name: 'Quotient Credit Union',
+          description: 'Quotient Credit Union is the credit union.',
+          logo: 'https://img.dock.io/06d78272268c606a172d5fd1cd559b46',
+          id: 'did:cheqd:testnet:5ad9c962-74e7-4857-891e-95e4a3b035d0',
+        },
+        name: 'Test Credential',
+        proof: {
+          type: 'Ed25519Signature2018',
+          created: '2025-05-29T18:48:19Z',
+          verificationMethod:
+            'did:cheqd:testnet:5ad9c962-74e7-4857-891e-95e4a3b035d0#keys-1',
+          proofPurpose: 'assertionMethod',
+          jws: 'eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..c5vxz6GKOuWykNKuNVqZ4giOplR3V8YVsJ5Ej4i5Dk3urVFd2ODsAkcu5Th7qWJrD5L3zEJzGEvlUbtRFCS1BQ',
+        },
+      },
+    ];
+    const presentationDefinition = {
+      id: '94d240d2-b70f-412e-8331-1b610407cce6',
+      name: 'Verificação de maioridade',
+      purpose: 'Verificação de maioridade',
+      input_descriptors: [
+        {
+          id: 'OpenFinanceCredentialV2',
+          name: 'Verificação de maioridade',
+          purpose: 'Verificação de maioridade',
+          constraints: {
+            fields: [
+              {
+                path: ['$.credentialSubject.name'],
+              },
+              {
+                path: ['$.type', '$.vc.type'],
+                filter: {
+                  type: 'array',
+                  contains: {
+                    const: 'BasicCredential',
+                  },
+                },
+              },
+            ],
+          },
+        },
+      ],
+    };
 
-    (pexService.presentationFrom as jest.Mock).mockResolvedValue({
-      presentation_submission: presentationSubmission,
-    });
+    const holderDID =
+      'did:key:z6MkkS7LbdxSqP8WM5GfsXiNwZC6Ve33aj83eEyzsFGphepp';
 
     const result = await getPresentationSubmision({
       credentials,
@@ -114,11 +169,16 @@ describe('getPresentationSubmision', () => {
       holderDID,
     });
 
-    expect(pexService.presentationFrom).toHaveBeenCalledWith({
-      presentationDefinition,
-      credentials,
-      holderDID,
+    expect(result).toStrictEqual({
+      id: expect.any(String),
+      definition_id: '94d240d2-b70f-412e-8331-1b610407cce6',
+      descriptor_map: [
+        {
+          id: 'OpenFinanceCredentialV2',
+          format: 'ldp_vc',
+          path: '$.verifiableCredential[0]',
+        },
+      ],
     });
-    expect(result).toEqual(presentationSubmission);
   });
 });

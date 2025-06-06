@@ -1,15 +1,8 @@
 import {Wallet, WalletEvents} from './wallet';
 import walletJson from '../test/fixtures/wallet-backup.json';
-import {mockDockService} from '../services/test-utils';
 import {getTestWallet} from '../test/setup-test-state';
 
 describe('ApiModule', () => {
-  let unmockDockService;
-
-  beforeAll(async () => {
-    unmockDockService = await mockDockService();
-  });
-
   describe('new wallet', () => {
     let wallet: Wallet;
 
@@ -219,9 +212,5 @@ describe('ApiModule', () => {
         'No matching recipient found for key agreement key.',
       );
     });
-  });
-
-  afterAll(async () => {
-    await unmockDockService();
   });
 });

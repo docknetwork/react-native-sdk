@@ -1,14 +1,7 @@
 import {Wallet} from './wallet';
 import walletLegacyData from '../test/fixtures/legacy-wallet-schema.json';
-import {mockDockService} from '../services/test-utils';
 
 describe('DataMigration', () => {
-  let unmockDockService;
-
-  beforeAll(async () => {
-    unmockDockService = await mockDockService();
-  });
-
   describe('migrate wallet from v0.1 to v0.2 (file1)', () => {
     let wallet: Wallet;
 
@@ -64,9 +57,5 @@ describe('DataMigration', () => {
     );
     const wallet = await Wallet.create({walletId: 'bad-documents'});
     await wallet.load();
-  });
-
-  afterAll(() => {
-    return unmockDockService();
   });
 });

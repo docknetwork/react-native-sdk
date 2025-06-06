@@ -68,13 +68,16 @@ export function useCredentialUtils() {
   }, [credentials, doesCredentialExist, deleteCredential, loading]);
 }
 
-export function useCredentialStatus({ credential }: any) {
+export function useCredentialStatus({ credential, onError }: any) {
   const [status, setStatus] = useState();
   const statusDoc = useDocument(`${credential.id}#status`);
 
   useEffect(() => {
-    getCredentialProvider().getCredentialStatus(credential).then(setStatus);
-  }, [credential, statusDoc]);
+    getCredentialProvider()
+      .getCredentialStatus(credential)
+      .then(setStatus)
+      .catch(onError);
+  }, [credential, statusDoc, onError]);
 
   return useMemo(() => {
     return status;

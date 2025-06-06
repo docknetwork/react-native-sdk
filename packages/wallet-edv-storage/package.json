@@ -1,0 +1,20 @@
+{
+  "name": "@docknetwork/wallet-edv-storage",
+  "version": "1.0.1",
+  "main": "./src/index.js",
+  "license": "MIT",
+  "type": "module",
+  "private": false,
+  "scripts": {
+    "unit:test": "echo no tests"
+  },
+  "dependencies": {
+    "@digitalbazaar/ed25519-verification-key-2018": "^4.0.0",
+    "@digitalbazaar/ed25519-verification-key-2020": "^4.2.0",
+    "@digitalbazaar/x25519-key-agreement-key-2020": "^3.0.1",
+    "@docknetwork/universal-wallet": "^3.3.4",
+    "@peculiar/webcrypto": "^1.5.0",
+    "base64url": "^3.0.1",
+    "futoin-hkdf": "^1.5.3"
+  }
+}

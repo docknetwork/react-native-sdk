@@ -234,7 +234,7 @@ class Wallet {
       }
 
       await blockchainService.init({
-        address: networkInfo.substrateUrl,
+        cheqdApiUrl: networkInfo.cheqdApiUrl,
       });
 
       this.eventManager.emit(WalletEvents.networkConnected);
