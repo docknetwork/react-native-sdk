@@ -18,7 +18,7 @@ yarn add @docknetwork/wallet-sdk-react-native
 
 ```
 **There are some scripts and additional dependencies required.**
-Please check our [example repo](https://github.com/docknetwork/wallet-sdk-demo) for detailed steps. 
+Please check our [examples](/examples) folder for detailed steps.
 
 ## React Native Example
 The following example will create a wallet and allow the user to add credentials to it. Displaying the count of documents added to the wallet.
