@@ -11,17 +11,10 @@
     "resolutions": {
         "@polkadot/util-crypto": "7.9.2",
         "@polkadot/wasm-crypto": "4.5.1",
-        "@polkadot/api": "5.6.1",
-        "@polkadot/types": "5.6.1",
-        "@polkadot/types-known": "5.6.1",
-        "@polkadot/util": "7.9.2",
-        "@polkadot/rpc-core": "5.6.1"
+        "@polkadot/util": "7.9.2"
     },
     "devDependencies": {
-        "@polkadot/types": "5.6.1",
         "@polkadot/keyring": "^7.2.1",
-        "@polkadot/types-known": "5.6.1",
-        "@polkadot/ui-shared": "^0.87.5",
         "@polkadot/util-crypto": "^7.2.1",
         "@polkadot/wasm-crypto": "^4.5.1",
         "babel-jest": "^26.6.0",

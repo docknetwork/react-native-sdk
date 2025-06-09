@@ -30,27 +30,9 @@ export const WalletEvents = {
   networkError: 'network-error',
 };
 
-/**
- * Can be used to debug the data migration behavior in the wallet
- */
-const MOCK_STORAGE = process.env.MOCK_STORAGE;
-
-async function shouldMockStorage(walletId) {
-  if (MOCK_STORAGE !== 'true') {
-    return;
-  }
-
-  await getStorage().setItem(walletId, JSON.stringify(legacyWalletSchema));
-}
 
 /** Wallet status */
 export type WalletStatus = 'closed' | 'loading' | 'ready' | 'error';
-
-// const environment = getEnvironment();
-
-// if (environment !== 'reactnative') {
-// require('../setup-nodejs');
-// }
 
 /**
  * Wallet
@@ -182,7 +164,6 @@ class Wallet {
   async deleteWallet() {
     this.eventManager.emit(WalletEvents.walletDeleted);
     await getStorage().removeItem('logs');
-    await getStorage().removeItem('transactions');
     await getStorage().removeItem(this.walletId);
     await walletService.create({
       walletId: this.walletId,

@@ -5530,6 +5530,17 @@
   optionalDependencies:
     "@digitalbazaar/edv-client" "15.0.2"
 
+"@docknetwork/wallet-sdk-transactions@^1.5.6":
+  version "1.5.8"
+  resolved "https://registry.yarnpkg.com/@docknetwork/wallet-sdk-transactions/-/wallet-sdk-transactions-1.5.8.tgz#544d4b89e7d88fbfee1409ff007ae0b51ed71fa9"
+  integrity sha512-8RoehhPo/DK8iSGybQ1qGPKwzym3hbQYOtDcmR1R8SNGewtPoIQf7dblKfVh76yHDf+QyNIs4Rr6NLOzYQgwuw==
+  dependencies:
+    "@polkadot/keyring" "^7.2.1"
+    "@polkadot/types-known" "5.6.1"
+    "@polkadot/ui-shared" "^0.87.5"
+    "@polkadot/util-crypto" "^7.2.1"
+    "@polkadot/wasm-crypto" "^4.5.1"
+
 "@eslint/eslintrc@^0.4.3":
   version "0.4.3"
   resolved "https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-0.4.3.tgz#9e42981ef035beb3dd49add17acb96e8ff6f394c"

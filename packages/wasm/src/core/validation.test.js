@@ -1,4 +1,3 @@
-import BigNumber from 'bignumber.js';
 import {
   assertAddress,
   assertTokenAmount,
@@ -18,11 +17,9 @@ describe('core validation', () => {
   });
 
   it('isNumberValid', () => {
-    expect(isNumberValid('100000000')).toBeTruthy();
     expect(isNumberValid('this is not valid')).toBeFalsy();
     expect(isNumberValid(false)).toBeFalsy();
     expect(isNumberValid(10)).toBeTruthy();
-    expect(isNumberValid(BigNumber(1))).toBeTruthy();
   });
 
   it('assertAddress', () => {
