@@ -27,4 +27,3 @@ export function testRpcEndpoint(service, rpcMethod, ...params) {
 }
 
 export const waitFor = timeout => new Promise(res => setTimeout(res, timeout));
-
