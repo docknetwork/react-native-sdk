@@ -1,4 +1,4 @@
-import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
+import {WalletEvents} from '@docknetwork/wallet-sdk-core/src/wallet';
 import {useCallback, useEffect, useState} from 'react';
 import {getWallet} from './wallet';
 

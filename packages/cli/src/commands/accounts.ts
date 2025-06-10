@@ -3,7 +3,7 @@ import inquirer from 'inquirer';
 import {IWallet} from '@docknetwork/wallet-sdk-core/lib/types';
 import {getWallet} from '../helpers';
 import clipboardy from 'clipboardy';
-import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
+import {WalletEvents} from '@docknetwork/wallet-sdk-core/src/wallet';
 import {substrateService} from '@docknetwork/wallet-sdk-wasm/src/services/substrate';
 
 const accountsCommands = new Command('accounts');

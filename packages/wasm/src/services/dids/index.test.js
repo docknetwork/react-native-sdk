@@ -3,14 +3,9 @@ import {DIDServiceRPC} from './service-rpc';
 import {didService as service} from './service';
 import {validation} from './config';
 import {DIDKeyManager} from '@docknetwork/wallet-sdk-dids/src';
-import {getTestWallet} from '../../test/setup-test-state';
 import {blockchainService} from '../blockchain/service';
 
 describe('DID Service', () => {
-  beforeAll(async () => {
-    await getTestWallet();
-  });
-
   it('ServiceRpc', () => {
     assertRpcService(DIDServiceRPC, service, validation);
   });
