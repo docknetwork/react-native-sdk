@@ -1,5 +1,4 @@
 const webpack = require('webpack');
-const {resolve} = require('path');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 const getWebpackConfig = ({entry, path, filename}) => ({
