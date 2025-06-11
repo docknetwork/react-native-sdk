@@ -7,6 +7,7 @@ import {
   MembershipWitness,
 } from '@docknetwork/crypto-wasm-ts';
 import {OpenID4VCIClientV1_0_13} from '@sphereon/oid4vci-client';
+import { VerifiableCredential, getSuiteFromKeyDoc } from '@docknetwork/credential-sdk/vc';
 import {Alg} from '@sphereon/oid4vci-common';
 import {getKeypairFromDoc} from '@docknetwork/universal-wallet/methods/keypairs';
 import {
@@ -117,13 +118,15 @@ class CredentialService {
       vp.setHolder(keyDoc.controller);
     }
 
-    keyDoc.keypair = keyDocToKeypair(keyDoc, blockchainService.dock);
+    const keyPair = getKeypairFromDoc(keyDoc);
+    keyPair.signer = keyPair.signer();
+    const suite = await getSuiteFromKeyDoc(keyPair);
 
     if (shouldSkipSigning) {
       return vp.toJSON();
     }
 
-    return vp.sign(keyDoc, challenge, domain, blockchainService.resolver);
+    return vp.sign(suite, challenge, domain, blockchainService.resolver);
   }
 
   async verifyPresentation({ presentation, options }: any) {

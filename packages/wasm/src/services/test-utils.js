@@ -1,8 +1,6 @@
 import {cryptoWaitReady} from '@polkadot/util-crypto';
 import assert from 'assert';
-import {TestFixtures} from '../fixtures';
 import {NetworkManager} from '../modules/network-manager';
-import {keyringService} from './keyring';
 import {RpcService} from './rpc-service-client';
 
 export const TEST_FEE_AMOUNT = 2.48;
@@ -31,9 +29,6 @@ export async function setupTestWallet() {
   NetworkManager.getInstance().setNetworkId('testnet');
 
   await cryptoWaitReady();
-  await keyringService.initialize({
-    ss58Format: NetworkManager.getInstance().getNetworkInfo().addressPrefix,
-  });
 
   walletCreated = true;
 }

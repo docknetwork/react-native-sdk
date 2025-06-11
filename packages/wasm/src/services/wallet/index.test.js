@@ -1,5 +1,3 @@
-import {NetworkManager} from '../../modules/network-manager';
-import {keyringService} from '../keyring/service';
 import {assertRpcService, getPromiseError} from '../test-utils';
 import {validation} from './configs';
 import {walletService as service, walletService} from './service';
@@ -11,12 +9,6 @@ describe('WalletService', () => {
   });
 
   describe('service', () => {
-    beforeAll(async () => {
-      await keyringService.initialize({
-        ss58Format: NetworkManager.getInstance().getNetworkInfo().addressPrefix,
-      });
-    });
-
     describe('getDocumentsFromEncryptedWallet', () => {
       it('expect to validate params', async () => {
         const error = await getPromiseError(() =>

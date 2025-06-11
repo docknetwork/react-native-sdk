@@ -8,8 +8,7 @@ import {X25519KeyAgreementKey2020} from '@digitalbazaar/x25519-key-agreement-key
 import {getKeypairFromDoc} from '@docknetwork/universal-wallet/methods/keypairs';
 import {logger} from '@docknetwork/wallet-sdk-data-store/src/logger';
 import {didService} from '@docknetwork/wallet-sdk-wasm/src/services/dids/service';
-import {keyringService} from '@docknetwork/wallet-sdk-wasm/src/services/keyring';
-import {ed25519PairFromSeed} from '@polkadot/util-crypto';
+import {Ed25519Keypair} from '@docknetwork/credential-sdk/keypairs';
 
 /**
  * EDVService
@@ -97,9 +96,6 @@ export class EDVService {
   }
 
   async generateKeys() {
-    await keyringService.initialize({
-      ss58Format: 22,
-    });
     const keyPair = await didService.generateKeyDoc({});
 
     const verificationKey = await Ed25519VerificationKey2018.generate({
@@ -116,10 +112,7 @@ export class EDVService {
   }
 
   async deriveKeys(masterKey: Uint8Array) {
-    await keyringService.initialize({
-      ss58Format: 22,
-    });
-    const pair = ed25519PairFromSeed(masterKey);
+    const {keyPair: pair} = new Ed25519Keypair(masterKey, 'seed');
 
     const keyPair = await didService.deriveKeyDoc({ pair });
 
