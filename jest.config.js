@@ -4,6 +4,10 @@ module.exports = {
   testTimeout: 30000,
   maxConcurrency: 2,
   testMatch: ["<rootDir>/packages/**/!(*.e2e).test.[j]s"],
+  testPathIgnorePatterns: [
+    "/node_modules/",
+    "/.rollup.cache/"
+  ],
   coverageThreshold: {
     global: {
       branches: 10,
