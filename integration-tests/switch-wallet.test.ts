@@ -1,9 +1,8 @@
 import {
-  cleanup,
   closeWallet,
-  createNewWallet,
   getCredentialProvider,
   getDocumentsByType,
+  getWallet,
   setNetwork,
 } from './helpers';
 import {BasicCredential} from './data/credentials';
@@ -14,10 +13,7 @@ async function assertWalletData() {
 }
 
 describe('Switch wallet', () => {
-  beforeEach(async () => {
-    await cleanup();
-    await createNewWallet();
-  });
+  beforeEach(() => getWallet());
 
   it('expect to maintain separate document stores when switching between networks', async () => {
     await setNetwork('testnet');
