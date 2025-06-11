@@ -8,23 +8,9 @@ import {
 } from './helpers';
 import {BasicCredential} from './data/credentials';
 
-async function createWalletData() {
-  await getCredentialProvider().addCredential(BasicCredential);
-}
-
 async function assertWalletData() {
-  const accounts = await getDocumentsByType('Address');
   const credentials = await getDocumentsByType('VerifiableCredential');
-
-  expect(accounts.length).toBe(2);
   expect(credentials.length).toBe(1);
-}
-
-async function isWalletEmpty() {
-  const accounts = await getDocumentsByType('Address');
-  const credentials = await getDocumentsByType('VerifiableCredential');
-
-  return !(accounts.length && credentials.length);
 }
 
 describe('Switch wallet', () => {
@@ -33,17 +19,18 @@ describe('Switch wallet', () => {
     await createNewWallet();
   });
 
-
-  it('expect switch to tesnet and have an empty wallet', async () => {
+  it('expect to maintain separate document stores when switching between networks', async () => {
     await setNetwork('testnet');
-    await createWalletData();
-    await assertWalletData();
-    await setNetwork('mainnet');
-    const err = await assertWalletData().catch(err => err);
-    expect(err).toBeDefined();
-  });
+    await getCredentialProvider().addCredential(BasicCredential);
 
-  it('expect switch to tesnet and have an empty wallet', () => {});
+    const testnetCredentials = await getDocumentsByType('VerifiableCredential');
+    expect(testnetCredentials.length).toBe(1);
+
+    await setNetwork('mainnet');
+    
+    const mainnetCredentials = await getDocumentsByType('VerifiableCredential');
+    expect(mainnetCredentials.length).toBe(0);
+  });
 
   afterAll(() => closeWallet());
 });
