@@ -1,5 +1,5 @@
 import {cryptoWaitReady} from '@polkadot/util-crypto';
-import {assertRpcService, getPromiseError} from '../test-utils';
+import {assertRpcService} from '../test-utils';
 import {validation} from './configs';
 import {utilCryptoService as service} from './service';
 import {UtilCryptoServiceRpc} from './service-rpc';
