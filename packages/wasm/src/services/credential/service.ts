@@ -10,6 +10,7 @@ import {OpenID4VCIClientV1_0_13} from '@sphereon/oid4vci-client';
 import { VerifiableCredential, getSuiteFromKeyDoc } from '@docknetwork/credential-sdk/vc';
 import {Alg} from '@sphereon/oid4vci-common';
 import {getKeypairFromDoc} from '@docknetwork/universal-wallet/methods/keypairs';
+import {hexToU8a} from '@docknetwork/credential-sdk/utils';
 import {
   VerifiablePresentation,
   Presentation,

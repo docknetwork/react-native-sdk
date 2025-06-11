@@ -97,7 +97,6 @@ export async function setBlockchainNetwork(wallet: IWallet) {
 }
 
 export async function initWalletWasm(wallet: IWallet) {
-  await utilCryptoService.cryptoWaitReady();
   const network = wallet.dataStore.network;
 
   if (isBlockchainNetwork(network)) {

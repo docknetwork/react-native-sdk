@@ -18,10 +18,6 @@ export class UtilCryptoServiceRpc extends RpcService {
     return this.call('mnemonicToMiniSecret', phrase);
   }
 
-  cryptoWaitReady(): Promise<any> {
-    return this.call('cryptoWaitReady');
-  }
-
   deriveValidate(uri: string): Promise<any> {
     validation.deriveValidate(uri);
     return this.call('deriveValidate', uri);

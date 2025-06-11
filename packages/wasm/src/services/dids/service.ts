@@ -19,7 +19,6 @@ import {
 import {Ed25519Keypair} from '@docknetwork/credential-sdk/keypairs';
 
 import {Logger} from '../../core/logger';
-import {polkadotToKeydoc} from '../../core/polkadot-utils';
 import base64url from 'base64url';
 import {keyDocToKeypair} from '../credential/utils';
 import {

@@ -7,8 +7,9 @@ import {
   VBWitnessUpdateInfo,
   Encoder,
 } from '@docknetwork/crypto-wasm-ts';
+// @ts-ignore
+import {hexToU8a} from '@docknetwork/credential-sdk/utils';
 
-import {hexToU8a} from '@polkadot/util';
 import {
   blockchainService,
 } from '../blockchain/service';

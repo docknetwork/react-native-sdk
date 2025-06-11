@@ -1,4 +1,3 @@
-import {cryptoWaitReady} from '@polkadot/util-crypto';
 import assert from 'assert';
 import {NetworkManager} from '../modules/network-manager';
 import {RpcService} from './rpc-service-client';
@@ -27,8 +26,6 @@ export async function setupTestWallet() {
   }
 
   NetworkManager.getInstance().setNetworkId('testnet');
-
-  await cryptoWaitReady();
 
   walletCreated = true;
 }

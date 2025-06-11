@@ -1,17 +1,15 @@
 import {
   cleanup,
   closeWallet,
-  createAccounts,
   createNewWallet,
+  getCredentialProvider,
   getDocumentsByType,
   setNetwork,
 } from './helpers';
 import {BasicCredential} from './data/credentials';
-import {importCredentialJSON} from './helpers/credential-helpers';
 
 async function createWalletData() {
-  await createAccounts();
-  await importCredentialJSON(BasicCredential);
+  await getCredentialProvider().addCredential(BasicCredential);
 }
 
 async function assertWalletData() {
@@ -35,14 +33,6 @@ describe('Switch wallet', () => {
     await createNewWallet();
   });
 
-  // it('expect to filter mainnet documents from testnet documents', async () => {
-  //   await setNetwork('mainnet');
-  //   await createWalletData();
-  //   await assertWalletData();
-  //   await setNetwork('testnet');
-  //   const isEmpty = await isWalletEmpty();
-  //   expect(isEmpty).toBe(true);
-  // });
 
   it('expect switch to tesnet and have an empty wallet', async () => {
     await setNetwork('testnet');

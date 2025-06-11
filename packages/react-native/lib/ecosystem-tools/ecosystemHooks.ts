@@ -1,13 +1,26 @@
 import {useEffect, useState} from 'react';
 import {getEcosystems} from '@docknetwork/wallet-sdk-core/src/ecosystem-tools';
-import {hexToString} from '@polkadot/util';
+// @ts-ignore
+import {hexToU8a, u8aToString} from '@docknetwork/credential-sdk/utils';
 import axios from 'axios';
 import { captureException } from '@docknetwork/wallet-sdk-core/src/helpers';
 import { getWallet } from '../wallet';
 
-const getMetadata = async govFramework => {
-  const metadataURL = await hexToString(govFramework);
+const hexToString = (hex: string): string => {
   try {
+    const bytes = hexToU8a(hex);
+    return u8aToString(bytes);
+  } catch (e) {
+    console.log('error: ', e)
+  }
+
+  return '';
+};
+
+const getMetadata = async govFramework => {
+  
+  try {
+    const metadataURL = await hexToString(govFramework);
     const response = await axios.get(metadataURL);
     return response.data;
   } catch (e) {

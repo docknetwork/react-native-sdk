@@ -28,6 +28,6 @@ module.exports = {
     'node-fetch': 'node-fetch/dist/index.cjs',
   },
   transformIgnorePatterns: [
-    '/node_modules/(?!@polkadot|@babel|@docknetwork|@digitalbazaar|uuid|@juanelas/base64)',
+    '/node_modules/(?!@babel|@docknetwork|@digitalbazaar|uuid|@juanelas/base64)',
   ],
 };

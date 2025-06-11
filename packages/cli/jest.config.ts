@@ -25,6 +25,6 @@ module.exports = {
       '@digitalbazaar/minimal-cipher': '@digitalbazaar/minimal-cipher/Cipher',
     },
     transformIgnorePatterns: [
-      '/node_modules/(?!@polkadot|@babel|@docknetwork|@digitalbazaar)',
+      '/node_modules/(?!@babel|@docknetwork|@digitalbazaar)',
     ],
   };
