@@ -1,16 +1,11 @@
 // @ts-nocheck
-import BigNumber from 'bignumber.js';
 import assert from 'assert';
 import {KeypairTypes} from '../types';
 
 export {assert};
 
 export function isNumberValid(v: any) {
-  if (v instanceof BigNumber) {
-    return true;
-  }
-
-  return !isNaN(parseInt(v, 10));
+  return typeof v === 'number' && !isNaN(v);
 }
 
 export function assertKeyType(type) {

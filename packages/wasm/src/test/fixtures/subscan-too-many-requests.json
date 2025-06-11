@@ -1,9 +1,0 @@
-{
-  "status": 429,
-  "statusText": "Too Many Requests",
-  "response": {
-    "data": {
-      "message": "API rate limit exceeded"
-    }
-  }
-}
