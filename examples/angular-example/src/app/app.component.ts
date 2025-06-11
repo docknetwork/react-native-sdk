@@ -141,13 +141,11 @@ export class AppComponent implements OnInit {
       this.didProvider = _didProvider;
       this.defaultDID = await _didProvider.getDefaultDID();
 
-      // TODO: check why this is giving the following error:
-      // ./node_modules/@docknetwork/wallet-sdk-wasm/lib/services/relay-service/service.mjs:2:0-91 - Error: Module not found: Error: Can't resolve '@docknetwork/wallet-sdk-relay-service/lib' in 'node_modules/@docknetwork/wallet-sdk-wasm/lib/services/relay-service'
-      // const _messageProvider = createMessageProvider({
-      //   wallet: _wallet,
-      //   didProvider: _didProvider,
-      // });
-      // this.messageProvider = _messageProvider;
+      const _messageProvider = createMessageProvider({
+        wallet: _wallet,
+        didProvider: _didProvider,
+      });
+      this.messageProvider = _messageProvider;
 
       // Set up message listener
       this.setupMessageListener();

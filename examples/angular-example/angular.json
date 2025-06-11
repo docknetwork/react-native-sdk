@@ -24,9 +24,14 @@
               "pako",
               "lru-cache",
               "bn.js",
+              "static-eval",
+              "global",
+              "tweetnacl",
               "@stablelib/xchacha20poly1305",
-              "@docknetwork/wallet-sdk-core/lib/cloud-wallet",
-              "@docknetwork/wallet-sdk-data-store-web/lib"
+              "@docknetwork/prettyvc",
+              "@docknetwork/wallet-sdk-core",
+              "@docknetwork/wallet-sdk-data-store-web",
+              "@docknetwork/wallet-sdk-relay-service"
             ],
             "outputPath": "dist/angular-example",
             "index": "src/index.html",
