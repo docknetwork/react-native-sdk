@@ -96,8 +96,6 @@
     "@inquirer/input": "^1.2.8",
     "@inquirer/prompts": "^3.0.3",
     "@inquirer/select": "^1.2.8",
-    "@polkadot/util": "^13.5.1",
-    "@polkadot/util-crypto": "^13.5.1",
     "@react-native-async-storage/async-storage": "^1.15.17",
     "@rollup/plugin-alias": "^4.0.2",
     "@rollup/plugin-babel": "^6.0.3",
