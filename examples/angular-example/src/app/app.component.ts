@@ -147,10 +147,8 @@ export class AppComponent implements OnInit {
       });
       this.messageProvider = _messageProvider;
 
-      // Set up message listener
       this.setupMessageListener();
 
-      // Load credentials
       await this.refreshDocuments();
     } catch (err) {
       console.error('Error provisioning new wallet', err);
@@ -222,20 +220,6 @@ export class AppComponent implements OnInit {
     }
   }
 
-  openRecoverWalletModal(): void {
-    this.recoverModalOpen = true;
-    this.mnemonic = null;
-  }
-
-  closeRecoverWalletModal(): void {
-    this.recoverModalOpen = false;
-    this.mnemonic = null;
-  }
-
-  closeMnemonicMessage(): void {
-    this.mnemonicMessage = null;
-  }
-
   async createNewWallet(): Promise<void> {
     this.loading = true;
     try {
@@ -246,7 +230,6 @@ export class AppComponent implements OnInit {
       console.log('Created new wallet');
       console.log('Mnemonic (save this securely):', mnemonic);
 
-      // Store in localStorage
       localStorage.setItem('keys', JSON.stringify({
         masterKey: Array.from(masterKey),
         // Mnemonic should not be stored in localStorage for security reasons
@@ -325,8 +308,27 @@ export class AppComponent implements OnInit {
     this.closeVerifyModal();
   }
 
+  async clearEDV(): Promise<void> {
+    if (this.cloudWallet) {
+      await this.cloudWallet.clearEdvDocuments();
+    }
+  }
+
+  async fetchMessages(): Promise<void> {
+    if (this.messageProvider) {
+      await this.messageProvider.fetchMessages();
+      await this.messageProvider.processDIDCommMessages();
+    }
+  }
+
   selectCredential(index: number): void {
     this.selectedCredential = this.documents[index];
+  }
+
+  copyDID(): void {
+    if (this.defaultDID) {
+      navigator.clipboard.writeText(this.defaultDID);
+    }
   }
 
   clearWallet(): void {
@@ -338,23 +340,18 @@ export class AppComponent implements OnInit {
     window.location.reload();
   }
 
-  async clearEDV(): Promise<void> {
-    if (this.cloudWallet) {
-      await this.cloudWallet.clearEdvDocuments();
-    }
+  openRecoverWalletModal(): void {
+    this.recoverModalOpen = true;
+    this.mnemonic = null;
   }
 
-  copyDID(): void {
-    if (this.defaultDID) {
-      navigator.clipboard.writeText(this.defaultDID);
-    }
+  closeRecoverWalletModal(): void {
+    this.recoverModalOpen = false;
+    this.mnemonic = null;
   }
 
-  async fetchMessages(): Promise<void> {
-    if (this.messageProvider) {
-      await this.messageProvider.fetchMessages();
-      await this.messageProvider.processDIDCommMessages();
-    }
+  closeMnemonicMessage(): void {
+    this.mnemonicMessage = null;
   }
 
   openImportModal(): void {
