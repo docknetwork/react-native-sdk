@@ -130,10 +130,25 @@ export async function isValid({
       status: CredentialStatus.Verified,
     };
   } catch (err) {
+    // Handle unknown error, when we can't determine the status
+    // Potential reasons can be network error, blockchain offline, internal SDK error
     console.error(err);
 
+    // in this case we return the cached status if possible
+    // It will avoid showing unknown status in case of a network error
+    const statusDoc = await wallet.getDocumentById(`${credential.id}#status`);
+
+    if (statusDoc) {
+      return {
+        ...statusDoc,
+        warning: 'unable_to_refresh_status',
+      };
+    }
+
+    // Return pending status
+    // As we can't determine the status, and there is no cached status
     return {
-      status: CredentialStatus.Invalid,
+      status: CredentialStatus.Pending,
       error: err.toString(),
     };
   }
@@ -188,6 +203,7 @@ type CredentialStatusDocument = {
   id: string;
   status: string;
   error: string;
+  warning?: string;
 };
 
 /**
@@ -268,6 +284,7 @@ async function syncCredentialStatus({
     const result = await isValid({credential, wallet});
     statusDoc.status = result?.status;
     statusDoc.error = result?.error;
+    statusDoc.warning = result?.warning;
     statusDoc.updatedAt = new Date().toISOString();
 
     await wallet.updateDocument(statusDoc);
