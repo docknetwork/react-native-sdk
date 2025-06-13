@@ -163,51 +163,39 @@ export function createVerificationController({
       assert(!!provingKey, 'No proving key found');
     }
 
-    const credentials = [];
-
-    for (const credentialSelection of selectedCredentials.values()) {
-      const isBBS = await isBBSPlusCredential(credentialSelection.credential);
-      const isKVAC = await isKvacCredential(credentialSelection.credential);
-
-      if (isBBS || isKVAC) {
-        // derive credential
-        const derivedCredentials =
-          await credentialServiceRPC.deriveVCFromPresentation({
-            proofRequest: templateJSON,
-            
-            credentials: [
-              {
-                credential: credentialSelection.credential,
-                witness: await credentialProvider.getMembershipWitness(credentialSelection.credential.id),
-                attributesToReveal: [
-                  ...(credentialSelection.attributesToReveal || []),
-                  'id',
-                ],
-              },
-            ],
-          });
-
-        console.log('Credential derived');
-
-        credentials.push(derivedCredentials[0]);
-      } else {
-        credentials.push(credentialSelection.credential);
-      }
-    }
-
     const didKeyPairList = await didProvider.getDIDKeyPairs();
     const keyDoc = didKeyPairList.find(doc => doc.controller === selectedDID);
 
     assert(keyDoc, `No key pair found for the selected DID ${selectedDID}`);
 
+    const credentials = [];
+    const attributesToReveal = [];
+    const witnesses = [];
+
+    for (const credentialSelection of selectedCredentials.values()) {
+      credentials.push(credentialSelection.credential);
+      attributesToReveal.push([
+        ...(credentialSelection.attributesToReveal || []),
+        'id',
+      ]);
+      witnesses.push(
+        await credentialProvider.getMembershipWitness(
+          credentialSelection.credential.id,
+        ),
+      );
+    }
+
     const presentation = await credentialServiceRPC.createPresentation({
       credentials,
+      attributesToReveal,
+      witnesses,
       challenge: templateJSON.nonce,
       keyDoc,
       id: keyDoc.controller.startsWith('did:key:')
         ? keyDoc.id
         : `${keyDoc.controller}#keys-1`,
       domain: 'dock.io',
+      pexForBounds: templateJSON,
     });
 
     return presentation;
