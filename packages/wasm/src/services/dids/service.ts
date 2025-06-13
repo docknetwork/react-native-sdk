@@ -6,7 +6,6 @@ import {
   KeypairToDIDKeyDocumentParams,
   GetDIDResolutionParams,
 } from './config';
-import {keyringService} from '../keyring/service';
 import {utilCryptoService} from '../util-crypto/service';
 import assert from 'assert';
 import {blockchainService, getDock} from '../blockchain/service';
@@ -20,13 +19,13 @@ import {
 import {Ed25519Keypair} from '@docknetwork/credential-sdk/keypairs';
 
 import {Logger} from '../../core/logger';
-import {polkadotToKeydoc} from '../../core/polkadot-utils';
 import base64url from 'base64url';
 import {keyDocToKeypair} from '../credential/utils';
 import {
   Ed25519Signature2020,
   EcdsaSecp256k1Signature2019,
 } from '@docknetwork/credential-sdk/vc/crypto';
+import { keypairToKeydoc } from './keypair-utils';
 
 async function getSignerKeypair(privateKeyDoc) {
   const privateKey =
@@ -84,34 +83,16 @@ class DIDService {
 
   async generateKeyDoc(params) {
     validation.generateKeyDoc(params);
-    const {derivePath = '', type = 'ed25519', keyPairJSON} = params;
-    let keyring;
-
-    if (keyPairJSON) {
-      keyring = keyringService.keyring.addFromJson(keyPairJSON);
-      keyring.unlock('');
-    } else {
-      const mnemonic = await utilCryptoService.mnemonicGenerate(12);
-      keyring = keyringService.getKeyringPair({
-        mnemonic,
-        derivePath,
-        type,
-      });
-    }
-
-    return polkadotToKeydoc(keyring, params.controller);
+    const {derivePath = '', type = 'ed25519'} = params;
+    const keyPair = Ed25519Keypair.random()
+    return keypairToKeydoc(keyPair, params.controller);
   }
 
   async deriveKeyDoc(params) {
     validation.deriveKeyDoc(params);
     const { pair, type = 'ed25519' } = params;
-
-    const keyring = keyringService.createFromPair({
-      pair,
-      type,
-    });
-
-    return polkadotToKeydoc(keyring, params.controller);
+    const keyPair = new Ed25519Keypair(pair.secretKey, 'private')
+    return keypairToKeydoc(keyPair, params.controller);
   }
 
   async createSignedJWT({payload, privateKeyDoc, headerInput}) {

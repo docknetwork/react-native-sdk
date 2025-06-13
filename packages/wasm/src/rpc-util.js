@@ -3,6 +3,12 @@ import {decryptData, SECURE_JSON_RPC} from './core/crypto';
 import {Logger} from './core/logger';
 
 export function createMethodResolver({service, methodFn, methodName}) {
+  if (methodFn === undefined) {
+    throw new Error(
+      `Resolver is undefined for ${methodName} in ${service.name}`,
+    );
+  }
+
   const methodPath = `${service.name}.${methodName}`;
 
   return {
@@ -58,6 +64,14 @@ export function createRpcService(service) {
   }
 
   return methods.map(methodFn => {
+    if (methodFn === undefined) {
+      throw new Error(
+        `Method is undefined in ${
+          service.name
+        }, available methods: ${Object.keys(service.rpcMethods).join(', ')}`,
+      );
+    }
+
     return createMethodResolver({
       methodFn,
       methodName: methodFn.name,

@@ -1,6 +1,6 @@
 import {createWallet, IWallet} from '@docknetwork/wallet-sdk-core/src/wallet';
 import {Network} from '@docknetwork/wallet-sdk-data-store/src/types';
-import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
+import {WalletEvents} from '@docknetwork/wallet-sdk-core/src/wallet';
 import {closeWallet} from './helpers/wallet-helpers';
 import {createDataStore} from '@docknetwork/wallet-sdk-data-store-typeorm/src';
 

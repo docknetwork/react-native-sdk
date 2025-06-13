@@ -13,11 +13,6 @@ fs.copySync(
   path.join(destDir, '@docknetwork/sdk'),
   {dereference: true},
 );
-fs.copySync(
-  path.join(sourceDir, '@polkadot'),
-  path.join(destDir, '@polkadot'),
-  {dereference: true},
-);
 fs.copySync(path.join(sourceDir, '@noble'), path.join(destDir, '@noble'), {
   dereference: true,
 });

@@ -2,7 +2,7 @@ import {setStorage} from '@docknetwork/wallet-sdk-wasm/src/core/storage';
 import {
   WalletEvents,
   WalletStatus,
-} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
+} from '@docknetwork/wallet-sdk-core/src/wallet';
 import React, {
   useCallback,
   useContext,
@@ -15,7 +15,6 @@ import {Platform, View} from 'react-native';
 import WebView from 'react-native-webview';
 import {WebviewEventHandler} from './message-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {AccountDetails} from '@docknetwork/wallet-sdk-wasm/src/modules/account';
 import {
   DocumentType,
   WalletDocument,

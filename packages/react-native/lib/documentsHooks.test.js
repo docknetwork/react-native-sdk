@@ -1,5 +1,4 @@
 import { useDocument, useDocuments } from './documentsHooks';
-import { WalletEvents } from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
 import { getWallet } from './wallet';
 import { act, renderHook } from '@testing-library/react-hooks';
 

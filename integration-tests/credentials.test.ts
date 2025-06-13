@@ -1,8 +1,4 @@
 import {
-  getCredentialById,
-  importCredentialJSON,
-} from './helpers/credential-helpers';
-import {
   BasicCredential,
   PolygonIDCredential,
   UniversityDegreeCredential,
@@ -33,8 +29,10 @@ describe('Credentials', () => {
 
   it('expect to import credentials', async () => {
     for (const credentialJSON of allCredentials) {
-      await importCredentialJSON(credentialJSON);
-      const credential = await getCredentialById(credentialJSON.id);
+      await getCredentialProvider().addCredential(credentialJSON);
+      const credential = await getCredentialProvider().getById(
+        credentialJSON.id,
+      );
       expect(credential).toBeDefined();
     }
   });

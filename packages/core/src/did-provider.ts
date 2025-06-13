@@ -136,8 +136,8 @@ export async function createDIDKey({wallet, name, derivePath=undefined, type=und
     name,
   });
 
-  await wallet.add(keyDoc);
-  await wallet.add(didDocumentResolution);
+  await wallet.addDocument(keyDoc);
+  await wallet.addDocument(didDocumentResolution);
 
   return {
     keyDoc,

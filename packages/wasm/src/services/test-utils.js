@@ -1,18 +1,6 @@
-import {cryptoWaitReady} from '@polkadot/util-crypto';
 import assert from 'assert';
-import {TestFixtures} from '../fixtures';
 import {NetworkManager} from '../modules/network-manager';
-import {keyringService} from './keyring';
 import {RpcService} from './rpc-service-client';
-import {walletService} from './wallet';
-
-export async function initializeWalletService() {
-  await cryptoWaitReady();
-  await keyringService.initialize({
-    ss58Format: 21,
-  });
-  await walletService.create('test-wallet', 'memory');
-}
 
 export const TEST_FEE_AMOUNT = 2.48;
 export const API_MOCK_DISABLED = process.env.API_MOCK_DISABLED === 'true';
@@ -38,23 +26,6 @@ export async function setupTestWallet() {
   }
 
   NetworkManager.getInstance().setNetworkId('testnet');
-
-  await cryptoWaitReady();
-  await keyringService.initialize({
-    ss58Format: NetworkManager.getInstance().getNetworkInfo().addressPrefix,
-  });
-  await walletService.create({
-    walletId: 'test-wallet',
-    type: 'memory',
-  });
-  await walletService.createAccountDocuments({
-    mnemonic: TestFixtures.account1.mnemonic,
-    name: TestFixtures.account1.name,
-  });
-  await walletService.createAccountDocuments({
-    mnemonic: TestFixtures.account2.mnemonic,
-    name: TestFixtures.account2.name,
-  });
 
   walletCreated = true;
 }

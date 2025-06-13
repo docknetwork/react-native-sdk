@@ -10,7 +10,7 @@ import {
   IWallet,
 } from '@docknetwork/wallet-sdk-core/lib/types';
 import {createWallet} from '@docknetwork/wallet-sdk-core/lib/wallet';
-import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
+import {WalletEvents} from '@docknetwork/wallet-sdk-core/src/wallet';
 import {setV1LocalStorage} from '@docknetwork/wallet-sdk-data-store-typeorm/src/migration/migration1/v1-data-store';
 import {
   IMessageProvider,

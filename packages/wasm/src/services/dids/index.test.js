@@ -3,14 +3,10 @@ import {DIDServiceRPC} from './service-rpc';
 import {didService as service} from './service';
 import {validation} from './config';
 import {DIDKeyManager} from '@docknetwork/wallet-sdk-dids/src';
-import {getTestWallet} from '../../test/setup-test-state';
 import {blockchainService} from '../blockchain/service';
+import {Ed25519Keypair} from '@docknetwork/credential-sdk/keypairs';
 
 describe('DID Service', () => {
-  beforeAll(async () => {
-    await getTestWallet();
-  });
-
   it('ServiceRpc', () => {
     assertRpcService(DIDServiceRPC, service, validation);
   });
@@ -121,25 +117,18 @@ describe('DID Service', () => {
     expect(keyDoc.privateKeyMultibase).toBeDefined();
   });
 
-  it('expect to generateKeyDoc with keyPair', async () => {
+  it('expect to deriveKeyDoc', async () => {
     const controller =
       'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQ';
-    const keyPairJSON = {
-      encoded:
-        'MFMCAQEwBQYDK2VwBCIEIJDIpsaUjZCkVkPmBPqKD0dgu59F8ks4yepJKNFQkz+A/fYvnshD7g1RpaSXuGcLytu6fN/P/PGt2ahhH2Bkh0GhIwMhAP32L57IQ+4NUaWkl7hnC8rbunzfz/zxrdmoYR9gZIdB',
-      encoding: {content: ['pkcs8', 'ed25519'], type: ['none'], version: '3'},
-      address: '3CGqgBTzZEPyhVTjpWdX5z2uDQ6hxEUALcZ6HthscNnVrKy7',
-      meta: {},
-    };
 
-    const keyDoc = await service.generateKeyDoc({
+    const {keyPair} = Ed25519Keypair.random();
+
+    const derivedKeyDoc = await service.deriveKeyDoc({
       controller,
-      keyPairJSON,
+      pair: keyPair,
     });
 
-    expect(keyDoc.controller).toEqual(controller);
-    expect(keyDoc.privateKeyMultibase).toEqual(
-      'z3ttk77Si8AUHHGAGLWue3qZacSgZDtRRCbd75Bmujx2qstznWv4ZRWtCjEKcJAUUufQpSsurEAJ47mYYKPwQnA2C',
-    );
+    expect(derivedKeyDoc.controller).toEqual(controller);
+    expect(derivedKeyDoc.privateKeyMultibase).toBeDefined();
   });
 });

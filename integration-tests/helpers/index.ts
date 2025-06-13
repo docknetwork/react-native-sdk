@@ -5,5 +5,4 @@ export function cleanup() {
   global.localStorage.removeItem('wallet');
 }
 
-export * from './account-helpers';
 export * from './wallet-helpers';

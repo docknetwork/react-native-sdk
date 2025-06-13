@@ -374,16 +374,16 @@ describe('Bound check', () => {
   });
 
   describe('isBase64OrDataUrl', () => {
-    it('expect to return true for base64 string', () => {
-      expect(isBase64OrDataUrl('base64string')).toBe(true);
+    it('expect to return true for base64 string', async () => {
+      expect(await isBase64OrDataUrl('SGVsbG8gV29ybGQ=')).toBe(true);
     });
 
-    it('expect to return true for data URL', () => {
-      expect(isBase64OrDataUrl('data:application/octet-stream;base64,base64string')).toBe(true);
+    it('expect to return true for data URL', async () => {
+      expect(await isBase64OrDataUrl('data:application/octet-stream;base64,base64string')).toBe(true);
     });
 
-    it('expect to return false for other strings', () => {
-      expect(isBase64OrDataUrl('http://certs.dock.io/some-key')).toBe(false);
+    it('expect to return false for other strings', async () => {
+      expect(await isBase64OrDataUrl('http://workspace.truvera.io/some-key')).toBe(false);
     });
   });
 });

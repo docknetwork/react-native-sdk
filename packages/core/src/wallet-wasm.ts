@@ -1,9 +1,8 @@
 import { blockchainService } from '@docknetwork/wallet-sdk-wasm/src/services/blockchain';
-import { keyringService } from '@docknetwork/wallet-sdk-wasm/src/services/keyring';
 import { utilCryptoService } from '@docknetwork/wallet-sdk-wasm/src/services/util-crypto';
 
 import { Network } from '@docknetwork/wallet-sdk-data-store/src/types';
-import { WalletEvents } from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
+import { WalletEvents } from '@docknetwork/wallet-sdk-core/src/wallet';
 import { captureException } from './helpers';
 import { IWallet } from './types';
 
@@ -49,10 +48,6 @@ export async function setBlockchainNetwork(wallet: IWallet) {
 
     await wallet.addDocument(cheqdMnemonicDoc);
   }
-
-  await keyringService.initialize({
-    ss58Format: networkConfigs.addressPrefix,
-  });
 
   let connectionInProgress = false;
 
@@ -102,7 +97,6 @@ export async function setBlockchainNetwork(wallet: IWallet) {
 }
 
 export async function initWalletWasm(wallet: IWallet) {
-  await utilCryptoService.cryptoWaitReady();
   const network = wallet.dataStore.network;
 
   if (isBlockchainNetwork(network)) {
