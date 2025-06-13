@@ -4,8 +4,9 @@ const webpack = require('webpack');
 
 module.exports = {
   target: ['web', 'es2022'],
+  devtool: false,
   resolve: {
-    extensions: ['.js', '.jsx', '.wasm'],
+    extensions: ['.js', '.jsx', '.ts', '.tsx', '.wasm'],
     alias: {
       realm: path.resolve(__dirname, 'shims/realm.js'),
       'react-native-sqlite-storage': path.resolve(
