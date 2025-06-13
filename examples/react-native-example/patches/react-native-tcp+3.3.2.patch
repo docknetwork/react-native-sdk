@@ -1,0 +1,81 @@
+diff --git a/node_modules/react-native-tcp/android/build.gradle b/node_modules/react-native-tcp/android/build.gradle
+index c582eb7..5785289 100644
+--- a/node_modules/react-native-tcp/android/build.gradle
++++ b/node_modules/react-native-tcp/android/build.gradle
+@@ -44,6 +44,6 @@ repositories {
+ }
+ 
+ dependencies {
+-    compile 'com.facebook.react:react-native:+'
+-    compile 'com.koushikdutta.async:androidasync:2.1.6'
++    implementation 'com.facebook.react:react-native:+'
++    implementation 'com.koushikdutta.async:androidasync:2.1.6'
+ }
+diff --git a/node_modules/react-native-tcp/package.json b/node_modules/react-native-tcp/package.json
+index 1080ace..de9befc 100644
+--- a/node_modules/react-native-tcp/package.json
++++ b/node_modules/react-native-tcp/package.json
+@@ -7,7 +7,30 @@
+     "start": "exit 1"
+   },
+   "browser": {
+-    "net": "./TcpSockets.js"
++    "net": "react-native-tcp",
++    "zlib": "browserify-zlib",
++    "console": "console-browserify",
++    "constants": "constants-browserify",
++    "crypto": "react-native-crypto",
++    "dns": "dns.js",
++    "domain": "domain-browser",
++    "http": "@tradle/react-native-http",
++    "https": "https-browserify",
++    "os": "react-native-os",
++    "path": "path-browserify",
++    "querystring": "querystring-es3",
++    "fs": "react-native-level-fs",
++    "_stream_transform": "readable-stream/transform",
++    "_stream_readable": "readable-stream/readable",
++    "_stream_writable": "readable-stream/writable",
++    "_stream_duplex": "readable-stream/duplex",
++    "_stream_passthrough": "readable-stream/passthrough",
++    "dgram": "react-native-udp",
++    "stream": "stream-browserify",
++    "timers": "timers-browserify",
++    "tty": "tty-browserify",
++    "vm": "vm-browserify",
++    "tls": false
+   },
+   "repository": {
+     "type": "git",
+@@ -46,5 +69,31 @@
+   "devDependencies": {
+     "babel-eslint": "^4.1.6",
+     "eslint-plugin-react": "^3.11.3"
++  },
++  "react-native": {
++    "net": "react-native-tcp",
++    "zlib": "browserify-zlib",
++    "console": "console-browserify",
++    "constants": "constants-browserify",
++    "crypto": "react-native-crypto",
++    "dns": "dns.js",
++    "domain": "domain-browser",
++    "http": "@tradle/react-native-http",
++    "https": "https-browserify",
++    "os": "react-native-os",
++    "path": "path-browserify",
++    "querystring": "querystring-es3",
++    "fs": "react-native-level-fs",
++    "_stream_transform": "readable-stream/transform",
++    "_stream_readable": "readable-stream/readable",
++    "_stream_writable": "readable-stream/writable",
++    "_stream_duplex": "readable-stream/duplex",
++    "_stream_passthrough": "readable-stream/passthrough",
++    "dgram": "react-native-udp",
++    "stream": "stream-browserify",
++    "timers": "timers-browserify",
++    "tty": "tty-browserify",
++    "vm": "vm-browserify",
++    "tls": false
+   }
+ }
