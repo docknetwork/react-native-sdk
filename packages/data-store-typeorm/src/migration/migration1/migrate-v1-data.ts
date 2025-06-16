@@ -14,13 +14,6 @@ function migrateNotificaions() {}
 
 function migrateDevSettings() {}
 
-function migrateTransactions() {
-  // Will skip this migration for performance improvements
-  // That would require Realm db as dependency
-  // We can drop the realm.db dependency from the wallet-sdk
-  // Transactions will be pulled from subscan into in the new data-store automatically
-}
-
 export async function migrateV1Data({dataStore}) {
   const v1Storage = getV1LocalStorage();
 
@@ -30,7 +23,6 @@ export async function migrateV1Data({dataStore}) {
   });
   await migrateNotificaions();
   await migrateDevSettings();
-  await migrateTransactions();
 
   // remove localStorage entries
   const walletJSON = await v1Storage.getItem('wallet');

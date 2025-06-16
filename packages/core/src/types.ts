@@ -1,15 +1,11 @@
 import {
   DataStore,
-  DataStoreConfigs,
   DocumentResolverResult,
   WalletDocument,
 } from '@docknetwork/wallet-sdk-data-store/src/types';
-import {Accounts} from '@docknetwork/wallet-sdk-wasm/src/modules/accounts';
 import {EventEmitter} from 'events';
 
 export interface IV1Wallet {
-  accounts: Accounts;
-
   getStatus: () => string;
   setStatus: (status: string) => void;
   eventManager: EventEmitter;

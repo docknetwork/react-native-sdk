@@ -3,13 +3,11 @@ import {credentialService as service} from './service';
 import {validation} from './config';
 import * as credentialUtils from '@docknetwork/credential-sdk/vc';
 import {CredentialServiceRPC} from './service-rpc';
-import {getTestWallet} from '../../test/setup-test-state';
 import {OpenID4VCIClientV1_0_13} from '@sphereon/oid4vci-client';
 import {didService} from '../dids/service';
 
 describe('Credential Service', () => {
   beforeAll(async () => {
-    await getTestWallet();
     const mockAddCredentialToPresent = jest.fn(() => 0);
     const mockAddAttributeToReveal = jest.fn();
     const mockCreatePresentation = jest.fn();

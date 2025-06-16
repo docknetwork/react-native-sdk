@@ -1,8 +1,6 @@
 import {CreateWalletProps, IWallet} from './types';
-import {toV1Wallet} from './v1-helpers';
 import {initWalletWasm} from './wallet-wasm';
 import {EventEmitter} from 'events';
-import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
 import {walletService} from '@docknetwork/wallet-sdk-wasm/src/services/wallet';
 import {importUniversalWalletDocuments} from '@docknetwork/wallet-sdk-data-store/src/helpers';
 import {ensureDID} from './did-provider';
@@ -22,6 +20,26 @@ export function ensureDocumentContext(document) {
     '@context': ['https://w3id.org/wallet/v1'],
   };
 }
+
+
+export type WalletStatus = 'closed' | 'loading' | 'ready' | 'error';
+
+export type KeypairType = 'sr25519' | 'ed25519' | 'ecdsa';
+
+export const WalletEvents = {
+  ready: 'ready',
+  error: 'error',
+  migrated: 'migrated',
+  statusUpdated: 'status-updated',
+  documentAdded: 'document-added',
+  documentUpdated: 'document-updated',
+  documentRemoved: 'document-removed',
+  walletDeleted: 'wallet-deleted',
+  walletImported: 'wallet-imported',
+  networkUpdated: 'network-updated',
+  networkConnected: 'network-connected',
+  networkError: 'network-error',
+};
 
 /**
  * Create wallet
@@ -138,21 +156,19 @@ export async function createWallet({
     },
   } as IWallet;
 
-  const v1Wallet = await toV1Wallet(wallet);
-
-  await initWalletWasm(v1Wallet);
+  await initWalletWasm(wallet);
 
   await ensureDID({
-    wallet: v1Wallet,
+    wallet,
   });
 
   [WalletEvents.networkUpdated, WalletEvents.walletDeleted].forEach(event =>
     eventEmitter.on(event, () => {
       ensureDID({
-        wallet: v1Wallet,
+        wallet,
       });
     }),
   );
 
-  return v1Wallet;
+  return wallet;
 }

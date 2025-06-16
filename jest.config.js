@@ -4,6 +4,10 @@ module.exports = {
   testTimeout: 30000,
   maxConcurrency: 2,
   testMatch: ["<rootDir>/packages/**/!(*.e2e).test.[j]s"],
+  testPathIgnorePatterns: [
+    "/node_modules/",
+    "/.rollup.cache/"
+  ],
   coverageThreshold: {
     global: {
       branches: 10,
@@ -44,6 +48,6 @@ module.exports = {
       '@docknetwork/wallet-sdk-data-store/src',
   },
   transformIgnorePatterns: [
-    '/node_modules/(?!@polkadot|@babel|@docknetwork|@digitalbazaar|base58-universal|p-limit|yocto-queue)',
+    '/node_modules/(?!@babel|@docknetwork|@digitalbazaar|base58-universal|p-limit|yocto-queue)',
   ],
 };

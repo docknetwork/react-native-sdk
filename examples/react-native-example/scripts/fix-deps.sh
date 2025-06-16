@@ -9,5 +9,4 @@ rm -rf ./node_modules/@docknetwork/wallet-sdk-core/node_modules/react-native*
 rm -rf node_modules/@docknetwork/wallet-sdk-wasm/node_modules/realm
 rm -rf ./node_modules/@docknetwork/wallet-sdk-wasm/node_modules/react-native*
 rm -rf ./node_modules/react-native-tcp
-rm -rf ./node_modules/@polkadot/*/node_modules/@polkadot
 rm -rf ./node_modules/react-native-qrcode-scanner/node_modules/react-native-permissions
