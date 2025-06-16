@@ -100,6 +100,7 @@ export class BlockchainService {
     }
 
     if (this.cheqdApi && this.cheqdApi.isInitialized()) {
+      Logger.info('Disconnecting from cheqd');
       await this.cheqdApi.disconnect();
     }
 
