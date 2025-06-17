@@ -1338,30 +1338,8 @@ PODS:
     - React-Core
   - react-native-udp (2.7.0):
     - React
-  - react-native-webview (13.13.5):
-    - DoubleConversion
-    - glog
-    - hermes-engine
-    - RCT-Folly (= 2024.11.18.00)
-    - RCTRequired
-    - RCTTypeSafety
+  - react-native-webview (11.26.1):
     - React-Core
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-hermes
-    - React-ImageManager
-    - React-jsi
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - Yoga
   - React-NativeModulesApple (0.79.3):
     - glog
     - hermes-engine
@@ -1999,7 +1977,7 @@ SPEC CHECKSUMS:
   react-native-randombytes: 3c8f3e89d12487fd03a2f966c288d495415fc116
   react-native-sqlite-storage: 0c84826214baaa498796c7e46a5ccc9a82e114ed
   react-native-udp: 317678b857ce48dbf5b30cfb2fbd3ca4c3300096
-  react-native-webview: 520bcb79c3f2af91e157cdd695732a34ab5f25c8
+  react-native-webview: ec195db71ebf55705d7b46a7da5f1b1746bb7efd
   React-NativeModulesApple: 65b2735133d6ce8a3cb5f23215ef85e427b0139c
   React-oscompat: f26aa2a4adc84c34212ab12c07988fe19e9cf16a
   React-perflogger: e15a0d43d1928e1c82f4f0b7fc05f7e9bccfede8
@@ -2035,8 +2013,8 @@ SPEC CHECKSUMS:
   RNOS: d07e5090b5060c6f2b83116d740a32cfdb33afe3
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   TcpSockets: d7fa8433e76a140bb34349c813eaa860e7f087af
-  Yoga: 645152fcc8359c80cdeb9be7a9e0d2e6c01304a4
+  Yoga: 29f74a5b77dca8c37669e1e1e867e5f4e12407df
 
 PODFILE CHECKSUM: 9649878ab7cbfcd96c2c5fee8b23a2ab0e2cf59c
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.1

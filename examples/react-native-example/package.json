@@ -8,7 +8,7 @@
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest",
-    "postinstall": "patch-package && jetifier && rn-nodeify --hack"
+    "postinstall": "patch-package && jetifier && rn-nodeify --hack && sh fixdeps.sh"
   },
   "dependencies": {
     "@docknetwork/wallet-sdk-core": "^1.5.9",
@@ -39,7 +39,7 @@
     "react-native-sqlite-storage": "^6.0.1",
     "react-native-tcp": "^3.3.2",
     "react-native-udp": "^2.7.0",
-    "react-native-webview": "13.13.5",
+    "react-native-webview": "^11.4.3",
     "readable-stream": "^1.0.33",
     "reflect-metadata": "^0.2.2",
     "rn-nodeify": "^10.3.0",
@@ -53,9 +53,6 @@
     "util": "^0.10.4",
     "vm-browserify": "^0.0.4",
     "winston": "^3.17.0"
-  },
-  "resolutions": {
-    "react-native-webview": "13.13.5"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
