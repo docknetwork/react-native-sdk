@@ -231,7 +231,7 @@ async function syncCredentialStatus({
 
   let statusDocs = [];
 
-  let isApiConnected;
+  await wallet.ensureNetwork();
 
   for (const credential of credentials) {
     let shouldFetch = !!forceFetch;
@@ -274,11 +274,6 @@ async function syncCredentialStatus({
       statusDoc.status = CredentialStatus.Pending;
       statusDoc.updatedAt = new Date().toISOString();
       await wallet.updateDocument(statusDoc);
-    }
-
-    if (!isApiConnected) {
-      await blockchainService.ensureBlockchainReady();
-      isApiConnected = true;
     }
 
     const result = await isValid({credential, wallet});

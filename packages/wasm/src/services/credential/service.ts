@@ -135,7 +135,6 @@ class CredentialService {
     const {credential, membershipWitness} = params;
     const result = await verifyCredential(credential, {
       resolver: blockchainService.resolver,
-      revocationApi: {dock: blockchainService.dock},
     });
 
     const {credentialStatus} = credential;

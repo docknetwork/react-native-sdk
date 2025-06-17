@@ -75,7 +75,7 @@ export class BlockchainService {
    * @returns
    */
   async ensureBlockchainReady() {
-    if (this.isBlockchainReady) {
+    if (await this.isApiConnected()) {
       return;
     }
 

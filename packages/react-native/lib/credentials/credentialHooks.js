@@ -1,7 +1,7 @@
 import {useMemo, useCallback, useState, useEffect} from 'react';
 import {useDocument, useDocuments} from '../index';
 import assert from 'assert';
-import { getCredentialProvider, getWallet } from '../wallet';
+import {getCredentialProvider, getWallet} from '../wallet';
 
 export const sortByIssuanceDate = (a, b) =>
   getCredentialTimestamp(b) - getCredentialTimestamp(a);
@@ -38,25 +38,20 @@ export function useCredentialUtils() {
   });
 
   const credentials = useMemo(() => {
-    return documents
-      .filter(doc => !!doc.id)
-      .sort(sortByIssuanceDate);
+    return documents.filter(doc => !!doc.id).sort(sortByIssuanceDate);
   }, [documents]);
 
   const doesCredentialExist = useCallback((allCredentials, credentialToAdd) => {
     return !!allCredentials.find(item => item.id === credentialToAdd.id);
   }, []);
 
-  const deleteCredential = useCallback(
-    async credentialId => {
-      assert(
-        typeof credentialId === 'string' && credentialId.length > 0,
-        'Credential ID is not set',
-      );
-      return await getWallet().remove(credentialId);
-    },
-    [],
-  );
+  const deleteCredential = useCallback(async credentialId => {
+    assert(
+      typeof credentialId === 'string' && credentialId.length > 0,
+      'Credential ID is not set',
+    );
+    return await getWallet().remove(credentialId);
+  }, []);
 
   return useMemo(() => {
     return {
@@ -68,19 +63,25 @@ export function useCredentialUtils() {
   }, [credentials, doesCredentialExist, deleteCredential, loading]);
 }
 
-export function useCredentialStatus({ credential, onError }: any) {
+export function useCredentialStatus({credentialId, onError}: any) {
   const [status, setStatus] = useState();
-  const statusDoc = useDocument(`${credential.id}#status`);
+  const statusDoc = useDocument(`${credentialId}#status`);
 
   useEffect(() => {
-    getCredentialProvider()
-      .getCredentialStatus(credential)
-      .then(setStatus)
-      .catch(onError);
-  }, [credential, statusDoc, onError]);
+    const fetchStatus = async () => {
+      const provider = getCredentialProvider();
+      const credential = await provider.getById(credentialId);
+
+      getCredentialProvider()
+        .getCredentialStatus(credential)
+        .then(setStatus)
+        .catch(onError);
+    };
+
+    fetchStatus();
+  }, [credentialId, statusDoc, onError]);
 
   return useMemo(() => {
     return status;
   }, [status]);
 }
-
