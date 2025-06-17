@@ -1,5 +1,5 @@
 // @ts-nocheck
-import {hexToU8a} from '@docknetwork/credential-sdk/utils';
+import {hexToU8a, u8aToString} from '@docknetwork/credential-sdk/utils';
 import * as bip39 from '@scure/bip39';
 import {wordlist} from '@scure/bip39/wordlists/english';
 import assert from 'assert';
@@ -18,6 +18,7 @@ export class UtilCryptoService {
     UtilCryptoService.prototype.mnemonicGenerate,
     UtilCryptoService.prototype.mnemonicToMiniSecret,
     UtilCryptoService.prototype.isBase64,
+    UtilCryptoService.prototype.hexToString,
   ];
 
   constructor() {
@@ -87,6 +88,17 @@ export class UtilCryptoService {
     } catch (e) {
       return false;
     }
+  }
+
+  hexToString(hex: string): string {
+    try {
+      const bytes = hexToU8a(hex);
+      return u8aToString(bytes);
+    } catch (e) {
+      console.log('error: ', e);
+    }
+
+    return '';
   }
 }
 
