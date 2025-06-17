@@ -21,7 +21,6 @@ import {
 } from '@docknetwork/wallet-sdk-wasm/src/types';
 import './rn-rpc-server';
 import {useDIDManagement} from './didHooks';
-import {useAccounts} from './accountsHooks';
 import {
   useCredentialUtils,
   useCredentialStatus,
@@ -53,7 +52,6 @@ export const WalletSDKContext = React.createContext<WalletSDKContextProps>({
 
 setStorage(AsyncStorage);
 
-export {useAccounts};
 export {useDIDManagement};
 export {useCredentialUtils, useCredentialStatus};
 export {useDocument, useDocuments} from './documentsHooks';
@@ -72,39 +70,6 @@ export const findRelatedDocs = (document, documentList) =>
     ? documentList.filter(doc => document.correlation.find(id => id === doc.id))
     : [];
 
-export function getAccount(address, documents): AccountDetails | null {
-  const addressDoc = findDocument(address, documents);
-
-  if (!addressDoc) {
-    return null;
-  }
-
-  const correlation = findRelatedDocs(addressDoc, documents);
-  const currencyDoc = correlation.find(filterDocsByType('Currency'));
-  const mnemonic = correlation.find(filterDocsByType('Mnemonic'));
-
-  return {
-    ...addressDoc,
-    address,
-    name: addressDoc.name,
-    balance: currencyDoc && currencyDoc.value,
-    mnemonic: mnemonic && mnemonic.value,
-  };
-}
-
-export function useAccount(address) {
-  const {documents, wallet} = useWallet();
-  const account = getAccount(address, documents);
-  const onDelete = () => wallet.remove(address);
-
-  return {
-    account,
-    fetchBalance: () => {
-      wallet?.accounts.fetchBalance(address);
-    },
-    onDelete,
-  };
-}
 export function useWallet() {
   return useContext(WalletSDKContext);
 }
@@ -143,20 +108,10 @@ export function _useWalletController() {
   }, [documents, wallet, firstFetch]);
 
   const refetch = useCallback(
-    async ({fetchBalances} = {fetchBalances: true}) => {
+    async () => {
       if (!wallet) return;
       try {
-        const allDocs = await wallet.query({});
-        if (fetchBalances) {
-          await Promise.all(
-            allDocs
-              .filter(doc => doc.type === 'Address')
-              .map((doc: any) => {
-                return wallet.accounts.fetchBalance(doc.address);
-              }),
-          );
-        }
-
+        const allDocs = await wallet.getAllDocuments();
         setDocuments(allDocs);
       } catch (err) {
         console.error(err);

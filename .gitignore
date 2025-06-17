@@ -9,8 +9,8 @@ node_modules
 /coverage
 /out
 # production
-/build
-.bundle
+# /build
+# .bundle
 
 /dock
 /dock.management
@@ -28,7 +28,7 @@ yarn-debug.log*
 yarn-error.log*
 .idea
 poc
-bundle.js
+# bundle.js
 
 *.management
 *.js.LICENSE.txt
