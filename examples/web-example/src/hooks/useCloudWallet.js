@@ -1,11 +1,11 @@
-import {useState, useEffect} from 'react';
-import {createDataStore} from '@docknetwork/wallet-sdk-data-store-web/lib/index';
-import {initializeCloudWallet} from '@docknetwork/wallet-sdk-core/lib/cloud-wallet';
-import {createWallet} from '@docknetwork/wallet-sdk-core/lib/wallet';
-import {createCredentialProvider} from '@docknetwork/wallet-sdk-core/lib/credential-provider';
-import {createDIDProvider} from '@docknetwork/wallet-sdk-core/lib/did-provider';
-import {createMessageProvider} from '@docknetwork/wallet-sdk-core/lib/message-provider';
-import {utilCryptoService} from "@docknetwork/wallet-sdk-wasm/lib/services/util-crypto";
+import { useState, useEffect } from 'react';
+import { createDataStore } from '@docknetwork/wallet-sdk-data-store-web/lib/index';
+import { initializeCloudWallet } from '@docknetwork/wallet-sdk-core/lib/cloud-wallet';
+import { createWallet } from '@docknetwork/wallet-sdk-core/lib/wallet';
+import { createCredentialProvider } from '@docknetwork/wallet-sdk-core/lib/credential-provider';
+import { createDIDProvider } from '@docknetwork/wallet-sdk-core/lib/did-provider';
+import { createMessageProvider } from '@docknetwork/wallet-sdk-core/lib/message-provider';
+import { utilCryptoService } from "@docknetwork/wallet-sdk-wasm/lib/services/util-crypto";
 
 const EDV_URL = 'https://edv.dock.io';
 const EDV_AUTH_KEY = 'DOCKWALLET-TEST';
