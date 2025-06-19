@@ -39,9 +39,25 @@ function App() {
 
   useEffect(() => {
     try {
-      const keys = localStorage.getItem("keys");
-      if (keys) {
-        setWalletKeys(JSON.parse(keys));
+      const jsonKeys = localStorage.getItem("keys");
+      if (jsonKeys) {
+        let masterKeyArray;
+        const parsedKeys = JSON.parse(jsonKeys);
+        if (parsedKeys.masterKey && typeof parsedKeys.masterKey === 'object' && !Array.isArray(parsedKeys.masterKey)) {
+          masterKeyArray = Object.values(parsedKeys.masterKey);
+        } else if (Array.isArray(parsedKeys.masterKey)) {
+          masterKeyArray = parsedKeys.masterKey;
+        } else {
+          console.log('Master key', parsedKeys.masterKey);
+          throw new Error('Invalid master key format');
+        }
+
+        const _walletKeys = {
+          masterKey: new Uint8Array(masterKeyArray),
+          mnemonic: parsedKeys.mnemonic,
+        };
+
+        setWalletKeys(_walletKeys);
       }
     } catch (err) {
       console.error("Error fetching wallet keys:", err);
@@ -296,7 +312,10 @@ function App() {
           onClick={() => {
             const currentKeys = localStorage.getItem("keys");
             localStorage.clear();
-            localStorage.setItem("keys", currentKeys);
+            localStorage.setItem("keys", {
+              masterKey: Array.from(currentKeys.masterKey),
+              mnemonic: currentKeys.mnemonic,
+            });
             window.location.reload();
           }}
         >

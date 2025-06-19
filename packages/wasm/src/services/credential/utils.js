@@ -5,10 +5,10 @@ import {
   Bls12381BBDT16KeyPairDock2024,
 } from '@docknetwork/credential-sdk/vc/crypto';
 import {randomAsHex} from '@docknetwork/credential-sdk/utils';
-import x25519KeyAgreementKey2020 from '@digitalbazaar/x25519-key-agreement-key-2020';
-import x25519KeyAgreementKey2019 from '@digitalbazaar/x25519-key-agreement-key-2019';
-import ed25519VerificationKey2018 from '@digitalbazaar/ed25519-verification-key-2018';
-import ed25519VerificationKey2020 from '@digitalbazaar/ed25519-verification-key-2020';
+import {X25519KeyAgreementKey2020} from '@digitalbazaar/x25519-key-agreement-key-2020';
+import {X25519KeyAgreementKey2019} from '@digitalbazaar/x25519-key-agreement-key-2019';
+import {Ed25519VerificationKey2018} from '@digitalbazaar/ed25519-verification-key-2018';
+import {Ed25519VerificationKey2020} from '@digitalbazaar/ed25519-verification-key-2020';
 
 import {Ed25519Keypair} from '@docknetwork/credential-sdk/keypairs';
 
@@ -62,13 +62,13 @@ export async function keyDocToKeypair(keyDoc) {
 
 const keyConstructors = {
   Ed25519VerificationKey2018: keypairOptions =>
-    new ed25519VerificationKey2018.Ed25519VerificationKey2018(keypairOptions),
+    new Ed25519VerificationKey2018(keypairOptions),
   Ed25519VerificationKey2020: keypairOptions =>
-    new ed25519VerificationKey2020.Ed25519VerificationKey2020(keypairOptions),
+    new Ed25519VerificationKey2020(keypairOptions),
   X25519KeyAgreementKey2019: keypairOptions =>
-    new x25519KeyAgreementKey2019.X25519KeyAgreementKey2019(keypairOptions),
+    new X25519KeyAgreementKey2019(keypairOptions),
   X25519KeyAgreementKey2020: keypairOptions =>
-    new x25519KeyAgreementKey2020.X25519KeyAgreementKey2020(keypairOptions),
+    new X25519KeyAgreementKey2020(keypairOptions),
 };
 
 export function getKeypairFromDoc(keypairOptions) {

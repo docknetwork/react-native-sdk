@@ -5,7 +5,6 @@ import { createWallet } from '@docknetwork/wallet-sdk-core/lib/wallet';
 import { createCredentialProvider } from '@docknetwork/wallet-sdk-core/lib/credential-provider';
 import { createDIDProvider } from '@docknetwork/wallet-sdk-core/lib/did-provider';
 import { createMessageProvider } from '@docknetwork/wallet-sdk-core/lib/message-provider';
-import { utilCryptoService } from "@docknetwork/wallet-sdk-wasm/lib/services/util-crypto";
 
 const EDV_URL = 'https://edv.dock.io';
 const EDV_AUTH_KEY = 'DOCKWALLET-TEST';
@@ -26,8 +25,6 @@ function useCloudWallet(walletKeys) {
     }
 
     setLoading(true);
-
-    await utilCryptoService.cryptoWaitReady();
 
     try {
       const _wallet = await createWallet({dataStore: _dataStore || dataStore});

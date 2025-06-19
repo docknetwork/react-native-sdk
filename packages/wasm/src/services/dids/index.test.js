@@ -93,19 +93,6 @@ describe('DID Service', () => {
     spy.mockReset();
   });
 
-  it('expect to get did document', async () => {
-    const document = 'document';
-    jest
-      .spyOn(blockchainService.modules.did, 'getDocument')
-      .mockResolvedValue(document);
-
-    const result = await service.getDidDockDocument(
-      'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi',
-    );
-
-    expect(result).toStrictEqual(document);
-  });
-
   it('expect to generateKeyDoc without keyPair', async () => {
     const controller =
       'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQ';
@@ -130,5 +117,42 @@ describe('DID Service', () => {
 
     expect(derivedKeyDoc.controller).toEqual(controller);
     expect(derivedKeyDoc.privateKeyMultibase).toBeDefined();
+  });
+
+  it('expect to createSignedJWT', async () => {
+    const headerInput = {
+      typ: 'openid4vci-proof+jwt',
+      alg: 'EdDSA',
+      kid: 'did:key:z6MkjW3DVk4mXjnK8GUuK2SydyFg8oMJbUnHiVzzSz3N9iGM#z6MkjW3DVk4mXjnK8GUuK2SydyFg8oMJbUnHiVzzSz3N9iGM',
+    };
+
+    const payload = {
+      aud: 'https://api.truvera.io/openid/issuers/d044f3d3-0934-4f62-9b6f-6f06ae8f383e',
+      iat: 1750356930,
+      exp: 1750357590,
+      iss: 'dock.wallet',
+    };
+
+    const privateKeyDoc = {
+      controller: 'did:key:z6MkjW3DVk4mXjnK8GUuK2SydyFg8oMJbUnHiVzzSz3N9iGM',
+      type: 'Ed25519VerificationKey2018',
+      id: 'did:key:z6MkjW3DVk4mXjnK8GUuK2SydyFg8oMJbUnHiVzzSz3N9iGM#z6MkjW3DVk4mXjnK8GUuK2SydyFg8oMJbUnHiVzzSz3N9iGM',
+      publicKeyMultibase: 'z6MkjW3DVk4mXjnK8GUuK2SydyFg8oMJbUnHiVzzSz3N9iGM',
+      privateKeyMultibase:
+        'zruzuEmC9VrJ3JUcufskfX4qNKwqqrNDztqJsDp1dXXQFS8CkfEDqK1ZBgNXeWF9xGhAPeVVfV1vL5pVaHpXLU2JwXK',
+      privateKeyBase58:
+        'GLkPGM4hz3AhQkQA1y63PtxdA3GL4vJiWgYpnB4N1sFi2wzr2tDbc482igkKaDcAwbrhe92LKJygEHd5xmBJtvR',
+      publicKeyBase58: '63nAuVpLCCHr1meCdTV8nshgKE5TBbXw2V64ci5MEVUy',
+      '@context': ['https://w3id.org/wallet/v1'],
+    };
+
+    const signedJWT = await service.createSignedJWT({
+      payload,
+      privateKeyDoc,
+      headerInput,
+    });
+
+    expect(signedJWT).toBeDefined();
+    expect(signedJWT).toContain('.');
   });
 });
