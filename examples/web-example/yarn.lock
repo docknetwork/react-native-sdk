@@ -5236,51 +5236,51 @@
   optionalDependencies:
     "@digitalbazaar/edv-client" "^11.3.2"
 
-"@docknetwork/wallet-sdk-core@^1.5.9":
-  version "1.5.10"
-  resolved "https://registry.yarnpkg.com/@docknetwork/wallet-sdk-core/-/wallet-sdk-core-1.5.10.tgz#8324b537ff6d5fee96f57c1b53403cd2d980f12c"
-  integrity sha512-wLc8QW7tQXs0JBEzQCKs+aFYrmpNaDTwvcuQvj2PbZp3ABLPiPbk4/aqjXMQBnhkOAnPKdBXSRUYVZsbB/g0tA==
+"@docknetwork/wallet-sdk-core@^1.5.11":
+  version "1.5.11"
+  resolved "https://registry.yarnpkg.com/@docknetwork/wallet-sdk-core/-/wallet-sdk-core-1.5.11.tgz#f37ce48f93b4873d7a50ba82ecccb5227eb8f913"
+  integrity sha512-MRbvw9ge3WXOHD90rfjFSICfrNii0yk/+S9/erOaQBmFwJlGos6qsx+1HDdointH9/5zJ2u6mSpLNrU1q3114A==
   dependencies:
-    "@docknetwork/wallet-sdk-wasm" "^1.5.10"
+    "@docknetwork/wallet-sdk-wasm" "^1.5.11"
     futoin-hkdf "^1.5.3"
 
-"@docknetwork/wallet-sdk-data-store-web@^1.5.10":
-  version "1.5.10"
-  resolved "https://registry.yarnpkg.com/@docknetwork/wallet-sdk-data-store-web/-/wallet-sdk-data-store-web-1.5.10.tgz#b10555fdbe52bae9a0e986e6a2982c4401ec7184"
-  integrity sha512-ABCn9ZEKd37qDzldm12pdIE3CXtUkf1w3I4DTLeZLC9YsweJwjtXs9PBCJFU7bIM5ZWCLM9++4nxfipgG56wCA==
+"@docknetwork/wallet-sdk-data-store-web@^1.5.11":
+  version "1.5.11"
+  resolved "https://registry.yarnpkg.com/@docknetwork/wallet-sdk-data-store-web/-/wallet-sdk-data-store-web-1.5.11.tgz#d46a6539572d93c3a0fd1648b1cc4fc21dfdc294"
+  integrity sha512-8a5w/vqyJLE89KTM177xOdCORJKWxxKWM5z2yEVMC/cq6TTy8OWAej/7viUk3Ep5Iobu6x37eErdgGhJJ8f7bA==
   dependencies:
-    "@docknetwork/wallet-sdk-wasm" "^1.5.10"
+    "@docknetwork/wallet-sdk-wasm" "^1.5.11"
     uuid "^8.3.2"
 
-"@docknetwork/wallet-sdk-data-store@^1.5.10":
-  version "1.5.10"
-  resolved "https://registry.yarnpkg.com/@docknetwork/wallet-sdk-data-store/-/wallet-sdk-data-store-1.5.10.tgz#57cfc7c3f88c7c4dad162c8c5b17c972ec317d57"
-  integrity sha512-oLFWc5o4GRzRQxQ/ipbMy3K7pIuGY2zad+u8rByhwdxygWs5uSiMJ3gss6KvImRXDVlP1sk+3HmF2eIRU6BOVA==
+"@docknetwork/wallet-sdk-data-store@^1.5.11":
+  version "1.5.11"
+  resolved "https://registry.yarnpkg.com/@docknetwork/wallet-sdk-data-store/-/wallet-sdk-data-store-1.5.11.tgz#34ebf9c2ecb5ec7afce48f96290b2912f18efb26"
+  integrity sha512-1Xu0mUzcvDjMGN393ApT4qnXJT92Lsx04AS5QEaYPY2UK1Tpzk6oiVb07HtaMXMSQwDG5kRF1x2XG5/UV0ZUIw==
   dependencies:
-    "@docknetwork/wallet-sdk-wasm" "^1.5.10"
+    "@docknetwork/wallet-sdk-wasm" "^1.5.11"
     uuid "^8.3.2"
 
-"@docknetwork/wallet-sdk-dids@^1.5.10":
-  version "1.5.10"
-  resolved "https://registry.yarnpkg.com/@docknetwork/wallet-sdk-dids/-/wallet-sdk-dids-1.5.10.tgz#a3a0377cec39112358574acb6ae7d759e5d47969"
-  integrity sha512-TT14+iKNBRswHy/ADtMymQdnjqMZj4i937I+/zSRu2ERf+WLWKI7zByBeKM+pI/45pxVk2346MiDh3pLzd1ngA==
+"@docknetwork/wallet-sdk-dids@^1.5.11":
+  version "1.5.11"
+  resolved "https://registry.yarnpkg.com/@docknetwork/wallet-sdk-dids/-/wallet-sdk-dids-1.5.11.tgz#389d100f84d1f44d2a4f309935ca7619cb6ac7e6"
+  integrity sha512-wfbSFNAIAJgN6ikWw+LUbkMERzIVbnIHMtyrwm8n5CX8jCj4euws9KEuOeP8UWl7cCTyTcLbGc+1pLE2iJFiaA==
   dependencies:
     "@digitalbazaar/did-method-key" "^2.0.0"
     uuid "^8.3.2"
 
-"@docknetwork/wallet-sdk-relay-service@^1.5.10":
-  version "1.5.10"
-  resolved "https://registry.yarnpkg.com/@docknetwork/wallet-sdk-relay-service/-/wallet-sdk-relay-service-1.5.10.tgz#74232b4ffd3c560fc3a571ab7e5a220954fa74e7"
-  integrity sha512-stuwZdssO0+5wcPtYBpHraHa2fNrPYiXsCAyMokFTPmEqMeB1x5rHjtbJzguu1Rr91JhKxxIWzpbOYuEJtJHsg==
+"@docknetwork/wallet-sdk-relay-service@^1.5.11":
+  version "1.5.11"
+  resolved "https://registry.yarnpkg.com/@docknetwork/wallet-sdk-relay-service/-/wallet-sdk-relay-service-1.5.11.tgz#16ab16613b7a1e215a4b66fb978dd67cda23fda6"
+  integrity sha512-srNczaikTtROlAECn/KRe5CxP0zUm6BoWohItMBTMtg2iK3q+jA++v307r6PURH1uNS2uZa0EcJCKFNWTGn+NQ==
   dependencies:
     "@docknetwork/minimal-cipher" "^5.2.1"
-    "@docknetwork/wallet-sdk-wasm" "^1.5.10"
+    "@docknetwork/wallet-sdk-wasm" "^1.5.11"
     uuid "^9.0.0"
 
-"@docknetwork/wallet-sdk-wasm@^1.5.10":
-  version "1.5.10"
-  resolved "https://registry.yarnpkg.com/@docknetwork/wallet-sdk-wasm/-/wallet-sdk-wasm-1.5.10.tgz#d1d170b0d4b44ac12fd1500f52fe256660b2b857"
-  integrity sha512-KYaAgI5s0WXPZ0SqqDnEDptGq5EHgeg2LtkD59yIEr+MQnm25nZ20r3a3G62E1Q7Hp0Glfy/ORsXAa7BWEQoPA==
+"@docknetwork/wallet-sdk-wasm@^1.5.11":
+  version "1.5.11"
+  resolved "https://registry.yarnpkg.com/@docknetwork/wallet-sdk-wasm/-/wallet-sdk-wasm-1.5.11.tgz#1bdbf3f50649f34b444358293e9424d8ec648f9d"
+  integrity sha512-4GSMlyuqCko1FDbZGV88r1sDgVPWOIxq9HtBMS5q2uTmPEjdq+bCa0+hRYpBpyziQZLkCgXIxpc2M2nfs8ROYA==
   dependencies:
     "@astronautlabs/jsonpath" "^1.1.2"
     "@cosmjs/proto-signing" "^0.32.4"
@@ -5288,7 +5288,7 @@
     "@docknetwork/cheqd-blockchain-modules" "0.33.0"
     "@docknetwork/credential-sdk" "0.50.0"
     "@docknetwork/universal-wallet" "^2.0.1"
-    "@docknetwork/wallet-sdk-dids" "^1.5.10"
+    "@docknetwork/wallet-sdk-dids" "^1.5.11"
     "@noble/hashes" "1.8.0"
     "@scure/bip39" "^1.6.0"
     "@sphereon/oid4vci-client" "^0.16.0"
