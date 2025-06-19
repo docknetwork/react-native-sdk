@@ -5,10 +5,12 @@ const showTests = false;
 class SlackReporter {
   async onRunComplete(contexts, results) {
     let failedTests = 0;
+    let totalTests = 0;
     let blocks = []; // Slack Blocks array
 
     results.testResults.forEach(testResult => {
       testResult.testResults.forEach(result => {
+        totalTests++;
         const symbol =
           result.status === 'passed' ? ':large_green_circle:' : ':x:';
         if (result.status !== 'passed') {
@@ -47,8 +49,8 @@ class SlackReporter {
           type: 'plain_text',
           text:
             failedTests === 0
-              ? `All ${results.testResults.length} tests passed! :tada:`
-              : `${failedTests} of ${results.testResults.length} tests failed :x:`,
+              ? `All ${totalTests} tests passed! :tada:`
+              : `${failedTests} of ${totalTests} tests failed :x:`,
           emoji: true,
         },
       },
