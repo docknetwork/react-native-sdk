@@ -26,7 +26,6 @@ module.exports = {
       };
 
       webpackConfig.module.rules.push(wasmLoader);
-
       webpackConfig.experiments = {
         asyncWebAssembly: true,
       };

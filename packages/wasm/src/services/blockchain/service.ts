@@ -132,9 +132,7 @@ export class BlockchainService {
       });
       Logger.info(`Cheqd initialized at: ${checkdApiUrl}`);
     } catch (err) {
-      console.error(err);
-      debugger;
-      Logger.error(`Failed to initialize cheqd at: ${checkdApiUrl}`);
+      Logger.error(`Failed to initialize cheqd at: ${checkdApiUrl}`, err);
     }
 
 

@@ -21,9 +21,6 @@ export class DIDServiceRPC extends RpcService {
   deriveKeyDoc(params) {
     return this.call('deriveKeyDoc', params);
   }
-  getDidDockDocument(did) {
-    return this.call('getDidDockDocument', did);
-  }
   createSignedJWT(params) {
     return this.call('createSignedJWT', params);
   }

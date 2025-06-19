@@ -29,7 +29,7 @@ import { keypairToKeydoc } from './keypair-utils';
 
 async function getSignerKeypair(privateKeyDoc) {
   const privateKey =
-    privateKeyDoc.keypair || keyDocToKeypair(privateKeyDoc, blockchainService.dock);
+    privateKeyDoc.keypair || await keyDocToKeypair(privateKeyDoc);
 
   if (!privateKey.signer && privateKey.sign) {
     privateKey.signer = () => ({sign: ({data}) => privateKey.sign(data)});
@@ -66,7 +66,6 @@ class DIDService {
     DIDService.prototype.getDIDResolution,
     DIDService.prototype.generateKeyDoc,
     DIDService.prototype.deriveKeyDoc,
-    DIDService.prototype.getDidDockDocument,
     DIDService.prototype.createSignedJWT,
   ];
   keypairToDIDKeyDocument(params: KeypairToDIDKeyDocumentParams) {
@@ -113,13 +112,6 @@ class DIDService {
 
     const signature = await sign({data: signPayload});
     return `${headerAndPayloadBase64URL}.${base64url.encode(signature)}`;
-  }
-
-  async getDidDockDocument(did) {
-    assert(!!did, 'DID is required');
-    const dock = blockchainService.dock;
-    const result = await blockchainService.modules.did.getDocument(did);
-    return result;
   }
 }
 

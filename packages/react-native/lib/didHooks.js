@@ -1,14 +1,11 @@
 import { useMemo } from 'react';
-import { createDIDProvider } from '@docknetwork/wallet-sdk-core/src/did-provider';
 import { useWallet } from './index';
+import { getDIDProvider } from './wallet';
 
 export function useDIDManagement() {
-  const { wallet, documents } = useWallet();
-  const didProvider = useMemo(() => {
-    return createDIDProvider({
-      wallet,
-    });
-  }, [wallet]);
+  const { documents } = useWallet();
+  const didProvider = getDIDProvider();
+
   const didList = useMemo(() => {
     if (Array.isArray(documents)) {
       return documents.filter(doc => {

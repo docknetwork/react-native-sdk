@@ -18,16 +18,11 @@ export class UtilCryptoServiceRpc extends RpcService {
     return this.call('mnemonicToMiniSecret', phrase);
   }
 
-  deriveValidate(uri: string): Promise<any> {
-    validation.deriveValidate(uri);
-    return this.call('deriveValidate', uri);
-  }
-
   isBase64(value: string): Promise<boolean> {
     return this.call('isBase64', value);
   }
 
-  getAddressPrefix(params: any): Promise<number | null> {
-    return this.call('getAddressPrefix', params);
+  hexToString(hex: string): Promise<string> {
+    return this.call('hexToString', hex);
   }
 }

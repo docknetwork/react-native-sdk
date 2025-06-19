@@ -75,9 +75,6 @@ jest.mock('@docknetwork/wallet-sdk-wasm/src/services/dids', () => {
         correlation: [],
       };
     }),
-    getDidDockDocument: jest.fn(() => {
-      return Promise.resolve();
-    }),
   };
 
   return {
