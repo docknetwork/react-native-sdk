@@ -32,6 +32,12 @@ module.exports = {
     '@digitalbazaar/http-signature-zcap-invoke': require.resolve(
       '@digitalbazaar/http-signature-zcap-invoke/main.js',
     ),
+    '@digitalbazaar/x25519-key-agreement-key-2020':
+      '@digitalbazaar/x25519-key-agreement-key-2020/lib/X25519KeyAgreementKey2020',
+    '@digitalbazaar/ed25519-verification-key-2020':
+      '@digitalbazaar/ed25519-verification-key-2020/lib/Ed25519VerificationKey2020',
+    '@digitalbazaar/ed25519-verification-key-2018':
+      '@digitalbazaar/ed25519-verification-key-2018/src/Ed25519VerificationKey2018',
     '@digitalbazaar/minimal-cipher': '@digitalbazaar/minimal-cipher/Cipher',
     '@digitalbazaar/did-method-key': '@digitalbazaar/did-method-key/lib/main',
     '@digitalbazaar/http-client': require.resolve(
