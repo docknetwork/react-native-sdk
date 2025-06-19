@@ -5,9 +5,10 @@ import { createVerificationController } from "@docknetwork/wallet-sdk-core/lib/v
 import { getVCData } from "@docknetwork/prettyvc";
 import axios from "axios";
 import { setLocalStorageImpl } from "@docknetwork/wallet-sdk-data-store-web/lib/localStorageJSON";
-import { edvService } from "@docknetwork/wallet-sdk-wasm/lib/services/edv";
 
 import useCloudWallet from './hooks/useCloudWallet';
+import { generateCloudWalletMasterKey } from "@docknetwork/wallet-sdk-core/lib/cloud-wallet";
+
 
 setLocalStorageImpl(global.localStorage);
 
@@ -62,6 +63,12 @@ function App() {
   const handleImportCredential = async () => {
     if (!credentialProvider) {
       return
+    }
+
+    // check if the URL is a valid openid-credential-offer
+    if (!credentialUrl.startsWith("openid-credential-offer:")) {
+      alert("Invalid credential offer URL. Check https://docs.truvera.io/truvera-api/openid#credential-offers for more details.");
+      return;
     }
 
     await credentialProvider.importCredentialFromURI({
@@ -193,7 +200,7 @@ function App() {
   const handleCreateWallet = async () => {
     setLoading(true);
     try {
-      const newKeys = await edvService.generateKeys();
+      const newKeys = await generateCloudWalletMasterKey();
       console.log("generated new keys for the wallet");
       localStorage.setItem("keys", JSON.stringify(newKeys));
       setWalletKeys(newKeys);

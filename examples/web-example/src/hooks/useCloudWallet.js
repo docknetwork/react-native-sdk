@@ -5,6 +5,7 @@ import { createWallet } from '@docknetwork/wallet-sdk-core/lib/wallet';
 import { createCredentialProvider } from '@docknetwork/wallet-sdk-core/lib/credential-provider';
 import { createDIDProvider } from '@docknetwork/wallet-sdk-core/lib/did-provider';
 import { createMessageProvider } from '@docknetwork/wallet-sdk-core/lib/message-provider';
+import { utilCryptoService } from "@docknetwork/wallet-sdk-wasm/lib/services/util-crypto";
 
 const EDV_URL = 'https://edv.dock.io';
 const EDV_AUTH_KEY = 'DOCKWALLET-TEST';
@@ -26,14 +27,18 @@ function useCloudWallet(walletKeys) {
 
     setLoading(true);
 
+    await utilCryptoService.cryptoWaitReady();
+
     try {
-      const _wallet = await createWallet({ dataStore: _dataStore || dataStore });
+      const _wallet = await createWallet({dataStore: _dataStore || dataStore});
       setWallet(_wallet);
 
-      const _credentialProvider = await createCredentialProvider({ wallet: _wallet });
+      const _credentialProvider = await createCredentialProvider({
+        wallet: _wallet,
+      });
       setCredentialProvider(_credentialProvider);
 
-      const _didProvider = createDIDProvider({ wallet: _wallet });
+      const _didProvider = createDIDProvider({wallet: _wallet});
       setDidProvider(_didProvider);
       setDefaultDID(await _didProvider.getDefaultDID());
 
@@ -63,29 +68,33 @@ function useCloudWallet(walletKeys) {
         });
         setDataStore(_dataStore);
 
-        const _cloudWallet = await initializeCloudWallet({
-          dataStore: _dataStore,
-          edvUrl: EDV_URL,
-          agreementKey: walletKeys.agreementKey,
-          verificationKey: walletKeys.verificationKey,
-          hmacKey: walletKeys.hmacKey,
-          authKey: EDV_AUTH_KEY,
-        });
-        setCloudWallet(_cloudWallet);
+        console.log('wallet keys', walletKeys.masterKey);
+
+        await provisionNewWallet(_dataStore);
 
         try {
-          await _cloudWallet.pullDocuments();
+          const _cloudWallet = await initializeCloudWallet({
+            dataStore: _dataStore,
+            edvUrl: EDV_URL,
+            masterKey: walletKeys.masterKey,
+            authKey: EDV_AUTH_KEY,
+          });
+          setCloudWallet(_cloudWallet);
+
+          try {
+            await _cloudWallet.pullDocuments();
+          } catch (err) {
+            console.error('Error pulling documents from EDV', err);
+          }
         } catch (err) {
-          console.error('Error pulling documents from EDV', err);
+          console.error('Error initializing cloud wallet', err);
+          console.log('Local wallet will be used instead of cloud wallet');
         }
 
         const documents = await _dataStore.documents.getAllDocuments();
         console.log('Documents:', documents);
 
-        if (documents.length !== 0) {
-          await provisionNewWallet(_dataStore);
-        }
-
+        
       } catch (err) {
         console.error('Error initializing cloud wallet', err);
       }
@@ -94,7 +103,10 @@ function useCloudWallet(walletKeys) {
     init();
 
     return () => {
-      if (cloudWallet && typeof cloudWallet.unsubscribeEventListeners === 'function') {
+      if (
+        cloudWallet &&
+        typeof cloudWallet.unsubscribeEventListeners === 'function'
+      ) {
         cloudWallet.unsubscribeEventListeners();
       }
     };
