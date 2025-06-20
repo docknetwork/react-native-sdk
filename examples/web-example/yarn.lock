@@ -13152,18 +13152,18 @@ jsonld@5.2.0, jsonld@^5.0.0:
     lru-cache "^6.0.0"
     rdf-canonize "^3.0.0"
 
-"jsonld@github:digitalcredentials/jsonld.js#v10.1.x":
+jsonld@digitalcredentials/jsonld.js#v10.1.x:
   version "8.3.3-0"
-  resolved "git+ssh://git@github.com/digitalcredentials/jsonld.js.git#da0794d863eeb65faf27673d46d9cffa32e1b65a"
+  resolved "https://codeload.github.com/digitalcredentials/jsonld.js/tar.gz/da0794d863eeb65faf27673d46d9cffa32e1b65a"
   dependencies:
     "@digitalbazaar/http-client" "^4.1.1"
     canonicalize "^1.0.1"
     lru-cache "^6.0.0"
     rdf-canonize "^4.0.1"
 
-"jsonld@github:digitalcredentials/jsonld.js#v10.x":
+jsonld@digitalcredentials/jsonld.js#v10.x:
   version "8.3.3-0"
-  resolved "git+ssh://git@github.com/digitalcredentials/jsonld.js.git#14357f7a1181ae769ecc50fee9303468f17665ff"
+  resolved "https://codeload.github.com/digitalcredentials/jsonld.js/tar.gz/14357f7a1181ae769ecc50fee9303468f17665ff"
   dependencies:
     "@digitalbazaar/http-client" "^4.1.1"
     canonicalize "^1.0.1"
@@ -14399,6 +14399,11 @@ playwright-core@1.53.1:
   version "1.53.1"
   resolved "https://registry.yarnpkg.com/playwright-core/-/playwright-core-1.53.1.tgz#0b6f7a2006ccb6126ffcc3e3b2fa9efda23b6638"
   integrity sha512-Z46Oq7tLAyT0lGoFx4DOuB1IA9D1TPj0QkYxpPVUnGDqHHvDpCftu1J2hM2PiWsNMoZh8+LQaarAWcDfPBc6zg==
+
+playwright-ctrf-json-reporter@^0.0.20:
+  version "0.0.20"
+  resolved "https://registry.yarnpkg.com/playwright-ctrf-json-reporter/-/playwright-ctrf-json-reporter-0.0.20.tgz#86e6c15a446105a07cb04313cec9908bb53c3e82"
+  integrity sha512-pv8ZZ1PBgztgQ1iShB8NqcFigTWGeZZ8zowld3wLlaeRF3bo4O9QrB5qlb2W7HcgppVWbM8SDvUszRLiLi923A==
 
 playwright@1.53.1, playwright@^1.53.1:
   version "1.53.1"
