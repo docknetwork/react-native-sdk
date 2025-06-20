@@ -1,8 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 // You'll need to provide this URL for testing
-const TEST_CREDENTIAL_URL = process.env.TEST_CREDENTIAL_URL || 'openid-credential-offer://example.com/test';
-const TEST_PROOF_REQUEST_URL = process.env.TEST_PROOF_REQUEST_URL || 'https://example.com/proof-request';
+const TEST_CREDENTIAL_URL = 'openid-credential-offer://?credential_offer_uri=https://api-staging.dock.io/openid/credential-offers/6b873dcc-2e20-476f-a800-b21422d9921a';
 
 test.describe('Credential Management', () => {
   test.beforeEach(async ({ page }) => {
