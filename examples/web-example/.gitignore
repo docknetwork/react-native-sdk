@@ -6,3 +6,8 @@ dock.lock
 yarn-error.log
 *.db
 /build
+
+# Playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/

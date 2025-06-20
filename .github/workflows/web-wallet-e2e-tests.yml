@@ -1,0 +1,56 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  e2e-tests:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        browser: [chromium, firefox, webkit]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'yarn'
+    
+    - name: Install dependencies
+      run: yarn install --frozen-lockfile
+      working-directory: examples/web-example
+    
+    - name: Install Playwright browsers
+      run: yarn playwright install --with-deps ${{ matrix.browser }}
+      working-directory: examples/web-example
+    
+    - name: Run E2E tests
+      run: yarn test:e2e --project=${{ matrix.browser }}
+      working-directory: examples/web-example
+      env:
+        CI: true
+        TEST_CREDENTIAL_URL: ${{ secrets.TEST_CREDENTIAL_URL }}
+        TEST_PROOF_REQUEST_URL: ${{ secrets.TEST_PROOF_REQUEST_URL }}
+    
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: playwright-report-${{ matrix.browser }}
+        path: examples/web-example/playwright-report/
+        retention-days: 30
+    
+    - name: Upload test videos
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-videos-${{ matrix.browser }}
+        path: examples/web-example/test-results/
+        retention-days: 7

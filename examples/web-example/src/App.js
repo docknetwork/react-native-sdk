@@ -310,12 +310,15 @@ function App() {
         <Button
           variant="contained"
           onClick={() => {
-            const currentKeys = localStorage.getItem("keys");
+            const currentKeysStr = localStorage.getItem("keys");
+            const currentKeys = currentKeysStr ? JSON.parse(currentKeysStr) : null;
             localStorage.clear();
-            localStorage.setItem("keys", {
-              masterKey: Array.from(currentKeys.masterKey),
-              mnemonic: currentKeys.mnemonic,
-            });
+            if (currentKeys) {
+              localStorage.setItem("keys", JSON.stringify({
+                masterKey: currentKeys.masterKey,
+                mnemonic: currentKeys.mnemonic,
+              }));
+            }
             window.location.reload();
           }}
         >
