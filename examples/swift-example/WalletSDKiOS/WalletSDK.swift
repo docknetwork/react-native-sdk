@@ -60,6 +60,11 @@ public class WalletSDK: ObservableObject {
         )
     }
     
+    public func fetchMessages() async throws {
+        Logger.wallet.info("WalletSDK: Fetching messages")
+        try await rpcClient.fetchMessages()
+    }
+    
     internal func setupWebView(_ webView: WKWebView) {
         rpcClient.setupWebView(webView)
     }

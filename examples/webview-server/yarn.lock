@@ -5161,6 +5161,17 @@
     lzutf8 "0.6.3"
     semver "^7.6.0"
 
+"@docknetwork/minimal-cipher@^5.2.1":
+  version "5.2.1"
+  resolved "https://registry.yarnpkg.com/@docknetwork/minimal-cipher/-/minimal-cipher-5.2.1.tgz#0a965117e326a97d9a2c8435d13f7a186ec746b8"
+  integrity sha512-7jL1cVALawvgDkibDbCYDkRRogQphoOcozFxNwT07VnJkrbczHK59IHa7Ia62CT8Fx7qgUmqEgKzfPqI71eOsw==
+  dependencies:
+    "@noble/ed25519" "^1.6.1"
+    "@stablelib/chacha" "^1.0.1"
+    "@stablelib/chacha20poly1305" "^1.0.1"
+    base58-universal "^1.0.0"
+    base64url-universal "^1.1.0"
+
 "@docknetwork/universal-wallet@^2.0.1":
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/@docknetwork/universal-wallet/-/universal-wallet-2.1.1.tgz#e51122dacfeb65eb883ddf1b7b5b3f2996e7068a"
@@ -5208,6 +5219,15 @@
   dependencies:
     "@digitalbazaar/did-method-key" "^2.0.0"
     uuid "^8.3.2"
+
+"@docknetwork/wallet-sdk-relay-service@^1.5.11":
+  version "1.5.11"
+  resolved "https://registry.yarnpkg.com/@docknetwork/wallet-sdk-relay-service/-/wallet-sdk-relay-service-1.5.11.tgz#16ab16613b7a1e215a4b66fb978dd67cda23fda6"
+  integrity sha512-srNczaikTtROlAECn/KRe5CxP0zUm6BoWohItMBTMtg2iK3q+jA++v307r6PURH1uNS2uZa0EcJCKFNWTGn+NQ==
+  dependencies:
+    "@docknetwork/minimal-cipher" "^5.2.1"
+    "@docknetwork/wallet-sdk-wasm" "^1.5.11"
+    uuid "^9.0.0"
 
 "@docknetwork/wallet-sdk-wasm@1.5.11", "@docknetwork/wallet-sdk-wasm@^1.5.11":
   version "1.5.11"
@@ -5858,7 +5878,7 @@
   dependencies:
     "@noble/hashes" "1.8.0"
 
-"@noble/ed25519@^1.6.0":
+"@noble/ed25519@^1.6.0", "@noble/ed25519@^1.6.1":
   version "1.7.5"
   resolved "https://registry.yarnpkg.com/@noble/ed25519/-/ed25519-1.7.5.tgz#94df8bdb9fec9c4644a56007eecb57b0e9fbd0d7"
   integrity sha512-xuS0nwRMQBvSxDa7UxMb61xTiH3MxTgUfhyPUALVIe0FlOAz4sjELwyDRyUvqeEYfRSG9qNjFIycqLZppg4RSA==
@@ -7949,7 +7969,7 @@ axios@^0.25.0:
   dependencies:
     follow-redirects "^1.14.7"
 
-axios@^1.6.0:
+axios@^1.6.0, axios@^1.7.7:
   version "1.10.0"
   resolved "https://registry.yarnpkg.com/axios/-/axios-1.10.0.tgz#af320aee8632eaf2a400b6a1979fa75856f38d54"
   integrity sha512-/1xYAC4MP/HEG+3duIhFr4ZQXR4sQXOIe+o6sdqzeykGLx6Upp/1p8MHqhINOvGeP7xyNHe7tsiJByc4SSVUxw==
@@ -12610,7 +12630,7 @@ jsonld@5.2.0, jsonld@^5.0.0:
     lru-cache "^6.0.0"
     rdf-canonize "^3.0.0"
 
-"jsonld@github:digitalcredentials/jsonld.js#v10.1.x":
+jsonld@digitalcredentials/jsonld.js#v10.1.x:
   version "8.3.3-0"
   resolved "https://codeload.github.com/digitalcredentials/jsonld.js/tar.gz/da0794d863eeb65faf27673d46d9cffa32e1b65a"
   dependencies:
@@ -12619,7 +12639,7 @@ jsonld@5.2.0, jsonld@^5.0.0:
     lru-cache "^6.0.0"
     rdf-canonize "^4.0.1"
 
-"jsonld@github:digitalcredentials/jsonld.js#v10.x":
+jsonld@digitalcredentials/jsonld.js#v10.x:
   version "8.3.3-0"
   resolved "https://codeload.github.com/digitalcredentials/jsonld.js/tar.gz/14357f7a1181ae769ecc50fee9303468f17665ff"
   dependencies:

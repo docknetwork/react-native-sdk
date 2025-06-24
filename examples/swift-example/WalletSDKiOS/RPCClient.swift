@@ -157,6 +157,15 @@ internal class RPCClient: ObservableObject {
         }
     }
     
+    func fetchMessages() async throws {
+        Logger.rpc.info("Fetching messages")
+        let response = try await sendRpcMessage(
+            method: "fetchMessages",
+            params: [:]
+        )
+        Logger.rpc.info("Messages fetched successfully")
+    }
+    
     func handleMessage(_ message: String) {
         guard !message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             Logger.rpc.debug("Skipping empty message")
@@ -202,6 +211,20 @@ internal class RPCClient: ObservableObject {
             case "LOG":
                 if let logMessage = body["message"] as? String {
                     Logger.rpc.debug("WebView Log: \(logMessage, privacy: .public)")
+                }
+            case "CREDENTIAL_ADDED":
+                Logger.rpc.info("Received CREDENTIAL_ADDED event")
+                if let data = body["data"] as? [String: Any],
+                   let credentials = data["credentials"] as? [[String: Any]] {
+                    Logger.rpc.info("Processing \(credentials.count) new credentials")
+                    Task {
+                        do {
+                            try await self.getCredentials()
+                            Logger.rpc.info("Credentials refreshed after CREDENTIAL_ADDED event")
+                        } catch {
+                            Logger.rpc.error("Failed to refresh credentials after CREDENTIAL_ADDED: \(error.localizedDescription)")
+                        }
+                    }
                 }
             default:
                 Logger.rpc.debug("Unhandled webview event type: \(type, privacy: .public)")

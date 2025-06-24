@@ -20,6 +20,7 @@ struct ContentView: View {
     @State private var errorMessage: String?
     @State private var showError = false
     @State private var showProofRequestModal = false
+    @State private var showCopiedToast = false
     
     private var webViewSection: some View {
         Group {
@@ -72,10 +73,21 @@ struct ContentView: View {
                             
                             Button(action: {
                                 UIPasteboard.general.string = walletSDK.defaultDID
+                                // Haptic feedback for copy action
+                                let impactFeedback = UIImpactFeedbackGenerator(style: .light)
+                                impactFeedback.impactOccurred()
+                                // Show confirmation
+                                showCopiedToast = true
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                    showCopiedToast = false
+                                }
                             }) {
                                 Image(systemName: "doc.on.doc")
-                                    .font(.caption2)
+                                    .font(.system(size: 14))
                                     .foregroundColor(.blue)
+                                    .padding(8)
+                                    .background(Color.blue.opacity(0.1))
+                                    .cornerRadius(6)
                             }
                             .buttonStyle(PlainButtonStyle())
                         }
@@ -139,6 +151,25 @@ struct ContentView: View {
                                 .cornerRadius(10)
                         }
                         .disabled(!walletSDK.isInitialized || walletSDK.credentials.isEmpty)
+                        
+                        Button(action: {
+                            Task {
+                                do {
+                                    try await walletSDK.fetchMessages()
+                                } catch {
+                                    errorMessage = error.localizedDescription
+                                    showError = true
+                                }
+                            }
+                        }) {
+                            Label("Fetch Messages", systemImage: "envelope.fill")
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.purple)
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
+                        }
+                        .disabled(!walletSDK.isInitialized)
                     }
                     .padding()
                 }
@@ -162,6 +193,23 @@ struct ContentView: View {
                 }
             }
         }
+        .overlay(
+            VStack {
+                if showCopiedToast {
+                    Text("DID Copied!")
+                        .font(.caption)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(Color.black.opacity(0.8))
+                        .foregroundColor(.white)
+                        .cornerRadius(20)
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                        .animation(.easeInOut(duration: 0.3), value: showCopiedToast)
+                }
+                Spacer()
+            }
+            .padding(.top, 50)
+        )
         .sheet(isPresented: $showImportModal) {
             NavigationView {
                 VStack(spacing: 20) {
@@ -256,7 +304,7 @@ struct ContentView: View {
         }
         .onAppear {
             // Use local bundle files (set to false for file:// URLs)
-            walletSDK.useLocalhost = false
+            walletSDK.useLocalhost = true
             
             // Fetch credentials once wallet is initialized
             Task {

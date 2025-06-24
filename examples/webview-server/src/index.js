@@ -3,10 +3,10 @@ import "./shim";
 import { createWallet } from "@docknetwork/wallet-sdk-core/lib/wallet";
 import { createDataStore } from "@docknetwork/wallet-sdk-data-store-web/lib/index";
 import { createCredentialProvider } from "@docknetwork/wallet-sdk-core/lib/credential-provider";
+import { createMessageProvider } from "@docknetwork/wallet-sdk-core/lib/message-provider";
 import { createVerificationController } from "@docknetwork/wallet-sdk-core/lib/verification-controller";
 import { createDIDProvider } from "@docknetwork/wallet-sdk-core/lib/did-provider";
 import { setLocalStorageImpl } from "@docknetwork/wallet-sdk-data-store-web/lib/localStorageJSON";
-import { basicCredential } from "./credentials/basic-credential";
 
 // Here you can define a JSON-RPC storage implementation
 // So that all data will be stored in the Host App instead of the browser
@@ -17,6 +17,7 @@ let dataStore;
 let wallet;
 let didProvider;
 let credentialProvider;
+let messageProvider;
 let requestIdCounter = 1;
 
 // Add initialization guard to prevent multiple initializations
@@ -52,6 +53,14 @@ function sendMessageToHost(message) {
     console.error("Error sending message to Host:", error);
   }
 }
+
+
+async function fetchMessages() {
+  await messageProvider.fetchMessages();
+  await messageProvider.processDIDCommMessages();
+}
+
+global.fetchMessages = fetchMessages;
 
 // Logs messages to Host
 function log(message) {
@@ -262,6 +271,18 @@ const rpcMethods = {
       sendError(id, "Failed to proxy network request", error.message);
     }
   },
+
+  async fetchMessages({ id }) {
+    try {
+      await fetchMessages();
+      sendMessageToHost({
+        id,
+        body: { message: "Messages fetched" },
+      });
+    } catch (error) {
+      sendError(id, "Failed to fetch messages", error.message);
+    }
+  },
 };
 
 // Message handler to process incoming Host messages and route them to the correct RPC method
@@ -346,6 +367,7 @@ async function initializeWallet() {
     wallet = await createWallet({ dataStore });
     didProvider = createDIDProvider({ wallet });
     credentialProvider = createCredentialProvider({ wallet });
+    messageProvider = createMessageProvider({ wallet, didProvider });
 
     const defaultDID = await didProvider.getDefaultDID();
     console.log("Wallet initialized with default DID:", defaultDID);
@@ -356,8 +378,23 @@ async function initializeWallet() {
     sendMessageToHost({
       body: {
         type: "WALLET_INITIALIZED",
-        data: { defaultDID, otherData: "testing demo" },
+        data: { defaultDID, },
       },
+    });
+
+    messageProvider.addMessageListener(async (message) => {
+      if (message.body.credentials) {
+        message.body.credentials.forEach(async (credential) => {
+          await credentialProvider.addCredential(credential);
+        });
+
+        sendMessageToHost({
+          body: {
+            type: "CREDENTIAL_ADDED",
+            data: { credentials: message.body.credentials },
+          },
+        });
+      }
     });
 
     console.log("Wallet initialization completed successfully");
