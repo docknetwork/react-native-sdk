@@ -304,7 +304,7 @@ struct ContentView: View {
         }
         .onAppear {
             // Use local bundle files (set to false for file:// URLs)
-            walletSDK.useLocalhost = true
+            walletSDK.useLocalhost = false
             
             // Fetch credentials once wallet is initialized
             Task {
