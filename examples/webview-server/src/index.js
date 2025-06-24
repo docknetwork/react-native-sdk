@@ -9,7 +9,7 @@ import { setLocalStorageImpl } from "@docknetwork/wallet-sdk-data-store-web/lib/
 import { basicCredential } from "./credentials/basic-credential";
 
 // Here you can define a JSON-RPC storage implementation
-// So that all data will be stored in the Flutter App instead of the browser
+// So that all data will be stored in the Host App instead of the browser
 // For this demo we will be using the browser's local storage
 setLocalStorageImpl(global.localStorage);
 
@@ -27,13 +27,13 @@ function generateUniqueId() {
   return `webview-${++requestIdCounter}`;
 }
 
-// Sends a message back to Flutter
-function sendMessageToFlutter(message) {
+// Sends a message back to Host
+function sendMessageToHost(message) {
   try {
     const id = message.id || generateUniqueId();
 
     if (message.body && message.body.type !== "LOG") {
-      log(`Sending message to Flutter: ${JSON.stringify(message)}`);
+      log(`Sending message to Host: ${JSON.stringify(message)}`);
     }
 
     const jsonRpcMessage = {
@@ -49,20 +49,20 @@ function sendMessageToFlutter(message) {
 
     global.Toaster.postMessage(JSON.stringify(jsonRpcMessage));
   } catch (error) {
-    console.error("Error sending message to Flutter:", error);
+    console.error("Error sending message to Host:", error);
   }
 }
 
-// Logs messages to Flutter
+// Logs messages to Host
 function log(message) {
   if (typeof message === "string" && message.trim()) {
-    sendMessageToFlutter({ body: { type: "LOG", message } });
+    sendMessageToHost({ body: { type: "LOG", message } });
   }
 }
 
-// Helper to handle errors and send them back to Flutter
+// Helper to handle errors and send them back to Host
 function sendError(id, errorMessage, details = null) {
-  sendMessageToFlutter({
+  sendMessageToHost({
     id,
     body: {
       error: errorMessage,
@@ -115,7 +115,7 @@ const rpcMethods = {
       const credentials = await credentialProvider.getCredentials();
       const latestCredential = credentials[credentials.length - 1];
 
-      sendMessageToFlutter({
+      sendMessageToHost({
         id,
         body: {
           result: latestCredential || credentials,
@@ -140,7 +140,7 @@ const rpcMethods = {
       }
 
       const credentials = await credentialProvider.getCredentials();
-      sendMessageToFlutter({
+      sendMessageToHost({
         id,
         body: { result: credentials },
       });
@@ -164,7 +164,7 @@ const rpcMethods = {
       const credential = await credentialProvider.getById(credentialId);
 
       if (!credential) {
-        sendMessageToFlutter({
+        sendMessageToHost({
           id,
           body: {
             error: `Credential with id ${credentialId} not found`,
@@ -209,7 +209,7 @@ const rpcMethods = {
         const result = await response.json();
         log(`Truvera API response: ${JSON.stringify(result)}`);
 
-        sendMessageToFlutter({
+        sendMessageToHost({
           id,
           body: { result },
         });
@@ -235,7 +235,7 @@ const rpcMethods = {
       }
 
       await dataStore.documents.removeAllDocuments();
-      sendMessageToFlutter({
+      sendMessageToHost({
         id,
         body: { message: "Data cleared" },
       });
@@ -250,8 +250,8 @@ const rpcMethods = {
 
       log(`Proxying network request: ${method} ${url}`);
 
-      // Send request to Flutter to handle natively
-      sendMessageToFlutter({
+      // Send request to Host to handle natively
+      sendMessageToHost({
         id,
         body: {
           method: "proxyNetworkRequest",
@@ -264,8 +264,8 @@ const rpcMethods = {
   },
 };
 
-// Message handler to process incoming Flutter messages and route them to the correct RPC method
-async function handleFlutterMessage(event) {
+// Message handler to process incoming Host messages and route them to the correct RPC method
+async function handleHostMessage(event) {
   try {
     // Get the actual message data - it could be a string or object
     let messageData = event.data;
@@ -318,7 +318,7 @@ async function handleFlutterMessage(event) {
       sendError(id, "Method Not Found", body.method);
     }
   } catch (error) {
-    console.error("Error handling Flutter message:", error);
+    console.error("Error handling Host message:", error);
   }
 }
 
@@ -353,7 +353,7 @@ async function initializeWallet() {
     isInitialized = true;
     isInitializing = false;
 
-    sendMessageToFlutter({
+    sendMessageToHost({
       body: {
         type: "WALLET_INITIALIZED",
         data: { defaultDID, otherData: "testing demo" },
@@ -366,7 +366,7 @@ async function initializeWallet() {
     isInitializing = false;
     isInitialized = false;
 
-    sendMessageToFlutter({
+    sendMessageToHost({
       body: {
         type: "WALLET_INITIALIZATION_ERROR",
         data: { error: error.message },
@@ -383,9 +383,9 @@ if (!isInitialized && !isInitializing) {
   }, 100);
 }
 
-// Listen for messages from Flutter
-if (!window.flutterMessageListenerAdded) {
-  window.addEventListener("message", handleFlutterMessage);
-  window.flutterMessageListenerAdded = true;
-  console.log("Flutter message listener added");
+// Listen for messages from Host
+if (!window.hostMessageListenerAdded) {
+  window.addEventListener("message", handleHostMessage);
+  window.hostMessageListenerAdded = true;
+  console.log("Host message listener added");
 }
