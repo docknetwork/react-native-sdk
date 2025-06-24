@@ -86,7 +86,7 @@ The project includes bundled web assets in `wallet-sdk-web/`:
 
 ### Option 2: Development with Localhost
 For WebView development with hot reload:
-1. Start the Webview Server development server on localhost:3000. Check ../examples/webview-server project for more details.
+1. Start the Webview Server on localhost:3000. Check ../examples/webview-server project for more details.
 2. Set useLocalhost to true in WalletSDKiOS/ContentView.swift
 3. Ensure your development server accepts connections from iOS Simulator
 
