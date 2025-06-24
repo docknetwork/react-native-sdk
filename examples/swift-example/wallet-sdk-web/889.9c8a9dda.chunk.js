@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkwallet_sdk_flutter_webivew=self.webpackChunkwallet_sdk_flutter_webivew||[]).push([[889],{94889:(e,a,t)=>{t.d(a,{MsgCreateDidDocPayload:()=>l.R7,MsgDeactivateDidDocPayload:()=>l.bF,MsgUpdateDidDocPayload:()=>l.C8});t(38195),t(24338),t(83346);var l=t(9854);t(67926)}}]);
