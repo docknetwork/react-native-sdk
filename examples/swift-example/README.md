@@ -75,6 +75,7 @@ The project includes bundled web assets in `wallet-sdk-web/`:
 - `index.html`: Main WebView entry point
 - `main.eeb62a29.js`: Compiled Wallet SDK JavaScript
 - Additional assets and dependencies
+- You can generate new assets by running `yarn build` in the ../examples/webview-server project
 
 ## Running the Example
 
@@ -83,10 +84,10 @@ The project includes bundled web assets in `wallet-sdk-web/`:
 2. Select your target device or simulator (iOS 18.4+)
 3. Build and run the project (⌘+R)
 
-### Option 3: Development with Localhost
+### Option 2: Development with Localhost
 For WebView development with hot reload:
-1. Start the wallet SDK development server on localhost:3000
-2. Toggle "Use Localhost" in the app settings
+1. Start the Werbview Server development server on localhost:3000. Check ../examples/webview-server project for more details.
+2. Set useLocalhost to true in WalletSDKiOS/ContentView.swift
 3. Ensure your development server accepts connections from iOS Simulator
 
 ## Usage Examples
