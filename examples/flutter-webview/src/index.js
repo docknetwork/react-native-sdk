@@ -24,7 +24,7 @@ function generateUniqueId() {
 }
 
 // Sends a message back to Flutter
-function sendMessageToFlutter(message) {
+function sendMessageToHost(message) {
   const id = message.id || generateUniqueId();
 
   if (message.body.type !== "LOG") {
