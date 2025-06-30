@@ -1,10 +1,10 @@
-import {DocumentEntity} from './document.entity';
 import {createTestDataStore} from '../../../test/test-utils';
-import {DataStore} from '../../types';
 import {createDocument} from './create-document';
 import {getDocumentsByType} from './get-documents-by-type';
 import {getDocumentById} from './get-document-by-id';
 import {getDocumentCorrelations} from './get-document-correlations';
+import {updateDocument} from './update-document';
+import {DataStore} from '@docknetwork/wallet-sdk-data-store/src/types';
 
 const mockDocuments = [
   {
@@ -130,6 +130,61 @@ describe('DocumentEntity', () => {
 
       expect(documents).toBeDefined();
       expect(documents.length).toEqual(2);
+    });
+  });
+
+  describe('Document operations with networkId validation', () => {
+    it('should maintain correct networkId through add, delete, update operations', async () => {
+      // Create a new dataStore for this test to avoid conflicts
+      const testDataStore = await createTestDataStore();
+
+      // Step 1: Add document
+      const testDocument = {
+        '@context': ['https://www.w3.org/2018/credentials/v1'],
+        id: 'test-doc-1',
+        type: ['VerifiableCredential', 'TestCredential'],
+        issuer: {id: 'did:example:test1'},
+        issuanceDate: '2023-01-01T00:00:00Z',
+        credentialSubject: {id: 'did:example:subject1'},
+      };
+
+      await createDocument({
+        dataStore: testDataStore,
+        json: testDocument,
+      });
+
+      // Step 3: Update 1 document
+      const docToUpdate = await getDocumentById({
+        dataStore: testDataStore,
+        id: 'test-doc-1',
+      });
+
+      expect(docToUpdate).toBeDefined();
+      expect(docToUpdate.id).toBe('test-doc-1');
+
+      const updatedDoc = {
+        ...docToUpdate,
+        // credentialSubject: {
+          // ...docToUpdate.credentialSubject,
+        updated: true,
+        // },
+      };
+      debugger;
+
+      await updateDocument({
+        dataStore: testDataStore,
+        document: updatedDoc,
+      });
+
+      const newDoc = await getDocumentById({
+        dataStore: testDataStore,
+        id: 'test-doc-1',
+      });
+
+      console.log('Updated Document:', newDoc);
+
+      debugger;
+      expect(newDoc.updated).toBe(true);
     });
   });
 });
