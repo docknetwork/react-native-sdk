@@ -164,12 +164,11 @@ describe('DocumentEntity', () => {
 
       const updatedDoc = {
         ...docToUpdate,
-        // credentialSubject: {
-          // ...docToUpdate.credentialSubject,
+        credentialSubject: {
+          ...docToUpdate.credentialSubject,
         updated: true,
-        // },
+        },
       };
-      debugger;
 
       await updateDocument({
         dataStore: testDataStore,
@@ -182,9 +181,8 @@ describe('DocumentEntity', () => {
       });
 
       console.log('Updated Document:', newDoc);
-
-      debugger;
-      expect(newDoc.updated).toBe(true);
+      expect(newDoc).toBeDefined();
+      expect(newDoc.credentialSubject.updated).toBe(true);
     });
   });
 });
