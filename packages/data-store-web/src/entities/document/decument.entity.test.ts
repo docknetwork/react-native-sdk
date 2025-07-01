@@ -135,10 +135,8 @@ describe('DocumentEntity', () => {
 
   describe('Document operations with networkId validation', () => {
     it('should maintain correct networkId through add, delete, update operations', async () => {
-      // Create a new dataStore for this test to avoid conflicts
       const testDataStore = await createTestDataStore();
 
-      // Step 1: Add document
       const testDocument = {
         '@context': ['https://www.w3.org/2018/credentials/v1'],
         id: 'test-doc-1',
@@ -153,7 +151,6 @@ describe('DocumentEntity', () => {
         json: testDocument,
       });
 
-      // Step 3: Update 1 document
       const docToUpdate = await getDocumentById({
         dataStore: testDataStore,
         id: 'test-doc-1',
@@ -180,7 +177,6 @@ describe('DocumentEntity', () => {
         id: 'test-doc-1',
       });
 
-      console.log('Updated Document:', newDoc);
       expect(newDoc).toBeDefined();
       expect(newDoc.credentialSubject.updated).toBe(true);
     });
