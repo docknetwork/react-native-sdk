@@ -11,6 +11,9 @@ let _localStorage = (() => {
     removeItem: (key) => {
       delete data[key];
     },
+    getData: () => {
+      return data;
+    }
   };
 })();
 
@@ -35,4 +38,7 @@ export const localStorageJSON = {
   removeItem: (key: string) => {
     return _localStorage.removeItem(key);
   },
+  getData: () => {
+    return _localStorage.getData();
+  }
 };

@@ -68,7 +68,7 @@ export async function createDocument({
     data: json,
   };
 
-  appendDocument(entity);
+  await appendDocument(entity);
 
   if (!options?.stopPropagation) {
     dataStore.events.emit(DataStoreEvents.DocumentCreated, json);

@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkwallet_sdk_webivew_server=self.webpackChunkwallet_sdk_webivew_server||[]).push([[889],{94889:(e,a,s)=>{s.d(a,{MsgCreateDidDocPayload:()=>d.R7,MsgDeactivateDidDocPayload:()=>d.bF,MsgUpdateDidDocPayload:()=>d.C8});s(38195),s(24338),s(83346);var d=s(9854);s(67926)}}]);

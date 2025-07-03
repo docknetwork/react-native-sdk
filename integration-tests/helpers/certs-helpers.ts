@@ -41,3 +41,34 @@ export async function createProofRequest(templateId: string) {
 
   return data;
 }
+
+
+export function issueCredential({subjectDID}) {
+  console.log('Issuing credential for DID', subjectDID);
+
+  return axios.post(
+    `${certsApiURL}/credentials`,
+    {
+      anchor: false,
+      persist: false,
+      credential: {
+        name: 'Test2',
+        type: ['VerifiableCredential', 'BasicCredential'],
+        issuer: 'did:dock:5GJeBeStWSxqyPGUJnERMFhm3wKcfCZP6nhqtoKyRAmq9FeU',
+        issuanceDate: '2023-11-01T15:43:59.361Z',
+        subject: {
+          id: subjectDID,
+          name: 'Test',
+        },
+      },
+      algorithm: 'dockbbs+',
+      distribute: true,
+    },
+    {
+      headers: {
+        'DOCK-API-TOKEN': process.env.CERTS_API_KEY,
+        'Content-Type': 'application/json',
+      },
+    },
+  );
+}

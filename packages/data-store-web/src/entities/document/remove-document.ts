@@ -20,9 +20,10 @@ export async function removeDocument({
   assert(!!id, 'Document id is required');
 
   logger.debug(`Removing document with id ${id}`);
-  const allDocs = await getAllDocuments({dataStore, allNetworks: true});
+  let allDocs = (await localStorageJSON.getItem('documents')) || [];
+
   const filteredDocs = allDocs.filter(
-    doc => doc.id !== id && doc.networkId !== dataStore.networkId,
+    doc => !(doc.id === id && doc.networkId === dataStore.networkId),
   );
 
   localStorageJSON.setItem('documents', filteredDocs);
