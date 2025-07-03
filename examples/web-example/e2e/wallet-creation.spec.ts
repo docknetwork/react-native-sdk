@@ -19,7 +19,7 @@ test.describe('Wallet Creation', () => {
     await expect(page.getByText('Documents')).toBeVisible();
     
     // Should show action buttons
-    await expect(page.getByRole('button', { name: 'Import Credential' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Import OpenID Credential' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Verify Credential' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Refresh' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Clear Wallet' })).toBeVisible();
@@ -102,6 +102,6 @@ test.describe('Wallet Creation', () => {
     
     // Should still show the main app interface (not the setup screen)
     await expect(page.getByText('Documents')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Import Credential' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Import OpenID Credential' })).toBeVisible();
   });
 });
