@@ -1,0 +1,1 @@
+rm -rf node_modules/@docknetwork/wallet-sdk-react-native/node_modules/react-native-webview
