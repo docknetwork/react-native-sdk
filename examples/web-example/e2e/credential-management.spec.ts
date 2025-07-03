@@ -11,7 +11,7 @@ test.describe('Credential Management', () => {
     await page.reload();
     
     // Create new wallet
-    await page.getByRole('button', { name: 'Create New Wallet' }).click();
+    await page.getByTestId('create-wallet-button').click();
     await page.waitForSelector('.App-header:has-text("Documents")', { timeout: 30000 });
     
     // Wait for default DID to be created automatically
@@ -19,10 +19,10 @@ test.describe('Credential Management', () => {
   });
 
   test('should open import credential modal', async ({ page }) => {
-    await page.getByRole('button', { name: 'Import Credential' }).click();
+    await page.getByTestId('import-credential-button').click();
     
     // Modal should be visible
-    await expect(page.getByRole('heading', { name: 'Import Credential' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Import OpenID Credential' })).toBeVisible();
     await expect(page.getByLabel('Credential Offer URL')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Import' })).toBeVisible();
   });
@@ -31,7 +31,7 @@ test.describe('Credential Management', () => {
     // Wait a bit longer for credential provider to be ready
     await page.waitForTimeout(2000);
     
-    await page.getByRole('button', { name: 'Import Credential' }).click();
+    await page.getByTestId('import-credential-button').click();
     
     // Enter invalid URL
     await page.getByLabel('Credential Offer URL').fill('https://invalid-url.com');
@@ -56,14 +56,14 @@ test.describe('Credential Management', () => {
     // Skip this test by default as it requires a real credential URL
     // Remove .skip and provide TEST_CREDENTIAL_URL env var to run
     
-    await page.getByRole('button', { name: 'Import Credential' }).click();
+    await page.getByTestId('import-credential-button').click();
     
     // Enter credential URL
     await page.getByLabel('Credential Offer URL').fill(TEST_CREDENTIAL_URL);
     await page.getByRole('button', { name: 'Import' }).click();
     
     // Wait for import to complete and modal to close
-    await page.waitForSelector('role=heading[name="Import Credential"]', { state: 'hidden', timeout: 30000 });
+    await page.waitForSelector('role=heading[name="Import OpenID Credential"]', { state: 'hidden', timeout: 30000 });
     
     // Should show the imported credential
     const credentialElements = await page.locator('[bgcolor="#ccc"]').count();
@@ -123,7 +123,7 @@ test.describe('Credential Management', () => {
 
   test('should fetch messages', async ({ page }) => {
     // Click Fetch Messages button
-    await page.getByRole('button', { name: 'Fetch Messages' }).click();
+    await page.getByTestId('fetch-messages-button').click();
     
     // Should not show any errors
     await expect(page.locator('text=Default DID:')).toBeVisible();
@@ -143,7 +143,7 @@ test.describe('Credential Management', () => {
     const did = didText.replace('Default DID:', '').replace('Copy', '').replace('Fetch Messages', '').trim();
     
     // Click copy button
-    await page.getByRole('button', { name: 'Copy' }).click();
+    await page.getByTestId('copy-did-button').click();
     
     // Verify clipboard content
     const clipboardText = await page.evaluate(() => navigator.clipboard.readText());
