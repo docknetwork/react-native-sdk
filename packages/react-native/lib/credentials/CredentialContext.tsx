@@ -22,6 +22,7 @@ interface CredentialStatus {
 interface CredentialContextValue {
   credentials: WalletDocument[];
   credentialStatusList: CredentialStatus[];
+  clearCache: () => Promise<void>;
 }
 
 const CredentialContext = createContext<CredentialContextValue | undefined>(
@@ -45,16 +46,9 @@ interface CredentialProviderProps {
 export const CredentialProvider: React.FC<CredentialProviderProps> = ({
   children,
 }) => {
-  const {documents} = useWallet();
+  const {documents, wallet} = useWallet();
   const [credentials, setCredentials] = useState<WalletDocument[]>([]);
   const [credentialStatusList, setCredentialStatusList] = useState<CredentialStatus[]>([]);
-
-  console.log('documents', {
-    documents,
-    credentials,
-    credentialStatusList
-  });
-
 
   useEffect(() => {
     // it should work for string and array of strings
@@ -68,14 +62,31 @@ export const CredentialProvider: React.FC<CredentialProviderProps> = ({
     })));
   }, [documents]);
 
+  const clearCache = useCallback(async () => {
+    try {
+      const statusDocuments = documents.filter(doc => doc.type.includes('CredentialStatus'));
+      
+      for (const statusDoc of statusDocuments) {
+        await wallet.removeDocument(statusDoc.id);
+      }
+      
+      setCredentialStatusList([]);
+    } catch (error) {
+      console.error('Error clearing credential status cache:', error);
+      throw error;
+    }
+  }, [documents, wallet]);
+
   const value = useMemo(
     () => ({
       credentials,
       credentialStatusList,
+      clearCache,
     }),
     [
       credentials,
       credentialStatusList,
+      clearCache,
     ],
   );
 
