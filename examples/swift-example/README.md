@@ -77,6 +77,42 @@ The project includes bundled web assets in `wallet-sdk-web/`:
 - Additional assets and dependencies
 - You can generate new assets by running `yarn build` in the ../examples/webview-server project
 
+## Linking WebView Files in Xcode (Optional)
+
+This example already has the integration configured, so you can skip this step if you are using the provided project. However, if you want to integrate it into your own project, follow these steps:
+
+### Steps to Link WebView Assets
+
+1. **Add WebView Assets to Project**
+   - In Xcode, right-click on your project navigator
+   - Select "Add Files to [YourProject]..."
+   - Navigate to your `wallet-sdk-web` folder containing the built assets
+   - Select the folder and ensure "Create folder references" is selected (blue folder icon)
+   - Make sure "Copy items if needed" is checked
+   - Add to your app target
+
+2. **Verify Folder Reference**
+   - The `wallet-sdk-web` folder should appear as a blue folder in Xcode (not yellow)
+   - Blue folders maintain their directory structure in the app bundle
+   - This ensures relative paths in HTML/JS files work correctly
+
+3. **Configure Build Phases**
+   - Select your project in Xcode
+   - Go to your app target → Build Phases
+   - Expand "Copy Bundle Resources"
+   - Verify that `wallet-sdk-web` folder is listed
+   - If not, click "+" and add the folder manually
+
+4. **Update Info.plist (if needed)**
+   - For local file access, ensure your Info.plist allows arbitrary loads:
+   ```xml
+   <key>NSAppTransportSecurity</key>
+   <dict>
+       <key>NSAllowsArbitraryLoadsInWebContent</key>
+       <true/>
+   </dict>
+   ```
+
 ## Running the Example
 
 ### Option 1: Using Xcode
