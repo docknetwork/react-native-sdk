@@ -262,6 +262,7 @@ function App() {
           </Button>
           <Button
             variant="contained"
+            data-testid="create-wallet-button"
             onClick={handleCreateWallet}
             sx={{ m: 1 }}
           >
@@ -280,15 +281,17 @@ function App() {
       <Box display="flex" gap={2} justifyContent="center" m={2}>
         <Button
           variant="contained"
+          data-testid="import-credential-button"
           onClick={() => {
             setImportModalOpen(true);
             setCredentialUrl("");
           }}
         >
-          Import Credential
+          Import OpenID Credential
         </Button>
         <Button
           variant="contained"
+          data-testid="verify-credential-button"
           onClick={() => {
             setVerifyModalOpen(true);
             setVerifyStep(1);
@@ -301,6 +304,7 @@ function App() {
 
         <Button
           variant="contained"
+          data-testid="refresh-button"
           onClick={() => {
             refreshDocuments();
           }}
@@ -310,12 +314,15 @@ function App() {
         <Button
           variant="contained"
           onClick={() => {
-            const currentKeys = localStorage.getItem("keys");
+            const currentKeysStr = localStorage.getItem("keys");
+            const currentKeys = currentKeysStr ? JSON.parse(currentKeysStr) : null;
             localStorage.clear();
-            localStorage.setItem("keys", {
-              masterKey: Array.from(currentKeys.masterKey),
-              mnemonic: currentKeys.mnemonic,
-            });
+            if (currentKeys) {
+              localStorage.setItem("keys", JSON.stringify({
+                masterKey: currentKeys.masterKey,
+                mnemonic: currentKeys.mnemonic,
+              }));
+            }
             window.location.reload();
           }}
         >
@@ -343,6 +350,7 @@ function App() {
           {defaultDID}
           <Button
             variant="contained"
+            data-testid="copy-did-button"
             onClick={() => {
               navigator.clipboard.writeText(defaultDID);
             }}
@@ -351,6 +359,7 @@ function App() {
           </Button>
           <Button
             variant="contained"
+            data-testid="fetch-messages-button"
             onClick={async () => {
               await messageProvider.fetchMessages();
               await messageProvider.processDIDCommMessages();
@@ -373,7 +382,7 @@ function App() {
       {/* Import Credential Modal */}
       <Modal open={importModalOpen} onClose={() => setImportModalOpen(false)}>
         <Box sx={modalStyle}>
-          <h2>Import Credential</h2>
+          <h2>Import OpenID Credential Offer</h2>
           <TextField
             label="Credential Offer URL"
             fullWidth
