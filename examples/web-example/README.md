@@ -7,16 +7,16 @@ This web application leverages the **Truvera Wallet SDK** and **Truvera Cloud Wa
 1. **Start the Application:**
    - Run the app with the following commands:
      ```bash
-     npm install
-     npm start
+     yarn install
+     yarn start
      ```
 
 2. **Initialize the Wallet:**
    - Option 1: Upload an existing wallet key file.
    - Option 2: Generate a new wallet by clicking "Create New Wallet."
 
-3. **Import a Credential:**
-   - Click **"Import Credential"** and enter the Credential Offer URL.
+3. **Import an OpenID Credential Offer:**
+   - Click **"Import OpenIDCredential"** and enter the Credential Offer URL.
    - Also, you can use DID distribution
      - Fetch DIDComm messages using the **"Fetch Messages"** button.
 
