@@ -41,7 +41,18 @@ const mockCreds = [
   },
 ];
 
-jest.mock('../index.js', () => {
+const mockRemove = jest.fn();
+jest.mock('../wallet', () => ({
+  getWallet: jest.fn(() => ({
+    remove: mockRemove,
+  })),
+  getCredentialProvider: jest.fn(() => ({
+    getById: jest.fn(),
+    getCredentialStatus: jest.fn(),
+  })),
+}));
+
+jest.mock('../index.tsx', () => {
   let documents = [
     {
       '@context': ['https://www.w3.org/2018/credentials/v1'],
@@ -79,9 +90,18 @@ jest.mock('../index.js', () => {
     useWallet: jest.fn(() => {
       return mockFunctions;
     }),
+    useDocument: jest.fn(() => null),
+    useDocuments: jest.fn(() => ({
+      documents: mockFunctions.documents,
+      loading: false,
+    })),
   };
 });
 describe('Credential Hooks', () => {
+  beforeEach(() => {
+    mockRemove.mockClear();
+  });
+
   test('Filter credentials list', () => {
     const {result} = renderHook(() => useCredentialUtils());
     expect(result.current.credentials.length).toBe(1);
@@ -108,12 +128,11 @@ describe('Credential Hooks', () => {
   });
   test('Delete Credential', async () => {
     const {result} = renderHook(() => useCredentialUtils());
-    const {result: walletResult} = renderHook(() => useWallet());
 
     await result.current.deleteCredential(
       'e8fc7810-9524-11ea-bb37-0242ac130002',
     );
-    expect(walletResult.current.wallet.remove).toBeCalledWith(
+    expect(mockRemove).toBeCalledWith(
       'e8fc7810-9524-11ea-bb37-0242ac130002',
     );
   });
