@@ -25,6 +25,10 @@ import {
   useCredentialUtils,
   useCredentialStatus,
 } from './credentials/credentialHooks';
+import {
+  CredentialProvider,
+  useCredentialContext,
+} from './credentials/CredentialContext';
 import {getOrCreateWallet} from './wallet';
 import debounce from 'lodash.debounce';
 import {setV1LocalStorage} from '@docknetwork/wallet-sdk-data-store-typeorm/src/migration/migration1/v1-data-store';
@@ -55,6 +59,7 @@ setStorage(AsyncStorage);
 export {useDIDManagement};
 export {useCredentialUtils, useCredentialStatus};
 export {useDocument, useDocuments} from './documentsHooks';
+export {useCredentialContext} from './credentials/CredentialContext';
 
 export function getStorage() {
   return AsyncStorage;
@@ -139,7 +144,6 @@ export function _useWalletController() {
     wallet.eventManager.on(WalletEvents.documentRemoved, _refetch);
     wallet.eventManager.on(WalletEvents.documentUpdated, _refetch);
     wallet.eventManager.on(WalletEvents.walletImported, _refetch);
-    wallet.eventManager.on(WalletEvents.migrated, _refetch);
     wallet.eventManager.on(WalletEvents.walletDeleted, () => {
       setDocuments([]);
     });
@@ -242,7 +246,9 @@ export function WalletSDKProvider({onError, customUri, children, onReady, config
   return (
     <View flex={1}>
       <WalletSDKContext.Provider value={controller}>
-        {children}
+        <CredentialProvider>
+          {children}
+        </CredentialProvider>
       </WalletSDKContext.Provider>
       <View style={{height: 0}}>
         {webviewContainer}
