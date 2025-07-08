@@ -65,13 +65,13 @@ jobs:
           restore-keys: npm-
 
       - name: Install dependencies
-        run: yarn install
+        run: npm ci
 
       - name: Build
-        run: yarn build
+        run: npm run build
 
       - name: Lint
-        run: yarn lint
+        run: npm run lint
 
       - name: Integration Tests
         env:
@@ -93,7 +93,7 @@ jobs:
           export CI=true
           echo "PR Number: $PR_NUMBER"
           echo "PR Title: $PR_TITLE"
-          yarn test:integration
+          npm run test:integration
 
       - name: Test Report
         uses: dorny/test-reporter@v1
