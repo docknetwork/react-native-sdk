@@ -259,4 +259,33 @@ describe('CredentialProvider', () => {
       (credentialServiceRPC.verifyCredential as any).mockReset();
     });
   });
+
+  describe('isValid', () => {
+    it('should return pending status when SDK is not initialized and no cached status exists', async () => {
+      await provider.addCredential({
+        ...customerCredential,
+      });
+
+      jest
+        .spyOn(credentialServiceRPC, 'verifyCredential')
+        .mockImplementation(async () => {
+          return {
+            verified: false,
+            error: {
+              errors: [
+                {
+                  message: 'SDK is not initialized'
+                }
+              ]
+            }
+          };
+        });
+
+      const result = await provider.isValid({credential: customerCredential});
+      
+      expect(result.status).toBe(CredentialStatus.Pending);
+      expect(result.error).toContain('SDK is not initialized. Please ensure the blockchain is connected.');
+      expect(credentialServiceRPC.verifyCredential).toHaveBeenCalledTimes(1);
+    });
+  });
 });
