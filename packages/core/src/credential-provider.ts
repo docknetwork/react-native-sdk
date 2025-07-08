@@ -7,13 +7,16 @@ import {IDIDProvider} from './did-provider';
 
 export type Credential = any;
 
-
 export interface ICredentialProvider {
   getCredentials(type?: string): Credential[];
   getById(id: string): Credential;
   getMembershipWitness(credential: any): Promise<any>;
   isBBSPlusCredential(credential: any): boolean;
-  isValid(credential: any, forceFetch?: boolean): Promise<boolean>;
+  isValid(credential: any, forceFetch?: boolean): Promise<{
+    status: string;
+    error?: string;
+    warning?: string;
+  }>;
   addCredential(credential: any): Promise<Credential>;
   importCredentialFromURI(
     params: importCredentialFromUriParams,
@@ -83,7 +86,11 @@ export async function isValid({
 }: {
   credential: Credential;
   wallet: IWallet;
-}) {
+}): Promise<{
+  status: string;
+  error?: string;
+  warning?: string;
+}> {
   assert(!!credential, 'credential is required');
 
   try {
