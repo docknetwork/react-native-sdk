@@ -109,6 +109,15 @@ export async function isValid({
 
     const {verified, error} = verificationResult;
 
+    if (error) {
+      const sdkNotInitialized = error?.errors?.find(err => err?.message === 'SDK is not initialized');
+      if (sdkNotInitialized) {
+        throw new Error(
+          'SDK is not initialized. Please ensure the blockchain is connected.',
+        );
+      }
+    }
+
     if (!verified) {
       if (
         typeof error === 'string' &&
