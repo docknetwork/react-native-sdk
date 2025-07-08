@@ -23,12 +23,12 @@ jobs:
           restore-keys: npm-
 
       - name: Install dependencies
-        run: yarn install
+        run: npm ci
 
       - name: Generate docs
         run:  |
           rm -rf docs 
-          yarn docs
+          npm run docs
 
       - name: Commit report
         run: |
