@@ -6,6 +6,7 @@ import {
 
 import {Logger} from '@docknetwork/wallet-sdk-wasm/src/core/logger';
 import rnRpcServer from './rn-rpc-server';
+import { WebViewHealthChecker } from './webview-health-checker';
 
 export class WebviewEventHandler {
   constructor({webViewRef, sandboxWebViewRef, onReady}) {
@@ -14,6 +15,9 @@ export class WebviewEventHandler {
     this.webViewRef = webViewRef;
     this.sandboxWebViewRef = sandboxWebViewRef;
     this.onReady = onReady;
+    
+    // Initialize health checker
+    this.healthChecker = new WebViewHealthChecker(this);
   }
 
   getEventMapping() {
@@ -21,6 +25,7 @@ export class WebviewEventHandler {
       'json-rpc-ready': this._handleRpcReady,
       'json-rpc-response': this._handleRpcResponse,
       'json-rpc-request': this._handleRpcRequest,
+      'health-check-pong': this._handleHealthPong,
       log: this._handleLog,
     };
   }
@@ -106,5 +111,34 @@ export class WebviewEventHandler {
 
   _handleLog(data) {
     Logger.info(data.body);
+  }
+
+  _handleHealthPong(data) {
+    this.healthChecker.handlePong(data);
+  }
+
+  reloadWebViews() {
+    this.webViewRef.current?.reload();
+    this.sandboxWebViewRef.current?.reload();
+  }
+
+  setHealthStatus(isHealthy, reason) {
+    this.healthChecker.setHealthStatus(isHealthy, reason);
+  }
+
+  startHealthCheck(config) {
+    this.healthChecker.start(config);
+  }
+
+  stopHealthCheck() {
+    this.healthChecker.stop();
+  }
+
+  pauseHealthCheck() {
+    this.healthChecker.pause();
+  }
+
+  resumeHealthCheck() {
+    this.healthChecker.resume();
   }
 }

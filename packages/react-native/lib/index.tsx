@@ -11,7 +11,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {Platform, View} from 'react-native';
+import {Platform, View, AppState, AppStateStatus} from 'react-native';
 import WebView from 'react-native-webview';
 import {WebviewEventHandler} from './message-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -42,6 +42,11 @@ export type WalletSDKContextProps = {
   toggleTestMode: () => Promise<void>;
   testMode?: boolean;
   refetch: ({fetchBalances}?: {fetchBalances: boolean}) => Promise<void>;
+  webViewHealth?: {
+    isHealthy: boolean;
+    reason?: string;
+    metadata?: any;
+  };
 };
 
 setV1LocalStorage(AsyncStorage);
@@ -60,6 +65,7 @@ export {useDIDManagement};
 export {useCredentialUtils, useCredentialStatus};
 export {useDocument, useDocuments} from './documentsHooks';
 export {useCredentialContext} from './credentials/CredentialContext';
+export {useWebViewHealth} from './hooks/useWebViewHealth';
 
 export function getStorage() {
   return AsyncStorage;
@@ -165,10 +171,11 @@ export function _useWalletController() {
   };
 }
 
-export function WalletSDKProvider({onError, customUri, children, onReady, configs}) {
+export function WalletSDKProvider({onError, customUri, children, onReady, configs, healthCheckConfig}) {
   const controller = _useWalletController();
   const webViewRef = useRef();
   const sandboxWebViewRef = useRef();
+  const [webViewHealth, setWebViewHealth] = useState({ isHealthy: true });
   const baseUrl =
     Platform.OS === 'ios' ? 'app-html' : 'file:///android_asset/app-html';
 
@@ -182,14 +189,44 @@ export function WalletSDKProvider({onError, customUri, children, onReady, config
   }, [onReady, createWallet, configs]);
 
   const eventHandler: WebviewEventHandler = useMemo(
-    () =>
-      new WebviewEventHandler({
+    () => {
+      const handler = new WebviewEventHandler({
         webViewRef,
         sandboxWebViewRef,
         onReady: handleReady,
-      }),
-    [webViewRef, handleReady],
+      });
+      
+      // Set up health change callback
+      handler.healthChecker.onHealthChange = (isHealthy, reason, metadata) => {
+        setWebViewHealth({ isHealthy, reason, metadata });
+        
+        // Emit wallet event if wallet exists
+        if (controller.wallet) {
+          controller.wallet.eventManager.emit(
+            isHealthy ? 'webview-healthy' : 'webview-unhealthy',
+            { reason, metadata }
+          );
+        }
+      };
+      
+      return handler;
+    },
+    [webViewRef, handleReady, controller.wallet],
   );
+
+  // App state monitoring
+  useEffect(() => {
+    const handleAppStateChange = (nextAppState: AppStateStatus) => {
+      if (nextAppState === 'background' || nextAppState === 'inactive') {
+        eventHandler.pauseHealthCheck();
+      } else if (nextAppState === 'active') {
+        eventHandler.resumeHealthCheck();
+      }
+    };
+
+    const subscription = AppState.addEventListener('change', handleAppStateChange);
+    return () => subscription.remove();
+  }, [eventHandler]);
 
   const webviewContainer = (
     <WebView
@@ -207,11 +244,33 @@ export function WalletSDKProvider({onError, customUri, children, onReady, config
               uri: `${baseUrl}/index.html`,
             }
       }
-      onError={err => {
-        console.log(err);
+      onError={(syntheticEvent) => {
+        const { nativeEvent } = syntheticEvent;
+        console.error('WebView error:', nativeEvent);
+        eventHandler.setHealthStatus(false, `WebView error: ${nativeEvent.description}`);
         if (onError) {
-          onError(err);
+          onError(syntheticEvent);
         }
+      }}
+      onHttpError={(syntheticEvent) => {
+        const { nativeEvent } = syntheticEvent;
+        console.error('WebView HTTP error:', nativeEvent);
+        eventHandler.setHealthStatus(false, `HTTP error: ${nativeEvent.statusCode}`);
+      }}
+      onContentProcessDidTerminate={(syntheticEvent) => {
+        console.error('WebView process terminated (iOS)');
+        eventHandler.setHealthStatus(false, 'WebView process terminated');
+        webViewRef.current?.reload();
+      }}
+      onRenderProcessGone={(syntheticEvent) => {
+        const { nativeEvent } = syntheticEvent;
+        console.error('WebView process gone (Android):', nativeEvent.didCrash);
+        eventHandler.setHealthStatus(false, 'WebView process crashed');
+        webViewRef.current?.reload();
+      }}
+      onLoadEnd={() => {
+        // Start health monitoring after WebView loads
+        eventHandler.startHealthCheck(healthCheckConfig);
       }}
       onMessage={event => {
         eventHandler.handleEvent(event);
@@ -230,11 +289,29 @@ export function WalletSDKProvider({onError, customUri, children, onReady, config
       source={{
         uri: `${baseUrl}/sandbox.html`,
       }}
-      onError={err => {
-        console.error(err);
+      onError={(syntheticEvent) => {
+        const { nativeEvent } = syntheticEvent;
+        console.error('Sandbox WebView error:', nativeEvent);
+        eventHandler.setHealthStatus(false, `Sandbox WebView error: ${nativeEvent.description}`);
         if (onError) {
-          onError(err);
+          onError(syntheticEvent);
         }
+      }}
+      onHttpError={(syntheticEvent) => {
+        const { nativeEvent } = syntheticEvent;
+        console.error('Sandbox WebView HTTP error:', nativeEvent);
+        eventHandler.setHealthStatus(false, `Sandbox HTTP error: ${nativeEvent.statusCode}`);
+      }}
+      onContentProcessDidTerminate={(syntheticEvent) => {
+        console.error('Sandbox WebView process terminated (iOS)');
+        eventHandler.setHealthStatus(false, 'Sandbox WebView process terminated');
+        sandboxWebViewRef.current?.reload();
+      }}
+      onRenderProcessGone={(syntheticEvent) => {
+        const { nativeEvent } = syntheticEvent;
+        console.error('Sandbox WebView process gone (Android):', nativeEvent.didCrash);
+        eventHandler.setHealthStatus(false, 'Sandbox WebView process crashed');
+        sandboxWebViewRef.current?.reload();
       }}
       onMessage={event => {
         eventHandler.handleSandboxEvent(event);
@@ -243,9 +320,15 @@ export function WalletSDKProvider({onError, customUri, children, onReady, config
     />
   );
 
+  // Add health status to context
+  const enhancedController = {
+    ...controller,
+    webViewHealth,
+  };
+
   return (
     <View flex={1}>
-      <WalletSDKContext.Provider value={controller}>
+      <WalletSDKContext.Provider value={enhancedController}>
         <CredentialProvider>
           {children}
         </CredentialProvider>

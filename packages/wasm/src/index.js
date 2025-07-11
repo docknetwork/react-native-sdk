@@ -58,6 +58,18 @@ global.handleEvent = event => {
     getLogger().log('webview: Received response', data.body);
     getRpcClient().receive(data.body);
   }
+
+  // Handle health check pings
+  if (data && data.type === 'health-check-ping') {
+    postMessage({
+      type: 'health-check-pong',
+      body: { 
+        id: data.body.id, 
+        timestamp: Date.now(),
+        status: 'healthy'
+      }
+    });
+  }
 };
 
 addEventListener('message', global.handleEvent);
