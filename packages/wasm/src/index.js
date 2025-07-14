@@ -61,6 +61,7 @@ global.handleEvent = event => {
 
   // Handle health check pings
   if (data && data.type === 'health-check-ping') {
+    console.log(`[WebView] Received ping: ${data.body.id}, responding with pong`);
     postMessage({
       type: 'health-check-pong',
       body: { 
