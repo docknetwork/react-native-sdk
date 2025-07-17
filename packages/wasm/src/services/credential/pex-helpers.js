@@ -60,6 +60,17 @@ function getAttributeName({field, selectedCredentials, index}) {
   return attributeName;
 }
 
+/**
+ * Convert PEX request to bounds for each descriptor
+ * @param {*} pexRequest - The PEX request object containing input descriptors and constraints
+ * @param {*} selectedCredentials  - Array of selected credentials corresponding to the input descriptors
+ * @param {*} removeFromRequest - if true, removes range proofs fields from the request. it might be dangerous if you will be using the proof request later
+ *  because it will not have the range proofs fields anymore.
+ * @returns {Array} - Array of bounds for each descriptor, where each bound is an object with attributeName, min, and max
+ * @throws {Error} - If a field path is missing or empty
+ * @throws {Error} - If an unsupported format or type is encountered
+ * @throws {Error} - If a selected credential is expected but not found at the given index
+ */
 export function pexToBounds(
   pexRequest,
   selectedCredentials = [],
