@@ -35,8 +35,11 @@ describe('Range proofs verification', () => {
       template: proofRequest.qr,
     });
 
-    // Reveal only dateOfBirth attribute
-    const attributesToReveal = ['credentialSubject.dateOfBirth'];
+    // We can keep the attributes to reveal empty
+    // Range proof attributes will be handled automatically during presentation creation
+    // and will not be revealed in the presentation
+    // even if we include them in the attributesToReveal, they will be ignored
+    const attributesToReveal = [];
 
     controller.selectedCredentials.set(credential.id, {
       credential: credential,
@@ -49,6 +52,19 @@ describe('Range proofs verification', () => {
     expect(
       presentation.verifiableCredential[0].credentialSubject,
     ).toBeUndefined();
+
+    // assert that the bounds for dateOfBirth are present
+    expect(
+      presentation.verifiableCredential[0].proof.bounds.credentialSubject
+        .dateOfBirth,
+    ).toEqual([
+      {
+        min: 502675200000,
+        max: 884541351600000,
+        paramId: 'key0',
+        protocol: 'LegoGroth16',
+      },
+    ]);
   });
 
   it('should not reveal range proof attributes for KVAC credentials', async () => {
@@ -70,11 +86,9 @@ describe('Range proofs verification', () => {
       template: proofRequest.qr,
     });
 
-    // Reveal only dateOfBirth attribute
-    const attributesToReveal = [
-      'credentialSubject.id',
-      'credentialSubject.dateOfBirth',
-    ];
+    // Reveal only id attribute
+    // The range proof attribute dateOfBirth will be handled automatically during presentation creation
+    const attributesToReveal = ['credentialSubject.id'];
 
     controller.selectedCredentials.set(credential.id, {
       credential: credential,
@@ -90,6 +104,18 @@ describe('Range proofs verification', () => {
     expect(
       presentation.verifiableCredential[0].credentialSubject.id,
     ).toBeDefined();
+    // assert that the bounds for dateOfBirth are present
+    expect(
+      presentation.verifiableCredential[0].proof.bounds.credentialSubject
+        .dateOfBirth,
+    ).toEqual([
+      {
+        min: 502675200000,
+        max: 884541351600000,
+        paramId: 'key0',
+        protocol: 'LegoGroth16',
+      },
+    ]);
   });
   afterAll(() => closeWallet());
 });
