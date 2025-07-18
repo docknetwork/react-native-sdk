@@ -1,6 +1,6 @@
 {
   "name": "@docknetwork/wallet-sdk-data-store",
-  "version": "1.5.11",
+  "version": "1.5.12",
   "license": "https://github.com/docknetwork/react-native-sdk/LICENSE",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -17,7 +17,7 @@
     "typeorm": "^0.3.15"
   },
   "dependencies": {
-    "@docknetwork/wallet-sdk-wasm": "^1.5.11",
+    "@docknetwork/wallet-sdk-wasm": "^1.5.12",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
