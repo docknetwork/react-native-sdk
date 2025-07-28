@@ -17,10 +17,57 @@ export type TruveraIDVConfig = {
   biometricMatchExpirationMinutes: number;
 };
 
-async function performBiometricCheck() {
-  await Keychain.getGenericPassword({
-    accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_ANY,
-  });
+export const isBiometrySupported = async () => {
+  try {
+    const biometryType = await Keychain.getSupportedBiometryType();
+    return !!biometryType;
+  } catch (error) {
+    return false;
+  }
+};
+
+export const saveBiometricData = async (username, password) => {
+  try {
+    await Keychain.setGenericPassword(username, password, {
+      accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_ANY,
+      accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED,
+    });
+  } catch (error) {
+    console.log('Error saving biometricId:', error.message);
+  }
+};
+
+export const getBiometricData = async () => {
+  try {
+    return await Keychain.getGenericPassword({
+      accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_ANY,
+    });
+  } catch (error) {
+    console.log('Error retrieving credentials:', error.message);
+    return null;
+  }
+};
+
+// Simulate a biometric check
+// This function will store mock data in the keychain
+// And right after that it will retrive that same information
+// It will trigger a biometric check in the user device
+async function simulateBiometricCheck() {
+  const biometrySupported = await isBiometrySupported();
+  
+  if (biometrySupported) {
+    await saveBiometricData('truvera-biometric-data', '1234567890');
+
+    const biometricData: any = await getBiometricData();
+
+    if (biometricData?.password) {
+      return !!biometricData.password;
+    }
+
+    return false;
+  }
+
+  return true;
 }
 
 export const getIssuanceDate = () => {
@@ -152,7 +199,11 @@ export function createTruveraIDVProvider({
 }): IDVProvider {
   return {
     async enroll(walletDID, proofRequest) {
-      await performBiometricCheck();
+      const biometricResult = await simulateBiometricCheck();
+
+      if (!biometricResult) {
+        throw new Error('Biometric check failed');
+      }
 
       const enrollmentCredential = await issueEnrollmentCredential(walletDID, configs);
       const matchCredential = await issueMatchCredential(walletDID, enrollmentCredential, configs);
@@ -163,7 +214,11 @@ export function createTruveraIDVProvider({
       };
     },
     async match(walletDID, enrollmentCredential, proofRequest) {
-      await performBiometricCheck();
+      const biometricResult = await simulateBiometricCheck();
+
+      if (!biometricResult) {
+        throw new Error('Biometric check failed');
+      }
 
       const matchCredential = await issueMatchCredential(walletDID, enrollmentCredential, configs);
 

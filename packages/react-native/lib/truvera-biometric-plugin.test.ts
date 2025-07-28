@@ -15,14 +15,15 @@ jest.mock('uuid', () => ({
 }));
 jest.mock('react-native-keychain', () => {
   return {
-    getSupportedBiometryType: () => 'FACE_ID',
+    getSupportedBiometryType: jest.fn().mockResolvedValue('FACE_ID'),
     ACCESS_CONTROL: {
       BIOMETRY_ANY: 1,
     },
     ACCESSIBLE: {
       WHEN_UNLOCKED: 1,
     },
-    getGenericPassword: jest.fn().mockResolvedValue('data'),
+    getGenericPassword: jest.fn().mockResolvedValue({ password: '1234567890' }),
+    setGenericPassword: jest.fn().mockResolvedValue(true),
   };
 });
 jest.mock('@docknetwork/wallet-sdk-core/src/biometric-provider', () => ({
@@ -242,6 +243,12 @@ describe('Truvera Biometric Plugin Unit Tests', () => {
       });
 
       it('should throw error if API call fails', async () => {
+        // Ensure biometric check passes
+        (Keychain.getSupportedBiometryType as jest.Mock).mockResolvedValueOnce('FACE_ID');
+        (Keychain.setGenericPassword as jest.Mock).mockResolvedValueOnce(true);
+        (Keychain.getGenericPassword as jest.Mock).mockResolvedValueOnce({ password: '1234567890' });
+        
+        // Then make API call fail
         mockedAxios.post.mockRejectedValueOnce(new Error('API Error'));
 
         const walletDID = 'did:dock:wallet123';
