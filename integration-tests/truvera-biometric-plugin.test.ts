@@ -20,20 +20,70 @@ import {
 // Only mock Keychain for biometric checks
 jest.mock('react-native-keychain', () => {
   return {
-    getSupportedBiometryType: () => 'FACE_ID',
+    getSupportedBiometryType: jest.fn().mockResolvedValue('FACE_ID'),
     ACCESS_CONTROL: {
       BIOMETRY_ANY: 1,
     },
     ACCESSIBLE: {
       WHEN_UNLOCKED: 1,
     },
-    getGenericPassword: jest.fn().mockResolvedValue('data'),
+    getGenericPassword: jest.fn().mockResolvedValue({ password: '1234567890' }),
+    setGenericPassword: jest.fn().mockResolvedValue(true),
   };
 });
 
 // Mock UUID to ensure a consistent biometric ID for testing
 jest.mock('uuid', () => ({
   v4: jest.fn().mockReturnValue('test-biometric-id-123')
+}));
+
+// Mock axios for API calls
+jest.mock('axios', () => ({
+  post: jest.fn().mockImplementation((url, data) => {
+    // Check the credential type from the request data
+    const credentialType = data.credential.type[1];
+    
+    if (credentialType === 'ForSurBiometricEnrollment') {
+      return Promise.resolve({
+        data: {
+          "@context": [
+            "https://www.w3.org/2018/credentials/v1",
+            "https://schema.truvera.io/biometric-context/v1"
+          ],
+          "id": "did:dock:enrollment123",
+          "type": ["VerifiableCredential", "ForSurBiometricEnrollment"],
+          "issuer": data.credential.issuer,
+          "issuanceDate": data.credential.issuanceDate,
+          "credentialSubject": data.credential.subject,
+          "proof": {
+            "type": "Ed25519Signature2018",
+            "proofValue": "mock-proof-value"
+          }
+        }
+      });
+    } else if (credentialType === 'ForSurBiometric') {
+      return Promise.resolve({
+        data: {
+          "@context": [
+            "https://www.w3.org/2018/credentials/v1",
+            "https://schema.truvera.io/biometric-context/v1"
+          ],
+          "id": "did:dock:match123",
+          "type": ["VerifiableCredential", "ForSurBiometric"],
+          "issuer": data.credential.issuer,
+          "issuanceDate": data.credential.issuanceDate,
+          "expirationDate": data.credential.expirationDate,
+          "credentialSubject": data.credential.subject,
+          "proof": {
+            "type": "BbsBlsSignature2020",
+            "proofValue": "mock-proof-value"
+          }
+        }
+      });
+    }
+    
+    return Promise.reject(new Error('Unknown credential type'));
+  })
 }));
 
 // Configuration for the Truvera provider
