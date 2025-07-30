@@ -278,11 +278,19 @@ describe('pex helpers', () => {
             attributeName: 'credentialSubject.age',
             min: 0,
             max: 10000000000,
+            proofRequestMax: undefined,
+            proofRequestMin: 0,
+            format: undefined,
+            type: 'number',
           },
           {
             attributeName: 'credentialSubject.dateOfBirth',
             min: new Date('2021-01-01'),
             max: new Date(884541351600000),
+            proofRequestMax: undefined,
+            proofRequestMin: '2021-01-01',
+            format: 'date',
+            type: undefined,
           },
         ],
       ]);
@@ -325,6 +333,10 @@ describe('pex helpers', () => {
             attributeName: 'credentialSubject.age',
             min: 0,
             max: 10000000000,
+            proofRequestMax: undefined,
+            proofRequestMin: 0,
+            format: undefined,
+            type: 'number',
           },
         ],
       ]);
@@ -361,6 +373,10 @@ describe('pex helpers', () => {
             attributeName: 'expirationDate',
             min: new Date('2021-01-01T00:00:00Z'),
             max: new Date('2022-01-01T00:00:00Z'),
+            proofRequestMax: '2022-01-01T00:00:00Z',
+            proofRequestMin: '2021-01-01T00:00:00Z',
+            format: 'date-time',
+            type: undefined,
           },
         ],
       ]);
@@ -398,6 +414,10 @@ describe('pex helpers', () => {
             attributeName: 'amount',
             min: 0,
             max: 100,
+            proofRequestMax: 100,
+            proofRequestMin: 0,
+            format: undefined,
+            type: 'number',
           },
         ],
       ]);
@@ -444,11 +464,19 @@ describe('pex helpers', () => {
             attributeName: 'startDate',
             min: new Date('2021-01-01'),
             max: new Date('2022-01-01'),
+            proofRequestMax: '2022-01-01',
+            proofRequestMin: '2021-01-01',
+            format: 'date',
+            type: undefined,
           },
           {
             attributeName: 'amount',
             min: 0,
             max: 100,
+            proofRequestMax: 100,
+            proofRequestMin: 0,
+            format: undefined,
+            type: 'number',
           },
         ],
       ]);
@@ -462,6 +490,67 @@ describe('pex helpers', () => {
       const bounds = pexToBounds(pexRequest);
 
       expect(bounds).toEqual([]);
+    });
+
+    it('should preserve original proof request values in new metadata fields', () => {
+      const pexRequest = {
+        input_descriptors: [
+          {
+            constraints: {
+              fields: [
+                {
+                  filter: {
+                    type: 'number',
+                    minimum: 18,
+                    maximum: 65,
+                  },
+                  path: ['$.credentialSubject.age'],
+                },
+                {
+                  filter: {
+                    format: 'date',
+                    formatMinimum: '2020-01-01',
+                    formatMaximum: '2025-12-31',
+                  },
+                  path: ['$.credentialSubject.graduationDate'],
+                },
+              ],
+            },
+          },
+        ],
+      };
+
+      const bounds = pexToBounds(pexRequest, [
+        {
+          credentialSubject: {
+            age: 25,
+            graduationDate: '2023-06-15',
+          },
+        },
+      ]);
+
+      expect(bounds).toEqual([
+        [
+          {
+            attributeName: 'credentialSubject.age',
+            min: 18,
+            max: 65,
+            proofRequestMax: 65,
+            proofRequestMin: 18,
+            format: undefined,
+            type: 'number',
+          },
+          {
+            attributeName: 'credentialSubject.graduationDate',
+            min: new Date('2020-01-01'),
+            max: new Date('2025-12-31'),
+            proofRequestMax: '2025-12-31',
+            proofRequestMin: '2020-01-01',
+            format: 'date',
+            type: undefined,
+          },
+        ],
+      ]);
     });
 
     it('should not have undefined attributeNames, exclude not found bounds', () => {
