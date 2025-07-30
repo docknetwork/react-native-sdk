@@ -173,6 +173,9 @@ export function pexToBounds(
             : formatMinimum
           : minimum;
 
+      const proofRequestMax = max;
+      const proofRequestMin = min;
+
       if (max === undefined && min === undefined) {
         return;
       }
@@ -247,6 +250,10 @@ export function pexToBounds(
         attributeName,
         min,
         max,
+        proofRequestMax,
+        proofRequestMin,
+        format,
+        type,
       });
     });
 
