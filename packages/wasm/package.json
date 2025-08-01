@@ -28,7 +28,7 @@
         "@docknetwork/credential-sdk": "0.50.0",
         "@sphereon/oid4vci-client": "^0.16.0",
         "@sphereon/oid4vci-common": "^0.16.0",
-        "axios": "^0.25.0",
+        "axios": "^1.11.0",
         "json-rpc-2.0": "^0.2.16",
         "uuid": "^8.3.2",
         "winston": "^3.3.3",

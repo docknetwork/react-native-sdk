@@ -17,7 +17,7 @@
     "browserslist": "> 0.01%",
     "dependencies": {
         "webpack": "^5.67.0",
-        "webpack-dev-server": "4.15.1",
+        "webpack-dev-server": "5.2.1",
         "react-native-webview": "^11.4.3",
         "@docknetwork/wallet-sdk-core": "^1.5.12",
         "@docknetwork/wallet-sdk-data-store-typeorm": "^1.5.12",
