@@ -1,4 +1,3 @@
-import {isBase64} from '@polkadot/util-crypto';
 import assert from 'assert';
 import axios from 'axios';
 import {Logger} from '@docknetwork/wallet-sdk-wasm/src/core/logger';
@@ -17,6 +16,7 @@ import {
 } from './payloads';
 import jwtDecode from 'jwt-decode';
 import {blockchainService} from '@docknetwork/wallet-sdk-wasm/src/services/blockchain/service';
+import {utilCryptoService} from '@docknetwork/wallet-sdk-wasm/src/services/util-crypto/service';
 
 let serviceURL = process.env.RELAY_SERVICE_URL || 'https://relay.truvera.io';
 
@@ -152,7 +152,7 @@ async function jwtHandler(message) {
 }
 
 async function base64Handler(message) {
-  if (!isBase64(message)) {
+  if (!(await utilCryptoService.isBase64(message))) {
     return false;
   }
 

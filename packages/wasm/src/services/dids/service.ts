@@ -6,7 +6,6 @@ import {
   KeypairToDIDKeyDocumentParams,
   GetDIDResolutionParams,
 } from './config';
-import {keyringService} from '../keyring/service';
 import {utilCryptoService} from '../util-crypto/service';
 import assert from 'assert';
 import {blockchainService, getDock} from '../blockchain/service';
@@ -20,35 +19,17 @@ import {
 import {Ed25519Keypair} from '@docknetwork/credential-sdk/keypairs';
 
 import {Logger} from '../../core/logger';
-import {polkadotToKeydoc} from '../../core/polkadot-utils';
 import base64url from 'base64url';
 import {keyDocToKeypair} from '../credential/utils';
 import {
   Ed25519Signature2020,
   EcdsaSecp256k1Signature2019,
 } from '@docknetwork/credential-sdk/vc/crypto';
-
-async function createDockDID({keyPair}) {
-  const dockDID = DockDid.random();
-  const dockController = dockDID.toString();
-  const publicKey = keyPair.publicKey();
-  const verRels = new VerificationRelationship();
-  const didKey = new DidKey(publicKey, verRels);
-
-  await blockchainService.modules.did.dockOnly.rawTx.newOnchain(
-    dockDID.did,
-    [didKey],
-    dockController === dockDID.toString()
-      ? []
-      : [DockDid.fromQualifiedString(dockController)],
-  );
-
-  return {did: dockDID.toString(), controller: dockController};
-}
+import { keypairToKeydoc } from './keypair-utils';
 
 async function getSignerKeypair(privateKeyDoc) {
   const privateKey =
-    privateKeyDoc.keypair || keyDocToKeypair(privateKeyDoc, blockchainService.dock);
+    privateKeyDoc.keypair || await keyDocToKeypair(privateKeyDoc);
 
   if (!privateKey.signer && privateKey.sign) {
     privateKey.signer = () => ({sign: ({data}) => privateKey.sign(data)});
@@ -84,8 +65,7 @@ class DIDService {
     DIDService.prototype.keypairToDIDKeyDocument,
     DIDService.prototype.getDIDResolution,
     DIDService.prototype.generateKeyDoc,
-    DIDService.prototype.registerDidDock,
-    DIDService.prototype.getDidDockDocument,
+    DIDService.prototype.deriveKeyDoc,
     DIDService.prototype.createSignedJWT,
   ];
   keypairToDIDKeyDocument(params: KeypairToDIDKeyDocumentParams) {
@@ -102,22 +82,16 @@ class DIDService {
 
   async generateKeyDoc(params) {
     validation.generateKeyDoc(params);
-    const {derivePath = '', type = 'ed25519', keyPairJSON} = params;
-    let keyring;
+    const {derivePath = '', type = 'ed25519'} = params;
+    const keyPair = Ed25519Keypair.random()
+    return keypairToKeydoc(keyPair, params.controller);
+  }
 
-    if (keyPairJSON) {
-      keyring = keyringService.keyring.addFromJson(keyPairJSON);
-      keyring.unlock('');
-    } else {
-      const mnemonic = await utilCryptoService.mnemonicGenerate(12);
-      keyring = keyringService.getKeyringPair({
-        mnemonic,
-        derivePath,
-        type,
-      });
-    }
-
-    return polkadotToKeydoc(keyring, params.controller);
+  async deriveKeyDoc(params) {
+    validation.deriveKeyDoc(params);
+    const { pair, type = 'ed25519' } = params;
+    const keyPair = new Ed25519Keypair(pair.secretKey, 'private')
+    return keypairToKeydoc(keyPair, params.controller);
   }
 
   async createSignedJWT({payload, privateKeyDoc, headerInput}) {
@@ -138,24 +112,6 @@ class DIDService {
 
     const signature = await sign({data: signPayload});
     return `${headerAndPayloadBase64URL}.${base64url.encode(signature)}`;
-  }
-
-  async getDidDockDocument(did) {
-    assert(!!did, 'DID is required');
-    const dock = blockchainService.dock;
-    const result = await blockchainService.didModule.getDocument(did);
-    return result;
-  }
-
-  async registerDidDock(keyPairJSON) {
-    assert(!!keyPairJSON, 'keyPair is required');
-    const keyPair = Ed25519Keypair.random();
-    const dockDID = await createDockDID({keyPair});
-
-    return {
-      dockDID,
-      keyPairWalletId: keyPairJSON.address,
-    };
   }
 }
 

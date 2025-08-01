@@ -1,47 +1,12 @@
-import axios from 'axios';
+import { issueCredential } from './helpers/certs-helpers';
 import {
   getWallet,
   getDIDProvider,
   getMessageProvider,
   closeWallet,
 } from './helpers/wallet-helpers';
-import assert from 'assert';
 import { logger } from '@docknetwork/wallet-sdk-data-store/src/logger';
 
-const testAPIURL = process.env.TESTING_API_URL || null;
-
-function issueCredential({subjectDID}) {
-  console.log('Issuing credential for DID', subjectDID);
-
-  return axios.post(
-    `${testAPIURL}/credentials`,
-    {
-      anchor: false,
-      password: 'test',
-      persist: true,
-      emailMessage: '',
-      credential: {
-        name: 'Test2',
-        type: ['VerifiableCredential', 'BasicCredential'],
-        issuer: 'did:dock:5GJeBeStWSxqyPGUJnERMFhm3wKcfCZP6nhqtoKyRAmq9FeU',
-        issuanceDate: '2023-11-01T15:43:59.361Z',
-        subject: {
-          id: subjectDID,
-          name: 'Test',
-        },
-      },
-      recipientEmail: 'maycon@dock.io',
-      algorithm: 'dockbbs+',
-      distribute: true,
-    },
-    {
-      headers: {
-        'DOCK-API-TOKEN': process.env.CERTS_API_KEY,
-        'Content-Type': 'application/json',
-      },
-    },
-  );
-}
 describe('Credential Distribution', () => {
   let wallet;
 
@@ -50,7 +15,6 @@ describe('Credential Distribution', () => {
   });
 
   it('should receive a credential issued to the wallet DID', async () => {
-    assert(testAPIURL, "Please configure the TESTING_API_URL env var.");
     const wallet = await getWallet();
     const currentDID = await getDIDProvider().getDefaultDID();
 

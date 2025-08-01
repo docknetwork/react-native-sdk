@@ -6,7 +6,7 @@ import {getWallet, getCredentialProvider} from '../helpers';
 import clipboardy from 'clipboardy';
 import {pexService} from '@docknetwork/wallet-sdk-wasm/src/services/pex';
 import input from '@inquirer/input';
-import { WalletEvents } from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
+import { WalletEvents } from '@docknetwork/wallet-sdk-core/src/wallet';
 
 const credentialsCommand = new Command('credentials').description(
   'list, filter with pex filter, import from url',

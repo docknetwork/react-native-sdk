@@ -1,9 +1,9 @@
 #!/bin/bash
 
-yarn workspace @docknetwork/wallet-sdk-data-store-typeorm build
-yarn workspace @docknetwork/wallet-sdk-data-store-web build
-yarn workspace @docknetwork/wallet-sdk-data-store build
-yarn workspace @docknetwork/wallet-sdk-wasm build
-yarn workspace @docknetwork/wallet-sdk-core build
-yarn workspace @docknetwork/wallet-sdk-dids build
-yarn workspace @docknetwork/wallet-sdk-relay-service build
+npm run build -w @docknetwork/wallet-sdk-data-store-typeorm
+npm run build -w @docknetwork/wallet-sdk-data-store-web
+npm run build -w @docknetwork/wallet-sdk-data-store
+npm run build -w @docknetwork/wallet-sdk-wasm
+npm run build -w @docknetwork/wallet-sdk-core
+npm run build -w @docknetwork/wallet-sdk-dids
+npm run build -w @docknetwork/wallet-sdk-relay-service

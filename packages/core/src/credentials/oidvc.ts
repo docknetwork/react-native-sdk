@@ -15,7 +15,7 @@ export async function acquireOpenIDCredentialFromURI({
   didProvider: IDIDProvider;
   uri: string;
   getAuthCode?: (authorizationURL: string) => Promise<string>;
-}) {
+}): Promise<any> {
   const [holderKeyDocument] = await didProvider.getDIDKeyPairs();
 
   let response = await credentialServiceRPC.acquireOIDCredential({
@@ -113,7 +113,7 @@ export async function getPresentationSubmision({
     holderDID,
   });
 
-  return presentation.presentation_submission;
+  return presentation?.presentation_submission;
 }
 
 pexService.evaluatePresentation;

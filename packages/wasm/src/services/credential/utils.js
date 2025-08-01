@@ -1,13 +1,22 @@
 import * as bs58 from 'base58-universal';
-import {Bls12381G2KeyPairDock2022} from '@docknetwork/credential-sdk/vc/crypto';
-import {getKeyring} from '../keyring/service';
+import {
+  Bls12381BBSKeyPairDock2023,
+  Bls12381G2KeyPairDock2022,
+  Bls12381BBDT16KeyPairDock2024,
+} from '@docknetwork/credential-sdk/vc/crypto';
+import {randomAsHex} from '@docknetwork/credential-sdk/utils';
+import {X25519KeyAgreementKey2020} from '@digitalbazaar/x25519-key-agreement-key-2020';
+import {X25519KeyAgreementKey2019} from '@digitalbazaar/x25519-key-agreement-key-2019';
+import {Ed25519VerificationKey2018} from '@digitalbazaar/ed25519-verification-key-2018';
+import {Ed25519VerificationKey2020} from '@digitalbazaar/ed25519-verification-key-2020';
 
-const docToKeyMap = {
-  Sr25519VerificationKey2020: 'sr25519',
-  Ed25519VerificationKey2018: 'ed25519',
-};
-export function keyDocToKeypair(keyDoc, dock) {
-  // For now we expect multibase to just be b58, this needs fixing later if/when we support more keys
+import {Ed25519Keypair} from '@docknetwork/credential-sdk/keypairs';
+
+export async function keyDocToKeypair(keyDoc) {
+  if (keyDoc.keypair) {
+    return keyDoc;
+  }
+
   const {
     type,
     privateKeyBase58,
@@ -15,25 +24,58 @@ export function keyDocToKeypair(keyDoc, dock) {
     privateKeyMultibase,
     publicKeyMultibase,
   } = keyDoc;
-  const privateKeyEncoded = privateKeyBase58 || privateKeyMultibase.substr(1);
+
+  const publicKeyEncoded = publicKeyBase58 || publicKeyMultibase.substr(1);
+  const privateKeyEncoded =
+    privateKeyBase58 || (privateKeyMultibase && privateKeyMultibase.substr(1));
+  if (!privateKeyEncoded) {
+    throw new Error(
+      `No private key in document found, this should not happen. Got: ${JSON.stringify(
+        keyDoc,
+        null,
+        2,
+      )}`,
+    );
+  }
+
   const privateKeyBytes = bs58.decode(privateKeyEncoded);
+  const publicKeyBytes = bs58.decode(publicKeyEncoded);
 
   if (type === 'Bls12381G2VerificationKeyDock2022') {
     return new Bls12381G2KeyPairDock2022(keyDoc);
+  } else if (type === 'Bls12381BBSVerificationKeyDock2023') {
+    return new Bls12381BBSKeyPairDock2023(keyDoc);
+  } else if (type === 'Bls12381BBDT16VerificationKeyDock2024') {
+    return new Bls12381BBDT16KeyPairDock2024(keyDoc);
+  } else if (
+    type === 'Ed25519VerificationKey2020' ||
+    type === 'Ed25519VerificationKey2018'
+  ) {
+    const key = new Ed25519Keypair(randomAsHex(32));
+    key.keyPair.publicKey = publicKeyBytes;
+    key.keyPair.secretKey = privateKeyBytes;
+    return key;
   } else {
-    const publicKeyEncoded = publicKeyBase58 || publicKeyMultibase.substr(1);
-    const keyType = docToKeyMap[type];
-    if (!keyType) {
-      throw new Error(`Unsupported key type: ${type}`);
-    }
-
-    return getKeyring().createFromPair(
-      {
-        publicKey: bs58.decode(publicKeyEncoded),
-        secretKey: privateKeyBytes,
-      },
-      {},
-      keyType,
-    );
+    throw new Error(`Unsupported key type: ${type}`);
   }
+}
+
+const keyConstructors = {
+  Ed25519VerificationKey2018: keypairOptions =>
+    new Ed25519VerificationKey2018(keypairOptions),
+  Ed25519VerificationKey2020: keypairOptions =>
+    new Ed25519VerificationKey2020(keypairOptions),
+  X25519KeyAgreementKey2019: keypairOptions =>
+    new X25519KeyAgreementKey2019(keypairOptions),
+  X25519KeyAgreementKey2020: keypairOptions =>
+    new X25519KeyAgreementKey2020(keypairOptions),
+};
+
+export function getKeypairFromDoc(keypairOptions) {
+  const {type} = keypairOptions;
+  const keyConstructor = keyConstructors[type];
+  if (!keyConstructor) {
+    throw new Error(`Unrecognized keypair type to construct: ${type}`);
+  }
+  return keyConstructor(keypairOptions);
 }

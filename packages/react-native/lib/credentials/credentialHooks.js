@@ -1,7 +1,7 @@
 import {useMemo, useCallback, useState, useEffect} from 'react';
 import {useDocument, useDocuments} from '../index';
 import assert from 'assert';
-import { getCredentialProvider, getWallet } from '../wallet';
+import {getCredentialProvider, getWallet} from '../wallet';
 
 export const sortByIssuanceDate = (a, b) =>
   getCredentialTimestamp(b) - getCredentialTimestamp(a);
@@ -68,13 +68,27 @@ export function useCredentialUtils() {
   }, [credentials, doesCredentialExist, deleteCredential, loading]);
 }
 
-export function useCredentialStatus({ credential }: any) {
+export function useCredentialStatus({credentialId, onError}: any) {
+  console.warn(
+    'useCredentialStatus from credentialHooks is deprecated. Please use useCredentialStatus from CredentialContext instead.'
+  );
+  
   const [status, setStatus] = useState();
-  const statusDoc = useDocument(`${credential.id}#status`);
+  const statusDoc = useDocument(`${credentialId}#status`);
 
   useEffect(() => {
-    getCredentialProvider().getCredentialStatus(credential).then(setStatus);
-  }, [credential, statusDoc]);
+    const fetchStatus = async () => {
+      const provider = getCredentialProvider();
+      const credential = await provider.getById(credentialId);
+
+      getCredentialProvider()
+        .getCredentialStatus(credential)
+        .then(setStatus)
+        .catch(onError);
+    };
+
+    fetchStatus();
+  }, [credentialId, statusDoc, onError]);
 
   return useMemo(() => {
     return status;

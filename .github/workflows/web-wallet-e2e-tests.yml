@@ -1,0 +1,59 @@
+name: Web Wallet E2E Tests
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  web-wallet-e2e-tests:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        browser: [chromium]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.2.0'
+    
+    - name: Install dependencies
+      run: yarn install --frozen-lockfile
+      working-directory: examples/web-example
+    
+    - name: Install Playwright browsers
+      run: yarn playwright install --with-deps ${{ matrix.browser }}
+      working-directory: examples/web-example
+    
+    - name: Run E2E tests
+      run: yarn test:e2e --project=${{ matrix.browser }}
+      working-directory: examples/web-example
+      env:
+        CI: true
+        TEST_CREDENTIAL_URL: ${{ secrets.TEST_CREDENTIAL_URL }}
+        TEST_PROOF_REQUEST_URL: ${{ secrets.TEST_PROOF_REQUEST_URL }}
+    
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: playwright-report-${{ matrix.browser }}
+        path: examples/web-example/playwright-report/
+        retention-days: 30
+    
+    - name: Upload test videos
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-videos-${{ matrix.browser }}
+        path: examples/web-example/test-results/
+        retention-days: 7
+
+    - name: Publish Test Summary Results
+      run: npx github-actions-ctrf ctrf/ctrf-report.json
+      working-directory: examples/web-example

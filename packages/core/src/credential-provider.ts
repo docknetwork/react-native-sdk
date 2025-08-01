@@ -12,7 +12,11 @@ export interface ICredentialProvider {
   getById(id: string): Credential;
   getMembershipWitness(credential: any): Promise<any>;
   isBBSPlusCredential(credential: any): boolean;
-  isValid(credential: any, forceFetch?: boolean): Promise<boolean>;
+  isValid(credential: any, forceFetch?: boolean): Promise<{
+    status: string;
+    error?: string;
+    warning?: string;
+  }>;
   addCredential(credential: any): Promise<Credential>;
   importCredentialFromURI(
     params: importCredentialFromUriParams,
@@ -23,6 +27,7 @@ export interface ICredentialProvider {
   getCredentialStatus(
     credential: Credential,
   ): Promise<{status: string; error?: string}>;
+  removeCredential(credential: Credential): Promise<void>;
 }
 
 export function isBBSPlusCredential(credential) {
@@ -81,7 +86,11 @@ export async function isValid({
 }: {
   credential: Credential;
   wallet: IWallet;
-}) {
+}): Promise<{
+  status: string;
+  error?: string;
+  warning?: string;
+}> {
   assert(!!credential, 'credential is required');
 
   try {
@@ -107,6 +116,15 @@ export async function isValid({
 
     const {verified, error} = verificationResult;
 
+    if (error) {
+      const sdkNotInitialized = error?.errors?.find(err => err?.message === 'SDK is not initialized');
+      if (sdkNotInitialized) {
+        throw new Error(
+          'SDK is not initialized. Please ensure the blockchain is connected.',
+        );
+      }
+    }
+
     if (!verified) {
       if (
         typeof error === 'string' &&
@@ -128,10 +146,25 @@ export async function isValid({
       status: CredentialStatus.Verified,
     };
   } catch (err) {
+    // Handle unknown error, when we can't determine the status
+    // Potential reasons can be network error, blockchain offline, internal SDK error
     console.error(err);
 
+    // in this case we return the cached status if possible
+    // It will avoid showing unknown status in case of a network error
+    const statusDoc = await wallet.getDocumentById(`${credential.id}#status`);
+
+    if (statusDoc) {
+      return {
+        ...statusDoc,
+        warning: 'unable_to_refresh_status',
+      };
+    }
+
+    // Return pending status
+    // As we can't determine the status, and there is no cached status
     return {
-      status: CredentialStatus.Invalid,
+      status: CredentialStatus.Pending,
       error: err.toString(),
     };
   }
@@ -186,6 +219,7 @@ type CredentialStatusDocument = {
   id: string;
   status: string;
   error: string;
+  warning?: string;
 };
 
 /**
@@ -266,12 +300,42 @@ async function syncCredentialStatus({
     const result = await isValid({credential, wallet});
     statusDoc.status = result?.status;
     statusDoc.error = result?.error;
+    statusDoc.warning = result?.warning;
     statusDoc.updatedAt = new Date().toISOString();
 
     await wallet.updateDocument(statusDoc);
   }
 
   return statusDocs;
+}
+
+/**
+ * Removes a credential and its related documents from the wallet
+ * @param param0 
+ * @returns 
+ */
+export async function removeCredential({
+  wallet, 
+  credential,
+}: {
+  wallet: IWallet;
+  credential: Credential | string;
+}): Promise<void> {
+  // Allow passing either a credential object or a credential ID
+  const credentialId = typeof credential === 'string' ? credential : credential.id;
+  
+  assert(!!credentialId, 'credential ID is required');
+  
+  // Remove the main credential document
+  await wallet.removeDocument(credentialId);
+  
+  if (await wallet.getDocumentById(`${credentialId}#witness`)) {
+    await wallet.removeDocument(`${credentialId}#witness`);
+  }
+
+  if (await wallet.getDocumentById(`${credentialId}#status`)) {
+    await wallet.removeDocument(`${credentialId}#status`);
+  }
 }
 
 export function createCredentialProvider({
@@ -319,6 +383,7 @@ export function createCredentialProvider({
       return syncCredentialStatus({wallet, ...props});
     },
     addCredential: credential => addCredential({wallet, credential}),
+    removeCredential: credential => removeCredential({wallet, credential}),
     // TODO: move import credential from json or URL to this provider
   };
 }

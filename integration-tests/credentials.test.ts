@@ -1,29 +1,16 @@
 import {
-  getCredentialById,
-  importCredentialJSON,
-} from './helpers/credential-helpers';
-import {
   BasicCredential,
   PolygonIDCredential,
   UniversityDegreeCredential,
   UniversityDegreeCredentialBBS,
-  BasicCredentialMainnet,
-  UniversityDegreeTestnet,
 } from './data/credentials';
 import {
   cleanup,
   closeWallet,
-  createNewWallet,
   getCredentialProvider,
   getWallet,
-  setupEnvironent,
 } from './helpers';
-import {credentialService} from '@docknetwork/wallet-sdk-wasm/src/services/credential/service';
-import {IWallet} from '@docknetwork/wallet-sdk-core/src/types';
-import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
-import {API_MOCK_DISABLED} from '@docknetwork/wallet-sdk-wasm/src/services/test-utils';
 import axios from 'axios';
-import {test} from '@docknetwork/wallet-sdk-wasm/src/services/blockchain/revocation';
 import {CheqdRevocationCredential} from './data/credentials/cheqd-credentials';
 
 const allCredentials = [
@@ -42,8 +29,10 @@ describe('Credentials', () => {
 
   it('expect to import credentials', async () => {
     for (const credentialJSON of allCredentials) {
-      await importCredentialJSON(credentialJSON);
-      const credential = await getCredentialById(credentialJSON.id);
+      await getCredentialProvider().addCredential(credentialJSON);
+      const credential = await getCredentialProvider().getById(
+        credentialJSON.id,
+      );
       expect(credential).toBeDefined();
     }
   });
@@ -51,7 +40,7 @@ describe('Credentials', () => {
   describe('credential status', () => {
     it('should get status of bbs revokable credential - dock issuer', async () => {
       const credentialUrl =
-        'https://creds-testnet.truvera.io/317c361641e7311663329a7fffff13a14f161832a9590acfd5d80a966c1615eb';
+        'https://creds-testnet.truvera.io/84b3cbe48c2e2e487c0c896615566b81b2e2e41ab818d3de3956cf1895ec4815';
       const password = 'test';
       const {data: credential} = await axios.get(
         `${credentialUrl}?p=${btoa(password)}`,

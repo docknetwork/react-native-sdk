@@ -1,5 +1,6 @@
 import assert from 'assert';
 import axios from 'axios';
+import {utilCryptoService} from '@docknetwork/wallet-sdk-wasm/src/services/util-crypto';
 
 // TODO: FIXME: this wont work for other staging envs
 function getApiURL(networkId) {
@@ -57,4 +58,32 @@ export async function getVerifiers({trustRegistryId, issuerDID, schemaId, networ
     console.log('error', error);
     return [];
   }
+}
+
+export async function getMetadata(govFramework: string): Promise<any> {
+  try {
+    const metadataURL = await utilCryptoService.hexToString(govFramework);
+    const response = await axios.get(metadataURL);
+    return response.data;
+  } catch (e) {
+    console.log('error: ', e);
+  }
+
+  return {};
+}
+
+export async function formatEcosystemData(ecosystems: any): Promise<any[]> {
+  const formattedEcosystems = [];
+  const ecosystemsList: any = Object.entries(ecosystems);
+
+  for (let i = 0; i < ecosystemsList.length; i++) {
+    let ecosystemData: any = {};
+    ecosystemData.trustRegistryId = ecosystemsList[i][0];
+    ecosystemData = {...ecosystemData, ...ecosystemsList[i][1]};
+
+    const metadata = await getMetadata(ecosystemsList[i][1]?.govFramework);
+    formattedEcosystems.push({...ecosystemData, ...metadata});
+  }
+
+  return formattedEcosystems;
 }

@@ -7,7 +7,7 @@ on:
     branches:
       - master
     paths:
-      - "yarn.lock"
+      - "package-lock.json"
       - ".github/workflows/**"
 
   schedule:
@@ -33,10 +33,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          yarn install
+          npm ci
 
       - name: Check licenses
         run: npx --yes license-checker --production --failOn "${{ env.AVOID_LICENSES }}" --excludePackages "${{ env.IGNORE_PACKAGES }}"
 
       - name: Run audit
-        run: /bin/bash -c "(yarn audit --groups 'dependencies' --level critical; [[ $? -ge 16 ]] && exit 1 || exit 0)"
+        run: npm audit --audit-level=critical

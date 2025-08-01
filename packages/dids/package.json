@@ -1,6 +1,6 @@
 {
     "name": "@docknetwork/wallet-sdk-dids",
-    "version": "0.4.19",
+    "version": "1.5.12",
     "license": "https://github.com/docknetwork/react-native-sdk/LICENSE",
     "repository": {
         "type": "git",
@@ -14,7 +14,7 @@
     },
     "scripts": {
         "prepublishOnly": "npm run build",
-        "build": "rm -rf lib && NODE_ENV=production babel src/ --out-dir lib --copy-files"
+        "build": "rm -rf lib && NODE_ENV=production babel src/ --out-dir lib --copy-files && node ../../scripts/fix-build-imports.js ./lib"
     },
     "devDependencies": {
         "@babel/cli": "^7.17.10",

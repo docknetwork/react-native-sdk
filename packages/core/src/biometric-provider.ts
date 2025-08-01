@@ -1,83 +1,173 @@
 import {WalletDocument} from '@docknetwork/wallet-sdk-wasm/src/types';
 import {IWallet} from './types';
-import {createCredentialProvider} from './credential-provider';
+import {
+  createCredentialProvider,
+  Credential,
+  CredentialStatus,
+} from './credential-provider';
 import assert from 'assert';
+import {EventEmitter} from 'events';
+import {createDIDProvider} from './did-provider';
 
-export type BiometricsPluginIssuerConfig = {
-  networkId: string;
-  did: string;
-  apiKey: string;
-  apiUrl: string;
-}
-
-export type BiometricsPluginConfigs = {
+export type BiometricsProviderConfigs<E> = {
+  // Generic configs used by the biometric provider
   enrollmentCredentialType: string;
   biometricMatchCredentialType: string;
-  biometricMatchExpirationMinutes: number;
-  issuerConfigs:BiometricsPluginIssuerConfig[];
-}
-
-let configs: BiometricsPluginConfigs = null;
-
-export function setBiometricConfigs(_configs: BiometricsPluginConfigs) {
-  configs = _configs;
+  // IDV specific configs, it depends on the IDV provider and its implementation
+  idvConfigs: E;
 };
 
+export interface IDVProcessOptions {
+  onDeepLink?: () => void;
+  onMessage?: () => void;
+  onError?: (error: Error) => void;
+  onCancel?: () => void;
+  onComplete?: (credential: any) => void;
+}
+
+export interface BiometricPlugin {
+  onEnroll(walletDID: string): Promise<WalletDocument>;
+  onMatch(
+    walletDID: string,
+    enrollmentCredential: Credential,
+  ): Promise<WalletDocument>;
+}
+
+let currentConfigs: BiometricsProviderConfigs<unknown> = null;
+
+export function setConfigs(configs: BiometricsProviderConfigs<unknown>) {
+  currentConfigs = configs;
+}
+
+export function isBiometricPluginEnabled() {
+  return !!currentConfigs?.biometricMatchCredentialType;
+}
+
 export function assertConfigs() {
-  assert(!!configs, 'Biometrics plugin not configured');
+  assert(!!currentConfigs, 'Missing biometric provider configs');
 }
 
 export function getBiometricConfigs() {
   assertConfigs();
-  return configs;
+  return currentConfigs;
 }
 
-export function getIssuerConfigsForNetwork(networkId): BiometricsPluginIssuerConfig {
-  return getBiometricConfigs()?.issuerConfigs.find(config => config.networkId === networkId);
+export function hasProofOfBiometrics(proofRequest) {
+  const fields = proofRequest.input_descriptors
+    ?.map(input => input.constraints?.fields)
+    .flat();
+  const paths = fields.map(field => field.path).flat();
+  return (
+    paths?.includes('$.credentialSubject.biometric.id') &&
+    paths?.includes('$.credentialSubject.biometric.created')
+  );
 }
 
-export function createBiometricBindingProvider({
+// map for events
+export const IDV_EVENTS = {
+  onDeepLink: 'onDeepLink',
+  onMessage: 'onMessage',
+  onError: 'onError',
+  onCancel: 'onCancel',
+  onComplete: 'onComplete',
+};
+
+export interface IDVProvider {
+  enroll(
+    walletDID: string,
+    proofRequest: any,
+  ): Promise<{enrollmentCredential: Credential; matchCredential: Credential}>;
+  match(
+    walletDID: string,
+    enrollmentCredential: Credential,
+    proofRequest: any,
+  ): Promise<{
+    matchCredential: Credential;
+  }>;
+}
+
+export interface IDVProviderFactory {
+  create(eventEmitter: EventEmitter, wallet: IWallet): IDVProvider;
+}
+
+export function createBiometricProvider({
   wallet,
-  onEnroll,
-  onMatch,
-  onCheckBiometryRequired,
+  idvProviderFactory,
 }: {
   wallet: IWallet;
-  onEnroll: () => Promise<WalletDocument>;
-  onMatch: (biometricTemplate: WalletDocument) => Promise<WalletDocument>;
-  onCheckBiometryRequired: (request) => boolean;
+  idvProviderFactory: IDVProviderFactory;
 }) {
   const credentialProvider = createCredentialProvider({wallet});
+  const didProvider = createDIDProvider({wallet});
+  const eventEmitter = new EventEmitter();
+  const idvProvider = idvProviderFactory.create(eventEmitter, wallet);
+
+
+  async function startIDV(proofRequest: any): Promise<{
+    enrollmentCredential: Credential;
+    matchCredential: Credential;
+  }> {
+    const walletDID = await didProvider.getDefaultDID();
+    let [enrollmentCredential] = await credentialProvider.getCredentials(
+      currentConfigs.enrollmentCredentialType,
+    );
+
+    // Remove any existing match credentials
+    const existingMatchCredentials = await credentialProvider.getCredentials(
+      currentConfigs.biometricMatchCredentialType,
+    );
+    for (const credential of existingMatchCredentials) {
+      await credentialProvider.removeCredential(credential.id);
+    }
+
+    let matchCredential: Credential;
+
+    if (!enrollmentCredential) {
+      // call IDV to start enrollment process and issue the enrollment credential + match credential
+      const credentials = await idvProvider.enroll(walletDID, proofRequest);
+
+      // check if credential is already in the credential store
+      const receivedViaDistribution = await credentialProvider.getById(
+        credentials.matchCredential.id,
+      );
+
+      if (!receivedViaDistribution) {
+        await credentialProvider.addCredential(
+          credentials.enrollmentCredential,
+        );
+        await credentialProvider.addCredential(credentials.matchCredential);
+      }
+
+      matchCredential = credentials.matchCredential;
+      enrollmentCredential = credentials.enrollmentCredential;
+    } else {
+      // call IDV to match the enrollment credential and issue the match credential
+      const credentials = await idvProvider.match(
+        walletDID,
+        enrollmentCredential,
+        proofRequest,
+      );
+
+      // check if credential is already in the credential store
+      const receivedViaDistribution = await credentialProvider.getById(
+        credentials.matchCredential.id,
+      );
+
+      if (!receivedViaDistribution) {
+        await credentialProvider.addCredential(credentials.matchCredential);
+      }
+
+      matchCredential = credentials.matchCredential;
+    }
+
+    return {
+      enrollmentCredential,
+      matchCredential,
+    };
+  }
+
   return {
-    enrollBiometry: async () => {
-      const enrollmentCredential = await onEnroll();
-      return await credentialProvider.addCredential(enrollmentCredential);
-    },
-    matchBiometry: async () => {
-      const CREDENTIAL_TYPE = configs.enrollmentCredentialType;
-      const enrollmentCredentials = await wallet.getDocumentsByType(
-        CREDENTIAL_TYPE,
-      );
-
-      if (!enrollmentCredentials.length) {
-        throw new Error('Enrollment credential not found');
-      }
-
-      const matchConfirmationCredential = await onMatch(
-        enrollmentCredentials[0],
-      );
-
-      if (matchConfirmationCredential) {
-        const biometricMatchCredentials = await wallet.getDocumentsByType(configs.biometricMatchCredentialType);
-        for (let i = 0; i < biometricMatchCredentials.length; i++) {
-          await wallet.removeDocument(biometricMatchCredentials[0].id);
-        }
-
-        await wallet.addDocument(matchConfirmationCredential);
-      }
-
-      return matchConfirmationCredential;
-    },
-    checkIsBiometryRequired: onCheckBiometryRequired,
+    startIDV,
+    eventEmitter,
   };
 }

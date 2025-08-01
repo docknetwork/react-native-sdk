@@ -6,7 +6,7 @@ import {IWallet} from '@docknetwork/wallet-sdk-core/lib/types';
 import { replaceResponseURL } from '@docknetwork/wallet-sdk-core/src/helpers';
 import {getCredentialProvider, getWallet} from '../helpers';
 import {createVerificationController} from '@docknetwork/wallet-sdk-core/src/verification-controller';
-import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
+import {WalletEvents} from '@docknetwork/wallet-sdk-core/src/wallet';
 import clipboardy from 'clipboardy';
 import rangeProofsTemplate from '../fixtures/range-proofs-template.json';
 import rangeProofsCredential from '../fixtures/range-proofs-credential.json';

@@ -2,7 +2,7 @@ import {setStorage} from '@docknetwork/wallet-sdk-wasm/src/core/storage';
 import {
   WalletEvents,
   WalletStatus,
-} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
+} from '@docknetwork/wallet-sdk-core/src/wallet';
 import React, {
   useCallback,
   useContext,
@@ -15,18 +15,20 @@ import {Platform, View} from 'react-native';
 import WebView from 'react-native-webview';
 import {WebviewEventHandler} from './message-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {AccountDetails} from '@docknetwork/wallet-sdk-wasm/src/modules/account';
 import {
   DocumentType,
   WalletDocument,
 } from '@docknetwork/wallet-sdk-wasm/src/types';
 import './rn-rpc-server';
 import {useDIDManagement} from './didHooks';
-import {useAccounts} from './accountsHooks';
 import {
   useCredentialUtils,
   useCredentialStatus,
 } from './credentials/credentialHooks';
+import {
+  CredentialProvider,
+  useCredentialContext,
+} from './credentials/CredentialContext';
 import {getOrCreateWallet} from './wallet';
 import debounce from 'lodash.debounce';
 import {setV1LocalStorage} from '@docknetwork/wallet-sdk-data-store-typeorm/src/migration/migration1/v1-data-store';
@@ -54,10 +56,10 @@ export const WalletSDKContext = React.createContext<WalletSDKContextProps>({
 
 setStorage(AsyncStorage);
 
-export {useAccounts};
 export {useDIDManagement};
 export {useCredentialUtils, useCredentialStatus};
 export {useDocument, useDocuments} from './documentsHooks';
+export {useCredentialContext} from './credentials/CredentialContext';
 
 export function getStorage() {
   return AsyncStorage;
@@ -73,39 +75,6 @@ export const findRelatedDocs = (document, documentList) =>
     ? documentList.filter(doc => document.correlation.find(id => id === doc.id))
     : [];
 
-export function getAccount(address, documents): AccountDetails | null {
-  const addressDoc = findDocument(address, documents);
-
-  if (!addressDoc) {
-    return null;
-  }
-
-  const correlation = findRelatedDocs(addressDoc, documents);
-  const currencyDoc = correlation.find(filterDocsByType('Currency'));
-  const mnemonic = correlation.find(filterDocsByType('Mnemonic'));
-
-  return {
-    ...addressDoc,
-    address,
-    name: addressDoc.name,
-    balance: currencyDoc && currencyDoc.value,
-    mnemonic: mnemonic && mnemonic.value,
-  };
-}
-
-export function useAccount(address) {
-  const {documents, wallet} = useWallet();
-  const account = getAccount(address, documents);
-  const onDelete = () => wallet.remove(address);
-
-  return {
-    account,
-    fetchBalance: () => {
-      wallet?.accounts.fetchBalance(address);
-    },
-    onDelete,
-  };
-}
 export function useWallet() {
   return useContext(WalletSDKContext);
 }
@@ -144,20 +113,10 @@ export function _useWalletController() {
   }, [documents, wallet, firstFetch]);
 
   const refetch = useCallback(
-    async ({fetchBalances} = {fetchBalances: true}) => {
+    async () => {
       if (!wallet) return;
       try {
-        const allDocs = await wallet.query({});
-        if (fetchBalances) {
-          await Promise.all(
-            allDocs
-              .filter(doc => doc.type === 'Address')
-              .map((doc: any) => {
-                return wallet.accounts.fetchBalance(doc.address);
-              }),
-          );
-        }
-
+        const allDocs = await wallet.getAllDocuments();
         setDocuments(allDocs);
       } catch (err) {
         console.error(err);
@@ -185,7 +144,6 @@ export function _useWalletController() {
     wallet.eventManager.on(WalletEvents.documentRemoved, _refetch);
     wallet.eventManager.on(WalletEvents.documentUpdated, _refetch);
     wallet.eventManager.on(WalletEvents.walletImported, _refetch);
-    wallet.eventManager.on(WalletEvents.migrated, _refetch);
     wallet.eventManager.on(WalletEvents.walletDeleted, () => {
       setDocuments([]);
     });
@@ -236,7 +194,7 @@ export function WalletSDKProvider({onError, customUri, children, onReady, config
   const webviewContainer = (
     <WebView
       style={{
-        display: 'none',
+        height: 0,
       }}
       ref={webViewRef}
       originWhitelist={['*']}
@@ -247,11 +205,10 @@ export function WalletSDKProvider({onError, customUri, children, onReady, config
             }
           : {
               uri: `${baseUrl}/index.html`,
-              baseUrl: baseUrl,
             }
       }
       onError={err => {
-        console.error(err);
+        console.log(err);
         if (onError) {
           onError(err);
         }
@@ -259,19 +216,19 @@ export function WalletSDKProvider({onError, customUri, children, onReady, config
       onMessage={event => {
         eventHandler.handleEvent(event);
       }}
+      javaScriptEnabled={true}
     />
   );
 
   const sandboxContainer = (
     <WebView
       style={{
-        display: 'none',
+        height: 0,
       }}
       ref={sandboxWebViewRef}
       originWhitelist={['*']}
       source={{
         uri: `${baseUrl}/sandbox.html`,
-        baseUrl: baseUrl,
       }}
       onError={err => {
         console.error(err);
@@ -282,13 +239,16 @@ export function WalletSDKProvider({onError, customUri, children, onReady, config
       onMessage={event => {
         eventHandler.handleSandboxEvent(event);
       }}
+      javaScriptEnabled={true}
     />
   );
 
   return (
     <View flex={1}>
       <WalletSDKContext.Provider value={controller}>
-        {children}
+        <CredentialProvider>
+          {children}
+        </CredentialProvider>
       </WalletSDKContext.Provider>
       <View style={{height: 0}}>
         {webviewContainer}

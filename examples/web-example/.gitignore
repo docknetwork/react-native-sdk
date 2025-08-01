@@ -1,0 +1,14 @@
+/local-storage
+/dock.management
+/dock
+node_modules
+dock.lock
+yarn-error.log
+*.db
+/build
+
+# Playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
+ctrf/

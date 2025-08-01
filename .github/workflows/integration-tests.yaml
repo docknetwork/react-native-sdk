@@ -58,24 +58,25 @@ jobs:
         run: echo "$GITHUB_CONTEXT"
 
       - name: Cache dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.npm
           key: npm-${{ hashFiles('package-lock.json') }}
           restore-keys: npm-
 
       - name: Install dependencies
-        run: yarn install
+        run: npm ci
 
       - name: Build
-        run: yarn build
+        run: npm run build
 
       - name: Lint
-        run: yarn lint
+        run: npm run lint
 
       - name: Integration Tests
         env:
           SALES_CERTS_API_KEY: ${{ secrets.SALES_CERTS_API_KEY }}
+          WALLET_API_URL: ${{ secrets.WALLET_API_URL }}
           CERTS_API_KEY: ${{ secrets.CERTS_API_KEY }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           PROOF_TEMPLATE_FOR_ANY_CREDENTIAL: ${{ vars.PROOF_TEMPLATE_FOR_ANY_CREDENTIAL }}
@@ -92,7 +93,7 @@ jobs:
           export CI=true
           echo "PR Number: $PR_NUMBER"
           echo "PR Title: $PR_TITLE"
-          yarn test:integration
+          npm run test:integration
 
       - name: Test Report
         uses: dorny/test-reporter@v1

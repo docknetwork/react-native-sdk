@@ -75,18 +75,6 @@ jest.mock('@docknetwork/wallet-sdk-wasm/src/services/dids', () => {
         correlation: [],
       };
     }),
-    registerDidDock: jest.fn(keypair => {
-      if (keypair) {
-        return {
-          keyPairWalletId: new Date().getTime().toString(),
-          dockDID: 'did:dock:z6MkjjCpsoQrwnEmqHzLdxWowXk5gjbwor4urC1RPDmGeV8r',
-        };
-      }
-      throw new Error('keyPair is required');
-    }),
-    getDidDockDocument: jest.fn(() => {
-      return Promise.resolve();
-    }),
   };
 
   return {
@@ -418,39 +406,5 @@ describe('DID Hooks', () => {
         password: 'test',
       }),
     ).rejects.toThrowError('DID KeyPair not found');
-  });
-  test('can create new DOCK DID', async () => {
-    const {result} = renderHook(() => useDIDManagement());
-    const {result: walletResult} = renderHook(() => useWallet());
-
-    await result.current.createDID({
-      address: '6GwnHZARcEkJio9dxPYy6SC5sAL6PxpZAB6VYwoFjGMU',
-      derivePath: '',
-      type: 'ed25519',
-      name: 'DID Name',
-      didType: 'diddock',
-    });
-    expect(didServiceRPC.generateKeyDoc).toHaveBeenCalledWith({
-      controller: 'did:dock:z6MkjjCpsoQrwnEmqHzLdxWowXk5gjbwor4urC1RPDmGeV8r',
-      keyPairJSON: expect.anything(),
-    });
-    expect(walletResult.current.wallet.add).toHaveBeenCalledTimes(2);
-    expect(didServiceRPC.registerDidDock).toHaveBeenCalled();
-    expect(didServiceRPC.getDidDockDocument).toHaveBeenCalledWith(
-      'did:dock:z6MkjjCpsoQrwnEmqHzLdxWowXk5gjbwor4urC1RPDmGeV8r',
-    );
-  });
-  test('can create new DOCK DID with invalid params', async () => {
-    const {result} = renderHook(() => useDIDManagement());
-
-    await expect(
-      result.current.createDID({
-        address: '',
-        derivePath: '',
-        type: 'ed25519',
-        name: 'DID Name',
-        didType: 'diddock',
-      }),
-    ).rejects.toThrowError('address is required');
   });
 });

@@ -1,18 +1,11 @@
-import {assertRpcService, getPromiseError} from '../test-utils';
+import {assertRpcService} from '../test-utils';
 import {DIDServiceRPC} from './service-rpc';
 import {didService as service} from './service';
 import {validation} from './config';
 import {DIDKeyManager} from '@docknetwork/wallet-sdk-dids/src';
-import {TestFixtures} from '../../fixtures';
-import {getTestWallet} from '../../test/setup-test-state';
-import {blockchainService} from '../blockchain/service';
-import {DockDid} from '@docknetwork/credential-sdk/types';
+import {Ed25519Keypair} from '@docknetwork/credential-sdk/keypairs';
 
 describe('DID Service', () => {
-  beforeAll(async () => {
-    await getTestWallet();
-  });
-
   it('ServiceRpc', () => {
     assertRpcService(DIDServiceRPC, service, validation);
   });
@@ -99,60 +92,6 @@ describe('DID Service', () => {
     spy.mockReset();
   });
 
-  it('expect to register did dock', async () => {
-    blockchainService.modules = {
-      did: {
-        dockOnly: {
-          rawTx: {
-            newOnchain: jest.fn(),
-          },
-        },
-      },
-    };
-
-    jest.spyOn(DockDid, 'fromQualifiedString').mockReturnValueOnce('');
-
-    const result = await service.registerDidDock(
-      TestFixtures.account1.getKeyring().toJson(''),
-    );
-    expect(result.dockDID).toBeDefined();
-    expect(result.keyPairWalletId).toBeDefined();
-  });
-
-  it('expect to fail to register did dock', async () => {
-    blockchainService.modules = {
-      did: {
-        dockOnly: {
-          rawTx: {
-            newOnchain: () => {
-              throw new Error('');
-            },
-          },
-        },
-      },
-    };
-
-    const error = await getPromiseError(() =>
-      service.registerDidDock(
-        TestFixtures.noBalanceAccount.getKeyring().toJson(''),
-      ),
-    );
-    expect(error.message).toBeDefined();
-  });
-
-  it('expect to get did document', async () => {
-    const document = 'document';
-    jest
-      .spyOn(blockchainService.didModule, 'getDocument')
-      .mockResolvedValue(document);
-
-    const result = await service.getDidDockDocument(
-      'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQi',
-    );
-
-    expect(result).toStrictEqual(document);
-  });
-
   it('expect to generateKeyDoc without keyPair', async () => {
     const controller =
       'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQ';
@@ -164,25 +103,55 @@ describe('DID Service', () => {
     expect(keyDoc.privateKeyMultibase).toBeDefined();
   });
 
-  it('expect to generateKeyDoc with keyPair', async () => {
+  it('expect to deriveKeyDoc', async () => {
     const controller =
       'did:dock:5HL5XB7CHcHT2ZUKjY2SCJvDAK11qoa1exgfVnVTHRbmjJQ';
-    const keyPairJSON = {
-      encoded:
-        'MFMCAQEwBQYDK2VwBCIEIJDIpsaUjZCkVkPmBPqKD0dgu59F8ks4yepJKNFQkz+A/fYvnshD7g1RpaSXuGcLytu6fN/P/PGt2ahhH2Bkh0GhIwMhAP32L57IQ+4NUaWkl7hnC8rbunzfz/zxrdmoYR9gZIdB',
-      encoding: {content: ['pkcs8', 'ed25519'], type: ['none'], version: '3'},
-      address: '3CGqgBTzZEPyhVTjpWdX5z2uDQ6hxEUALcZ6HthscNnVrKy7',
-      meta: {},
-    };
 
-    const keyDoc = await service.generateKeyDoc({
+    const {keyPair} = Ed25519Keypair.random();
+
+    const derivedKeyDoc = await service.deriveKeyDoc({
       controller,
-      keyPairJSON,
+      pair: keyPair,
     });
 
-    expect(keyDoc.controller).toEqual(controller);
-    expect(keyDoc.privateKeyMultibase).toEqual(
-      'z3ttk77Si8AUHHGAGLWue3qZacSgZDtRRCbd75Bmujx2qstznWv4ZRWtCjEKcJAUUufQpSsurEAJ47mYYKPwQnA2C',
-    );
+    expect(derivedKeyDoc.controller).toEqual(controller);
+    expect(derivedKeyDoc.privateKeyMultibase).toBeDefined();
+  });
+
+  it('expect to createSignedJWT', async () => {
+    const headerInput = {
+      typ: 'openid4vci-proof+jwt',
+      alg: 'EdDSA',
+      kid: 'did:key:z6MkjW3DVk4mXjnK8GUuK2SydyFg8oMJbUnHiVzzSz3N9iGM#z6MkjW3DVk4mXjnK8GUuK2SydyFg8oMJbUnHiVzzSz3N9iGM',
+    };
+
+    const payload = {
+      aud: 'https://api.truvera.io/openid/issuers/d044f3d3-0934-4f62-9b6f-6f06ae8f383e',
+      iat: 1750356930,
+      exp: 1750357590,
+      iss: 'dock.wallet',
+    };
+
+    const privateKeyDoc = {
+      controller: 'did:key:z6MkjW3DVk4mXjnK8GUuK2SydyFg8oMJbUnHiVzzSz3N9iGM',
+      type: 'Ed25519VerificationKey2018',
+      id: 'did:key:z6MkjW3DVk4mXjnK8GUuK2SydyFg8oMJbUnHiVzzSz3N9iGM#z6MkjW3DVk4mXjnK8GUuK2SydyFg8oMJbUnHiVzzSz3N9iGM',
+      publicKeyMultibase: 'z6MkjW3DVk4mXjnK8GUuK2SydyFg8oMJbUnHiVzzSz3N9iGM',
+      privateKeyMultibase:
+        'zruzuEmC9VrJ3JUcufskfX4qNKwqqrNDztqJsDp1dXXQFS8CkfEDqK1ZBgNXeWF9xGhAPeVVfV1vL5pVaHpXLU2JwXK',
+      privateKeyBase58:
+        'GLkPGM4hz3AhQkQA1y63PtxdA3GL4vJiWgYpnB4N1sFi2wzr2tDbc482igkKaDcAwbrhe92LKJygEHd5xmBJtvR',
+      publicKeyBase58: '63nAuVpLCCHr1meCdTV8nshgKE5TBbXw2V64ci5MEVUy',
+      '@context': ['https://w3id.org/wallet/v1'],
+    };
+
+    const signedJWT = await service.createSignedJWT({
+      payload,
+      privateKeyDoc,
+      headerInput,
+    });
+
+    expect(signedJWT).toBeDefined();
+    expect(signedJWT).toContain('.');
   });
 });

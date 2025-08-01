@@ -2,7 +2,6 @@ import {
   VerifiableCredential,
   getSuiteFromKeyDoc,
 } from '@docknetwork/credential-sdk/vc';
-import {cryptoWaitReady} from '@polkadot/util-crypto';
 import {getKeypairFromDoc} from '@docknetwork/universal-wallet/methods/keypairs';
 import assert from 'assert';
 import base64url from 'base64url';
@@ -26,8 +25,6 @@ export function ensureDIDDockFragment(keyDoc) {
 export async function generateSignedPayload(keyPairDoc, subject) {
   assert(!!keyPairDoc, 'keyPairDoc is required');
   assert(!!subject, 'subject is required');
-
-  await cryptoWaitReady();
 
   keyPairDoc = ensureDIDDockFragment(keyPairDoc);
 

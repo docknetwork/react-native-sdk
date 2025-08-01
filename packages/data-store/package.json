@@ -1,6 +1,6 @@
 {
   "name": "@docknetwork/wallet-sdk-data-store",
-  "version": "0.4.19",
+  "version": "1.5.12",
   "license": "https://github.com/docknetwork/react-native-sdk/LICENSE",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -11,13 +11,13 @@
   },
   "scripts": {
     "test": "jest",
-    "build": "tsc -p tsconfig.build.json"
+    "build": "rm -rf lib && rm -rf tsconfig.build.tsbuildinfo && tsc -p tsconfig.build.json && node ../../scripts/fix-build-imports.js ./lib"
   },
   "peerDependencies": {
     "typeorm": "^0.3.15"
   },
   "dependencies": {
-    "@docknetwork/wallet-sdk-wasm": "^0.4.19",
+    "@docknetwork/wallet-sdk-wasm": "^1.5.12",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

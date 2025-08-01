@@ -2,38 +2,17 @@
   "name": "@docknetwork/react-native-sdk",
   "version": "0.1.0",
   "private": true,
-  "workspaces": {
-    "packages": [
-      "packages/**"
-    ]
-  },
-  "resolutions": {
-    "@polkadot/wasm-crypto": "6.3.1",
-    "@polkadot/rpc-core": "9.7.1",
-    "@polkadot/api": "9.7.1",
-    "@polkadot/keyring": "10.1.11",
-    "@polkadot/rpc-provider": "9.7.1",
-    "@polkadot/types": "9.7.1",
-    "@polkadot/types-known": "9.7.1",
-    "@polkadot/util": "10.1.11",
-    "@polkadot/util-crypto": "10.1.11",
+  "workspaces": [
+    "packages/*"
+  ],
+  "overrides": {
     "commander": "11.0.0",
-    "@noble/hashes": "1.3.1"
+    "base64url-universal": "1.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.16.0",
     "@babel/preset-env": "^7.22.10",
     "@docknetwork/universal-wallet": "2.1.1",
-    "@polkadot/api": "9.7.1",
-    "@polkadot/keyring": "10.1.11",
-    "@polkadot/rpc-core": "9.7.1",
-    "@polkadot/rpc-provider": "9.7.1",
-    "@polkadot/types": "9.7.1",
-    "@polkadot/types-known": "9.7.1",
-    "@polkadot/ui-shared": "3.4.1",
-    "@polkadot/util": "10.1.11",
-    "@polkadot/util-crypto": "10.1.11",
-    "@polkadot/wasm-crypto": "6.3.1",
     "@react-native-community/eslint-config": "^2.0.0",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
@@ -76,17 +55,16 @@
     "build": "sh ./scripts/build.sh",
     "build:rn:webview": "node  ./packages/react-native/bundler/build.js",
     "build-and-copy": "node  ./packages/react-native/bundler/build-and-copy.js",
-    "build-packages": "yarn workspace @docknetwork/wallet-sdk-dids build",
+    "build-packages": "npm run build -w @docknetwork/wallet-sdk-dids",
     "test": "export NODE_OPTIONS=\"--max_old_space_size=4096\";node ./node_modules/jest/bin/jest.js --forceExit",
-    "test:ci": "yarn test",
+    "test:ci": "npm test",
     "test:integration": "export API_MOCK_DISABLED=true; jest --config jest.config.e2e.js --ci --forceExit --runInBand",
-    "examples:all": "nodemon --exec NODE_ENV=development npx babel-node ./examples/index.js",
     "lint": "eslint './packages/**/*.js' --max-warnings=0 --ignore-path=.prettierignore",
     "lint:fix": "eslint './src/**/*.js' --fix --ignore-path=.prettierignore",
     "format": "prettier './src/**/*.{js,json}' --write",
     "exec": "BABEL_ENV=development; babel-node",
     "docs": "documentation build packages/core/lib/** -f html -o docs",
-    "postinstall": "sh ./scripts/fix-deps.sh && node ./fixdeps && yarn build"
+    "postinstall": "sh ./scripts/fix-deps.sh && npm run build"
   },
   "jest-junit": {
     "outputDirectory": "reports",
@@ -98,7 +76,6 @@
     "titleTemplate": "{title}"
   },
   "dependencies": {
-    "@astronautlabs/jsonpath": "^1.1.2",
     "@babel/node": "^7.22.10",
     "@babel/plugin-proposal-class-properties": "^7.18.6",
     "@babel/plugin-proposal-private-methods": "^7.18.6",
@@ -110,16 +87,13 @@
     "@babel/preset-typescript": "^7.22.5",
     "@cosmjs/proto-signing": "^0.32.4",
     "@digitalbazaar/x25519-key-agreement-key-2020": "2.1.0",
-    "@docknetwork/cheqd-blockchain-api": "0.30.2",
-    "@docknetwork/cheqd-blockchain-modules": "0.30.2",
-    "@docknetwork/credential-sdk": "0.44.0",
-    "@docknetwork/dock-blockchain-api": "0.20.2",
-    "@docknetwork/dock-blockchain-modules": "0.26.2",
+    "@docknetwork/cheqd-blockchain-api": "0.36.1",
+    "@docknetwork/cheqd-blockchain-modules": "0.33.0",
+    "@docknetwork/credential-sdk": "0.50.0",
     "@inquirer/checkbox": "^1.3.8",
     "@inquirer/input": "^1.2.8",
     "@inquirer/prompts": "^3.0.3",
     "@inquirer/select": "^1.2.8",
-    "@noble/hashes": "1.3.1",
     "@react-native-async-storage/async-storage": "^1.15.17",
     "@rollup/plugin-alias": "^4.0.2",
     "@rollup/plugin-babel": "^6.0.3",
@@ -128,6 +102,7 @@
     "@rollup/plugin-node-resolve": "^13.1.3",
     "@rollup/plugin-typescript": "^11.1.3",
     "@rollup/plugin-wasm": "^5.1.2",
+    "@scure/bip39": "^1.6.0",
     "@sphereon/oid4vci-client": "^0.16.0",
     "@types/jest": "^28.1.6",
     "assert": "^2.0.0",
@@ -138,7 +113,7 @@
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
     "babel-preset-es2015": "^6.24.1",
     "base64url": "^3.0.1",
-    "bignumber.js": "^9.0.1",
+    "base64url-universal": "1.1.0",
     "buffer": "^6.0.3",
     "chalk": "^5.3.0",
     "core-js": "^3.20.3",

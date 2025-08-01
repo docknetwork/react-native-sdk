@@ -1,6 +1,6 @@
 import {createWallet, IWallet} from '@docknetwork/wallet-sdk-core/src/wallet';
 import {Network} from '@docknetwork/wallet-sdk-data-store/src/types';
-import {WalletEvents} from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
+import {WalletEvents} from '@docknetwork/wallet-sdk-core/src/wallet';
 import {closeWallet} from './helpers/wallet-helpers';
 import {createDataStore} from '@docknetwork/wallet-sdk-data-store-typeorm/src';
 
@@ -12,8 +12,8 @@ describe('Custom networks', () => {
       credentialHostnames: ['creds.polygon.com'],
       id: 'polygon',
       configs: {
-        substrateUrl: 'wss://knox-1.dock.io',
         addressPrefix: 21,
+        cheqdApiUrl: 'https://testnet.cheqd.docknode.io/',
       },
     },
     {
@@ -21,8 +21,8 @@ describe('Custom networks', () => {
       credentialHostnames: ['creds.mumbai.polygon.com'],
       id: 'mumbai',
       configs: {
-        substrateUrl: 'wss://knox-1.dock.io',
         addressPrefix: 21,
+        cheqdApiUrl: 'https://testnet.cheqd.docknode.io/',
       },
     },
   ];

@@ -1,9 +1,8 @@
 import { blockchainService } from '@docknetwork/wallet-sdk-wasm/src/services/blockchain';
-import { keyringService } from '@docknetwork/wallet-sdk-wasm/src/services/keyring';
 import { utilCryptoService } from '@docknetwork/wallet-sdk-wasm/src/services/util-crypto';
 
 import { Network } from '@docknetwork/wallet-sdk-data-store/src/types';
-import { WalletEvents } from '@docknetwork/wallet-sdk-wasm/src/modules/wallet';
+import { WalletEvents } from '@docknetwork/wallet-sdk-core/src/wallet';
 import { captureException } from './helpers';
 import { IWallet } from './types';
 
@@ -50,30 +49,54 @@ export async function setBlockchainNetwork(wallet: IWallet) {
     await wallet.addDocument(cheqdMnemonicDoc);
   }
 
-  await keyringService.initialize({
-    ss58Format: networkConfigs.addressPrefix,
-  });
+  let connectionInProgress = false;
 
-  blockchainService
-    .init({
-      substrateUrl: networkConfigs.substrateUrl,
-      cheqdApiUrl: networkConfigs.cheqdApiUrl,
-      networkId: network.id,
-      cheqdMnemonic: cheqdMnemonicDoc.value,
-    })
-    .then(() => {
-      wallet.eventManager.emit(WalletEvents.networkConnected);
-    })
-    .catch(err => {
-      captureException(new Error('Unable to connect to substrate node'));
-      captureException(err);
-      console.error(err);
-      wallet.eventManager.emit(WalletEvents.networkError, err);
-    });
+  const initializeBlockchain = () => {
+    clearInterval(wallet.networkCheckInterval);
+  
+    if (connectionInProgress) {
+      return;
+    }
+  
+    connectionInProgress = true;
+  
+    blockchainService
+      .init({
+        substrateUrl: networkConfigs.substrateUrl,
+        cheqdApiUrl: networkConfigs.cheqdApiUrl,
+        networkId: network.id,
+        cheqdMnemonic: cheqdMnemonicDoc.value,
+      })
+      .then(() => {
+        wallet.eventManager.emit(WalletEvents.networkConnected);
+      })
+      .catch(err => {
+        const errorMessage = new Error('Unable to connect to blockchain');
+        captureException(errorMessage);
+        captureException(err);
+        console.error(err);
+        wallet.eventManager.emit(WalletEvents.networkError, err);
+      })
+      .finally(() => {
+        connectionInProgress = false;
+  
+        wallet.networkCheckInterval = setInterval(async () => {
+          try {
+            if (!await blockchainService.isApiConnected()) {
+              wallet.eventManager.emit(WalletEvents.networkError, new Error('Network not connected'));
+              initializeBlockchain();
+            }
+          } catch (err) {
+            console.error('Error during connectivity check:', err);
+          }
+        }, 10000);
+      });
+  };
+  
+  initializeBlockchain();
 }
 
 export async function initWalletWasm(wallet: IWallet) {
-  await utilCryptoService.cryptoWaitReady();
   const network = wallet.dataStore.network;
 
   if (isBlockchainNetwork(network)) {
@@ -82,6 +105,20 @@ export async function initWalletWasm(wallet: IWallet) {
     wallet.eventManager.on(WalletEvents.networkUpdated, async () => {
       handleBlockchainNetworkChange(wallet).catch(err => console.error(err));
     });
+  }
+
+  wallet.ensureNetwork = async () => {
+    try {
+      const isConnected = await blockchainService.isApiConnected();
+
+      if (!isConnected) {
+        await setBlockchainNetwork(wallet);
+        wallet.eventManager.emit(WalletEvents.networkConnected);
+      }
+    } catch (err) {
+      console.error('Error checking network connection:', err);
+      wallet.eventManager.emit(WalletEvents.networkError, err);
+    }
   }
 
   wallet.setStatus('ready');

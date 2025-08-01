@@ -1,0 +1,204 @@
+<div class="app-container">
+  <!-- Loading Screen -->
+  <div *ngIf="cloudWalletLoading || loading" class="loading-container">
+    <h2>Loading...</h2>
+  </div>
+
+  <!-- Wallet Setup Screen -->
+  <div *ngIf="!masterKey && !cloudWalletLoading && !loading" class="setup-container">
+    <h2>Welcome to the Wallet App</h2>
+    <p>Please recover your wallet using your mnemonic phrase.</p>
+
+    <div *ngIf="recoveryError" class="error">
+      {{ recoveryError }}
+    </div>
+
+    <div class="setup-buttons">
+      <button class="btn primary" (click)="openRecoverWalletModal()">
+        Recover Wallet
+      </button>
+
+      <button class="btn primary" (click)="createNewWallet()">
+        Create New Wallet
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Wallet Interface -->
+  <div *ngIf="masterKey && !cloudWalletLoading && !loading" class="wallet-container">
+    <header class="header">
+      <h1>{{ title }}</h1>
+    </header>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <button class="btn primary" (click)="openImportModal()">
+        Import Credential
+      </button>
+      <button class="btn primary" (click)="openVerifyModal()">
+        Verify Credential
+      </button>
+      <button class="btn secondary" (click)="refreshDocuments()">
+        Refresh
+      </button>
+      <button class="btn secondary" (click)="clearWallet()">
+        Clear Wallet
+      </button>
+      <button *ngIf="cloudWallet" class="btn secondary" (click)="clearEDV()">
+        Clear EDV
+      </button>
+    </div>
+
+    <!-- DID Management -->
+    <div class="did-section">
+      <div *ngIf="!defaultDID" class="create-did">
+        <button class="btn primary" (click)="provisionNewWallet()">
+          Create Default DID
+        </button>
+      </div>
+
+      <div *ngIf="defaultDID" class="did-display">
+        <div class="did-info">
+          <strong>Default DID:</strong>
+          <span class="did-value">{{ defaultDID }}</span>
+          <button class="btn small" (click)="copyDID()">Copy</button>
+          <button class="btn small" (click)="fetchMessages()">Fetch Messages</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Credentials List -->
+    <div class="credentials-section">
+      <h3>Credentials ({{ formattedCredentials.length }})</h3>
+
+      <div *ngIf="formattedCredentials.length === 0" class="no-credentials">
+        No credentials found. Import some credentials to get started.
+      </div>
+
+      <div class="credentials-list">
+        <div *ngFor="let credential of formattedCredentials" class="credential-card">
+          <div class="credential-id">{{ credential.id }}</div>
+          <div class="credential-type">{{ credential.humanizedType || 'Unknown Type' }}</div>
+          <div class="credential-subject">
+            <pre>{{ credential.credentialSubject | json }}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recover using mnemonic modal -->
+  <div *ngIf="recoverModalOpen" class="modal-overlay" (click)="closeRecoverWalletModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h2>Recover Wallet</h2>
+      <div class="form-group">
+        <label for="mnemonic">Mnemonic Phrase:</label>
+        <textarea
+          id="mnemonic"
+          [(ngModel)]="mnemonic"
+          placeholder="Enter your mnemonic phrase"
+          class="input"></textarea>
+      </div>
+      <div class="modal-buttons">
+        <button class="btn secondary" (click)="closeRecoverWalletModal()">Cancel</button>
+        <button
+          class="btn primary"
+          (click)="recoverWallet()"
+          [disabled]="!mnemonic">
+          Recover
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Save mnemonic message modal -->
+  <div *ngIf="mnemonicMessage" class="modal-overlay" (click)="closeMnemonicMessage()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h2>Mnemonic</h2>
+      <div class="form-group">
+        <label for="mnemonic">{{ mnemonicMessage }}</label>
+      </div>
+      <div class="modal-buttons">
+        <button class="btn primary" (click)="closeMnemonicMessage()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Import Credential Modal -->
+  <div *ngIf="importModalOpen" class="modal-overlay" (click)="closeImportModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h2>Import Credential</h2>
+      <div class="form-group">
+        <label for="credentialUrl">Credential Offer URL:</label>
+        <input
+          id="credentialUrl"
+          type="text"
+          [(ngModel)]="credentialUrl"
+          placeholder="Enter credential offer URL"
+          class="input">
+      </div>
+      <div class="modal-buttons">
+        <button class="btn secondary" (click)="closeImportModal()">Cancel</button>
+        <button
+          class="btn primary"
+          (click)="importCredential()"
+          [disabled]="!credentialUrl">
+          Import
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Verify Credential Modal -->
+  <div *ngIf="verifyModalOpen" class="modal-overlay" (click)="closeVerifyModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <!-- Step 1: Enter Proof Request URL -->
+      <div *ngIf="verifyStep === 1">
+        <h2>Verify Credential</h2>
+        <div class="form-group">
+          <label for="proofRequestUrl">Proof Request URL:</label>
+          <input
+            id="proofRequestUrl"
+            type="text"
+            [(ngModel)]="proofRequestUrl"
+            placeholder="Enter proof request URL"
+            class="input">
+        </div>
+        <div class="modal-buttons">
+          <button class="btn secondary" (click)="closeVerifyModal()">Cancel</button>
+          <button
+            class="btn primary"
+            (click)="nextVerifyStep()"
+            [disabled]="!proofRequestUrl">
+            Next
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 2: Select Credential -->
+      <div *ngIf="verifyStep === 2">
+        <h2>Select Credential to Present</h2>
+        <div class="credential-selection">
+          <div *ngFor="let credential of formattedCredentials; let i = index"
+               class="credential-card selectable"
+               [class.selected]="selectedCredential?.id === credential.id"
+               (click)="selectCredential(i)">
+            <div class="credential-type">{{ credential.humanizedType || 'Unknown Type' }}</div>
+            <div class="credential-subject">
+              <pre>{{ credential.credentialSubject | json }}</pre>
+            </div>
+          </div>
+        </div>
+        <div class="modal-buttons">
+          <button class="btn secondary" (click)="backVerifyStep()">Back</button>
+          <button
+            class="btn primary"
+            (click)="handleVerifyCredential()"
+            [disabled]="!selectedCredential">
+            Verify
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

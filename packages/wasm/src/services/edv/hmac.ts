@@ -37,6 +37,18 @@ export default class HMAC {
     return key;
   }
 
+  static async deriveKey(baseKey: Uint8Array) {
+    const key = await crypto.subtle.importKey(
+      'raw',
+      baseKey,
+      {name: 'HMAC', hash: {name: 'SHA-256'}},
+      true,
+      ['sign', 'verify'],
+    );
+
+    return key;
+  }
+
   static async exportKey(key: CryptoKey) {
     const rawKey = await crypto.subtle.exportKey('raw', key);
     return base64url.encode(Buffer.from(rawKey));

@@ -1,5 +1,4 @@
 const webpack = require('webpack');
-const {resolve} = require('path');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 const getWebpackConfig = ({entry, path, filename}) => ({
@@ -11,24 +10,6 @@ const getWebpackConfig = ({entry, path, filename}) => ({
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js', '.json', '.mjs', '.cjs'],
-    alias: {
-      '@polkadot/types/packageInfo.cjs': resolve(
-        __dirname,
-        '../../../node_modules/@polkadot/types/packageInfo.cjs',
-      ),
-      '@polkadot/types/packageInfo.js': resolve(
-        __dirname,
-        '../../../node_modules/@polkadot/types/packageInfo.js',
-      ),
-      '@polkadot/rpc-core/packageInfo.cjs': resolve(
-        __dirname,
-        '../../../node_modules/@polkadot/rpc-core/packageInfo.cjs',
-      ),
-      '@polkadot/rpc-core/packageInfo.js': resolve(
-        __dirname,
-        '../../../node_modules/@polkadot/rpc-core/packageInfo.js',
-      ),
-    },
     fallback: {
       crypto: require.resolve('crypto-browserify'),
       stream: require.resolve('stream-browserify'),
@@ -47,9 +28,7 @@ const getWebpackConfig = ({entry, path, filename}) => ({
     rules: [
       {
         test: /\.(m|c)?(j|t)s$/,
-        exclude: [
-          /\/node_modules\/(?!@polkadot|@docknetwork|@digitalbazaar|@cheqd)/,
-        ],
+        exclude: [/\/node_modules\/(?!@docknetwork|@digitalbazaar|@cheqd)/],
         use: {
           loader: require.resolve('babel-loader'),
           options: {
@@ -59,12 +38,9 @@ const getWebpackConfig = ({entry, path, filename}) => ({
               '@babel/plugin-transform-async-to-generator',
               '@babel/plugin-syntax-bigint',
               '@babel/plugin-transform-modules-commonjs',
-              ['@babel/plugin-proposal-class-properties', {loose: false}],
-              ['@babel/plugin-proposal-private-methods', {loose: false}],
-              [
-                '@babel/plugin-proposal-private-property-in-object',
-                {loose: false},
-              ],
+              '@babel/plugin-transform-class-properties',
+              '@babel/plugin-transform-private-methods',
+              '@babel/plugin-transform-private-property-in-object',
               '@babel/plugin-transform-flow-strip-types',
             ],
           },

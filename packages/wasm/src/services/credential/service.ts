@@ -9,6 +9,7 @@ import {
 import {OpenID4VCIClientV1_0_13} from '@sphereon/oid4vci-client';
 import {Alg} from '@sphereon/oid4vci-common';
 import {getKeypairFromDoc} from '@docknetwork/universal-wallet/methods/keypairs';
+import {hexToU8a} from '@docknetwork/credential-sdk/utils';
 import {
   VerifiablePresentation,
   Presentation,
@@ -117,13 +118,15 @@ class CredentialService {
       vp.setHolder(keyDoc.controller);
     }
 
-    keyDoc.keypair = keyDocToKeypair(keyDoc, blockchainService.dock);
+    const keyPair = getKeypairFromDoc(keyDoc);
+    keyPair.signer = keyPair.signer();
+    const suite = await getSuiteFromKeyDoc(keyPair);
 
     if (shouldSkipSigning) {
       return vp.toJSON();
     }
 
-    return vp.sign(keyDoc, challenge, domain, blockchainService.resolver);
+    return vp.sign(suite, challenge, domain, blockchainService.resolver);
   }
 
   async verifyPresentation({ presentation, options }: any) {
@@ -196,15 +199,9 @@ class CredentialService {
     uri: string;
     authorizationCode?: string;
     holderKeyDocument: any;
-  }) {
+  }): Promise<any> {
     const searchParams = new URL(uri).searchParams;
     const params = new URLSearchParams(searchParams);
-    const credentialOfferEncoded = params.get('credential_offer');
-    const credentialOfferDecoded = decodeURIComponent(credentialOfferEncoded);
-    const credentialOffer = JSON.parse(credentialOfferDecoded);
-    const scope = credentialOffer.credentials[0];
-    const format = 'ldp_vc';
-    const credentialTypes = scope.replace('ldp_vc:', '');
 
     const client = await OpenID4VCIClientV1_0_13.fromURI({
       uri: uri,
@@ -212,9 +209,13 @@ class CredentialService {
       authorizationRequest: {
         redirectUri: 'dock-wallet://credentials/callback',
         clientId: 'dock.wallet',
-        scope: credentialOffer.credentials[0],
       },
     });
+
+    const format = 'ldp_vc';
+    const { scope }  = client.getCredentialsSupported()[0];
+    const scopeSplit = scope.split(':');
+    const credentialTypes = scopeSplit[scopeSplit.length - 1];
 
     let code;
 
@@ -249,6 +250,7 @@ class CredentialService {
             return jwt;
           },
         },
+        context: 'truverawallet',
         format: format,
         alg: Alg.EdDSA,
         kid: holderKeyDocument.id,

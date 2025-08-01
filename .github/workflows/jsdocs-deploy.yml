@@ -16,19 +16,19 @@ jobs:
           node-version: '16.x'
 
       - name: Cache dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.npm
           key: npm-${{ hashFiles('package-lock.json') }}
           restore-keys: npm-
 
       - name: Install dependencies
-        run: yarn install
+        run: npm ci
 
       - name: Generate docs
         run:  |
           rm -rf docs 
-          yarn docs
+          npm run docs
 
       - name: Commit report
         run: |

@@ -1,0 +1,210 @@
+diff --git a/node_modules/react-native-udp/android/build.gradle b/node_modules/react-native-udp/android/build.gradle
+index 8a2effa..e1eda76 100644
+--- a/node_modules/react-native-udp/android/build.gradle
++++ b/node_modules/react-native-udp/android/build.gradle
+@@ -33,6 +33,6 @@ dependencies {
+     def supportLibVersion = project.hasProperty('supportLibVersion') ? project.supportLibVersion : DEFAULT_SUPPORT_LIB_VERSION
+ 
+     implementation fileTree(dir: 'libs', include: ['*.jar'])
+-    implementation "com.android.support:appcompat-v7:$supportLibVersion"
++    implementation "androidx.appcompat:appcompat:1.6.1"
+     implementation 'com.facebook.react:react-native:+'
+ }
+diff --git a/node_modules/react-native-udp/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/AndroidManifest.xml b/node_modules/react-native-udp/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/AndroidManifest.xml
+new file mode 100644
+index 0000000..ed2ab22
+--- /dev/null
++++ b/node_modules/react-native-udp/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/AndroidManifest.xml
+@@ -0,0 +1,12 @@
++<?xml version="1.0" encoding="utf-8"?>
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++    package="com.tradle.react" >
++
++    <uses-sdk android:minSdkVersion="16" />
++
++    <uses-permission android:name="android.permission.INTERNET" />
++    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
++    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
++    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
++
++</manifest>
+\ No newline at end of file
+diff --git a/node_modules/react-native-udp/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/output-metadata.json b/node_modules/react-native-udp/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/output-metadata.json
+new file mode 100644
+index 0000000..d1465ed
+--- /dev/null
++++ b/node_modules/react-native-udp/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/output-metadata.json
+@@ -0,0 +1,18 @@
++{
++  "version": 3,
++  "artifactType": {
++    "type": "AAPT_FRIENDLY_MERGED_MANIFESTS",
++    "kind": "Directory"
++  },
++  "applicationId": "com.tradle.react",
++  "variantName": "debug",
++  "elements": [
++    {
++      "type": "SINGLE",
++      "filters": [],
++      "attributes": [],
++      "outputFile": "AndroidManifest.xml"
++    }
++  ],
++  "elementType": "File"
++}
+\ No newline at end of file
+diff --git a/node_modules/react-native-udp/android/build/intermediates/aar_metadata/debug/writeDebugAarMetadata/aar-metadata.properties b/node_modules/react-native-udp/android/build/intermediates/aar_metadata/debug/writeDebugAarMetadata/aar-metadata.properties
+new file mode 100644
+index 0000000..1211b1e
+--- /dev/null
++++ b/node_modules/react-native-udp/android/build/intermediates/aar_metadata/debug/writeDebugAarMetadata/aar-metadata.properties
+@@ -0,0 +1,6 @@
++aarFormatVersion=1.0
++aarMetadataVersion=1.0
++minCompileSdk=1
++minCompileSdkExtension=0
++minAndroidGradlePluginVersion=1.0.0
++coreLibraryDesugaringEnabled=false
+diff --git a/node_modules/react-native-udp/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties b/node_modules/react-native-udp/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties
+new file mode 100644
+index 0000000..5fc343f
+--- /dev/null
++++ b/node_modules/react-native-udp/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties
+@@ -0,0 +1 @@
++#Thu Jun 12 11:53:49 BRT 2025
+diff --git a/node_modules/react-native-udp/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml b/node_modules/react-native-udp/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml
+new file mode 100644
+index 0000000..44bf3c7
+--- /dev/null
++++ b/node_modules/react-native-udp/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="utf-8"?>
++<merger version="3"><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/mayconmellos/dev/dock/WalletSDKExample/node_modules/react-native-udp/android/src/main/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main" generated-set="main$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/mayconmellos/dev/dock/WalletSDKExample/node_modules/react-native-udp/android/src/main/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/mayconmellos/dev/dock/WalletSDKExample/node_modules/react-native-udp/android/src/debug/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug" generated-set="debug$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/mayconmellos/dev/dock/WalletSDKExample/node_modules/react-native-udp/android/src/debug/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/mayconmellos/dev/dock/WalletSDKExample/node_modules/react-native-udp/android/build/generated/res/resValues/debug"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated" generated-set="generated$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/mayconmellos/dev/dock/WalletSDKExample/node_modules/react-native-udp/android/build/generated/res/resValues/debug"/></dataSet><mergedItems/></merger>
+\ No newline at end of file
+diff --git a/node_modules/react-native-udp/android/build/intermediates/manifest_merge_blame_file/debug/processDebugManifest/manifest-merger-blame-debug-report.txt b/node_modules/react-native-udp/android/build/intermediates/manifest_merge_blame_file/debug/processDebugManifest/manifest-merger-blame-debug-report.txt
+new file mode 100644
+index 0000000..e1e1582
+--- /dev/null
++++ b/node_modules/react-native-udp/android/build/intermediates/manifest_merge_blame_file/debug/processDebugManifest/manifest-merger-blame-debug-report.txt
+@@ -0,0 +1,20 @@
++1<?xml version="1.0" encoding="utf-8"?>
++2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++3    package="com.tradle.react" >
++4
++5    <uses-sdk android:minSdkVersion="16" />
++6
++7    <uses-permission android:name="android.permission.INTERNET" />
++7-->/Users/mayconmellos/dev/dock/WalletSDKExample/node_modules/react-native-udp/android/src/main/AndroidManifest.xml:4:5-66
++7-->/Users/mayconmellos/dev/dock/WalletSDKExample/node_modules/react-native-udp/android/src/main/AndroidManifest.xml:4:22-64
++8    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
++8-->/Users/mayconmellos/dev/dock/WalletSDKExample/node_modules/react-native-udp/android/src/main/AndroidManifest.xml:5:5-78
++8-->/Users/mayconmellos/dev/dock/WalletSDKExample/node_modules/react-native-udp/android/src/main/AndroidManifest.xml:5:22-76
++9    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
++9-->/Users/mayconmellos/dev/dock/WalletSDKExample/node_modules/react-native-udp/android/src/main/AndroidManifest.xml:6:5-75
++9-->/Users/mayconmellos/dev/dock/WalletSDKExample/node_modules/react-native-udp/android/src/main/AndroidManifest.xml:6:22-73
++10    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
++10-->/Users/mayconmellos/dev/dock/WalletSDKExample/node_modules/react-native-udp/android/src/main/AndroidManifest.xml:7:5-85
++10-->/Users/mayconmellos/dev/dock/WalletSDKExample/node_modules/react-native-udp/android/src/main/AndroidManifest.xml:7:22-83
++11
++12</manifest>
+diff --git a/node_modules/react-native-udp/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml b/node_modules/react-native-udp/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml
+new file mode 100644
+index 0000000..ed2ab22
+--- /dev/null
++++ b/node_modules/react-native-udp/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml
+@@ -0,0 +1,12 @@
++<?xml version="1.0" encoding="utf-8"?>
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++    package="com.tradle.react" >
++
++    <uses-sdk android:minSdkVersion="16" />
++
++    <uses-permission android:name="android.permission.INTERNET" />
++    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
++    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
++    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
++
++</manifest>
+\ No newline at end of file
+diff --git a/node_modules/react-native-udp/android/build/intermediates/navigation_json/debug/extractDeepLinksDebug/navigation.json b/node_modules/react-native-udp/android/build/intermediates/navigation_json/debug/extractDeepLinksDebug/navigation.json
+new file mode 100644
+index 0000000..0637a08
+--- /dev/null
++++ b/node_modules/react-native-udp/android/build/intermediates/navigation_json/debug/extractDeepLinksDebug/navigation.json
+@@ -0,0 +1 @@
++[]
+\ No newline at end of file
+diff --git a/node_modules/react-native-udp/android/build/intermediates/nested_resources_validation_report/debug/generateDebugResources/nestedResourcesValidationReport.txt b/node_modules/react-native-udp/android/build/intermediates/nested_resources_validation_report/debug/generateDebugResources/nestedResourcesValidationReport.txt
+new file mode 100644
+index 0000000..08f4ebe
+--- /dev/null
++++ b/node_modules/react-native-udp/android/build/intermediates/nested_resources_validation_report/debug/generateDebugResources/nestedResourcesValidationReport.txt
+@@ -0,0 +1 @@
++0 Warning/Error
+\ No newline at end of file
+diff --git a/node_modules/react-native-udp/android/build/outputs/logs/manifest-merger-debug-report.txt b/node_modules/react-native-udp/android/build/outputs/logs/manifest-merger-debug-report.txt
+new file mode 100644
+index 0000000..18ccb3b
+--- /dev/null
++++ b/node_modules/react-native-udp/android/build/outputs/logs/manifest-merger-debug-report.txt
+@@ -0,0 +1,33 @@
++-- Merging decision tree log ---
++manifest
++ADDED from /Users/mayconmellos/dev/dock/WalletSDKExample/node_modules/react-native-udp/android/src/main/AndroidManifest.xml:2:1-8:12
++INJECTED from /Users/mayconmellos/dev/dock/WalletSDKExample/node_modules/react-native-udp/android/src/main/AndroidManifest.xml:2:1-8:12
++	package
++		ADDED from /Users/mayconmellos/dev/dock/WalletSDKExample/node_modules/react-native-udp/android/src/main/AndroidManifest.xml:3:5-31
++		INJECTED from /Users/mayconmellos/dev/dock/WalletSDKExample/node_modules/react-native-udp/android/src/main/AndroidManifest.xml
++	xmlns:android
++		ADDED from /Users/mayconmellos/dev/dock/WalletSDKExample/node_modules/react-native-udp/android/src/main/AndroidManifest.xml:2:11-69
++uses-permission#android.permission.INTERNET
++ADDED from /Users/mayconmellos/dev/dock/WalletSDKExample/node_modules/react-native-udp/android/src/main/AndroidManifest.xml:4:5-66
++	android:name
++		ADDED from /Users/mayconmellos/dev/dock/WalletSDKExample/node_modules/react-native-udp/android/src/main/AndroidManifest.xml:4:22-64
++uses-permission#android.permission.ACCESS_NETWORK_STATE
++ADDED from /Users/mayconmellos/dev/dock/WalletSDKExample/node_modules/react-native-udp/android/src/main/AndroidManifest.xml:5:5-78
++	android:name
++		ADDED from /Users/mayconmellos/dev/dock/WalletSDKExample/node_modules/react-native-udp/android/src/main/AndroidManifest.xml:5:22-76
++uses-permission#android.permission.ACCESS_WIFI_STATE
++ADDED from /Users/mayconmellos/dev/dock/WalletSDKExample/node_modules/react-native-udp/android/src/main/AndroidManifest.xml:6:5-75
++	android:name
++		ADDED from /Users/mayconmellos/dev/dock/WalletSDKExample/node_modules/react-native-udp/android/src/main/AndroidManifest.xml:6:22-73
++uses-permission#android.permission.CHANGE_WIFI_MULTICAST_STATE
++ADDED from /Users/mayconmellos/dev/dock/WalletSDKExample/node_modules/react-native-udp/android/src/main/AndroidManifest.xml:7:5-85
++	android:name
++		ADDED from /Users/mayconmellos/dev/dock/WalletSDKExample/node_modules/react-native-udp/android/src/main/AndroidManifest.xml:7:22-83
++uses-sdk
++INJECTED from /Users/mayconmellos/dev/dock/WalletSDKExample/node_modules/react-native-udp/android/src/main/AndroidManifest.xml reason: use-sdk injection requested
++INJECTED from /Users/mayconmellos/dev/dock/WalletSDKExample/node_modules/react-native-udp/android/src/main/AndroidManifest.xml
++INJECTED from /Users/mayconmellos/dev/dock/WalletSDKExample/node_modules/react-native-udp/android/src/main/AndroidManifest.xml
++	android:targetSdkVersion
++		INJECTED from /Users/mayconmellos/dev/dock/WalletSDKExample/node_modules/react-native-udp/android/src/main/AndroidManifest.xml
++	android:minSdkVersion
++		INJECTED from /Users/mayconmellos/dev/dock/WalletSDKExample/node_modules/react-native-udp/android/src/main/AndroidManifest.xml
+diff --git a/node_modules/react-native-udp/android/src/main/java/com/tradle/react/UdpSocketClient.java b/node_modules/react-native-udp/android/src/main/java/com/tradle/react/UdpSocketClient.java
+index 15d6526..510f06d 100644
+--- a/node_modules/react-native-udp/android/src/main/java/com/tradle/react/UdpSocketClient.java
++++ b/node_modules/react-native-udp/android/src/main/java/com/tradle/react/UdpSocketClient.java
+@@ -8,7 +8,7 @@
+ package com.tradle.react;
+ 
+ import android.os.AsyncTask;
+-import android.support.annotation.Nullable;
++import androidx.annotation.Nullable;
+ import android.util.Base64;
+ import android.util.Pair;
+ 
+diff --git a/node_modules/react-native-udp/android/src/main/java/com/tradle/react/UdpSockets.java b/node_modules/react-native-udp/android/src/main/java/com/tradle/react/UdpSockets.java
+index a0b7c46..2768252 100644
+--- a/node_modules/react-native-udp/android/src/main/java/com/tradle/react/UdpSockets.java
++++ b/node_modules/react-native-udp/android/src/main/java/com/tradle/react/UdpSockets.java
+@@ -9,7 +9,7 @@ package com.tradle.react;
+ 
+ import android.content.Context;
+ import android.net.wifi.WifiManager;
+-import android.support.annotation.Nullable;
++import androidx.annotation.Nullable;
+ import android.util.SparseArray;
+ import android.os.AsyncTask;
+ 

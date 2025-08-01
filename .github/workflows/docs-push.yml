@@ -6,7 +6,6 @@ on:
       - "docs/**"
       - ".github/workflows/docs-push.yml"
       - "README.md"
-      - "examples/**"
     
 jobs:
   Copy-docs:
@@ -28,10 +27,8 @@ jobs:
       - name: Copy files
         run: |
           # Specify the files or directories you want to copy
-          mkdir -p knowledge-base/developer-documentation/wallet-sdk/examples
           cp -r docs/* knowledge-base/developer-documentation/wallet-sdk/
           cp README.md knowledge-base/developer-documentation/wallet-sdk/README.md
-          cp -r examples/* knowledge-base/developer-documentation/wallet-sdk/examples/
 
       - name: Get branch name
         id: get_branch

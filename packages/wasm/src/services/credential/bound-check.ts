@@ -1,8 +1,8 @@
 import {LegoProvingKey} from '@docknetwork/crypto-wasm-ts/lib/legosnark';
 import {PresentationBuilder} from '@docknetwork/crypto-wasm-ts/lib';
-import {isBase64} from '@polkadot/util-crypto';
 import base64url from 'base64url';
 import {pexToBounds} from './pex-helpers';
+import {utilCryptoService} from '../util-crypto/service';
 
 interface Filter {
   type: string;
@@ -110,9 +110,9 @@ export function blobFromBase64(base64String: string): Uint8Array {
   return base64url.toBuffer(cleanedBase64);
 }
 
-export function isBase64OrDataUrl(str: string): boolean {
+export async function isBase64OrDataUrl(str: string): Promise<boolean> {
   return (
-    isBase64(str) ||
+    (await utilCryptoService.isBase64(str)) ||
     (str as string).indexOf('data:application/octet-stream') > -1
   );
 }
@@ -120,7 +120,7 @@ export function isBase64OrDataUrl(str: string): boolean {
 export async function fetchProvingKey(proofRequest: ProofRequest) {
   let blob: Uint8Array;
 
-  if (isBase64OrDataUrl(proofRequest.boundCheckSnarkKey)) {
+  if (await isBase64OrDataUrl(proofRequest.boundCheckSnarkKey)) {
     console.log('Is base64');
     blob = blobFromBase64(proofRequest.boundCheckSnarkKey);
   } else {

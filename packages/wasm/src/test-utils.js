@@ -27,16 +27,3 @@ export function testRpcEndpoint(service, rpcMethod, ...params) {
 }
 
 export const waitFor = timeout => new Promise(res => setTimeout(res, timeout));
-
-let sendTokensSpy;
-let getFeeSpy;
-
-export function resetMockTransaction() {
-  if (sendTokensSpy) {
-    sendTokensSpy.mockRestore();
-  }
-
-  if (getFeeSpy) {
-    getFeeSpy.mockRestore();
-  }
-}

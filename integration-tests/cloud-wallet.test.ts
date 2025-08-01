@@ -4,6 +4,8 @@ import {DataStore, DataStoreEvents} from '@docknetwork/wallet-sdk-data-store/src
 import {
   SYNC_MARKER_TYPE,
   initializeCloudWallet,
+  generateCloudWalletMasterKey,
+  recoverCloudWalletMasterKey,
 } from '@docknetwork/wallet-sdk-core/src/cloud-wallet';
 import {createDataStore} from '@docknetwork/wallet-sdk-data-store-typeorm/src';
 import {edvService} from '@docknetwork/wallet-sdk-wasm/src/services/edv';
@@ -24,8 +26,11 @@ describe('Cloud wallet', () => {
   let wallet: IWallet;
 
   beforeAll(async () => {
-    const {verificationKey, agreementKey, hmacKey} =
-      await edvService.generateKeys();
+    if (!EDV_URL || !EDV_AUTH_KEY) {
+      throw new Error("Missing required environment variables: EDV_URL and EDV_AUTH_KEY");
+    }
+
+    const { masterKey } = await generateCloudWalletMasterKey();
 
     dataStore = await createDataStore({
       databasePath: ':memory:',
@@ -45,9 +50,7 @@ describe('Cloud wallet', () => {
     } = await initializeCloudWallet({
       dataStore,
       edvUrl: EDV_URL,
-      agreementKey,
-      verificationKey,
-      hmacKey,
+      masterKey,
       authKey: EDV_AUTH_KEY,
     }));
 
@@ -57,6 +60,24 @@ describe('Cloud wallet', () => {
       dontWaitForNetwork: true,
       dataStore,
     });
+  });
+
+  it('should generate a valid master key with mnemonic', async () => {
+    const { mnemonic, masterKey } = await generateCloudWalletMasterKey();
+
+    expect(mnemonic).toBeDefined();
+    expect(typeof mnemonic).toBe('string');
+    expect(mnemonic.split(' ').length).toBe(12);
+
+    expect(masterKey).toBeDefined();
+    expect(masterKey).toBeInstanceOf(Uint8Array);
+  });
+
+  it('should recover the same master key from a mnemonic', async () => {
+    const { mnemonic, masterKey } = await generateCloudWalletMasterKey();
+    const recoveredKey = await recoverCloudWalletMasterKey(mnemonic);
+
+    expect(recoveredKey).toStrictEqual(masterKey);
   });
 
   it('should see a document added directly to the EDV appear in the wallet after pulling', async () => {

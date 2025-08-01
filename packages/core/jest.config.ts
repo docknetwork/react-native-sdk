@@ -34,6 +34,6 @@ module.exports = {
       '@docknetwork/wallet-sdk-data-store/src',
   },
   transformIgnorePatterns: [
-    '/node_modules/(?!@polkadot|@babel|@docknetwork|@digitalbazaar)',
+    '/node_modules/(?!@babel|@docknetwork|@digitalbazaar)',
   ],
 };

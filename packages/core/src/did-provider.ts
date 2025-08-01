@@ -54,35 +54,6 @@ export async function importDID({
   }
 }
 
-export async function createDIDock({wallet, address, name}) {
-  assert(!!wallet, 'wallet is required');
-  assert(!!address, 'address is required');
-  assert(!!name, 'name is required');
-
-  const keyPair = await wallet.getAccountKeyPair(address);
-  const {dockDID, keyPairWalletId} = await didServiceRPC.registerDidDock(
-    keyPair,
-  );
-
-  const keydoc = await didServiceRPC.generateKeyDoc({
-    keyPairJSON: keyPair,
-    controller: dockDID,
-  });
-
-  const didDocument = await didServiceRPC.getDidDockDocument(dockDID);
-
-  const dockDIDResolution = {
-    id: dockDID,
-    type: 'DIDResolutionResponse',
-    name,
-    didDocument,
-    correlation: [keydoc.id, keyPairWalletId],
-  };
-
-  await wallet.add(keydoc);
-  await wallet.add(dockDIDResolution);
-}
-
 async function editDID({wallet, id, name}){
   if (typeof id === 'string' && id.length > 0) {
     const docs = await wallet.query({
@@ -165,8 +136,8 @@ export async function createDIDKey({wallet, name, derivePath=undefined, type=und
     name,
   });
 
-  await wallet.add(keyDoc);
-  await wallet.add(didDocumentResolution);
+  await wallet.addDocument(keyDoc);
+  await wallet.addDocument(didDocumentResolution);
 
   return {
     keyDoc,
@@ -216,7 +187,6 @@ export interface IDIDProvider {
     encryptedJSONWallet: any;
     password: string;
   }): Promise<void>;
-  createDIDock(params: {address: string; name: string}): Promise<void>;
   createDIDKey(params: {name: string, derivePath?:string, type?: string}): Promise<any>;
   editDID(params: {id: string; name: string}): Promise<void>;
   deleteDID(params: {id: string;}): Promise<void>;
@@ -231,9 +201,6 @@ export function createDIDProvider({wallet}): IDIDProvider {
   return {
     async importDID({encryptedJSONWallet, password}) {
       return importDID({wallet, encryptedJSONWallet, password});
-    },
-    async createDIDock({address, name}) {
-      return createDIDock({wallet, address, name});
     },
     async createDIDKey({name, derivePath, type}) {
       return createDIDKey({wallet, name, derivePath, type});
