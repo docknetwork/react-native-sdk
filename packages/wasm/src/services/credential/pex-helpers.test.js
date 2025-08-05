@@ -230,6 +230,31 @@ describe('pex helpers', () => {
 
       expect(result).toEqual(['credentialSubject.id']);
     });
+
+    it('should skip issuanceDate', () => {
+      const result = getPexRequiredAttributes(
+        {
+          id: 'test-issuanceDate',
+          input_descriptors: [
+            {
+              constraints: {
+                fields: [
+                  {
+                    path: ['$.issuanceDate'],
+                  },
+                ],
+              },
+            },
+          ],
+        },
+        [
+          {
+            issuanceDate: '2021-01-01',
+          },
+        ],
+      );
+      expect(result).toEqual([]);
+    });
   });
 
   describe('pexToBounds', () => {

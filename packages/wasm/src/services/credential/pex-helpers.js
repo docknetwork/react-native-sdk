@@ -276,6 +276,7 @@ const attributesToSkip = [
   /^@context/,
   /^proof/,
   /^credentialSchema/,
+  /^issuanceDate/,
 ];
 
 const shouldSkipAttribute = attributeName =>
