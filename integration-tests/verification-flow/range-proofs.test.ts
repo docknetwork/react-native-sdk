@@ -118,11 +118,14 @@ describe('Range proofs verification', () => {
     ]);
   });
 
-
   it('should not reveal issuanceDate', async () => {
     const wallet: IWallet = await getWallet();
     const controller = await createVerificationController({
       wallet,
+    });
+
+    await controller.start({
+      template: proofRequest.qr,
     });
 
     const credentialUrl =
@@ -132,19 +135,15 @@ describe('Range proofs verification', () => {
       `${credentialUrl}?p=${btoa(password)}`,
     );
 
-    getCredentialProvider().addCredential(credential);
-
-    await controller.start({
-      template: proofRequest.qr,
-    });
-
+    try {
+      await getCredentialProvider().addCredential(credential);
+    } catch(err) {
+      console.error('Credential already added');
+    }
 
     // pexToBounds should skip issuanceDate
     // There is an SDK limitation that prevents us from sharing the actual issuanceDate
-    const attributesToReveal = [
-      'issuanceDate',
-      'salary',
-    ];
+    const attributesToReveal = ['issuanceDate', 'credentialSubject.salary'];
 
     controller.selectedCredentials.set(credential.id, {
       credential: credential,
@@ -153,11 +152,14 @@ describe('Range proofs verification', () => {
 
     const presentation = await controller.createPresentation();
 
-
     // Presentation issuanceDate should not be equal to the credential issuanceDate
     // The credential SDK will genreate a presentation timestamp instead
-    expect(presentation.verifiableCredential[0].issuanceDate).not.toBe(credential.issuanceDate);
-    expect(presentation.verifiableCredential[0].credentialSubject.salary).toBe(credential.credentialSubject.salary);
-  })
+    expect(presentation.verifiableCredential[0].issuanceDate).not.toBe(
+      credential.issuanceDate,
+    );
+    expect(presentation.verifiableCredential[0].credentialSubject.salary).toBe(
+      credential.credentialSubject.salary,
+    );
+  });
   afterAll(() => closeWallet());
 });
