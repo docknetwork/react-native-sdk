@@ -29,7 +29,7 @@ import {
 import assert from 'assert';
 import axios from 'axios';
 import {getIsRevoked, getWitnessDetails} from './bbs-revocation';
-import {getPexRequiredAttributes} from './pex-helpers';
+import {getPexRequiredAttributes, shouldSkipAttribute} from './pex-helpers';
 import {didService} from '../dids/service';
 
 const pex: PEX = new PEX();
@@ -397,7 +397,7 @@ class CredentialService {
         ? descriptorBounds[idx].map(bound => bound.attributeName)
         : [];
       const filteredAttributes = attributesToReveal.filter(
-        attribute => !attributesToSkip.includes(attribute),
+        attribute => !attributesToSkip.includes(attribute) && !shouldSkipAttribute(attribute),
       );
       const _pexRequiredAttributes = pexRequiredAttributes[idx] || [];
 
