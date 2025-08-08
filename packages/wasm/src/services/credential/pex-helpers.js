@@ -276,9 +276,10 @@ const attributesToSkip = [
   /^@context/,
   /^proof/,
   /^credentialSchema/,
+  /^issuanceDate/,
 ];
 
-const shouldSkipAttribute = attributeName =>
+export const shouldSkipAttribute = attributeName =>
   attributesToSkip.some(regex => regex.test(attributeName));
 
 export function getPexRequiredAttributes(pexRequest, selectedCredentials = []) {
