@@ -46,7 +46,17 @@ const sendMessage = async ({keyPairDoc, recipientDid, message, type}) => {
     ) || [];
 
   const serviceEndpoints = services
-    .flatMap(service => service.serviceEndpoint || [])
+    .flatMap(service => {
+      if (!service.serviceEndpoint) {
+        return [];
+      }
+
+      if (!Array.isArray(service.serviceEndpoint)) {
+        return [service.serviceEndpoint];
+      }
+
+      return service.serviceEndpoint;
+    })
     .filter(endpoint => endpoint.accept?.includes('didcomm/v2'));
 
   // Try each endpoint until one is successful
