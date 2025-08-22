@@ -44,7 +44,7 @@ const sendMessage = async ({keyPairDoc, recipientDid, message, type}) => {
     endpoint => endpoint.type === 'DIDCommMessaging',
   );
 
-  const serviceEndpoint = service?.serviceEndpoint[0];
+  const serviceEndpoint = service?.serviceEndpoint?.[0];
 
   // if DIDCommMessaging endpoint is found, use it to send the message
   if (serviceEndpoint) {
