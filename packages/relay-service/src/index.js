@@ -39,6 +39,48 @@ const sendMessage = async ({keyPairDoc, recipientDid, message, type}) => {
     keyAgreementKey,
   });
 
+  const didDocument = await blockchainService.resolveDID(recipientDid);
+  const services =
+    didDocument?.service?.filter(
+      endpoint => endpoint.type === 'DIDCommMessaging',
+    ) || [];
+
+  const serviceEndpoints = services
+    .flatMap(service => {
+      if (!service.serviceEndpoint) {
+        return [];
+      }
+
+      if (!Array.isArray(service.serviceEndpoint)) {
+        return [service.serviceEndpoint];
+      }
+
+      return service.serviceEndpoint;
+    })
+    .filter(endpoint => endpoint.accept?.includes('didcomm/v2'));
+
+  // Try each endpoint until one is successful
+  for (const endpoint of serviceEndpoints) {
+    try {
+      const result = await axios.post(endpoint.uri, jweMessage, {
+        headers: {
+          'Content-Type': 'application/didcomm-encrypted+json',
+          Accept: 'application/didcomm-encrypted+json',
+        },
+      });
+
+      return {
+        success: result.data.status === 'received',
+        endpoint: endpoint.uri,
+      };
+    } catch (err) {
+      console.error(
+        `Failed to send message to ${endpoint.uri}:`,
+        err.response || err.message,
+      );
+    }
+  }
+
   const {payload, did} = await generateSignedPayload(keyPairDoc, {
     to: recipientDid,
     msg: toBase64(jweMessage),
@@ -52,10 +94,12 @@ const sendMessage = async ({keyPairDoc, recipientDid, message, type}) => {
       },
     );
 
-    return result.data;
+    return {
+      success: result.data.success,
+    };
   } catch (err) {
     console.error(err.response);
-    return err;
+    throw err;
   }
 };
 
