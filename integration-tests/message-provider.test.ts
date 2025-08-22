@@ -25,11 +25,10 @@ describe('Credential Distribution', () => {
         messageID: '123',
         response: 'yes',
       },
-      useDIDServiceEndpoint: true,
       type: 'https://schema.truvera.io/yes-no-response-V1.json',
     });
 
-    expect(result.status).toBe('received');
+    expect(result.success).toBe(true);
   });
 
   afterAll(() => closeWallet(wallet));
