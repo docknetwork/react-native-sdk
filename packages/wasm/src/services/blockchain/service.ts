@@ -176,6 +176,9 @@ export class BlockchainService {
     });
   }
 
+  async resolveDID(did: string) {
+    return this.resolver.resolve(did);
+  }
   /**
    *
    * @returns

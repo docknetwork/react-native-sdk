@@ -7,7 +7,7 @@ import {relayService as defaultRelayService} from '@docknetwork/wallet-sdk-wasm/
 const FETCH_MESSAGE_LIMIT = 10;
 
 export interface IMessageProvider {
-  sendMessage: (message: any) => Promise<void>;
+  sendMessage: (message: any) => Promise<any>;
   fetchMessages: () => Promise<void>;
   processDIDCommMessages: () => Promise<void>;
   startAutoFetch: (timeout?: number) => () => void;
@@ -229,6 +229,7 @@ export function createMessageProvider({
       did,
       recipientDid,
       message,
+      useDIDServiceEndpoint,
       // didcomm message parameters
       from,
       to,
@@ -253,11 +254,12 @@ export function createMessageProvider({
         if (!keyPairDoc) {
           throw new Error(`${did} not found in didDocs`);
         }
-        await relayService.sendMessage({
+        return await relayService.sendMessage({
           keyPairDoc,
           message,
           recipientDid,
           type,
+          useDIDServiceEndpoint,
         });
       } catch (error) {
         captureException(error);
