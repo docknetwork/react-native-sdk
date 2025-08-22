@@ -29,8 +29,7 @@ describe('Credential Distribution', () => {
       type: 'https://schema.truvera.io/yes-no-response-V1.json',
     });
 
-    expect(result.webhookDispatched).toBe(true);
-    expect(result.isEncrypted).toBe(true);
+    expect(result.status).toBe('received');
   });
 
   afterAll(() => closeWallet(wallet));

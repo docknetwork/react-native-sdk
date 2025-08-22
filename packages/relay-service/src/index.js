@@ -58,7 +58,12 @@ const sendMessage = async ({
     }
 
     try {
-      const result = await axios.post(serviceEndpoint.uri, jweMessage);
+      const result = await axios.post(serviceEndpoint.uri, jweMessage, {
+        headers: {
+          'Content-Type': 'application/didcomm-encrypted+json',
+          Accept: 'application/didcomm-encrypted+json',
+        },
+      });
 
       return result.data;
     } catch (err) {
