@@ -229,7 +229,6 @@ export function createMessageProvider({
       did,
       recipientDid,
       message,
-      useDIDServiceEndpoint,
       // didcomm message parameters
       from,
       to,
@@ -259,7 +258,6 @@ export function createMessageProvider({
           message,
           recipientDid,
           type,
-          useDIDServiceEndpoint,
         });
       } catch (error) {
         captureException(error);

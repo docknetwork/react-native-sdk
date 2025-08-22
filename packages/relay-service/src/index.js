@@ -25,13 +25,7 @@ export const didcomm = {
   decrypt: didcommDecrypt,
 };
 
-const sendMessage = async ({
-  keyPairDoc,
-  recipientDid,
-  message,
-  type,
-  useDIDServiceEndpoint,
-}) => {
+const sendMessage = async ({keyPairDoc, recipientDid, message, type}) => {
   assert(!!keyPairDoc, 'keyPairDoc is required');
   assert(!!recipientDid, 'recipientDid is required');
   assert(!!message, 'message is required');
@@ -45,18 +39,15 @@ const sendMessage = async ({
     keyAgreementKey,
   });
 
-  if (useDIDServiceEndpoint) {
-    const didDocument = await blockchainService.resolveDID(recipientDid);
-    const service = didDocument.service.find(
-      endpoint => endpoint.type === 'DIDCommMessaging',
-    );
+  const didDocument = await blockchainService.resolveDID(recipientDid);
+  const service = didDocument.service.find(
+    endpoint => endpoint.type === 'DIDCommMessaging',
+  );
 
-    const serviceEndpoint = service?.serviceEndpoint[0];
+  const serviceEndpoint = service?.serviceEndpoint[0];
 
-    if (!serviceEndpoint) {
-      throw new Error(`DIDComm Service endpoint not found for ${recipientDid}`);
-    }
-
+  // if DIDCommMessaging endpoint is found, use it to send the message
+  if (serviceEndpoint) {
     try {
       const result = await axios.post(serviceEndpoint.uri, jweMessage, {
         headers: {
