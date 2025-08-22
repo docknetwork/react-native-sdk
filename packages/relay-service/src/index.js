@@ -40,26 +40,34 @@ const sendMessage = async ({keyPairDoc, recipientDid, message, type}) => {
   });
 
   const didDocument = await blockchainService.resolveDID(recipientDid);
-  const service = didDocument.service.find(
-    endpoint => endpoint.type === 'DIDCommMessaging',
-  );
+  const services =
+    didDocument?.service?.filter(
+      endpoint => endpoint.type === 'DIDCommMessaging',
+    ) || [];
 
-  const serviceEndpoint = service?.serviceEndpoint?.[0];
+  const serviceEndpoints = services
+    .flatMap(service => service.serviceEndpoint || [])
+    .filter(endpoint => endpoint.accept?.includes('didcomm/v2'));
 
-  // if DIDCommMessaging endpoint is found, use it to send the message
-  if (serviceEndpoint) {
+  // Try each endpoint until one is successful
+  for (const endpoint of serviceEndpoints) {
     try {
-      const result = await axios.post(serviceEndpoint.uri, jweMessage, {
+      const result = await axios.post(endpoint.uri, jweMessage, {
         headers: {
           'Content-Type': 'application/didcomm-encrypted+json',
           Accept: 'application/didcomm-encrypted+json',
         },
       });
 
-      return result.data;
+      return {
+        success: result.data.status === 'received',
+        endpoint: endpoint.uri,
+      };
     } catch (err) {
-      console.error(err.response);
-      return err;
+      console.error(
+        `Failed to send message to ${endpoint.uri}:`,
+        err.response || err.message,
+      );
     }
   }
 
@@ -76,10 +84,12 @@ const sendMessage = async ({keyPairDoc, recipientDid, message, type}) => {
       },
     );
 
-    return result.data;
+    return {
+      success: result.data.success,
+    };
   } catch (err) {
     console.error(err.response);
-    return err;
+    throw err;
   }
 };
 
