@@ -177,11 +177,13 @@ describe('Relay service', () => {
       });
 
       // Mock the JWT decode functionality to return an object with credentials
-      jest.spyOn(require('jwt-decode'), 'default').mockImplementation(() => ({
-        payload: {
-          credentials: [{id: 'test-credential'}],
-        },
-      }));
+      const jwtDecodeMock = jest
+        .spyOn(require('jwt-decode'), 'jwtDecode')
+        .mockImplementation(() => ({
+          payload: {
+            credentials: [{id: 'test-credential'}],
+          },
+        }));
 
       const result = await RelayService.resolveDidcommMessage({
         message: `didcomm://${messageURL}`,
@@ -193,6 +195,7 @@ describe('Relay service', () => {
       expect(result.body).toBeDefined();
 
       axiosMock.mockRestore();
+      jwtDecodeMock.mockRestore();
     });
 
     it('expect to handle base64 JSON', async () => {

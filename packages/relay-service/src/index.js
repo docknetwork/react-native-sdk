@@ -14,7 +14,7 @@ import {
   generateSignedPayloadFromList,
   toBase64,
 } from './payloads';
-import jwtDecode from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode';
 import {blockchainService} from '@docknetwork/wallet-sdk-wasm/src/services/blockchain/service';
 import {utilCryptoService} from '@docknetwork/wallet-sdk-wasm/src/services/util-crypto/service';
 
