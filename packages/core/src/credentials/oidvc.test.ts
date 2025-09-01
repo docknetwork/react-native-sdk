@@ -6,7 +6,7 @@ import {
 } from './oidvc';
 import {credentialServiceRPC} from '@docknetwork/wallet-sdk-wasm/src/services/credential';
 import {MetadataClient} from '@sphereon/oid4vci-client';
-import jwtDecode from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode';
 import axios from 'axios';
 
 jest.mock('@docknetwork/wallet-sdk-wasm/src/services/credential');

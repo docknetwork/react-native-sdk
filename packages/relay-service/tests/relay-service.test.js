@@ -176,13 +176,6 @@ describe('Relay service', () => {
         data: jwtMessage,
       });
 
-      // Mock the JWT decode functionality to return an object with credentials
-      jest.spyOn(require('jwt-decode'), 'default').mockImplementation(() => ({
-        payload: {
-          credentials: [{id: 'test-credential'}],
-        },
-      }));
-
       const result = await RelayService.resolveDidcommMessage({
         message: `didcomm://${messageURL}`,
         keyPairDocs: [BOB_KEY_PAIR_DOC],
