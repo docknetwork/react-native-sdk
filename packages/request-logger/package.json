@@ -1,6 +1,6 @@
 {
     "name": "@docknetwork/wallet-sdk-request-logger",
-    "version": "1.5.12",
+    "version": "1.5.14",
     "license": "https://github.com/docknetwork/react-native-sdk/LICENSE",
     "repository": {
         "type": "git",
