@@ -1,10 +1,12 @@
 import {DocumentEntity} from './document.entity';
 import {createTestDataStore} from '../../../test/test-utils';
-import {DataStore} from '../../types';
+import {DataStore} from '@docknetwork/wallet-sdk-data-store/src/types';
 import {createDocument} from './create-document';
 import {getDocumentsByType} from './get-documens-by-type';
 import {getDocumentById} from './get-document-by-id';
 import {getDocumentCorrelations} from './get-document-correlations';
+import {removeAllDocuments} from './remove-document';
+import {getAllDocuments} from './get-all-documents';
 
 const mockDocuments = [
   {
@@ -130,6 +132,23 @@ describe('DocumentEntity', () => {
 
       expect(documents).toBeDefined();
       expect(documents.length).toEqual(2);
+    });
+  });
+
+  describe('removeAllDocuments', () => {
+    it('should remove all documents from the database', async () => {
+      // First, verify we have documents
+      const documentsBefore = await getAllDocuments({dataStore});
+      expect(documentsBefore.length).toBeGreaterThan(0);
+      expect(documentsBefore.length).toEqual(mockDocuments.length);
+
+      // Remove all documents
+      await removeAllDocuments({dataStore});
+
+      // Verify all documents are removed
+      const documentsAfter = await getAllDocuments({dataStore});
+      expect(documentsAfter).toBeDefined();
+      expect(documentsAfter.length).toEqual(0);
     });
   });
 });
