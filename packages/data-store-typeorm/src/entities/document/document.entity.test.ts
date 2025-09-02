@@ -137,15 +137,12 @@ describe('DocumentEntity', () => {
 
   describe('removeAllDocuments', () => {
     it('should remove all documents from the database', async () => {
-      // First, verify we have documents
       const documentsBefore = await getAllDocuments({dataStore});
       expect(documentsBefore.length).toBeGreaterThan(0);
       expect(documentsBefore.length).toEqual(mockDocuments.length);
 
-      // Remove all documents
       await removeAllDocuments({dataStore});
 
-      // Verify all documents are removed
       const documentsAfter = await getAllDocuments({dataStore});
       expect(documentsAfter).toBeDefined();
       expect(documentsAfter.length).toEqual(0);
