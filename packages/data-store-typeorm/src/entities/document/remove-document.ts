@@ -39,7 +39,11 @@ export async function removeAllDocuments({
 }: ContextProps): Promise<void> {
   const db = getDataSource(dataStore);
   const repository = db.getRepository(DocumentEntity);
-  await repository.delete({});
+
+  await repository
+    .createQueryBuilder()
+    .delete()
+    .execute();
 
   dataStore.events.emit(DataStoreEvents.AllDocumentsDeleted);
 }
