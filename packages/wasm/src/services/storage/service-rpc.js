@@ -5,15 +5,15 @@ export class StorageServiceRpc extends RpcService {
     super('storage');
   }
 
-  setItem(...args): Promise<any> {
+  setItem(...args) {
     return this.call('setItem', ...args);
   }
 
-  removeItem(...args): Promise<any> {
+  removeItem(...args) {
     return this.call('removeItem', ...args);
   }
 
-  getItem(...args): Promise<any> {
+  getItem(...args) {
     return this.call('getItem', ...args);
   }
 }

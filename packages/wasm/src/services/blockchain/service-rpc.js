@@ -44,4 +44,12 @@ export class BlockchainServiceRpc extends RpcService {
   resolveDID(did: string): Promise<any> {
     return this.call('resolveDID', did);
   }
+
+  getCache(): Promise<any> {
+    return this.call('getCache');
+  }
+
+  clearCache(did?: string): Promise<any> {
+    return this.call('clearCache', did);
+  }
 }
