@@ -25,79 +25,10 @@ import {
   AccumulatorId,
   AccumulatorPublicKey,
 } from '@docknetwork/credential-sdk/types';
-import { storageService } from '../storage';
+import { CachedDIDResolver } from './cached-did-resolver';
 
 class AnyDIDResolver extends ResolverRouter {
   method = WILDCARD;
-}
-
-class CachedDIDResolver {
-  constructor(router, cacheOptions = {}) {
-    this.router = router;
-    this.cache = {};
-    // 30 days default
-    this.ttl = cacheOptions.ttl || 30 * 24 * 60 * 60 * 1000;
-    this.loadCache();
-  }
-
-  async loadCache() {
-    const cachedData = await storageService.getItem('did-cache');
-    if (cachedData) {
-      this.cache = JSON.parse(cachedData);
-    }
-  }
-
-  async resolve(did) {
-    const cached = this.cache[did];
-
-    if (cached && Date.now() - cached.timestamp < this.ttl) {
-      console.log('Cache hit for:', did);
-      return cached.value;
-    }
-
-    console.log('Cache miss, resolving:', did);
-    const result = await this.router.resolve(did);
-
-    this.cache[did] = {
-      value: result,
-      id: did,
-      timestamp: Date.now()
-    };
-
-    this.saveCache();
-
-    return result;
-  }
-
-  saveCache() {
-    storageService.setItem('did-cache', JSON.stringify(this.cache));
-  }
-
-  getCache() {
-    return this.cache;
-  }
-
-  setCache(cache) {
-    this.cache = cache;
-  }
-
-  /**
-   * if the did is provided, it will remove the specific did from the cache
-   * otherwise, it will clear the entire cache
-   * @param did
-   */
-  clearCache(did) {
-    if (did) {
-      delete this.cache[did];
-    } else {
-      this.cache = {};
-    }
-    this.saveCache();
-  }
-
-  supports(id) {
-    return this.router.supports(id);
-  }
 }
 
 /**
