@@ -2,7 +2,6 @@ import assert from 'assert';
 import {rpcRequest} from '../rpc-client';
 
 export class RpcService {
-
   constructor(serviceName) {
     assert(!!serviceName, 'serviceName is required');
 
