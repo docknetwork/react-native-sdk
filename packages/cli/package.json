@@ -1,10 +1,10 @@
 {
     "name": "@docknetwork/wallet-sdk-cli",
     "version": "1.5.6",
-    "license": "https://github.com/docknetwork/react-native-sdk/LICENSE",
+    "license": "https://github.com/docknetwork/wallet-sdk/LICENSE",
     "repository": {
         "type": "git",
-        "url": "https://github.com/docknetwork/react-native-sdk",
+        "url": "https://github.com/docknetwork/wallet-sdk",
         "directory": "packages/cli"
     },
     "scripts": {

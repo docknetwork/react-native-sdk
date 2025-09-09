@@ -2,7 +2,7 @@
 
 You can find the implementation of ecosystem tools in the following location:
 
-File Path: [packages/core/src/ecosystem-tools.ts](https://github.com/docknetwork/react-native-sdk/blob/5dfbcb197b848802478d2f7a697286a8c3c28823/packages/core/src/ecosystem-tools.ts#L4)
+File Path: [packages/core/src/ecosystem-tools.ts](https://github.com/docknetwork/wallet-sdk/blob/5dfbcb197b848802478d2f7a697286a8c3c28823/packages/core/src/ecosystem-tools.ts#L4)
 
 ## Usage Example
 
@@ -47,4 +47,4 @@ This JSON output contains the details of the ecosystems associated with the give
 
 For more examples and usage, please refer to the integration test at:
 
-Test File Path: https://github.com/docknetwork/react-native-sdk/blob/master/integration-tests/ecosystem-tools.test.ts This test file provides comprehensive examples on how to interact with ecosystem tools effectively.
+Test File Path: https://github.com/docknetwork/wallet-sdk/blob/master/integration-tests/ecosystem-tools.test.ts This test file provides comprehensive examples on how to interact with ecosystem tools effectively.

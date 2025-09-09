@@ -204,7 +204,7 @@ export const dataStoreConfigs: DataStoreConfigs = DEFAULT_WALLET_CONFIGS;
 
 ## Adding a custom biometric provider
 
-Adding a custom biometric provider will require the development of the plugin following the IDVProvider interface defined at [packages/core/src/biometric-provider.ts](https://github.com/docknetwork/react-native-sdk/blob/master/packages/core/src/biometric-provider.ts). The plugin should implement the following methods:
+Adding a custom biometric provider will require the development of the plugin following the IDVProvider interface defined at [packages/core/src/biometric-provider.ts](https://github.com/docknetwork/wallet-sdk/blob/master/packages/core/src/biometric-provider.ts). The plugin should implement the following methods:
 
 * enroll: Enrolls the biometric data. It should issue an enrollment credential and a match credential.
 * match: Performs the biometric match and if it is valid, returns a biometric match credential.
