@@ -27,12 +27,13 @@ describe('DID resolution', () => {
     const messagingService = doc1.service.find(service => service.type === 'DIDCommMessaging');
     expect(messagingService).toBeDefined();
 
-    const cacheJSON = await storageService.getItem('did-cache');
+    const cacheKey = `did-cache:did:cheqd:testnet:c0890f1c-c7bb-4ea6-be7a-8c31404743b7`;
+    const cacheJSON = await storageService.getItem(cacheKey);
     expect(cacheJSON).toBeDefined();
 
-    const cache = JSON.parse(cacheJSON);
-    const cachedDoc = cache['did:cheqd:testnet:c0890f1c-c7bb-4ea6-be7a-8c31404743b7']
-    expect(cachedDoc.value).toEqual(doc1);
+    const cachedEntry = JSON.parse(cacheJSON);
+    expect(cachedEntry.value).toEqual(doc1);
+    expect(cachedEntry.id).toEqual('did:cheqd:testnet:c0890f1c-c7bb-4ea6-be7a-8c31404743b7');
   });
 
   afterAll(() => closeWallet(wallet));
