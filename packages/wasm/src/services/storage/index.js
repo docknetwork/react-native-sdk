@@ -3,7 +3,7 @@ import {StorageServiceRpc} from './service-rpc';
 
 let storageService;
 
-if (window.ReactNativeWebView) {
+if (typeof window !== 'undefined' && window.ReactNativeWebView) {
   // Detect if we are running inside the webview
   // then route the calls to the service-rpc
   storageService = new StorageServiceRpc();
