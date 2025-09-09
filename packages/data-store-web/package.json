@@ -1,12 +1,12 @@
 {
   "name": "@docknetwork/wallet-sdk-data-store-web",
   "version": "1.5.14",
-  "license": "https://github.com/docknetwork/react-native-sdk/LICENSE",
+  "license": "https://github.com/docknetwork/wallet-sdk/LICENSE",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/docknetwork/react-native-sdk",
+    "url": "https://github.com/docknetwork/wallet-sdk",
     "directory": "packages/data-store"
   },
   "scripts": {

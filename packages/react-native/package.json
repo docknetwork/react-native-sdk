@@ -1,10 +1,10 @@
 {
     "name": "@docknetwork/wallet-sdk-react-native",
     "version": "1.5.14",
-    "license": "https://github.com/docknetwork/react-native-sdk/LICENSE",
+    "license": "https://github.com/docknetwork/wallet-sdk/LICENSE",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/docknetwork/react-native-sdk.git",
+        "url": "git+https://github.com/docknetwork/wallet-sdk.git",
         "directory": "packages/react-native"
     },
     "peerDependencies": {

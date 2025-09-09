@@ -1,6 +1,6 @@
 # Truvera Wallet SDK
 
-The [Wallet SDK](https://github.com/docknetwork/react-native-sdk) enables you to build a Verifiable Credentials wallet inside your app and allows your users to receive, store, and manage their DOCK tokens too. This was built for mobile applications with added support for Polkadot-JS.
+The [Wallet SDK](https://github.com/docknetwork/wallet-sdk) enables you to build a Verifiable Credentials wallet inside your app and allows your users to receive, store, and manage their DOCK tokens too. This was built for mobile applications with added support for Polkadot-JS.
 
 To use the wallet-sdk, all you need to do is wrap your app in a `WalletSDKProvider` and start building your wallet.
 
@@ -71,16 +71,16 @@ export default App;
 
 Check the following repository for detailed examples for running the Truvera Wallet SDK on NodeJS, Web, and Flutter.
 
-[See the examples](https://github.com/docknetwork/react-native-sdk/tree/master/examples)
+[See the examples](https://github.com/docknetwork/wallet-sdk/tree/master/examples)
 
 
 ## Docs
 
-For more details you can check the [getting started guide](https://github.com/docknetwork/react-native-sdk/blob/master/docs/getting-started.md)
+For more details you can check the [getting started guide](https://github.com/docknetwork/wallet-sdk/blob/master/docs/getting-started.md)
 
-[See the Github repository](https://docknetwork.github.io/react-native-sdk/)
+[See the Github repository](https://docknetwork.github.io/wallet-sdk/)
 
 ## Features
-- [Biometric Plugin](https://github.com/docknetwork/react-native-sdk/blob/master/docs/biometric-plugin.md)
-- [Ecosystem Tools](https://github.com/docknetwork/react-native-sdk/blob/master/docs/ecosystem-tools.md)
-- [Cloud Wallet](https://github.com/docknetwork/react-native-sdk/blob/master/docs/cloud-wallet.md)
+- [Biometric Plugin](https://github.com/docknetwork/wallet-sdk/blob/master/docs/biometric-plugin.md)
+- [Ecosystem Tools](https://github.com/docknetwork/wallet-sdk/blob/master/docs/ecosystem-tools.md)
+- [Cloud Wallet](https://github.com/docknetwork/wallet-sdk/blob/master/docs/cloud-wallet.md)
