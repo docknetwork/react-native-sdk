@@ -17,26 +17,32 @@ interface DIDResolver {
 
 export class CachedDIDResolver {
   private router: DIDResolver;
-  private cache: Record<string, CacheEntry> = {};
   private ttl: number;
-  private readonly CACHE_KEY = 'did-cache';
+  private readonly CACHE_PREFIX = 'did-cache:';
 
   constructor(router: DIDResolver, cacheOptions: CacheOptions = {}) {
     this.router = router;
-    // 7 days default
-    this.ttl = cacheOptions.ttl || 7 * 24 * 60 * 60 * 1000;
-    this.loadCache();
+    // 1 hour default
+    this.ttl = cacheOptions.ttl || 60 * 60 * 1000;
   }
 
-  async loadCache(): Promise<void> {
-    const cachedData = await storageService.getItem(this.CACHE_KEY);
-    if (cachedData) {
-      this.cache = JSON.parse(cachedData);
-    }
+  private getCacheKey(did: string): string {
+    return `${this.CACHE_PREFIX}${did}`;
+  }
+
+  private async getCacheEntry(did: string): Promise<CacheEntry | null> {
+    const key = this.getCacheKey(did);
+    const data = await storageService.getItem(key);
+    return data ? JSON.parse(data) : null;
+  }
+
+  private async setCacheEntry(did: string, entry: CacheEntry): Promise<void> {
+    const key = this.getCacheKey(did);
+    await storageService.setItem(key, JSON.stringify(entry));
   }
 
   async resolve(did: string): Promise<any> {
-    const cached = this.cache[did];
+    const cached = await this.getCacheEntry(did);
 
     if (cached) {
       if (Date.now() - cached.timestamp < this.ttl) {
@@ -44,7 +50,6 @@ export class CachedDIDResolver {
         return cached.value;
       } else {
         console.log('Cache expired for:', did, 'returning stale value and refreshing in background');
-        // Return stale value immediately, refresh in background
         this.refreshInBackground(did);
         return cached.value;
       }
@@ -53,13 +58,11 @@ export class CachedDIDResolver {
     console.log('Cache miss, resolving:', did);
     const result = await this.router.resolve(did);
 
-    this.cache[did] = {
+    await this.setCacheEntry(did, {
       value: result,
       id: did,
       timestamp: Date.now()
-    };
-
-    this.saveCache();
+    });
 
     return result;
   }
@@ -69,29 +72,16 @@ export class CachedDIDResolver {
       console.log('Refreshing cache in background for:', did);
       const result = await this.router.resolve(did);
       
-      this.cache[did] = {
+      await this.setCacheEntry(did, {
         value: result,
         id: did,
         timestamp: Date.now()
-      };
+      });
 
-      this.saveCache();
       console.log('Background refresh completed for:', did);
     } catch (error) {
       console.warn('Background refresh failed for:', did, error);
     }
-  }
-
-  saveCache(): void {
-    storageService.setItem(this.CACHE_KEY, JSON.stringify(this.cache));
-  }
-
-  getCache(): Record<string, CacheEntry> {
-    return this.cache;
-  }
-
-  setCache(cache: Record<string, CacheEntry>): void {
-    this.cache = cache;
   }
 
   /**
@@ -99,13 +89,15 @@ export class CachedDIDResolver {
    * otherwise, it will clear the entire cache
    * @param did
    */
-  clearCache(did?: string): void {
+  async clearCache(did?: string): Promise<void> {
     if (did) {
-      delete this.cache[did];
+      const key = this.getCacheKey(did);
+      await storageService.removeItem(key);
     } else {
-      this.cache = {};
+      const allKeys = await storageService.getAllKeys();
+      const cacheKeys = allKeys.filter(key => key.startsWith(this.CACHE_PREFIX));
+      await Promise.all(cacheKeys.map(key => storageService.removeItem(key)));
     }
-    this.saveCache();
   }
 
   supports(id: string): boolean {

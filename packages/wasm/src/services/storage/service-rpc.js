@@ -16,4 +16,8 @@ export class StorageServiceRpc extends RpcService {
   getItem(...args) {
     return this.call('getItem', ...args);
   }
+
+  getAllKeys() {
+    return this.call('getAllKeys');
+  }
 }
