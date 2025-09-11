@@ -342,14 +342,3 @@ export async function createWallet({
 
   return wallet;
 }
-
-/**
- * Deletes the entire wallet and all its documents
- * @param {IWallet} wallet - The wallet instance to delete
- * @returns {Promise<void>}
- * @fires WalletEvents.walletDeleted
- */
-export async function deleteWallet(wallet: IWallet): Promise<void> {
-  await wallet.dataStore.documents.removeAllDocuments();
-  wallet.eventManager.emit(WalletEvents.walletDeleted);
-}

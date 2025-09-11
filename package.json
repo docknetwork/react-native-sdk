@@ -63,7 +63,6 @@
     "lint:fix": "eslint './src/**/*.js' --fix --ignore-path=.prettierignore",
     "format": "prettier './src/**/*.{js,json}' --write",
     "exec": "BABEL_ENV=development; babel-node",
-    "docs": "documentation build packages/core/lib/** -f html -o docs",
     "postinstall": "sh ./scripts/fix-deps.sh && npm run build"
   },
   "jest-junit": {
@@ -122,7 +121,7 @@
     "glob": "^7.2.0",
     "https-browserify": "^1.0.0",
     "jest-junit": "^16.0.0",
-    "jsdoc": "^3.6.7",
+    "jsdoc": "^4.0.2",
     "jsdoc-babel": "^0.5.0",
     "jsdom": "^19.0.0",
     "jwt-decode": "^4.0.0",
