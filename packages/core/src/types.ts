@@ -272,3 +272,31 @@ export type CrateWalletWithDataStore = {
 export type CreateWalletProps = {
   dataStore: DataStore;
 }
+
+
+/**
+ * Possible wallet status values
+ * @typedef {'closed' | 'loading' | 'ready' | 'error'} WalletStatus
+ */
+export type WalletStatus = 'closed' | 'loading' | 'ready' | 'error';
+
+/**
+ * Supported keypair types
+ * @typedef {'sr25519' | 'ed25519' | 'ecdsa'} KeypairType
+ */
+export type KeypairType = 'sr25519' | 'ed25519' | 'ecdsa';
+
+export const WalletEvents = {
+  ready: 'ready',
+  error: 'error',
+  migrated: 'migrated',
+  statusUpdated: 'status-updated',
+  documentAdded: 'document-added',
+  documentUpdated: 'document-updated',
+  documentRemoved: 'document-removed',
+  walletDeleted: 'wallet-deleted',
+  walletImported: 'wallet-imported',
+  networkUpdated: 'network-updated',
+  networkConnected: 'network-connected',
+  networkError: 'network-error',
+};

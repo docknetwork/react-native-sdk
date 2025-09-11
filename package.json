@@ -63,7 +63,8 @@
     "lint:fix": "eslint './src/**/*.js' --fix --ignore-path=.prettierignore",
     "format": "prettier './src/**/*.{js,json}' --write",
     "exec": "BABEL_ENV=development; babel-node",
-    "postinstall": "sh ./scripts/fix-deps.sh && npm run build"
+    "postinstall": "sh ./scripts/fix-deps.sh && npm run build",
+    "docs:markdown": "cd packages/core && npm run docs"
   },
   "jest-junit": {
     "outputDirectory": "reports",
@@ -123,6 +124,7 @@
     "jest-junit": "^16.0.0",
     "jsdoc": "^4.0.2",
     "jsdoc-babel": "^0.5.0",
+    "jsdoc-to-markdown": "^9.1.2",
     "jsdom": "^19.0.0",
     "jwt-decode": "^4.0.0",
     "mock-local-storage": "^1.1.19",

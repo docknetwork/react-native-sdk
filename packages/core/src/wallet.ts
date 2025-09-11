@@ -4,7 +4,7 @@
  * This module provides the main wallet creation and management functions.
  */
 
-import {CreateWalletProps, IWallet} from './types';
+import {CreateWalletProps, IWallet, WalletEvents} from './types';
 
 
 import {initWalletWasm} from './wallet-wasm';
@@ -34,34 +34,6 @@ export function ensureDocumentContext(document) {
     '@context': ['https://w3id.org/wallet/v1'],
   };
 }
-
-
-/**
- * Possible wallet status values
- * @typedef {'closed' | 'loading' | 'ready' | 'error'} WalletStatus
- */
-export type WalletStatus = 'closed' | 'loading' | 'ready' | 'error';
-
-/**
- * Supported keypair types
- * @typedef {'sr25519' | 'ed25519' | 'ecdsa'} KeypairType
- */
-export type KeypairType = 'sr25519' | 'ed25519' | 'ecdsa';
-
-export const WalletEvents = {
-  ready: 'ready',
-  error: 'error',
-  migrated: 'migrated',
-  statusUpdated: 'status-updated',
-  documentAdded: 'document-added',
-  documentUpdated: 'document-updated',
-  documentRemoved: 'document-removed',
-  walletDeleted: 'wallet-deleted',
-  walletImported: 'wallet-imported',
-  networkUpdated: 'network-updated',
-  networkConnected: 'network-connected',
-  networkError: 'network-error',
-};
 
 
 /**

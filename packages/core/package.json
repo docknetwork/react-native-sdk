@@ -11,8 +11,8 @@
     "test": "jest",
     "prepublishOnly": "npm run build",
     "build": "rm -rf lib && rm -rf tsconfig.build.tsbuildinfo && tsc -p tsconfig.build.json && node ../../scripts/fix-build-imports.js ./lib",
-    "docs": "jsdoc -c jsdoc.conf.json --lenient || true",
-    "docs:clean": "rm -rf docs",
+    "docs": "node generate-docs.js",
+    "docs:clean": "rm -rf ../../jsdocs/core.md ../../jsdocs/core/",
     "docs:build": "npm run docs:clean && npm run docs"
   },
   "peerDependencies": {
