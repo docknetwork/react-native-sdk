@@ -78,7 +78,7 @@ export function isCredentialExpired(credential) {
 /**
  * Uses Dock SDK to verify a credential
  * @param credential
- * @returns
+ * @returns {Promise<Object>} Verification result with status and optional error/warning messages
  */
 export async function isValid({
   credential,
@@ -312,7 +312,7 @@ async function syncCredentialStatus({
 /**
  * Removes a credential and its related documents from the wallet
  * @param param0 
- * @returns 
+ * @returns {Promise<void>}
  */
 export async function removeCredential({
   wallet, 
