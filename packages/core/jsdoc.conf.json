@@ -1,0 +1,30 @@
+{
+  "source": {
+    "include": ["./src"],
+    "includePattern": "\\.(js|ts)$",
+    "exclude": ["node_modules/", "lib/", "**/*.test.ts", "**/*.test.js", "**/*.d.ts", "fixtures/"]
+  },
+  "opts": {
+    "destination": "./jsdocs/",
+    "recurse": true,
+    "readme": "./README.md"
+  },
+  "plugins": [
+    "plugins/markdown",
+    "jsdoc-babel"
+  ],
+  "babel": {
+    "extensions": ["js", "ts"],
+    "ignore": ["**/*.(test|spec).ts"],
+    "babelrc": false,
+    "presets": [["@babel/preset-typescript", { "allExtensions": true }]]
+  },
+  "templates": {
+    "cleverLinks": false,
+    "monospaceLinks": false
+  },
+  "tags": {
+    "allowUnknownTags": true,
+    "dictionaries": ["jsdoc", "closure"]
+  }
+}
