@@ -25,6 +25,7 @@ import {
   AccumulatorId,
   AccumulatorPublicKey,
 } from '@docknetwork/credential-sdk/types';
+import { CachedDIDResolver } from './cached-did-resolver';
 
 class AnyDIDResolver extends ResolverRouter {
   method = WILDCARD;
@@ -50,6 +51,9 @@ export class BlockchainService {
     BlockchainService.prototype.init,
     BlockchainService.prototype.isApiConnected,
     BlockchainService.prototype.getAddress,
+    BlockchainService.prototype.resolveDID,
+    BlockchainService.prototype.getCache,
+    BlockchainService.prototype.clearCache,
   ];
 
   constructor() {
@@ -82,12 +86,22 @@ export class BlockchainService {
     return once(this.emitter, BlockchainService.Events.BLOCKCHAIN_READY);
   }
 
+  getCache() {
+    return this.resolver.getCache();
+  }
+
+  clearCache(did) {
+    return this.resolver.clearCache(did);
+  }
+
   createDIDResolver() {
-    return new AnyDIDResolver([
+    const router = new AnyDIDResolver([
       new DIDKeyResolver(),
       new CoreResolver(this.modules),
       new UniversalResolver(universalResolverUrl),
     ]);
+
+    return new CachedDIDResolver(router);
   }
   /**
    *
