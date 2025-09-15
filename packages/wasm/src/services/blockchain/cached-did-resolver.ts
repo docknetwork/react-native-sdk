@@ -78,9 +78,9 @@ export class CachedDIDResolver {
     console.log('Cache miss, resolving:', did);
     const result = await this.router.resolve(did);
 
-    await this.setCacheEntry(did, {
+    await this.setCacheEntry(result.id, {
       value: result,
-      id: did,
+      id: result.id,
       timestamp: Date.now()
     });
 
