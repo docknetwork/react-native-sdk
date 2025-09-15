@@ -26,6 +26,10 @@ export class StorageService {
 
     return AsyncStorage.getItem(key);
   }
+
+  getAllKeys(): Promise<string[]> {
+    return AsyncStorage.getAllKeys();
+  }
 }
 
 export const storageService: StorageService = new StorageService();
