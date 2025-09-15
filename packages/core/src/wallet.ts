@@ -19,8 +19,9 @@ function once(emitter: EventEmitter, eventName: string) {
 }
 
 export {
-  // Deprecated, please use WalletEvents from ./types.ts instead
-  // Added for backward compatibility with other packages and wallet examples
+  /**
+   * @deprecated Please use WalletEvents from ./types.ts instead
+   */
   WalletEvents,
 };
 
