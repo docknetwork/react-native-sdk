@@ -18,6 +18,12 @@ function once(emitter: EventEmitter, eventName: string) {
   return new Promise(resolve => emitter.once(eventName, resolve));
 }
 
+export {
+  // Deprecated, please use WalletEvents from ./types.ts instead
+  // Added for backward compatibility with other packages and wallet examples
+  WalletEvents,
+};
+
 /**
  * Ensures a document has the proper @context for Universal Wallet compatibility
  * @param {Object} document - The document to add context to
