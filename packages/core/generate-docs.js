@@ -7,7 +7,7 @@ const path = require('path');
 async function generateMarkdownDocs() {
   console.log('Generating markdown documentation...');
 
-  const outputDir = path.resolve('../../jsdocs');
+  const outputDir = path.resolve('../../docs/api');
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, {recursive: true});
   }
