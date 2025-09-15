@@ -1,8 +1,11 @@
 import { CachedDIDResolver } from './cached-did-resolver';
+import { storageService } from '../storage';
 
 const mockStorageService = {
   getItem: jest.fn(),
   setItem: jest.fn(),
+  removeItem: jest.fn(),
+  getAllKeys: jest.fn(),
 };
 
 jest.mock('../storage', () => ({
@@ -20,13 +23,13 @@ describe('CachedDIDResolver', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockStorageService.getItem.mockResolvedValue(null);
+    mockStorageService.getAllKeys.mockResolvedValue([]);
     resolver = new CachedDIDResolver(mockRouter);
   });
 
   describe('constructor', () => {
     it('should initialize with default TTL', () => {
       expect(resolver).toBeDefined();
-      expect(mockStorageService.getItem).toHaveBeenCalledWith('did-cache');
     });
 
     it('should initialize with custom TTL', () => {
@@ -42,27 +45,54 @@ describe('CachedDIDResolver', () => {
 
     it('should resolve DID and cache the result on cache miss', async () => {
       mockRouter.resolve.mockResolvedValue(testResult);
+      mockStorageService.getItem.mockResolvedValue(null);
 
       const result = await resolver.resolve(testDid);
 
       expect(mockRouter.resolve).toHaveBeenCalledWith(testDid);
       expect(result).toEqual(testResult);
-      expect(mockStorageService.setItem).toHaveBeenCalled();
+      expect(mockStorageService.setItem).toHaveBeenCalledWith(
+        `did-cache:${testDid}`,
+        JSON.stringify({
+          value: testResult,
+          id: testDid,
+          timestamp: expect.any(Number),
+        })
+      );
+    });
+
+    it('should use result.id for cache key instead of input did', async () => {
+      const inputDid = 'did:example:input';
+      const resultDid = 'did:example:resolved';
+      const testResultWithDifferentId = { id: resultDid, publicKey: [] };
+
+      mockRouter.resolve.mockResolvedValue(testResultWithDifferentId);
+      mockStorageService.getItem.mockResolvedValue(null);
+
+      const result = await resolver.resolve(inputDid);
+
+      expect(result).toEqual(testResultWithDifferentId);
+      // Should use result.id (resultDid) for the cache key, not inputDid
+      expect(mockStorageService.setItem).toHaveBeenCalledWith(
+        `did-cache:${resultDid}`,
+        JSON.stringify({
+          value: testResultWithDifferentId,
+          id: resultDid,
+          timestamp: expect.any(Number),
+        })
+      );
     });
 
     it('should return cached result on cache hit', async () => {
       const cachedData = {
-        [testDid]: {
-          value: testResult,
-          id: testDid,
-          timestamp: Date.now(),
-        },
+        value: testResult,
+        id: testDid,
+        timestamp: Date.now(),
       };
-      
+
       mockStorageService.getItem.mockResolvedValue(JSON.stringify(cachedData));
-      const resolverWithCache = new CachedDIDResolver(mockRouter);
-      
-      const result = await resolverWithCache.resolve(testDid);
+
+      const result = await resolver.resolve(testDid);
 
       expect(result).toEqual(testResult);
       expect(mockRouter.resolve).not.toHaveBeenCalled();
@@ -72,72 +102,131 @@ describe('CachedDIDResolver', () => {
       const expiredTimestamp = Date.now() - (8 * 24 * 60 * 60 * 1000); // 8 days ago (expired)
       const staleResult = { id: testDid, publicKey: [], stale: true };
       const freshResult = { id: testDid, publicKey: [], fresh: true };
-      
+
       const cachedData = {
-        [testDid]: {
-          value: staleResult,
-          id: testDid,
-          timestamp: expiredTimestamp,
-        },
+        value: staleResult,
+        id: testDid,
+        timestamp: expiredTimestamp,
       };
 
       mockStorageService.getItem.mockResolvedValue(JSON.stringify(cachedData));
       mockRouter.resolve.mockResolvedValue(freshResult);
-      
-      const resolverWithExpiredCache = new CachedDIDResolver(mockRouter);
-      const result = await resolverWithExpiredCache.resolve(testDid);
+
+      const result = await resolver.resolve(testDid);
 
       // Should return stale value immediately
       expect(result).toEqual(staleResult);
-      
+
       // Background refresh should be triggered (not awaited)
       // Give it time to complete
-      await new Promise(resolve => setTimeout(resolve, 10));
-      
+      await new Promise(resolve => setTimeout(resolve, 50));
+
       expect(mockRouter.resolve).toHaveBeenCalledWith(testDid);
+      expect(mockStorageService.setItem).toHaveBeenCalledWith(
+        `did-cache:${testDid}`,
+        JSON.stringify({
+          value: freshResult,
+          id: testDid,
+          timestamp: expect.any(Number),
+        })
+      );
+    });
+
+    it('should handle corrupted cache data gracefully', async () => {
+      const testDid = 'did:example:corrupted';
+      const testResult = { id: testDid, publicKey: [] };
+
+      // Return invalid JSON from storage
+      mockStorageService.getItem.mockResolvedValue('invalid json {');
+      mockRouter.resolve.mockResolvedValue(testResult);
+
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+
+      const result = await resolver.resolve(testDid);
+
+      expect(consoleSpy).toHaveBeenCalledWith('Error parsing cache entry:', expect.any(Error));
+      expect(mockRouter.resolve).toHaveBeenCalledWith(testDid);
+      expect(result).toEqual(testResult);
+
+      consoleSpy.mockRestore();
     });
   });
 
-  describe('getCache', () => {
-    it('should return the current cache', () => {
-      const cache = resolver.getCache();
-      expect(cache).toBeDefined();
-      expect(typeof cache).toBe('object');
-    });
-  });
+  describe('getCachedDIDs', () => {
+    it('should return empty array when no cached DIDs exist', async () => {
+      mockStorageService.getAllKeys.mockResolvedValue([]);
 
-  describe('setCache', () => {
-    it('should set the cache', () => {
-      const newCache = { 'did:example:456': { value: {}, id: 'did:example:456', timestamp: Date.now() } };
-      resolver.setCache(newCache);
-      expect(resolver.getCache()).toEqual(newCache);
+      const cachedDIDs = await resolver.getCachedDIDs();
+
+      expect(cachedDIDs).toEqual([]);
+      expect(mockStorageService.getAllKeys).toHaveBeenCalled();
+    });
+
+    it('should return list of cached DIDs', async () => {
+      const allKeys = [
+        'did-cache:did:example:123',
+        'did-cache:did:example:456',
+        'did-cache:did:dock:789',
+        'other-key:something',
+        'user-preference:theme',
+      ];
+
+      mockStorageService.getAllKeys.mockResolvedValue(allKeys);
+
+      const cachedDIDs = await resolver.getCachedDIDs();
+
+      expect(cachedDIDs).toEqual([
+        'did:example:123',
+        'did:example:456',
+        'did:dock:789',
+      ]);
+      expect(mockStorageService.getAllKeys).toHaveBeenCalled();
+    });
+
+    it('should handle empty storage correctly', async () => {
+      mockStorageService.getAllKeys.mockResolvedValue([]);
+
+      const cachedDIDs = await resolver.getCachedDIDs();
+
+      expect(cachedDIDs).toEqual([]);
     });
   });
 
   describe('clearCache', () => {
-    beforeEach(() => {
-      const cache = {
-        'did:example:123': { value: {}, id: 'did:example:123', timestamp: Date.now() },
-        'did:example:456': { value: {}, id: 'did:example:456', timestamp: Date.now() },
-      };
-      resolver.setCache(cache);
+    it('should clear specific DID from cache', async () => {
+      const didToRemove = 'did:example:123';
+
+      await resolver.clearCache(didToRemove);
+
+      expect(mockStorageService.removeItem).toHaveBeenCalledWith(`did-cache:${didToRemove}`);
+      expect(mockStorageService.removeItem).toHaveBeenCalledTimes(1);
     });
 
-    it('should clear specific DID from cache', () => {
-      resolver.clearCache('did:example:123');
-      
-      const cache = resolver.getCache();
-      expect(cache['did:example:123']).toBeUndefined();
-      expect(cache['did:example:456']).toBeDefined();
-      expect(mockStorageService.setItem).toHaveBeenCalled();
+    it('should clear entire cache when no DID specified', async () => {
+      const allKeys = [
+        'did-cache:did:example:123',
+        'did-cache:did:example:456',
+        'other-key:something',
+      ];
+
+      mockStorageService.getAllKeys.mockResolvedValue(allKeys);
+
+      await resolver.clearCache();
+
+      expect(mockStorageService.getAllKeys).toHaveBeenCalled();
+      expect(mockStorageService.removeItem).toHaveBeenCalledWith('did-cache:did:example:123');
+      expect(mockStorageService.removeItem).toHaveBeenCalledWith('did-cache:did:example:456');
+      expect(mockStorageService.removeItem).not.toHaveBeenCalledWith('other-key:something');
+      expect(mockStorageService.removeItem).toHaveBeenCalledTimes(2);
     });
 
-    it('should clear entire cache when no DID specified', () => {
-      resolver.clearCache();
-      
-      const cache = resolver.getCache();
-      expect(Object.keys(cache)).toHaveLength(0);
-      expect(mockStorageService.setItem).toHaveBeenCalled();
+    it('should handle clearing cache when no cached entries exist', async () => {
+      mockStorageService.getAllKeys.mockResolvedValue([]);
+
+      await resolver.clearCache();
+
+      expect(mockStorageService.getAllKeys).toHaveBeenCalled();
+      expect(mockStorageService.removeItem).not.toHaveBeenCalled();
     });
   });
 
@@ -151,34 +240,49 @@ describe('CachedDIDResolver', () => {
       expect(mockRouter.supports).toHaveBeenCalledWith(testId);
       expect(result).toBe(true);
     });
+
+    it('should return false when router does not support DID', () => {
+      const testId = 'did:unsupported:123';
+      mockRouter.supports.mockReturnValue(false);
+
+      const result = resolver.supports(testId);
+
+      expect(mockRouter.supports).toHaveBeenCalledWith(testId);
+      expect(result).toBe(false);
+    });
   });
 
-  describe('loadCache', () => {
-    it('should load cache from storage on initialization', async () => {
+  describe('background refresh', () => {
+    it('should handle background refresh failure gracefully', async () => {
+      const testDid = 'did:example:refresh-fail';
+      const expiredTimestamp = Date.now() - (8 * 24 * 60 * 60 * 1000);
+      const staleResult = { id: testDid, publicKey: [] };
+
       const cachedData = {
-        'did:example:123': {
-          value: { id: 'did:example:123' },
-          id: 'did:example:123',
-          timestamp: Date.now(),
-        },
+        value: staleResult,
+        id: testDid,
+        timestamp: expiredTimestamp,
       };
 
       mockStorageService.getItem.mockResolvedValue(JSON.stringify(cachedData));
-      
-      const newResolver = new CachedDIDResolver(mockRouter);
-      await new Promise(resolve => setTimeout(resolve, 0)); // Allow async loadCache to complete
+      mockRouter.resolve.mockRejectedValue(new Error('Network error'));
 
-      expect(mockStorageService.getItem).toHaveBeenCalledWith('did-cache');
-      expect(newResolver.getCache()).toEqual(cachedData);
-    });
+      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
 
-    it('should handle empty cache from storage', async () => {
-      mockStorageService.getItem.mockResolvedValue(null);
-      
-      const newResolver = new CachedDIDResolver(mockRouter);
-      await new Promise(resolve => setTimeout(resolve, 0));
+      const result = await resolver.resolve(testDid);
 
-      expect(newResolver.getCache()).toEqual({});
+      expect(result).toEqual(staleResult);
+
+      // Wait for background refresh to complete
+      await new Promise(resolve => setTimeout(resolve, 50));
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'Background refresh failed for:',
+        testDid,
+        expect.any(Error)
+      );
+
+      consoleSpy.mockRestore();
     });
   });
 });
