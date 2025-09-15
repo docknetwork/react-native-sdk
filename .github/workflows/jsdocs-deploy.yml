@@ -1,8 +1,6 @@
 name: Deploy js docs
 on: push
-  # push:
-  #   branches:
-  #     - master
+
 jobs:
   deployJsDocs:
     runs-on: ubuntu-latest
@@ -27,9 +25,7 @@ jobs:
 
       - name: Generate docs
         run:  |
-          rm -rf jsdocs 
-          mkdir -p jsdocs
-          cd packages/core && npm run docs
+          cd ./packages/core && npm run docs
           cd ../..
 
       - name: Commit report
