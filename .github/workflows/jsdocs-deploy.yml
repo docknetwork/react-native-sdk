@@ -25,11 +25,7 @@ jobs:
 
       - name: Generate docs
         run:  |
-          npm run docs --workspace @docknetwork/wallet-sdk-core
-          # Create Jekyll config
-          # echo "theme: jekyll-theme-minimal" > jsdocs/_config.yml
-          # echo "title: Wallet SDK Documentation" >> jsdocs/_config.yml
-          # echo "description: API Documentation" >> jsdocs/_config.yml
+          npm run docs
 
       - name: Commit report
         run: |

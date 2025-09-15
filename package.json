@@ -64,7 +64,7 @@
     "format": "prettier './src/**/*.{js,json}' --write",
     "exec": "BABEL_ENV=development; babel-node",
     "postinstall": "sh ./scripts/fix-deps.sh && npm run build",
-    "docs:markdown": "cd packages/core && npm run docs"
+    "docs": "npm run docs --workspace @docknetwork/wallet-sdk-core"
   },
   "jest-junit": {
     "outputDirectory": "reports",
