@@ -8,6 +8,7 @@ import {EventEmitter} from 'events';
 /**
  * Legacy V1 wallet interface for backward compatibility
  * @interface IV1Wallet
+ * @deprecated This interface is obsolete and should not be used for new implementations. Use IWallet instead.
  */
 export interface IV1Wallet {
   /**
