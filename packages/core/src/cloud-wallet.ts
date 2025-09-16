@@ -1,3 +1,9 @@
+/**
+ * @module cloud-wallet
+ * @description Cloud wallet functionality for the Truvera Wallet SDK.
+ * This module provides the main cloud wallet creation and management functions.
+ */
+
 import {
   DataStore,
   DataStoreEvents,

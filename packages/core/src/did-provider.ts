@@ -145,12 +145,6 @@ export async function createDIDKey({wallet, name, derivePath=undefined, type=und
   };
 }
 
-/**
- * Get DIDs list
- *
- * @param param0
- * @returns
- */
 export async function getAll({wallet}) {
   assert(!!wallet, 'wallet is required');
   const dids = await wallet.getDocumentsByType('DIDResolutionResponse');
