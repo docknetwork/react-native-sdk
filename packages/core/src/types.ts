@@ -209,6 +209,7 @@ export interface IWallet extends IV1Wallet{
    * @param {any} json - The encrypted wallet JSON
    * @param {string} password - Password to decrypt the wallet
    * @returns {Promise<any>} Array of decrypted documents
+   * @see {@link https://w3c-ccg.github.io/universal-wallet-interop-spec/}
    */
   getDocumentsFromEncryptedWallet: (
     json: any,
