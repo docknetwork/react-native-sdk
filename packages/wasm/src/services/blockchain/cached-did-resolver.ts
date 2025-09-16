@@ -29,16 +29,36 @@ export class CachedDIDResolver {
   private getCacheKey(did: string): string {
     return `${this.CACHE_PREFIX}${did}`;
   }
+  
 
   private async getCacheEntry(did: string): Promise<CacheEntry | null> {
     const key = this.getCacheKey(did);
     const data = await storageService.getItem(key);
-    return data ? JSON.parse(data) : null;
+
+    try {
+      return data ? JSON.parse(data) : null;
+    } catch (error) {
+      console.error('Error parsing cache entry:', error);
+      return null;
+    }
   }
 
   private async setCacheEntry(did: string, entry: CacheEntry): Promise<void> {
     const key = this.getCacheKey(did);
     await storageService.setItem(key, JSON.stringify(entry));
+  }
+
+  async getCachedDIDs(): Promise<string[]> {
+    const allKeys = await storageService.getAllKeys();
+    const cachedDIDs: string[] = [];
+    
+    allKeys.forEach(key => {
+      if (key.startsWith(this.CACHE_PREFIX)) {
+        cachedDIDs.push(key.replace(this.CACHE_PREFIX, ''));
+      }
+    });
+    
+    return cachedDIDs;
   }
 
   async resolve(did: string): Promise<any> {
@@ -58,9 +78,9 @@ export class CachedDIDResolver {
     console.log('Cache miss, resolving:', did);
     const result = await this.router.resolve(did);
 
-    await this.setCacheEntry(did, {
+    await this.setCacheEntry(result.id, {
       value: result,
-      id: did,
+      id: result.id,
       timestamp: Date.now()
     });
 
