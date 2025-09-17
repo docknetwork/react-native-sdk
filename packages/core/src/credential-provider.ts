@@ -1,5 +1,12 @@
+/**
+ * @module credential-provider
+ * @description Verifiable credential management functionality for the Truvera Wallet SDK.
+ * This module provides functions for importing, verifying, storing, and managing verifiable credentials.
+ */
+
 import {credentialServiceRPC} from '@docknetwork/wallet-sdk-wasm/src/services/credential';
-import {IWallet} from './types';
+import {IWallet, ICredentialProvider} from './types';
+export type {ICredentialProvider};
 import assert from 'assert';
 import {blockchainService} from '@docknetwork/wallet-sdk-wasm/src/services/blockchain';
 import {acquireOpenIDCredentialFromURI} from './credentials/oidvc';
@@ -7,29 +14,10 @@ import {IDIDProvider} from './did-provider';
 
 export type Credential = any;
 
-export interface ICredentialProvider {
-  getCredentials(type?: string): Credential[];
-  getById(id: string): Credential;
-  getMembershipWitness(credential: any): Promise<any>;
-  isBBSPlusCredential(credential: any): boolean;
-  isValid(credential: any, forceFetch?: boolean): Promise<{
-    status: string;
-    error?: string;
-    warning?: string;
-  }>;
-  addCredential(credential: any): Promise<Credential>;
-  importCredentialFromURI(
-    params: importCredentialFromUriParams,
-  ): Promise<Credential>;
-  syncCredentialStatus(
-    params: SyncCredentialStatusParams,
-  ): Promise<CredentialStatusDocument[]>;
-  getCredentialStatus(
-    credential: Credential,
-  ): Promise<{status: string; error?: string}>;
-  removeCredential(credential: Credential): Promise<void>;
-}
-
+/**
+ * @private
+ * Internal function to check if a credential uses BBS+ signature
+ */
 export function isBBSPlusCredential(credential) {
   return (
     (typeof credential?.proof?.type === 'string' &&
@@ -47,6 +35,10 @@ type importCredentialFromUriParams = {
   getAuthCode?: (authorizationURL: string) => Promise<string>;
 };
 
+/**
+ * @private
+ * Internal function to import credential from URI
+ */
 export async function importCredentialFromURI({
   uri,
   wallet,
@@ -68,6 +60,10 @@ export async function importCredentialFromURI({
   await addCredential({wallet, credential});
 }
 
+/**
+ * @private
+ * Internal function to check if credential is expired
+ */
 export function isCredentialExpired(credential) {
   return (
     !!credential.expirationDate &&
@@ -172,6 +168,10 @@ export async function isValid({
 
 export const ACUMM_WITNESS_PROP_KEY = '$$accum__witness$$';
 
+/**
+ * @private
+ * Internal function to add credential to wallet
+ */
 export async function addCredential({wallet, credential}) {
   const acummWitness = credential[ACUMM_WITNESS_PROP_KEY];
 
@@ -195,6 +195,10 @@ export async function addCredential({wallet, credential}) {
   return response;
 }
 
+/**
+ * @private
+ * Internal function to get membership witness for credential
+ */
 async function getMembershipWitness({credentialId, wallet}) {
   const document = await wallet.getDocumentById(`${credentialId}#witness`);
   return document?.value;
@@ -229,6 +233,10 @@ type CredentialStatusDocument = {
  *
  * @param param0
  * @returns CredentialStatusDocument[]
+ */
+/**
+ * @private
+ * Internal function to sync credential status from blockchain
  */
 async function syncCredentialStatus({
   wallet,
@@ -314,6 +322,10 @@ async function syncCredentialStatus({
  * @param param0 
  * @returns {Promise<void>}
  */
+/**
+ * @private
+ * Internal function to remove credential and related documents
+ */
 export async function removeCredential({
   wallet, 
   credential,
@@ -338,6 +350,35 @@ export async function removeCredential({
   }
 }
 
+/**
+ * Creates a credential provider instance bound to a wallet
+ * @param {Object} params - Provider configuration
+ * @param {IWallet} params.wallet - The wallet instance to use for credential storage
+ * @returns {ICredentialProvider} A credential provider instance with all verifiable credential management methods
+ * @see {@link ICredentialProvider} - The interface defining all available credential provider methods
+ * @example
+ * import { createCredentialProvider } from '@docknetwork/wallet-sdk-core';
+ *
+ * const credentialProvider = createCredentialProvider({wallet});
+ *
+ * // Add a credential
+ * const addedCredential = await credentialProvider.addCredential(myCredential);
+ *
+ * // Validate a credential
+ * const result = await credentialProvider.isValid(credential);
+ * if (result.status === 'verified') {
+ *   console.log('Credential is valid');
+ * }
+ *
+ * // Get all credentials
+ * const allCredentials = credentialProvider.getCredentials();
+ *
+ * // Import from URI
+ * await credentialProvider.importCredentialFromURI({
+ *   uri: 'https://example.com/credential-offer',
+ *   didProvider
+ * });
+ */
 export function createCredentialProvider({
   wallet,
 }: {
@@ -348,21 +389,98 @@ export function createCredentialProvider({
   }
 
   return {
+    /**
+     * Imports a credential from a URI (supports OpenID credential offers)
+     * @memberof ICredentialProvider
+     * @param {Object} params - Import parameters
+     * @param {string} params.uri - The URI containing the credential offer
+     * @param {any} params.didProvider - DID provider instance for key management
+     * @param {Function} [params.getAuthCode] - Optional callback to handle authorization
+     * @returns {Promise<any>} The imported credential
+     * @throws {Error} If import fails
+     * @example
+     * const credential = await credentialProvider.importCredentialFromURI({
+     *   uri: 'https://issuer.example.com/credential-offer',
+     *   didProvider,
+     *   getAuthCode: async (url) => getUserAuthCode(url)
+     * });
+     */
     importCredentialFromURI: async (params: importCredentialFromUriParams) =>
       importCredentialFromURI({
         ...params,
         wallet,
       }),
+    /**
+     * Retrieves credentials from the wallet, optionally filtered by type
+     * @memberof ICredentialProvider
+     * @param {string} [type='VerifiableCredential'] - The credential type to filter by
+     * @returns {any[]} Array of credentials matching the specified type
+     * @example
+     * const allCredentials = credentialProvider.getCredentials();
+     * const certificates = credentialProvider.getCredentials('Certificate');
+     */
     getCredentials,
+    /**
+     * Gets the membership witness for a credential (used for BBS+ credentials)
+     * @memberof ICredentialProvider
+     * @param {string} credentialId - The credential ID to get the witness for
+     * @returns {Promise<any>} The membership witness data
+     * @example
+     * const witness = await credentialProvider.getMembershipWitness('credential-123');
+     */
     getMembershipWitness: async (credentialId: string) =>
       getMembershipWitness({credentialId, wallet}),
+    /**
+     * Retrieves a credential by its ID
+     * @memberof ICredentialProvider
+     * @param {string} id - The unique identifier of the credential
+     * @returns {any} The credential document
+     * @throws {Error} If credential is not found
+     * @example
+     * const credential = await credentialProvider.getById('credential-123');
+     */
     getById: (id: string) => wallet.getDocumentById(id),
+    /**
+     * Checks if a credential uses BBS+ signature
+     * @memberof ICredentialProvider
+     * @param {any} credential - The credential to check
+     * @returns {boolean} True if the credential uses BBS+ signature
+     * @example
+     * const isBBS = credentialProvider.isBBSPlusCredential(credential);
+     * if (isBBS) {
+     *   console.log('This credential uses BBS+ signatures');
+     * }
+     */
     isBBSPlusCredential,
+    /**
+     * Validates a credential by verifying its cryptographic proof and status
+     * @memberof ICredentialProvider
+     * @param {any} credential - The credential to validate
+     * @param {boolean} [forceFetch=false] - Whether to force refresh the credential status
+     * @returns {Promise<{status: string, error?: string, warning?: string}>} Validation result
+     * @throws {Error} If validation fails
+     * @example
+     * const result = await credentialProvider.isValid(credential);
+     * if (result.status === 'verified') {
+     *   console.log('Credential is valid');
+     * } else if (result.status === 'revoked') {
+     *   console.log('Credential has been revoked');
+     * }
+     */
     isValid: async credential =>
       isValid({
         credential,
         wallet,
       }) as any,
+    /**
+     * Gets the current status of a credential (cached, fast operation)
+     * @memberof ICredentialProvider
+     * @param {any} credential - The credential to check
+     * @returns {Promise<{status: string, error?: string}>} Current credential status
+     * @example
+     * const status = await credentialProvider.getCredentialStatus(credential);
+     * console.log(`Credential status: ${status.status}`);
+     */
     getCredentialStatus: async (credential: Credential) => {
       assert(!!credential, 'credential is required');
 
@@ -379,10 +497,51 @@ export function createCredentialProvider({
         error: statusDoc?.error,
       };
     },
+    /**
+     * Synchronizes credential status from the blockchain
+     * @memberof ICredentialProvider
+     * @param {Object} params - Sync parameters
+     * @param {string[]} [params.credentialIds] - Optional list of credential IDs to sync
+     * @param {boolean} [params.forceFetch=false] - Whether to force refresh from blockchain
+     * @returns {Promise<any[]>} Array of credential status documents
+     * @example
+     * // Sync all credentials
+     * await credentialProvider.syncCredentialStatus({});
+     *
+     * // Sync specific credentials
+     * await credentialProvider.syncCredentialStatus({
+     *   credentialIds: ['cred-1', 'cred-2'],
+     *   forceFetch: true
+     * });
+     */
     syncCredentialStatus: async (props: SyncCredentialStatusParams) => {
       return syncCredentialStatus({wallet, ...props});
     },
+    /**
+     * Adds a credential to the wallet
+     * @memberof ICredentialProvider
+     * @param {any} credential - The credential to add
+     * @returns {Promise<any>} The added credential document
+     * @example
+     * const addedCredential = await credentialProvider.addCredential({
+     *   '@context': ['https://www.w3.org/2018/credentials/v1'],
+     *   type: ['VerifiableCredential'],
+     *   issuer: 'did:dock:issuer123',
+     *   credentialSubject: { name: 'Alice' }
+     * });
+     */
     addCredential: credential => addCredential({wallet, credential}),
+    /**
+     * Removes a credential and all its related documents from the wallet
+     * @memberof ICredentialProvider
+     * @param {any} credential - The credential to remove
+     * @returns {Promise<void>}
+     * @throws {Error} If credential is not found
+     * @example
+     * await credentialProvider.removeCredential(credential);
+     * // Or by ID
+     * await credentialProvider.removeCredential('credential-123');
+     */
     removeCredential: credential => removeCredential({wallet, credential}),
     // TODO: move import credential from json or URL to this provider
   };

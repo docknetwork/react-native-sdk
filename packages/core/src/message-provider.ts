@@ -1,23 +1,22 @@
+/**
+ * @module message-provider
+ * @description DIDComm message management functionality for the Truvera Wallet SDK.
+ * This module provides functions for sending, receiving, and processing DIDComm messages.
+ */
+
 import {logger} from '@docknetwork/wallet-sdk-data-store/src/logger';
 import {IDIDProvider} from './did-provider';
 import {WalletDocumentTypes, captureException} from './helpers';
-import {IWallet} from './types';
+import {IWallet, IMessageProvider} from './types';
+export type {IMessageProvider};
 import {relayService as defaultRelayService} from '@docknetwork/wallet-sdk-wasm/src/services/relay-service';
 
 const FETCH_MESSAGE_LIMIT = 10;
 
-export interface IMessageProvider {
-  sendMessage: (message: any) => Promise<any>;
-  fetchMessages: () => Promise<void>;
-  processDIDCommMessages: () => Promise<void>;
-  startAutoFetch: (timeout?: number) => () => void;
-  addMessageListener: (handler: () => void) => () => void;
-  waitForMessage: () => Promise<any>;
-  markMessageAsRead: (messageId: string) => Promise<void>;
-  clearCache: () => Promise<void>;
-  processMessageRecurrentJob: () => Promise<void>;
-}
-
+/**
+ * @private
+ * Internal function to retrieve key pair documents for a DID
+ */
 async function getKeyPairDocs(didProvider: IDIDProvider, did?: string) {
   try {
     const keyPairDocs = await didProvider.getDIDKeyPairs();
@@ -30,6 +29,37 @@ async function getKeyPairDocs(didProvider: IDIDProvider, did?: string) {
   }
 }
 
+/**
+ * Creates a message provider instance bound to a wallet and DID provider
+ * @param {Object} params - Provider configuration
+ * @param {IWallet} params.wallet - The wallet instance to use for message storage
+ * @param {IDIDProvider} params.didProvider - The DID provider instance to use for key management
+ * @param {any} [params.relayService] - Optional relay service implementation (defaults to built-in service)
+ * @returns {IMessageProvider} A message provider instance with all DIDComm message management methods
+ * @see {@link IMessageProvider} - The interface defining all available message provider methods
+ * @example
+ * import { createMessageProvider } from '@docknetwork/wallet-sdk-core';
+ *
+ * const messageProvider = createMessageProvider({
+ *   wallet,
+ *   didProvider
+ * });
+ *
+ * // Send a message
+ * await messageProvider.sendMessage({
+ *   did: 'did:key:sender123',
+ *   recipientDid: 'did:key:recipient456',
+ *   message: { hello: 'world' }
+ * });
+ *
+ * // Start auto-fetching messages
+ * const stopAutoFetch = messageProvider.startAutoFetch(5000);
+ *
+ * // Add message listener
+ * const removeListener = messageProvider.addMessageListener((message) => {
+ *   console.log('Received message:', message);
+ * });
+ */
 export function createMessageProvider({
   wallet,
   didProvider,
@@ -38,7 +68,7 @@ export function createMessageProvider({
   wallet: IWallet;
   didProvider: IDIDProvider;
   relayService?: any;
-}) {
+}): IMessageProvider {
   async function markMessageAsRead(messageId: string) {
     try {
       const message = await wallet.getDocumentById(messageId);
@@ -225,6 +255,27 @@ export function createMessageProvider({
   }
 
   return {
+    /**
+     * Sends a DIDComm message to a recipient
+     * @memberof IMessageProvider
+     * @param {Object} params - Message parameters
+     * @param {string} [params.did] - Sender DID identifier
+     * @param {string} [params.recipientDid] - Recipient DID identifier
+     * @param {any} [params.message] - Message payload to send
+     * @param {string} [params.from] - Alternative sender DID (alias for did)
+     * @param {string} [params.to] - Alternative recipient DID (alias for recipientDid)
+     * @param {any} [params.body] - Alternative message payload (alias for message)
+     * @param {string} [params.type] - DIDComm message type
+     * @returns {Promise<any>} Result of sending the message
+     * @throws {Error} If sender DID not found or message sending fails
+     * @example
+     * await messageProvider.sendMessage({
+     *   did: 'did:key:sender123',
+     *   recipientDid: 'did:key:recipient456',
+     *   message: { hello: 'world' },
+     *   type: 'basic-message'
+     * });
+     */
     async sendMessage({
       did,
       recipientDid,
@@ -264,6 +315,14 @@ export function createMessageProvider({
         throw new Error(`Failed to send message: ${error.message}`);
       }
     },
+    /**
+     * Waits for the next incoming message
+     * @memberof IMessageProvider
+     * @returns {Promise<any>} Promise that resolves with the next received message
+     * @example
+     * const nextMessage = await messageProvider.waitForMessage();
+     * console.log('Received message:', nextMessage);
+     */
     waitForMessage() {
       return new Promise((resolve: any) => {
         let removeListener = addMessageListener(async message => {
@@ -272,6 +331,16 @@ export function createMessageProvider({
         });
       });
     },
+    /**
+     * Starts automatic message fetching at regular intervals
+     * @memberof IMessageProvider
+     * @param {number} [timeout=2000] - Interval in milliseconds between fetch operations
+     * @returns {Function} Function to stop the auto-fetch process
+     * @example
+     * const stopAutoFetch = messageProvider.startAutoFetch(5000);
+     * // Later, stop auto-fetching
+     * stopAutoFetch();
+     */
     startAutoFetch(timeout = 2000) {
       clearInterval(listenerIntervalId);
       listenerIntervalId = setInterval(async () => {
@@ -281,6 +350,14 @@ export function createMessageProvider({
 
       return () => clearInterval(listenerIntervalId);
     },
+    /**
+     * Clears all cached messages from the wallet
+     * @memberof IMessageProvider
+     * @returns {Promise<void>}
+     * @example
+     * await messageProvider.clearCache();
+     * console.log('All messages cleared');
+     */
     clearCache: async () => {
       return Promise.all(
         (
@@ -291,10 +368,57 @@ export function createMessageProvider({
         }),
       );
     },
+    /**
+     * Fetches new messages from the relay service
+     * @memberof IMessageProvider
+     * @returns {Promise<void>}
+     * @throws {Error} If message fetching fails
+     * @example
+     * await messageProvider.fetchMessages();
+     * console.log('Messages fetched successfully');
+     */
     fetchMessages,
+    /**
+     * Adds a listener for when messages are decrypted
+     * @memberof IMessageProvider
+     * @param {Function} handler - Callback function to handle decrypted messages
+     * @returns {Function} Function to remove the listener
+     * @example
+     * const removeListener = messageProvider.addMessageListener((message) => {
+     *   console.log('New message received:', message);
+     * });
+     * // Later, remove the listener
+     * removeListener();
+     */
     addMessageListener,
+    /**
+     * Processes stored DIDComm messages and decrypts them
+     * @memberof IMessageProvider
+     * @returns {Promise<void>}
+     * @throws {Error} If message processing fails
+     * @example
+     * await messageProvider.processDIDCommMessages();
+     * console.log('Messages processed successfully');
+     */
     processDIDCommMessages,
+    /**
+     * Starts the recurrent message processing job
+     * @memberof IMessageProvider
+     * @returns {Promise<void>}
+     * @example
+     * await messageProvider.processMessageRecurrentJob();
+     */
     processMessageRecurrentJob,
+    /**
+     * Marks a message as read and removes it from storage
+     * @memberof IMessageProvider
+     * @param {string} messageId - The ID of the message to mark as read
+     * @returns {Promise<void>}
+     * @throws {Error} If message is not found or not a DIDComm message
+     * @example
+     * await messageProvider.markMessageAsRead('message-id-123');
+     * console.log('Message marked as read');
+     */
     markMessageAsRead,
   } as any;
 }

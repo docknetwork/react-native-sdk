@@ -302,3 +302,420 @@ export const WalletEvents = {
   networkConnected: 'network-connected',
   networkError: 'network-error',
 };
+
+/**
+ * Interface for DID provider operations
+ * @interface IDIDProvider
+ * @description Provides a high-level API for DID management operations
+ */
+export interface IDIDProvider {
+  /**
+   * Imports a DID from an encrypted wallet JSON
+   * @param {Object} params - Import parameters
+   * @param {any} params.encryptedJSONWallet - The encrypted wallet JSON containing the DID
+   * @param {string} params.password - Password to decrypt the wallet
+   * @returns {Promise<any[]>} Array of imported documents
+   * @throws {Error} If password is incorrect or DID already exists in wallet
+   */
+  importDID: (params: {encryptedJSONWallet: any; password: string}) => Promise<any>;
+
+  /**
+   * Creates a new DID:key with an associated keypair
+   * @param {Object} params - Creation parameters
+   * @param {string} params.name - The name for the new DID
+   * @param {string} [params.derivePath] - Optional derivation path for the keypair
+   * @param {string} [params.type] - Optional key type specification
+   * @returns {Promise<{keyDoc: any, didDocumentResolution: any}>} The created keypair and DID document
+   * @throws {Error} If name is not provided
+   */
+  createDIDKey: (params: {name: string; derivePath?: string; type?: string}) => Promise<any>;
+
+  /**
+   * Edits a DID document's name
+   * @param {Object} params - Edit parameters
+   * @param {string} params.id - The ID of the DID document to edit
+   * @param {string} params.name - The new name for the DID
+   * @returns {Promise<void>}
+   * @throws {Error} If document ID is not set or document not found
+   */
+  editDID: (params: {id: string; name: string}) => Promise<void>;
+
+  /**
+   * Deletes a DID from the wallet
+   * @param {Object} params - Delete parameters
+   * @param {string} params.id - The ID of the DID document to delete
+   * @returns {Promise<void>}
+   * @throws {Error} If document ID is not set
+   */
+  deleteDID: (params: {id: string}) => Promise<void>;
+
+  /**
+   * Exports a DID and its correlated documents as an encrypted JSON
+   * @param {Object} params - Export parameters
+   * @param {string} params.id - The ID of the DID document to export
+   * @param {string} params.password - Password for encryption
+   * @returns {Promise<any>} Encrypted wallet JSON containing the DID and correlations
+   * @throws {Error} If DID document or keypair not found
+   */
+  exportDID: (params: {id: string; password: string}) => Promise<any>;
+
+  /**
+   * Retrieves all DIDs stored in the wallet
+   * @returns {Promise<any[]>} Array of DID resolution response documents
+   */
+  getAll: () => Promise<any>;
+
+  /**
+   * Retrieves all keypairs associated with DIDs in the wallet
+   * @returns {Promise<any[]>} Array of keypair documents
+   */
+  getDIDKeyPairs: () => Promise<any>;
+
+  /**
+   * Ensures at least one DID exists in the wallet, creating a default if none exist
+   * @returns {Promise<{keyDoc: any, didDocumentResolution: any}|void>} The created DID if one was created, undefined otherwise
+   */
+  ensureDID: () => Promise<any>;
+
+  /**
+   * Gets the default DID from the wallet (first DID if exists)
+   * @returns {Promise<string|undefined>} The default DID identifier or undefined if no DIDs exist
+   */
+  getDefaultDID: () => Promise<string>;
+}
+
+/**
+ * Interface for DIDComm message provider operations
+ * @interface IMessageProvider
+ * @description Provides a high-level API for DIDComm message management operations
+ */
+export interface IMessageProvider {
+  /**
+   * Sends a DIDComm message to a recipient
+   * @param {Object} params - Message parameters
+   * @param {string} [params.did] - Sender DID identifier
+   * @param {string} [params.recipientDid] - Recipient DID identifier
+   * @param {any} [params.message] - Message payload to send
+   * @param {string} [params.from] - Alternative sender DID (alias for did)
+   * @param {string} [params.to] - Alternative recipient DID (alias for recipientDid)
+   * @param {any} [params.body] - Alternative message payload (alias for message)
+   * @param {string} [params.type] - DIDComm message type
+   * @returns {Promise<any>} Result of sending the message
+   * @throws {Error} If sender DID not found or message sending fails
+   */
+  sendMessage: (params: {
+    did?: string;
+    recipientDid?: string;
+    message?: any;
+    from?: string;
+    to?: string;
+    body?: any;
+    type?: string;
+  }) => Promise<any>;
+
+  /**
+   * Fetches new messages from the relay service
+   * @returns {Promise<void>}
+   * @throws {Error} If message fetching fails
+   */
+  fetchMessages: () => Promise<void>;
+
+  /**
+   * Processes stored DIDComm messages and decrypts them
+   * @returns {Promise<void>}
+   * @throws {Error} If message processing fails
+   */
+  processDIDCommMessages: () => Promise<void>;
+
+  /**
+   * Starts automatic message fetching at regular intervals
+   * @param {number} [timeout=2000] - Interval in milliseconds between fetch operations
+   * @returns {Function} Function to stop the auto-fetch process
+   */
+  startAutoFetch: (timeout?: number) => () => void;
+
+  /**
+   * Adds a listener for when messages are decrypted
+   * @param {Function} handler - Callback function to handle decrypted messages
+   * @returns {Function} Function to remove the listener
+   */
+  addMessageListener: (handler: (message: any) => void) => () => void;
+
+  /**
+   * Waits for the next incoming message
+   * @returns {Promise<any>} Promise that resolves with the next received message
+   */
+  waitForMessage: () => Promise<any>;
+
+  /**
+   * Marks a message as read and removes it from storage
+   * @param {string} messageId - The ID of the message to mark as read
+   * @returns {Promise<void>}
+   * @throws {Error} If message is not found or not a DIDComm message
+   */
+  markMessageAsRead: (messageId: string) => Promise<void>;
+
+  /**
+   * Clears all cached messages from the wallet
+   * @returns {Promise<void>}
+   */
+  clearCache: () => Promise<void>;
+
+  /**
+   * Starts the recurrent message processing job
+   * @returns {Promise<void>}
+   */
+  processMessageRecurrentJob: () => Promise<void>;
+}
+
+/**
+ * Interface for verifiable credential provider operations
+ * @interface ICredentialProvider
+ * @description Provides a high-level API for verifiable credential management operations
+ */
+export interface ICredentialProvider {
+  /**
+   * Retrieves credentials from the wallet, optionally filtered by type
+   * @param {string} [type='VerifiableCredential'] - The credential type to filter by
+   * @returns {any[]} Array of credentials matching the specified type
+   * @example
+   * const allCredentials = credentialProvider.getCredentials();
+   * const certificates = credentialProvider.getCredentials('Certificate');
+   */
+  getCredentials: (type?: string) => any[];
+
+  /**
+   * Retrieves a credential by its ID
+   * @param {string} id - The unique identifier of the credential
+   * @returns {any} The credential document
+   * @throws {Error} If credential is not found
+   */
+  getById: (id: string) => any;
+
+  /**
+   * Gets the membership witness for a credential (used for BBS+ credentials)
+   * @param {any} credential - The credential to get the witness for
+   * @returns {Promise<any>} The membership witness data
+   */
+  getMembershipWitness: (credential: any) => Promise<any>;
+
+  /**
+   * Checks if a credential uses BBS+ signature
+   * @param {any} credential - The credential to check
+   * @returns {boolean} True if the credential uses BBS+ signature
+   */
+  isBBSPlusCredential: (credential: any) => boolean;
+
+  /**
+   * Validates a credential by verifying its cryptographic proof and status
+   * @param {any} credential - The credential to validate
+   * @param {boolean} [forceFetch=false] - Whether to force refresh the credential status
+   * @returns {Promise<{status: string, error?: string, warning?: string}>} Validation result
+   * @throws {Error} If validation fails
+   * @example
+   * const result = await credentialProvider.isValid(credential);
+   * if (result.status === 'verified') {
+   *   console.log('Credential is valid');
+   * }
+   */
+  isValid: (credential: any, forceFetch?: boolean) => Promise<{
+    status: string;
+    error?: string;
+    warning?: string;
+  }>;
+
+  /**
+   * Adds a credential to the wallet
+   * @param {any} credential - The credential to add
+   * @returns {Promise<any>} The added credential document
+   * @example
+   * const addedCredential = await credentialProvider.addCredential(myCredential);
+   */
+  addCredential: (credential: any) => Promise<any>;
+
+  /**
+   * Imports a credential from a URI (supports OpenID credential offers)
+   * @param {Object} params - Import parameters
+   * @param {string} params.uri - The URI containing the credential offer
+   * @param {any} params.didProvider - DID provider instance for key management
+   * @param {Function} [params.getAuthCode] - Optional callback to handle authorization
+   * @returns {Promise<any>} The imported credential
+   * @throws {Error} If import fails
+   */
+  importCredentialFromURI: (params: {
+    uri: string;
+    didProvider: any;
+    getAuthCode?: (authorizationURL: string) => Promise<string>;
+  }) => Promise<any>;
+
+  /**
+   * Synchronizes credential status from the blockchain
+   * @param {Object} params - Sync parameters
+   * @param {string[]} [params.credentialIds] - Optional list of credential IDs to sync
+   * @param {boolean} [params.forceFetch=false] - Whether to force refresh from blockchain
+   * @returns {Promise<any[]>} Array of credential status documents
+   */
+  syncCredentialStatus: (params: {
+    credentialIds?: string[];
+    forceFetch?: boolean;
+  }) => Promise<any[]>;
+
+  /**
+   * Gets the current status of a credential (cached, fast operation)
+   * @param {any} credential - The credential to check
+   * @returns {Promise<{status: string, error?: string}>} Current credential status
+   */
+  getCredentialStatus: (credential: any) => Promise<{status: string; error?: string}>;
+
+  /**
+   * Removes a credential and all its related documents from the wallet
+   * @param {any} credential - The credential to remove
+   * @returns {Promise<void>}
+   * @throws {Error} If credential is not found
+   */
+  removeCredential: (credential: any) => Promise<void>;
+}
+
+/**
+ * Configuration options for biometric provider operations
+ * @typedef {Object} BiometricsProviderConfigs
+ * @template E - Type for IDV-specific configurations
+ * @property {string} enrollmentCredentialType - The credential type used for biometric enrollment
+ * @property {string} biometricMatchCredentialType - The credential type used for biometric matching
+ * @property {E} idvConfigs - IDV provider-specific configuration options
+ */
+export type BiometricsProviderConfigs<E> = {
+  enrollmentCredentialType: string;
+  biometricMatchCredentialType: string;
+  idvConfigs: E;
+};
+
+/**
+ * Options for IDV (Identity Verification) process callbacks
+ * @interface IDVProcessOptions
+ * @description Callback functions for handling different stages of the identity verification process
+ */
+export interface IDVProcessOptions {
+  /**
+   * Called when a deep link is triggered during IDV process
+   */
+  onDeepLink?: () => void;
+
+  /**
+   * Called when a message is received during IDV process
+   */
+  onMessage?: () => void;
+
+  /**
+   * Called when an error occurs during IDV process
+   * @param {Error} error - The error that occurred
+   */
+  onError?: (error: Error) => void;
+
+  /**
+   * Called when the IDV process is cancelled
+   */
+  onCancel?: () => void;
+
+  /**
+   * Called when the IDV process completes successfully
+   * @param {any} credential - The credential issued upon completion
+   */
+  onComplete?: (credential: any) => void;
+}
+
+/**
+ * Interface for biometric plugin implementations
+ * @interface BiometricPlugin
+ * @description Defines the contract for biometric enrollment and matching operations
+ */
+export interface BiometricPlugin {
+  /**
+   * Performs biometric enrollment for a wallet DID
+   * @param {string} walletDID - The DID of the wallet to enroll
+   * @returns {Promise<any>} The enrollment result document
+   * @throws {Error} If enrollment fails
+   */
+  onEnroll: (walletDID: string) => Promise<any>;
+
+  /**
+   * Performs biometric matching against an enrollment credential
+   * @param {string} walletDID - The DID of the wallet performing the match
+   * @param {any} enrollmentCredential - The enrollment credential to match against
+   * @returns {Promise<any>} The matching result document
+   * @throws {Error} If matching fails
+   */
+  onMatch: (walletDID: string, enrollmentCredential: any) => Promise<any>;
+}
+
+/**
+ * Interface for IDV (Identity Verification) provider implementations
+ * @interface IDVProvider
+ * @description Defines the contract for identity verification operations
+ */
+export interface IDVProvider {
+  /**
+   * Enrolls a user with biometric data and issues credentials
+   * @param {string} walletDID - The DID of the wallet to enroll
+   * @param {any} proofRequest - The proof request for enrollment
+   * @returns {Promise<{enrollmentCredential: any, matchCredential: any}>} Both enrollment and match credentials
+   * @throws {Error} If enrollment fails
+   */
+  enroll: (
+    walletDID: string,
+    proofRequest: any,
+  ) => Promise<{enrollmentCredential: any; matchCredential: any}>;
+
+  /**
+   * Matches biometric data against an enrollment credential
+   * @param {string} walletDID - The DID of the wallet performing the match
+   * @param {any} enrollmentCredential - The enrollment credential to match against
+   * @param {any} proofRequest - The proof request for matching
+   * @returns {Promise<{matchCredential: any}>} The match credential
+   * @throws {Error} If matching fails
+   */
+  match: (
+    walletDID: string,
+    enrollmentCredential: any,
+    proofRequest: any,
+  ) => Promise<{matchCredential: any}>;
+}
+
+/**
+ * Factory interface for creating IDV provider instances
+ * @interface IDVProviderFactory
+ * @description Creates IDV provider instances with proper event handling and wallet integration
+ */
+export interface IDVProviderFactory {
+  /**
+   * Creates an IDV provider instance
+   * @param {EventEmitter} eventEmitter - Event emitter for IDV process events
+   * @param {IWallet} wallet - The wallet instance for credential storage
+   * @returns {IDVProvider} A configured IDV provider instance
+   */
+  create: (eventEmitter: EventEmitter, wallet: IWallet) => IDVProvider;
+}
+
+/**
+ * Interface for biometric provider operations
+ * @interface IBiometricProvider
+ * @description Provides a high-level API for biometric identity verification operations
+ */
+export interface IBiometricProvider {
+  /**
+   * Starts the identity verification process
+   * @param {any} proofRequest - The proof request to fulfill through IDV
+   * @returns {Promise<{enrollmentCredential: any, matchCredential: any}>} The enrollment and match credentials
+   * @throws {Error} If IDV process fails
+   */
+  startIDV: (proofRequest: any) => Promise<{
+    enrollmentCredential: any;
+    matchCredential: any;
+  }>;
+
+  /**
+   * Event emitter for IDV process events
+   * @type {EventEmitter}
+   */
+  eventEmitter: EventEmitter;
+}
