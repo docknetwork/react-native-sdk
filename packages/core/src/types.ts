@@ -392,25 +392,37 @@ export interface IDIDProvider {
 export interface IMessageProvider {
   /**
    * Sends a DIDComm message to a recipient
+   * @memberof IMessageProvider
    * @param {Object} params - Message parameters
-   * @param {string} [params.did] - Sender DID identifier
-   * @param {string} [params.recipientDid] - Recipient DID identifier
+   * @param {string} [params.from] - Sender DID identifier
+   * @param {string} [params.to] - Recipient DID identifier
    * @param {any} [params.message] - Message payload to send
-   * @param {string} [params.from] - Alternative sender DID (alias for did)
-   * @param {string} [params.to] - Alternative recipient DID (alias for recipientDid)
-   * @param {any} [params.body] - Alternative message payload (alias for message)
    * @param {string} [params.type] - DIDComm message type
+   * @param {string} [params.did] - @deprecated Use 'from' instead - Sender DID identifier
+   * @param {string} [params.recipientDid] - @deprecated Use 'to' instead - Recipient DID identifier
+   * @param {any} [params.body] - @deprecated Use 'message' instead - Message payload to send
    * @returns {Promise<any>} Result of sending the message
    * @throws {Error} If sender DID not found or message sending fails
+   * @example
+   * await messageProvider.sendMessage({
+   *   from: 'did:key:sender123',
+   *   to: 'did:key:recipient456',
+   *   message: { hello: 'world' },
+   *   type: 'basic-message'
+   * });
+   *
    */
   sendMessage: (params: {
-    did?: string;
-    recipientDid?: string;
-    message?: any;
     from?: string;
     to?: string;
-    body?: any;
+    message?: any;
     type?: string;
+    /** @deprecated Use 'from' instead */
+    did?: string;
+    /** @deprecated Use 'to' instead */
+    recipientDid?: string;
+    /** @deprecated Use 'message' instead */
+    body?: any;
   }) => Promise<any>;
 
   /**
