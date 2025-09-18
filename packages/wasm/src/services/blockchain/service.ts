@@ -52,8 +52,9 @@ export class BlockchainService {
     BlockchainService.prototype.isApiConnected,
     BlockchainService.prototype.getAddress,
     BlockchainService.prototype.resolveDID,
-    BlockchainService.prototype.getCache,
+    BlockchainService.prototype.getCachedDIDs,
     BlockchainService.prototype.clearCache,
+    BlockchainService.prototype.getCacheEntry,
   ];
 
   constructor() {
@@ -86,8 +87,12 @@ export class BlockchainService {
     return once(this.emitter, BlockchainService.Events.BLOCKCHAIN_READY);
   }
 
-  getCache() {
-    return this.resolver.getCache();
+  getCachedDIDs() {
+    return this.resolver.getCachedDIDs();
+  }
+
+  getCacheEntry(did) {
+    return this.resolver.getCacheEntry(did);
   }
 
   clearCache(did) {

@@ -5,6 +5,7 @@ export class StorageService {
     setItem: StorageService.prototype.setItem,
     getItem: StorageService.prototype.getItem,
     removeItem: StorageService.prototype.removeItem,
+    getAllKeys: StorageService.prototype.getAllKeys,
   };
 
   constructor() {
