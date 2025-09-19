@@ -152,23 +152,6 @@ export const IDV_EVENTS = {
   onComplete: 'onComplete',
 };
 
-export interface IDVProvider {
-  enroll(
-    walletDID: string,
-    proofRequest: any,
-  ): Promise<{enrollmentCredential: Credential; matchCredential: Credential}>;
-  match(
-    walletDID: string,
-    enrollmentCredential: Credential,
-    proofRequest: any,
-  ): Promise<{
-    matchCredential: Credential;
-  }>;
-}
-
-export interface IDVProviderFactory {
-  create(eventEmitter: EventEmitter, wallet: IWallet): IDVProvider;
-}
 
 /**
  * Creates a biometric provider instance for identity verification and biometric credential management
