@@ -14,8 +14,8 @@ import {relayService as defaultRelayService} from '@docknetwork/wallet-sdk-wasm/
 const FETCH_MESSAGE_LIMIT = 10;
 
 /**
- * @private
  * Internal function to retrieve key pair documents for a DID
+ * @private
  */
 async function getKeyPairDocs(didProvider: IDIDProvider, did?: string) {
   try {

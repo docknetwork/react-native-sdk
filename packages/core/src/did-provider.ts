@@ -10,8 +10,8 @@ import {didServiceRPC} from '@docknetwork/wallet-sdk-wasm/src/services/dids/inde
 import assert from 'assert';
 
 /**
- * @private
  * Internal function to import a DID from an encrypted wallet JSON
+ * @private
  */
 export async function importDID({
   wallet,
@@ -66,8 +66,8 @@ export async function importDID({
 }
 
 /**
- * @private
  * Internal function to edit a DID document's name
+ * @private
  */
 async function editDID({wallet, id, name}){
   if (typeof id === 'string' && id.length > 0) {
@@ -87,8 +87,8 @@ async function editDID({wallet, id, name}){
 };
 
 /**
- * @private
  * Internal function to delete a DID from the wallet
+ * @private
  */
 async function deleteDID({wallet, id}){
   if (typeof id === 'string' && id.length > 0) {
@@ -99,8 +99,8 @@ async function deleteDID({wallet, id}){
 }
 
 /**
- * @private
  * Internal function to export a DID and its correlated documents
+ * @private
  */
 async function exportDID({wallet, id, password }){
   const existingDoc = await wallet.getDocumentById(id);
@@ -123,8 +123,8 @@ async function exportDID({wallet, id, password }){
 }
 
 /**
- * @private
  * Internal function to create a DID document from a keypair document
+ * @private
  */
 export const createDIDKeyDocument = async (
   keypairDoc: any,
@@ -154,8 +154,8 @@ export const createDIDKeyDocument = async (
 };
 
 /**
- * @private
  * Internal function to create a new DID:key with an associated keypair
+ * @private
  */
 export async function createDIDKey({wallet, name, derivePath=undefined, type=undefined}) {
   assert(!!wallet, 'wallet is required');
@@ -177,8 +177,8 @@ export async function createDIDKey({wallet, name, derivePath=undefined, type=und
 }
 
 /**
- * @private
  * Internal function to retrieve all DIDs stored in the wallet
+ * @private
  */
 export async function getAll({wallet}) {
   assert(!!wallet, 'wallet is required');
@@ -187,8 +187,8 @@ export async function getAll({wallet}) {
 }
 
 /**
- * @private
  * Internal function to get the default DID from the wallet
+ * @private
  */
 export async function getDefaultDID({wallet}) {
   assert(!!wallet, 'wallet is required');
@@ -197,8 +197,8 @@ export async function getDefaultDID({wallet}) {
 }
 
 /**
- * @private
  * Internal function to retrieve all keypairs associated with DIDs
+ * @private
  */
 export async function getDIDKeyPairs({wallet}) {
   assert(!!wallet, 'wallet is required');

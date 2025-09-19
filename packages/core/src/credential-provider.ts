@@ -15,8 +15,8 @@ import {IDIDProvider} from './did-provider';
 export type Credential = any;
 
 /**
- * @private
  * Internal function to check if a credential uses BBS+ signature
+ * @private
  */
 export function isBBSPlusCredential(credential) {
   return (
@@ -36,8 +36,8 @@ type importCredentialFromUriParams = {
 };
 
 /**
- * @private
  * Internal function to import credential from URI
+ * @private
  */
 export async function importCredentialFromURI({
   uri,
@@ -61,8 +61,8 @@ export async function importCredentialFromURI({
 }
 
 /**
- * @private
  * Internal function to check if credential is expired
+ * @private
  */
 export function isCredentialExpired(credential) {
   return (
@@ -169,8 +169,8 @@ export async function isValid({
 export const ACUMM_WITNESS_PROP_KEY = '$$accum__witness$$';
 
 /**
- * @private
  * Internal function to add credential to wallet
+ * @private
  */
 export async function addCredential({wallet, credential}) {
   const acummWitness = credential[ACUMM_WITNESS_PROP_KEY];
@@ -196,8 +196,8 @@ export async function addCredential({wallet, credential}) {
 }
 
 /**
- * @private
  * Internal function to get membership witness for credential
+ * @private
  */
 async function getMembershipWitness({credentialId, wallet}) {
   const document = await wallet.getDocumentById(`${credentialId}#witness`);
@@ -235,8 +235,8 @@ type CredentialStatusDocument = {
  * @returns CredentialStatusDocument[]
  */
 /**
- * @private
  * Internal function to sync credential status from blockchain
+ * @private
  */
 async function syncCredentialStatus({
   wallet,
@@ -323,8 +323,8 @@ async function syncCredentialStatus({
  * @returns {Promise<void>}
  */
 /**
- * @private
  * Internal function to remove credential and related documents
+ * @private
  */
 export async function removeCredential({
   wallet, 
@@ -457,7 +457,10 @@ export function createCredentialProvider({
      * @memberof ICredentialProvider
      * @param {any} credential - The credential to validate
      * @param {boolean} [forceFetch=false] - Whether to force refresh the credential status
-     * @returns {Promise<{status: string, error?: string, warning?: string}>} Validation result
+     * @returns {Promise<Object>} Validation result
+     * @returns {string} returns.status - Validation status (verified, revoked, expired, invalid, pending)
+     * @returns {string} [returns.error] - Error message if validation failed
+     * @returns {string} [returns.warning] - Warning message if any
      * @throws {Error} If validation fails
      * @example
      * const result = await credentialProvider.isValid(credential);
@@ -476,7 +479,9 @@ export function createCredentialProvider({
      * Gets the current status of a credential (cached, fast operation)
      * @memberof ICredentialProvider
      * @param {any} credential - The credential to check
-     * @returns {Promise<{status: string, error?: string}>} Current credential status
+     * @returns {Promise<Object>} Current credential status
+     * @returns {string} returns.status - Current status of the credential
+     * @returns {string} [returns.error] - Error message if any
      * @example
      * const status = await credentialProvider.getCredentialStatus(credential);
      * console.log(`Credential status: ${status.status}`);
