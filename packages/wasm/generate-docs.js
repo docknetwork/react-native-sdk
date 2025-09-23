@@ -25,7 +25,7 @@ async function generateMarkdownDocs() {
     './src/services/util-crypto/*.js',
   ];
 
-  console.log(`Processing source files from packages/wasm...`);
+  console.log('Processing source files from packages/wasm...');
 
   const output = await jsdoc2md.render({
     files: sourceFiles,
