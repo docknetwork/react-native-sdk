@@ -10,7 +10,9 @@
     "scripts": {
         "prepublishOnly": "npm run build",
         "build:babel": "rm -rf lib && NODE_ENV=production babel src/ --out-dir lib --copy-files",
-        "build": "rm -rf lib && rollup -c && node ../../scripts/fix-build-imports.js ./lib"
+        "build": "rm -rf lib && rollup -c && node ../../scripts/fix-build-imports.js ./lib",
+        "docs": "node generate-docs.js",
+        "docs:jsdoc": "jsdoc -c jsdoc.conf.json -r src/"
     },
     "resolutions": {
         "p-limit": "2.3.0"
