@@ -5,7 +5,7 @@ React-native project running the Truvera wallet-sdk
 
 ```bash
 nvm use 20.2.0
-yarn install
+npm install --legacy-peer-deps
 
 # install pods for iOS
 cd ios
@@ -15,13 +15,13 @@ pod install
 
 # Running on android
 ```bash
-yarn start
-yarn android
+npm start
+npm run android
 ```
 
 
-# Running on android
+# Running on iOS
 ```bash
-yarn start
-yarn ios
+npm start
+npm run ios
 ```
