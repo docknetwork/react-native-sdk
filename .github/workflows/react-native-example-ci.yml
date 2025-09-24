@@ -1,0 +1,35 @@
+name: React Native Example CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  react-native-example-check:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.2.0'
+
+    - name: Install dependencies
+      run: npm ci
+      working-directory: examples/react-native-example
+
+    - name: Run lint
+      run: npm run lint
+      working-directory: examples/react-native-example
+      env:
+        CI: true
+
+    - name: Run tests
+      run: npm test -- --passWithNoTests
+      working-directory: examples/react-native-example
+      env:
+        CI: true

@@ -23,15 +23,15 @@ jobs:
         node-version: '20.2.0'
     
     - name: Install dependencies
-      run: yarn install --frozen-lockfile
+      run: npm ci
       working-directory: examples/web-example
-    
+
     - name: Install Playwright browsers
-      run: yarn playwright install --with-deps ${{ matrix.browser }}
+      run: npx playwright install --with-deps ${{ matrix.browser }}
       working-directory: examples/web-example
-    
+
     - name: Run E2E tests
-      run: yarn test:e2e --project=${{ matrix.browser }}
+      run: npm run test:e2e -- --project=${{ matrix.browser }}
       working-directory: examples/web-example
       env:
         CI: true
