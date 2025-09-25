@@ -227,7 +227,7 @@ describe('CredentialProvider', () => {
         });
 
       await provider.syncCredentialStatus({forceFetch: true});
-      
+
       // Clear mocks
       jest.clearAllMocks();
 
@@ -253,6 +253,196 @@ describe('CredentialProvider', () => {
 
       // Verify that verifyCredential was called despite the error
       expect(credentialServiceRPC.verifyCredential).toHaveBeenCalledTimes(2);
+    });
+
+    it('should always refetch credentials with Invalid status even when cached', async () => {
+      // First, create credentials with Invalid status
+      jest
+        .spyOn(credentialServiceRPC, 'verifyCredential')
+        .mockImplementation(async () => {
+          return {
+            verified: false,
+            error: 'Credential validation failed',
+          };
+        });
+
+      await provider.syncCredentialStatus({forceFetch: true});
+
+      // Verify initial calls
+      expect(credentialServiceRPC.verifyCredential).toHaveBeenCalledTimes(2);
+
+      // Check that status is set to Invalid
+      const initialStatusDoc = await wallet.getDocumentById(
+        `${customerCredential.id}#status`,
+      );
+      expect(initialStatusDoc.status).toBe(CredentialStatus.Invalid);
+
+      // Clear mocks to track only subsequent calls
+      jest.clearAllMocks();
+
+      // Now mock successful verification
+      jest
+        .spyOn(credentialServiceRPC, 'verifyCredential')
+        .mockImplementation(async () => {
+          return {
+            verified: true,
+          };
+        });
+
+      // Call syncCredentialStatus again WITHOUT forceFetch
+      // Invalid status should trigger refetch even without forceFetch
+      const statusDocs = await provider.syncCredentialStatus({});
+
+      // Verify that verifyCredential was called again despite no forceFetch
+      expect(credentialServiceRPC.verifyCredential).toHaveBeenCalledTimes(2);
+
+      // Check that status is now updated to Verified
+      expect(statusDocs.length).toBe(2);
+      for (const statusDoc of statusDocs) {
+        expect(statusDoc.status).toBe(CredentialStatus.Verified);
+      }
+    });
+
+    it('should always refetch credentials with Pending status even when cached', async () => {
+      // First, manually create a Pending status document
+      const pendingStatusDoc = {
+        type: 'CredentialStatus',
+        id: `${customerCredential.id}#status`,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        status: CredentialStatus.Pending,
+        error: null,
+        warning: null,
+      };
+      await wallet.updateDocument(pendingStatusDoc);
+
+      // Mock successful verification
+      jest
+        .spyOn(credentialServiceRPC, 'verifyCredential')
+        .mockImplementation(async () => {
+          return {
+            verified: true,
+          };
+        });
+
+      // Call syncCredentialStatus without forceFetch
+      // Pending status should trigger refetch
+      const statusDocs = await provider.syncCredentialStatus({
+        credentialIds: [customerCredential.id],
+      });
+
+      // Verify that verifyCredential was called for the Pending credential
+      expect(credentialServiceRPC.verifyCredential).toHaveBeenCalledTimes(1);
+
+      // Check that status is now updated to Verified
+      expect(statusDocs.length).toBe(1);
+      expect(statusDocs[0].status).toBe(CredentialStatus.Verified);
+    });
+
+    it('should cache Revoked status and not refetch within 24 hours', async () => {
+      // First, create credentials with Revoked status
+      jest
+        .spyOn(credentialServiceRPC, 'verifyCredential')
+        .mockImplementation(async () => {
+          return {
+            verified: false,
+            error: 'Revocation check failed',
+          };
+        });
+
+      await provider.syncCredentialStatus({forceFetch: true});
+
+      // Verify initial calls
+      expect(credentialServiceRPC.verifyCredential).toHaveBeenCalledTimes(2);
+
+      // Check that status is set to Revoked
+      const revokedStatusDoc = await wallet.getDocumentById(
+        `${customerCredential.id}#status`,
+      );
+      expect(revokedStatusDoc.status).toBe(CredentialStatus.Revoked);
+
+      // Clear mocks to track only subsequent calls
+      jest.clearAllMocks();
+
+      // Call syncCredentialStatus again WITHOUT forceFetch
+      // Revoked status should NOT trigger refetch within 24 hours
+      const statusDocs = await provider.syncCredentialStatus({});
+
+      // Verify that verifyCredential was NOT called (cached)
+      expect(credentialServiceRPC.verifyCredential).toHaveBeenCalledTimes(0);
+
+      // Check that status remains Revoked
+      expect(statusDocs.length).toBe(2);
+      for (const statusDoc of statusDocs) {
+        expect(statusDoc.status).toBe(CredentialStatus.Revoked);
+      }
+    });
+
+    it('should cache Verified status and not refetch within 24 hours', async () => {
+      // First, create credentials with Verified status
+      jest
+        .spyOn(credentialServiceRPC, 'verifyCredential')
+        .mockImplementation(async () => {
+          return {
+            verified: true,
+          };
+        });
+
+      await provider.syncCredentialStatus({forceFetch: true});
+
+      // Verify initial calls
+      expect(credentialServiceRPC.verifyCredential).toHaveBeenCalledTimes(2);
+
+      // Check that status is set to Verified
+      const verifiedStatusDoc = await wallet.getDocumentById(
+        `${customerCredential.id}#status`,
+      );
+      expect(verifiedStatusDoc.status).toBe(CredentialStatus.Verified);
+
+      // Clear mocks to track only subsequent calls
+      jest.clearAllMocks();
+
+      // Call syncCredentialStatus again WITHOUT forceFetch
+      // Verified status should NOT trigger refetch within 24 hours
+      const statusDocs = await provider.syncCredentialStatus({});
+
+      // Verify that verifyCredential was NOT called (cached)
+      expect(credentialServiceRPC.verifyCredential).toHaveBeenCalledTimes(0);
+
+      // Check that status remains Verified
+      expect(statusDocs.length).toBe(2);
+      for (const statusDoc of statusDocs) {
+        expect(statusDoc.status).toBe(CredentialStatus.Verified);
+      }
+    });
+
+    it('should refetch credentials without status document', async () => {
+      // Remove any existing status documents
+      await wallet.removeDocument(`${customerCredential.id}#status`).catch(() => {});
+      await wallet.removeDocument(`${biometricsBBSRevocation.id}#status`).catch(() => {});
+
+      // Mock successful verification
+      jest
+        .spyOn(credentialServiceRPC, 'verifyCredential')
+        .mockImplementation(async () => {
+          return {
+            verified: true,
+          };
+        });
+
+      // Call syncCredentialStatus
+      // Missing status docs should trigger fetch
+      const statusDocs = await provider.syncCredentialStatus({});
+
+      // Verify that verifyCredential was called for both credentials
+      expect(credentialServiceRPC.verifyCredential).toHaveBeenCalledTimes(2);
+
+      // Check that status documents were created
+      expect(statusDocs.length).toBe(2);
+      for (const statusDoc of statusDocs) {
+        expect(statusDoc.status).toBe(CredentialStatus.Verified);
+        expect(statusDoc.type).toBe('CredentialStatus');
+      }
     });
 
     afterEach(() => {
