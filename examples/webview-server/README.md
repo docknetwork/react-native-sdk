@@ -21,13 +21,13 @@ webview-project/
 
 1. **Install Dependencies**
    ```bash
-   yarn install
+   npm install --legacy-peer-deps
    ```
 
 2. **Build the Bundle**
    Build the WebView bundle using Webpack:
    ```bash
-   yarn run build
+   npm run build
    ```
 
    After building, the bundled files will be available in the `build/` directory.
@@ -38,7 +38,7 @@ webview-project/
 4. **Running the Project**
    For testing or local development:
    ```bash
-   yarn start
+   npm start
    ```
    Access the WebView locally via the provided URL (e.g., `http://localhost:3000/index.html`).
 
