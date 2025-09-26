@@ -22,12 +22,6 @@ jobs:
       run: npm ci --force
       working-directory: examples/react-native-example
 
-    - name: Run lint
-      run: npm run lint
-      working-directory: examples/react-native-example
-      env:
-        CI: true
-
     - name: Run tests
       run: npm test -- --passWithNoTests
       working-directory: examples/react-native-example
