@@ -276,7 +276,9 @@ async function syncCredentialStatus({
 
     statusDocs.push(statusDoc);
 
-    if (!statusDoc.status || statusDoc.status === CredentialStatus.Pending) {
+    // Revoked and Expired statuses should be cached
+    // The user can fore refresh that from the credentials screen
+    if (!statusDoc.status || statusDoc.status === CredentialStatus.Invalid || statusDoc.status === CredentialStatus.Pending) {
       shouldFetch = true;
     }
 
