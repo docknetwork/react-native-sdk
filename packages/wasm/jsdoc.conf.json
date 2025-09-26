@@ -1,8 +1,31 @@
 {
-    "plugins": ["node_modules/jsdoc-babel"],
-    "babel": {
-        "extensions": ["js", "es6", "jsx"],
-        "presets": ["es2015"],
-        "plugins": "transform-flow-strip-types"
-    }
+  "source": {
+    "includePattern": ".+\\.(js|ts)$",
+    "exclude": ["node_modules", "lib", "fixtures", "test", "__tests__"]
+  },
+  "opts": {
+    "destination": "./jsdocs/",
+    "recurse": true
+  },
+  "plugins": [
+    "plugins/markdown",
+    "jsdoc-babel"
+  ],
+  "babel": {
+    "extensions": ["js", "ts"],
+    "ignore": ["**/*.(test|spec).(js|ts)"],
+    "babelrc": false,
+    "presets": [
+      ["@babel/preset-env", { "targets": { "node": "current" } }],
+      ["@babel/preset-typescript", { "allExtensions": true }]
+    ]
+  },
+  "templates": {
+    "cleverLinks": false,
+    "monospaceLinks": false
+  },
+  "tags": {
+    "allowUnknownTags": true,
+    "dictionaries": ["jsdoc", "closure"]
+  }
 }
