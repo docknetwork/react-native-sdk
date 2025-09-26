@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+
+# Build directories
+android/app/build/
+android/build/
+ios/build/
+ios/Pods/
+
+# Generated files and assets
+android/app/src/main/assets/
+android/app/build/intermediates/
+assets/
+*.bundle.js
+*.jsbundle
+bundle.js
+sandbox.js
+
+# Metro bundler output
+.metro-health-check*
+metro.config.js
+
+# Expo
+.expo/
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Coverage
+coverage/
+.nyc_output
+
+# Temporary files
+tmp/
+temp/

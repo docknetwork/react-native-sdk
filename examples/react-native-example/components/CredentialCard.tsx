@@ -13,7 +13,7 @@ const CredentialCard = ({credential, onRemove}: CredentialCardProps) => {
   const issuanceDate = credential.issuanceDate
     ? new Date(credential.issuanceDate).toLocaleDateString()
     : 'Unknown Date';
-  
+
   // Extract subject information if available
   const subjectName = credential.credentialSubject?.name || 'No Name';
 
@@ -32,14 +32,14 @@ const CredentialCard = ({credential, onRemove}: CredentialCardProps) => {
       <View style={styles.content}>
         <Text style={styles.label}>Issuer:</Text>
         <Text style={styles.value}>{issuerName}</Text>
-        
+
         <Text style={styles.label}>Issued Date:</Text>
         <Text style={styles.value}>{issuanceDate}</Text>
 
         <Text style={styles.label}>Type:</Text>
         <Text style={styles.value}>
-          {Array.isArray(credential.type) 
-            ? credential.type.filter((t: string) => t !== 'VerifiableCredential').join(', ') 
+          {Array.isArray(credential.type)
+            ? credential.type.filter((t: string) => t !== 'VerifiableCredential').join(', ')
             : credential.type || 'Unknown Type'}
         </Text>
       </View>
@@ -121,4 +121,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CredentialCard; 
+export default CredentialCard;
