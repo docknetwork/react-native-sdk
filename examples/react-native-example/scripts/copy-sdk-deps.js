@@ -60,8 +60,8 @@ function copyModules(module, parentDir) {
   }
 
   if (moduleName.indexOf('@') === 0) {
-    glob.sync(`${module}/*`).forEach(module => {
-      copyModules(module, `${parentDir}/${moduleName}`);
+    glob.sync(`${module}/*`).forEach(_module => {
+      copyModules(_module, `${parentDir}/${moduleName}`);
     });
   }
 }

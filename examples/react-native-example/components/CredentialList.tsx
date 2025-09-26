@@ -30,9 +30,9 @@ const CredentialList = ({credentials, loading, onRemoveCredential}: CredentialLi
       data={credentials}
       keyExtractor={item => item.id}
       renderItem={({item}) => (
-        <CredentialCard 
-          credential={item} 
-          onRemove={onRemoveCredential} 
+        <CredentialCard
+          credential={item}
+          onRemove={onRemoveCredential}
         />
       )}
       contentContainerStyle={styles.list}
@@ -59,4 +59,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CredentialList; 
+export default CredentialList;

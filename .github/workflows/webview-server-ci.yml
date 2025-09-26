@@ -1,0 +1,29 @@
+name: Webview Server CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  webview-server-build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.2.0'
+
+    - name: Install dependencies
+      run: npm install --force
+      working-directory: examples/webview-server
+
+    - name: Build webview server application
+      run: npm run build
+      working-directory: examples/webview-server
+      env:
+        CI: true
