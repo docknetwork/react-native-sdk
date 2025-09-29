@@ -1,37 +1,349 @@
+/* Main container */
 .App {
+  min-height: 100vh;
+  background-color: #282c34;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Header */
+.App-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 0;
+}
+
+.App-header h1 {
+  color: white;
+  font-size: 36px;
+  font-weight: 700;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Loading state */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: white;
+  font-size: 24px;
+}
+
+/* Setup container */
+.setup-container {
+  max-width: 500px;
+  margin: 100px auto;
+  background: white;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.setup-container h2 {
+  color: #333;
+  margin-bottom: 16px;
+  font-size: 28px;
+  font-weight: 600;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.setup-container p {
+  color: #666;
+  margin-bottom: 32px;
+  font-size: 16px;
 }
 
-.App-header {
-  background-color: #282c34;
+.setup-buttons {
   display: flex;
   flex-direction: column;
+  gap: 16px;
+}
+
+.error {
+  background: #fee;
+  color: #c53030;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #fed7d7;
+}
+
+/* Main wallet container */
+.wallet-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Action buttons */
+.action-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+
+/* DID section */
+.did-section {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 40px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.create-did {
+  text-align: center;
+}
+
+.did-display {
+  text-align: center;
+}
+
+.did-info {
+  display: flex;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.did-value {
+  font-family: 'Monaco', 'Consolas', monospace;
+  background: #f7fafc;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  word-break: break-all;
+}
+
+/* Credentials section */
+.credentials-section {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.credentials-section h3 {
+  margin: 0 0 20px 0;
+  color: #2d3748;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.no-credentials {
+  text-align: center;
+  color: #718096;
+  font-style: italic;
+  padding: 40px;
+}
+
+.credentials-list {
+  display: grid;
+  gap: 16px;
+}
+
+.credential-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.credential-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.credential-card.selectable {
+  cursor: pointer;
+}
+
+.credential-card.selectable:hover {
+  border-color: #4c51bf;
+}
+
+.credential-card.selected {
+  border-color: #4c51bf;
+  background: #f7faff;
+}
+
+.credential-id {
+  font-size: 12px;
+  color: #a0aec0;
+  font-family: 'Monaco', 'Consolas', monospace;
+  margin-bottom: 8px;
+  word-break: break-all;
+}
+
+.credential-type {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 12px;
+}
+
+.credential-subject {
+  background: #f7fafc;
+  border-radius: 6px;
+  padding: 12px;
+  overflow-x: auto;
+}
+
+.credential-subject pre {
+  margin: 0;
+  font-size: 14px;
+  color: #4a5568;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* Modal styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  padding: 32px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.modal-content h2 {
+  margin: 0 0 24px 0;
+  color: #2d3748;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #4a5568;
+  font-weight: 500;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: flex-end;
+  margin-top: 32px;
+}
+
+.credential-selection {
+  display: grid;
+  gap: 12px;
+  max-height: 400px;
+  overflow-y: auto;
+  margin-bottom: 24px;
+}
+
+/* Custom button styles */
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  min-width: 120px;
+}
+
+.btn.primary {
+  background: #4c51bf;
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.btn.primary:hover {
+  background: #434190;
+  transform: translateY(-1px);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.btn.secondary {
+  background: #e2e8f0;
+  color: #4a5568;
+}
+
+.btn.secondary:hover {
+  background: #cbd5e0;
+  transform: translateY(-1px);
+}
+
+.btn.small {
+  padding: 8px 16px;
+  font-size: 14px;
+  min-width: 80px;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .App {
+    padding: 10px;
   }
-  to {
-    transform: rotate(360deg);
+
+  .setup-container {
+    margin: 50px auto;
+    padding: 30px 20px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .did-info {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .did-value {
+    max-width: 100%;
+  }
+
+  .modal-content {
+    padding: 24px 20px;
+    margin: 20px;
+  }
+
+  .modal-buttons {
+    flex-direction: column;
+  }
+
+  .App-header h1 {
+    font-size: 28px;
   }
 }
