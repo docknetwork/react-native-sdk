@@ -4,7 +4,7 @@ React-native project running the Truvera wallet-sdk
 # Installation
 
 ```bash
-nvm use 22.17.1
+nvm use 22.20.0
 npm install --legacy-peer-deps
 
 # install pods for iOS
