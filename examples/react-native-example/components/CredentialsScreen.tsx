@@ -14,10 +14,10 @@ const CredentialsScreen = () => {
       try {
         setLoading(true);
         const provider = getCredentialProvider();
-        
+
         // Check if the basic credential exists
         const credentialExist = await provider.getById(basicCredential.id);
-        
+
         // Add the credential if it doesn't exist
         if (!credentialExist) {
           await provider.addCredential(basicCredential);
@@ -25,7 +25,7 @@ const CredentialsScreen = () => {
         } else {
           console.log('Credential already exists in the wallet');
         }
-        
+
         // Get all credentials
         const allCredentials = await provider.getCredentials();
         setCredentials(allCredentials);
@@ -45,7 +45,7 @@ const CredentialsScreen = () => {
     try {
       setLoading(true);
       const provider = getCredentialProvider();
-      
+
       // Create a modified version of the basic credential with a different ID
       const anotherCredential = {
         ...basicCredential,
@@ -56,13 +56,13 @@ const CredentialsScreen = () => {
           name: 'Another Test Credential',
         },
       };
-      
+
       await provider.addCredential(anotherCredential);
-      
+
       // Refresh the credentials list
       const updatedCredentials = await provider.getCredentials();
       setCredentials(updatedCredentials);
-      
+
       console.log('Added another credential');
     } catch (error) {
       console.error('Error adding another credential:', error);
@@ -76,10 +76,10 @@ const CredentialsScreen = () => {
     try {
       setLoading(true);
       const provider = getCredentialProvider();
-      
+
       await provider.removeCredential(id);
       console.log('Removed credential with ID:', id);
-      
+
       // Refresh the credentials list
       const updatedCredentials = await provider.getCredentials();
       setCredentials(updatedCredentials);
@@ -92,17 +92,17 @@ const CredentialsScreen = () => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity 
-        style={styles.addButton} 
+      <TouchableOpacity
+        style={styles.addButton}
         onPress={addAnotherCredential}
       >
         <Text style={styles.addButtonText}>Add New Credential</Text>
       </TouchableOpacity>
-      
-      <CredentialList 
-        credentials={credentials} 
-        loading={loading} 
-        onRemoveCredential={handleRemoveCredential} 
+
+      <CredentialList
+        credentials={credentials}
+        loading={loading}
+        onRemoveCredential={handleRemoveCredential}
       />
     </View>
   );
@@ -132,4 +132,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CredentialsScreen; 
+export default CredentialsScreen;

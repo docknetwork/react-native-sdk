@@ -33,7 +33,7 @@ function App(): React.JSX.Element {
       customUri={null}>
       <SafeAreaView style={styles.container}>
         <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
-        
+
         <View style={styles.header}>
           <Text style={styles.headerTitle}>
             Wallet SDK Examples
