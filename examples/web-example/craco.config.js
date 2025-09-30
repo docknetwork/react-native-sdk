@@ -43,6 +43,7 @@ module.exports = {
           __dirname,
           "shims/react-native-sqlite-storage.js"
         ),
+        "jwt-decode": path.resolve(__dirname, "shims/jwt-decode.js"),
       };
 
       webpackConfig.module.rules.push({
