@@ -10,8 +10,8 @@ The Truvera Mobile SDK supports:
 
 ## Installation
 ```js
-yarn add @docknetwork/wallet-sdk-core
-yarn add @docknetwork/wallet-sdk-react-native
+npm install @docknetwork/wallet-sdk-core
+npm install @docknetwork/wallet-sdk-react-native
 
 ```
 **There are some scripts and additional dependencies required.**

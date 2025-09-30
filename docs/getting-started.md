@@ -7,7 +7,7 @@ This guide walks you through the process of setting up the Truvera Wallet SDK, c
 To start, you need to install the necessary packages for the wallet SDK and the data store. Open your terminal and run the following command:
 
 ```bash
-yarn add @docknetwork/wallet-sdk-core @docknetwork/wallet-sdk-data-store-typeorm
+npm install @docknetwork/wallet-sdk-core @docknetwork/wallet-sdk-data-store-typeorm
 ```
 
 The `@docknetwork/wallet-sdk-core` provides the core wallet functionality, while `@docknetwork/wallet-sdk-data-store-typeorm` handles data persistence using a local SQLite database.
@@ -16,7 +16,7 @@ The `@docknetwork/wallet-sdk-core` provides the core wallet functionality, while
 
 ### 1. Initialize the Data Store
 
-Before creating a wallet, you need to set up a data store to manage the persistence of wallet data such as DIDs and credentials. Here’s how to create a data store:
+Before creating a wallet, you need to set up a data store to manage the persistence of wallet data such as DIDs and credentials. Here’s how to create a local data store:
 
 ```ts
 import {createDataStore} from '@docknetwork/wallet-sdk-data-store-typeorm/lib';
@@ -28,9 +28,9 @@ const dataStore = await createDataStore({
 });
 ```
 
-This code initializes a SQLite database to store wallet data. You can adjust the `databasePath` and `defaultNetwork` based on your needs.
+This code initializes an SQLite database to store wallet data locally on the device. You can adjust the `databasePath` and `defaultNetwork` based on your needs.
 
-If you want to use the cloud wallet solution, please refer to the [Cloud Wallet Documentation](cloud-wallet.md) for detailed instructions and configuration options.
+If you want to store data in the Truvera Cloud Wallet, please refer to the [Cloud Wallet Documentation](cloud-wallet.md) for detailed instructions and configuration options.
 
 ### 2. Create a New Wallet
 
