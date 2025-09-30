@@ -114,6 +114,10 @@ export class OID4VCHandler implements QRCodeHandler {
   ) => Promise<OID4VCImportResult>;
 
   constructor(config: OID4VCHandlerConfig) {
+    if (!config.onImportCredential) {
+      throw new Error('onImportCredential callback is required');
+    }
+
     this.priority = config.priority ?? 5;
     this.uriPrefixes = config.uriPrefixes ?? ['openid-credential-offer://'];
     this.onImportCredential = config.onImportCredential;
