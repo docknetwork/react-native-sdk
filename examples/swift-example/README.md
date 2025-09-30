@@ -75,7 +75,7 @@ The project includes bundled web assets in `wallet-sdk-web/`:
 - `index.html`: Main WebView entry point
 - `main.eeb62a29.js`: Compiled Wallet SDK JavaScript
 - Additional assets and dependencies
-- You can generate new assets by running `yarn build` in the ../examples/webview-server project
+- You can generate new assets by running `npm run build` in the ../examples/webview-server project
 
 ## Linking WebView Files in Xcode (Optional)
 
