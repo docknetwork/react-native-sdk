@@ -9,45 +9,45 @@ test.describe('Credential Management', () => {
     await page.goto('/');
     await page.evaluate(() => localStorage.clear());
     await page.reload();
-    
+
     // Create new wallet
     await page.getByTestId('create-wallet-button').click();
-    await page.waitForSelector('.App-header:has-text("Documents")', { timeout: 30000 });
-    
+    await page.waitForSelector('.App-header:has-text("Truvera Wallet React Example")', { timeout: 30000 });
+
     // Wait for default DID to be created automatically
     await page.waitForSelector('text=Default DID:', { timeout: 30000 });
   });
 
   test('should open import credential modal', async ({ page }) => {
     await page.getByTestId('import-credential-button').click();
-    
+
     // Modal should be visible
-    await expect(page.getByRole('heading', { name: 'Import OpenID Credential' })).toBeVisible();
-    await expect(page.getByLabel('Credential Offer URL')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Import Credential' })).toBeVisible();
+    await expect(page.getByPlaceholder('Enter credential offer URL')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Import' })).toBeVisible();
   });
 
   test('should validate credential URL format', async ({ page }) => {
     // Wait a bit longer for credential provider to be ready
     await page.waitForTimeout(2000);
-    
+
     await page.getByTestId('import-credential-button').click();
-    
+
     // Enter invalid URL
-    await page.getByLabel('Credential Offer URL').fill('https://invalid-url.com');
-    
+    await page.getByPlaceholder('Enter credential offer URL').fill('https://invalid-url.com');
+
     // Set up dialog handler and click import
     let dialogMessage = '';
     page.on('dialog', async dialog => {
       dialogMessage = dialog.message();
       await dialog.accept();
     });
-    
+
     await page.getByRole('button', { name: 'Import' }).click({ force: true });
-    
+
     // Wait for dialog to be handled
     await page.waitForTimeout(1000);
-    
+
     // Verify the alert message was shown
     expect(dialogMessage).toContain('Invalid credential offer URL');
   });
@@ -55,18 +55,18 @@ test.describe('Credential Management', () => {
   test.skip('should import a credential successfully', async ({ page }) => {
     // Skip this test by default as it requires a real credential URL
     // Remove .skip and provide TEST_CREDENTIAL_URL env var to run
-    
+
     await page.getByTestId('import-credential-button').click();
-    
+
     // Enter credential URL
-    await page.getByLabel('Credential Offer URL').fill(TEST_CREDENTIAL_URL);
+    await page.getByPlaceholder('Enter credential offer URL').fill(TEST_CREDENTIAL_URL);
     await page.getByRole('button', { name: 'Import' }).click();
-    
+
     // Wait for import to complete and modal to close
-    await page.waitForSelector('role=heading[name="Import OpenID Credential"]', { state: 'hidden', timeout: 30000 });
-    
+    await page.waitForSelector('role=heading[name="Import Credential"]', { state: 'hidden', timeout: 30000 });
+
     // Should show the imported credential
-    const credentialElements = await page.locator('[bgcolor="#ccc"]').count();
+    const credentialElements = await page.locator('.credential-card').count();
     expect(credentialElements).toBeGreaterThan(0);
   });
 
@@ -124,12 +124,12 @@ test.describe('Credential Management', () => {
   test('should fetch messages', async ({ page }) => {
     // Click Fetch Messages button
     await page.getByTestId('fetch-messages-button').click();
-    
+
     // Should not show any errors
     await expect(page.locator('text=Default DID:')).toBeVisible();
-    
+
     // The button should remain clickable
-    await expect(page.getByRole('button', { name: 'Fetch Messages' })).toBeEnabled();
+    await expect(page.getByTestId('fetch-messages-button')).toBeEnabled();
   });
 
   test('should copy DID to clipboard', async ({ page, context }) => {
