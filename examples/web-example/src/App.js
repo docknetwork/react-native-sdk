@@ -237,9 +237,9 @@ function App() {
   if (cloudWalletLoading || loading) {
     return (
       <div className="App">
-        <Box className="App-header" p={5}>
-          Loading...
-        </Box>
+        <div className="loading-container">
+          <h2>Loading...</h2>
+        </div>
       </div>
     );
   }
@@ -247,156 +247,201 @@ function App() {
   if (!walletKeys) {
     return (
       <div className="App">
-        <Box className="App-header" p={5}>
+        <div className="setup-container">
           <h2>Welcome to the Wallet App</h2>
           <p>Please upload your wallet key file or create a new wallet.</p>
-          {uploadError && <p style={{ color: "red" }}>{uploadError}</p>}
-          <Button variant="contained" component="label" sx={{ m: 1 }}>
-            Upload Wallet Key File
-            <input
-              type="file"
-              accept=".json"
-              hidden
-              onChange={handleWalletKeyUpload}
-            />
-          </Button>
-          <Button
-            variant="contained"
-            data-testid="create-wallet-button"
-            onClick={handleCreateWallet}
-            sx={{ m: 1 }}
-          >
-            Create New Wallet
-          </Button>
-        </Box>
+          {uploadError && <div className="error">{uploadError}</div>}
+          <div className="setup-buttons">
+            <Button variant="contained" component="label" className="btn primary">
+              Upload Wallet Key File
+              <input
+                type="file"
+                accept=".json"
+                hidden
+                onChange={handleWalletKeyUpload}
+              />
+            </Button>
+            <button
+              className="btn primary"
+              data-testid="create-wallet-button"
+              onClick={handleCreateWallet}
+            >
+              Create New Wallet
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="App">
-      <Box className="App-header" p={5}>
-        Documents
-      </Box>
-      <Box display="flex" gap={2} justifyContent="center" m={2}>
-        <Button
-          variant="contained"
-          data-testid="import-credential-button"
-          onClick={() => {
-            setImportModalOpen(true);
-            setCredentialUrl("");
-          }}
-        >
-          Import OpenID Credential
-        </Button>
-        <Button
-          variant="contained"
-          data-testid="verify-credential-button"
-          onClick={() => {
-            setVerifyModalOpen(true);
-            setVerifyStep(1);
-            setProofRequestUrl("");
-            setSelectedCredential(null);
-          }}
-        >
-          Verify Credential
-        </Button>
+      <div className="wallet-container">
+        <header className="App-header">
+          <h1>Truvera Wallet React Example</h1>
+        </header>
 
-        <Button
-          variant="contained"
-          data-testid="refresh-button"
-          onClick={() => {
-            refreshDocuments();
-          }}
-        >
-          Refresh
-        </Button>
-        <Button
-          variant="contained"
-          onClick={() => {
-            const currentKeysStr = localStorage.getItem("keys");
-            const currentKeys = currentKeysStr ? JSON.parse(currentKeysStr) : null;
-            localStorage.clear();
-            if (currentKeys) {
-              localStorage.setItem("keys", JSON.stringify({
-                masterKey: currentKeys.masterKey,
-                mnemonic: currentKeys.mnemonic,
-              }));
-            }
-            window.location.reload();
-          }}
-        >
-          Clear Wallet
-        </Button>
-        {cloudWallet && (
-          <Button
-            variant="contained"
-            onClick={() => cloudWallet.clearEdvDocuments()}
-          >
-            Clear EDV
-          </Button>
-        )}
-      </Box>
-      {!defaultDID ? (
-        <Button
-          variant="contained"
-          onClick={() => provisionNewWallet()}
-        >
-          Create Default DID
-        </Button>
-      ) : (
-        <Box display="flex" gap={2} justifyContent="center" alignItems="center">
-          <b>Default DID:</b>
-          {defaultDID}
-          <Button
-            variant="contained"
-            data-testid="copy-did-button"
+        {/* Action Buttons */}
+        <div className="action-buttons">
+          <button
+            className="btn primary"
+            data-testid="import-credential-button"
             onClick={() => {
-              navigator.clipboard.writeText(defaultDID);
+              setImportModalOpen(true);
+              setCredentialUrl("");
             }}
           >
-            Copy
-          </Button>
-          <Button
-            variant="contained"
-            data-testid="fetch-messages-button"
-            onClick={async () => {
-              await messageProvider.fetchMessages();
-              await messageProvider.processDIDCommMessages();
+            Import Credential
+          </button>
+          <button
+            className="btn primary"
+            data-testid="verify-credential-button"
+            onClick={() => {
+              setVerifyModalOpen(true);
+              setVerifyStep(1);
+              setProofRequestUrl("");
+              setSelectedCredential(null);
             }}
           >
-            Fetch Messages
-          </Button>
-        </Box>
-      )}
-      <div>
-        {formattedCredentials.map((document) => (
-          <Box key={document.id} bgcolor="#ccc" p={2} m={2}>
-            <div>{document.id}</div>
-            <div>{document.humanizedType}</div>
-            <div>{JSON.stringify(document?.credentialSubject)}</div>
-          </Box>
-        ))}
+            Verify Credential
+          </button>
+          <button
+            className="btn secondary"
+            data-testid="refresh-button"
+            onClick={() => {
+              refreshDocuments();
+            }}
+          >
+            Refresh
+          </button>
+          <button
+            className="btn secondary"
+            onClick={() => {
+              const currentKeysStr = localStorage.getItem("keys");
+              const currentKeys = currentKeysStr ? JSON.parse(currentKeysStr) : null;
+              localStorage.clear();
+              if (currentKeys) {
+                localStorage.setItem("keys", JSON.stringify({
+                  masterKey: currentKeys.masterKey,
+                  mnemonic: currentKeys.mnemonic,
+                }));
+              }
+              window.location.reload();
+            }}
+          >
+            Clear Wallet
+          </button>
+          {cloudWallet && (
+            <button
+              className="btn secondary"
+              onClick={() => cloudWallet.clearEdvDocuments()}
+            >
+              Clear EDV
+            </button>
+          )}
+        </div>
+
+        {/* DID Management */}
+        <div className="did-section">
+          {!defaultDID ? (
+            <div className="create-did">
+              <button
+                className="btn primary"
+                onClick={() => provisionNewWallet()}
+              >
+                Create Default DID
+              </button>
+            </div>
+          ) : (
+            <div className="did-display">
+              <div className="did-info">
+                <strong>Default DID:</strong>
+                <span className="did-value">{defaultDID}</span>
+                <button
+                  className="btn small"
+                  data-testid="copy-did-button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(defaultDID);
+                  }}
+                >
+                  Copy
+                </button>
+                <button
+                  className="btn small"
+                  data-testid="fetch-messages-button"
+                  onClick={async () => {
+                    await messageProvider.fetchMessages();
+                    await messageProvider.processDIDCommMessages();
+                  }}
+                >
+                  Fetch Messages
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Credentials List */}
+        <div className="credentials-section">
+          <h3>Credentials ({formattedCredentials.length})</h3>
+
+          {formattedCredentials.length === 0 ? (
+            <div className="no-credentials">
+              No credentials found. Import some credentials to get started.
+            </div>
+          ) : (
+            <div className="credentials-list">
+              {formattedCredentials.map((document) => (
+                <div key={document.id} className="credential-card">
+                  <div className="credential-id">{document.id}</div>
+                  <div className="credential-type">{document.humanizedType || 'Unknown Type'}</div>
+                  <div className="credential-subject">
+                    <pre>{JSON.stringify(document?.credentialSubject, null, 2)}</pre>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Import Credential Modal */}
       <Modal open={importModalOpen} onClose={() => setImportModalOpen(false)}>
         <Box sx={modalStyle}>
-          <h2>Import OpenID Credential Offer</h2>
-          <TextField
-            label="Credential Offer URL"
-            fullWidth
-            value={credentialUrl}
-            onChange={(e) => setCredentialUrl(e.target.value)}
-            margin="normal"
-          />
-          <Button
-            variant="contained"
-            onClick={handleImportCredential}
-            sx={{ mt: 2 }}
-          >
-            Import
-          </Button>
+          <h2>Import Credential</h2>
+          <div className="form-group">
+            <label htmlFor="credentialUrl">Credential Offer URL:</label>
+            <TextField
+              id="credentialUrl"
+              fullWidth
+              value={credentialUrl}
+              onChange={(e) => setCredentialUrl(e.target.value)}
+              placeholder="Enter credential offer URL"
+              InputProps={{
+                sx: {
+                  borderRadius: '8px',
+                  '&.Mui-focused': {
+                    boxShadow: '0 0 0 3px rgba(76, 81, 191, 0.1)',
+                  },
+                },
+              }}
+            />
+          </div>
+          <div className="modal-buttons">
+            <button
+              className="btn secondary"
+              onClick={() => setImportModalOpen(false)}
+            >
+              Cancel
+            </button>
+            <button
+              className="btn primary"
+              onClick={handleImportCredential}
+              disabled={!credentialUrl}
+            >
+              Import
+            </button>
+          </div>
         </Box>
       </Modal>
 
@@ -414,58 +459,73 @@ function App() {
           {verifyStep === 1 && (
             <>
               <h2>Verify Credential</h2>
-              <TextField
-                label="Proof Request URL"
-                fullWidth
-                value={proofRequestUrl}
-                onChange={(e) => setProofRequestUrl(e.target.value)}
-                margin="normal"
-              />
-              <Button
-                variant="contained"
-                onClick={() => setVerifyStep(2)}
-                sx={{ mt: 2 }}
-                disabled={!proofRequestUrl}
-              >
-                Next
-              </Button>
+              <div className="form-group">
+                <label htmlFor="proofRequestUrl">Proof Request URL:</label>
+                <TextField
+                  id="proofRequestUrl"
+                  fullWidth
+                  value={proofRequestUrl}
+                  onChange={(e) => setProofRequestUrl(e.target.value)}
+                  placeholder="Enter proof request URL"
+                  InputProps={{
+                    sx: {
+                      borderRadius: '8px',
+                      '&.Mui-focused': {
+                        boxShadow: '0 0 0 3px rgba(76, 81, 191, 0.1)',
+                      },
+                    },
+                  }}
+                />
+              </div>
+              <div className="modal-buttons">
+                <button
+                  className="btn secondary"
+                  onClick={() => setVerifyModalOpen(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="btn primary"
+                  onClick={() => setVerifyStep(2)}
+                  disabled={!proofRequestUrl}
+                >
+                  Next
+                </button>
+              </div>
             </>
           )}
           {verifyStep === 2 && (
             <>
               <h2>Select Credential to Present</h2>
-              <div>
+              <div className="credential-selection">
                 {formattedCredentials.map((document, idx) => (
-                  <Box
+                  <div
                     key={document.id}
-                    bgcolor={
-                      selectedCredential?.id === document.id ? "#aaa" : "#ccc"
-                    }
-                    overflow={"hidden"}
-                    p={2}
-                    m={2}
+                    className={`credential-card selectable ${selectedCredential?.id === document.id ? 'selected' : ''}`}
                     onClick={() => setSelectedCredential(documents[idx])}
-                    sx={{ cursor: "pointer" }}
                   >
-                    <div>{document.humanizedType}</div>
-                    <div>
-                      {JSON.stringify(document.credentialSubject, null, 4)}
+                    <div className="credential-type">{document.humanizedType || 'Unknown Type'}</div>
+                    <div className="credential-subject">
+                      <pre>{JSON.stringify(document.credentialSubject, null, 2)}</pre>
                     </div>
-                  </Box>
+                  </div>
                 ))}
               </div>
-              <Box display="flex" justifyContent="space-between" mt={2}>
-                <Button variant="outlined" onClick={() => setVerifyStep(1)}>
+              <div className="modal-buttons">
+                <button
+                  className="btn secondary"
+                  onClick={() => setVerifyStep(1)}
+                >
                   Back
-                </Button>
-                <Button
-                  variant="contained"
+                </button>
+                <button
+                  className="btn primary"
                   onClick={handleVerifyCredential}
                   disabled={!selectedCredential}
                 >
                   Verify
-                </Button>
-              </Box>
+                </button>
+              </div>
             </>
           )}
         </Box>

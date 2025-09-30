@@ -1,59 +1,33 @@
-# AngularExample
+# Cloud Wallet Demo
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.13.
+This web application leverages the **Truvera Wallet SDK** and **Truvera Cloud Wallet** for managing credentials and data storage.
 
-## Development server
+## Usage Instructions
 
-To start a local development server, run:
+1. **Start the Application:**
+   - Run the app with the following commands:
+     ```bash
+     npm install
+     npm start
+     ```
 
-```bash
-ng serve
-```
+2. **Initialize the Wallet:**
+   - Option 1: Upload an existing wallet key file.
+   - Option 2: Generate a new wallet by clicking "Create New Wallet."
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+3. **Import an OpenID Credential Offer:**
+   - Click **"Import OpenIDCredential"** and enter the Credential Offer URL.
+   - Also, you can use DID distribution
+     - Fetch DIDComm messages using the **"Fetch Messages"** button.
 
-## Code scaffolding
+4. **View and Manage Credentials:**
+   - Use the **"Refresh"** button to reload credentials.
+   - Credentials are displayed in a structured format.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+5. **Verify a Credential:**
+   - Click **"Verify Credential"** and provide a **Proof Request URL**.
+   - Follow the steps to select a credential and send the proof.
 
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+6. **Cloud Storage Operations:**
+   - Use **"Clear EDV"** to reset cloud-stored documents.
+   - Sync with the cloud wallet via **"Refresh."**
