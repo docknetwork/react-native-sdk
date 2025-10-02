@@ -1,28 +1,25 @@
 # Truvera Wallet SDK
 
-The [Wallet SDK](https://github.com/docknetwork/wallet-sdk) enables you to build a Verifiable Credentials wallet inside your app and allows your users to receive, store, and manage their DOCK tokens too. This was built for mobile applications with added support for Polkadot-JS.
+The [Wallet SDK](https://github.com/docknetwork/wallet-sdk) enables you to build an identity wallet inside your app and allows your users to receive, store, and manage verifiable credentials.
 
 To use the wallet-sdk, all you need to do is wrap your app in a `WalletSDKProvider` and start building your wallet.
 
-Using [polkadot-js](https://polkadot.js.org/) libraries in React Native is a challenge, due to the lack of WebAssembly support.
-The Truvera Wallet SDK handles all the Polkadot Web Assembly in a WebView, sending messages to the React Native thread through a JSON RPC layer.
-
-Truvera Mobile SDK supports:
+The Truvera Mobile SDK supports:
 - Devices that have Android 8.1 or higher and iOS 11 or higher.
 - Minimum supported version of Node.js is 20.2.0
 
 ## Installation
 ```js
-yarn add @docknetwork/wallet-sdk-core
-yarn add @docknetwork/wallet-sdk-react-native
+npm install @docknetwork/wallet-sdk-core
+npm install @docknetwork/wallet-sdk-react-native
 
 ```
 **There are some scripts and additional dependencies required.**
-Please check our [examples](/examples) folder for detailed steps.
+Please check our [examples](https://github.com/docknetwork/wallet-sdk/tree/master/examples) folder for detailed steps.
 
 ## React Native Example
-The following example will create a wallet and allow the user to add credentials to it. Displaying the count of documents added to the wallet.
-Notice that the all documents are accessible through the `documents` object.
+The following example will create a wallet and allow the user to add credentials to it, displaying the count of documents added to the wallet.
+Notice that all documents are accessible through the `documents` object.
 
 ```js
 import {Box, Button, NativeBaseProvider, Text} from 'native-base';
@@ -67,20 +64,20 @@ export default App;
 
 ```
 
-## Running on other platforms
 
-Check the following repository for detailed examples for running the Truvera Wallet SDK on NodeJS, Web, and Flutter.
+## Documentation
 
-[See the examples](https://github.com/docknetwork/wallet-sdk/tree/master/examples)
+The [Truvera Documentation Portal](https://docs.truvera.io) aggregates documentation for all components of the Truvera Platform. Documentation specific to the Wallet SDK is mirrored from [the GitHub repository](https://github.com/docknetwork/wallet-sdk). Node package reference documentation is also published on [GitHub.io](https://docknetwork.github.io/wallet-sdk/).
+
+For more details you should read [the getting started guide](https://github.com/docknetwork/wallet-sdk/blob/master/docs/getting-started.md).
 
 
-## Docs
-
-For more details you can check the [getting started guide](https://github.com/docknetwork/wallet-sdk/blob/master/docs/getting-started.md)
-
-[See the Github repository](https://docknetwork.github.io/wallet-sdk/)
-
-## Features
+### Key Features
 - [Biometric Plugin](https://github.com/docknetwork/wallet-sdk/blob/master/docs/biometric-plugin.md)
 - [Ecosystem Tools](https://github.com/docknetwork/wallet-sdk/blob/master/docs/ecosystem-tools.md)
 - [Cloud Wallet](https://github.com/docknetwork/wallet-sdk/blob/master/docs/cloud-wallet.md)
+
+
+### Running on other platforms
+
+[The examples directory](https://github.com/docknetwork/wallet-sdk/tree/master/examples) contains detailed examples for running the Truvera Wallet SDK on NodeJS, Web, and Flutter.
