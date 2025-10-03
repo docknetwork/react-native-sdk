@@ -34,10 +34,10 @@ jobs:
       - name: Copy files
         run: |
           # Specify the files or directories you want to copy
-          ls ./
-          rm -rf knowledge-base/credential-wallet/wallet-sdk
-          cp -r docs/* knowledge-base/credential-wallet/wallet-sdk
-          cp README.md knowledge-base/credential-wallet/wallet-sdk/README.md
+          ls ./knowledge-base
+          rm -rf ./knowledge-base/credential-wallet/wallet-sdk
+          cp -r docs/* ./knowledge-base/credential-wallet/wallet-sdk
+          cp README.md ./knowledge-base/credential-wallet/wallet-sdk/README.md
 
       - name: Get branch name
         id: get_branch
