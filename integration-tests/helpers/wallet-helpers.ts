@@ -44,7 +44,7 @@ export async function createNewWallet({
     dataStore = await createDataStore({
       databasePath: ':memory:',
       dbType: 'sqlite',
-      defaultNetwork: 'mainnet',
+      defaultNetwork: 'testnet',
     });
   }
 
