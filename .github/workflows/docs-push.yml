@@ -34,7 +34,7 @@ jobs:
       - name: Copy files
         run: |
           # Specify the files or directories you want to copy
-          ls ./knowledge-base
+          ls ./knowledge-base/credential-wallet
           rm -rf ./knowledge-base/credential-wallet/wallet-sdk
           cp -r docs/* ./knowledge-base/credential-wallet/wallet-sdk
           cp README.md ./knowledge-base/credential-wallet/wallet-sdk/README.md
