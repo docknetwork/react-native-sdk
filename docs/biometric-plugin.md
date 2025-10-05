@@ -2,11 +2,23 @@
 
 ## Purpose
 
-The biometrics plugin provides a way to perform credential verification using the user's biometric data. It is useful to guarantee that only the biometric holder can perform the verification.
+The biometrics plugin allows for the collection of the user's biometric data as part of credential verification. This allows the verification process to guarantee that only the physical person who was issued the credential can perform the verification.
+
+## Overview
+
+When the wallet detects a request for a biometric check credential, it will trigger the biometric plugin to perform a biometric collection. If the user has not previously enrolled a biometric template, the user can be onboarded with the biometric service which can create an enrollment credential. The enrollment credential can contain the biometric template, or point to a biometric template hosted elsewhere. If the user has previously enrolled, then the biometric collection can be compared with the contents of the enrollment credential.
+
+The enrollment credential also contains a biometric ID, which is a random string that can be used to identify a successful biometric check for a specific use case. For privacy purposes, the biometric ID should not be derived from the user's actual biometric. If the currently collected sample matches the biometric template, then the biometric ID stored in the enrollment credential can be put into a biometric check credential which can be shared without disclosing the user's biometric.
+
+During issuance, the issuer can request a recent biometric check credential and embed the biometric ID and biometric issuer DID into the credential that is being issued.
+
+During verification, the verifier can request a recent biometric check credential alongside the credential with the attributes of interest. If the holder can produce a biometric check credential that contains the same biometric ID as is embedded in the credential of interest and also comes from the same biometric issuer as the credential of interest, then the relying party can be confident that it is the same physical person who was issued the credential.
+
+You can learn more about [biometric bound credentials in the solutions section of the documentation](https://docs.truvera.io/solutions/biometric-bound-credentials).
 
 ## Flow
 
-The biometric plugin flow is the following:
+The following diagram details the flow of the biometric plugin:
 
 ```mermaid
 sequenceDiagram
@@ -100,7 +112,7 @@ The presence of the following fields should trigger the biometric check:
 
 ## How to enable the biometric plugin in the wallet
 
-To enable the biometric plugin in a white-label wallet, you need to edit the following file src/wallet-sdk-configs.ts and add your configuration:
+To enable the biometric plugin in a white-label wallet, you need to edit `src/wallet-sdk-configs.ts` and add your configuration:
 
 ```typescript
 import { BiometricsProviderConfigs, IDVProviderFactory, setConfigs } from '@docknetwork/wallet-sdk-core/src/biometric-provider';
@@ -135,7 +147,7 @@ export const idvProviderFactory: IDVProviderFactory = {
 
 ```
 
-The truvera biometric plugin requires the following configs:
+The Truvera biometric plugin requires the following configs:
 
 * walletApiUrl: The URL of the wallet API that will be used to issue the credentials
 * ecosystemID: The ecosystem ID of the biometric service
