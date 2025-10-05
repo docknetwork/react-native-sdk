@@ -1,4 +1,4 @@
-# Truvera Wallet SDK
+# Getting Started with the Truvera Wallet SDK
 
 This guide walks you through the process of setting up the Truvera Wallet SDK, creating a wallet, managing decentralized identifiers (DIDs), adding credentials, and verifying them.
 
