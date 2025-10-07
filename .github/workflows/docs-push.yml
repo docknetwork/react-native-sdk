@@ -1,11 +1,11 @@
 name: Push docs to knowledgebase
-on: [push]
-  # push:
-  #   branches: master
-  #   paths:
-  #     - "docs/**"
-  #     - ".github/workflows/docs-push.yml"
-  #     - "README.md"
+on:
+  push:
+    branches: master
+    paths:
+      - "docs/**"
+      - ".github/workflows/docs-push.yml"
+      - "README.md"
     
 jobs:
   Copy-docs:
