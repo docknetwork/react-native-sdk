@@ -1,8 +1,11 @@
 # Ecosystem Tools
 
-You can find the implementation of ecosystem tools in the following location:
+An ecosystem is a trusted set of issuers and verifiers. If a credential is associated with an ecosystem, then the credential details will include the ecosystem logo and a link to the ecosystem web page. This allows credential holders to become familiar with the branding of an ecosystem which they can then use to identify verifiers who will trust the ecosystem credentials and abide by the ecosystem's policies.
 
-File Path: [packages/core/src/ecosystem-tools.ts](https://github.com/docknetwork/wallet-sdk/blob/5dfbcb197b848802478d2f7a697286a8c3c28823/packages/core/src/ecosystem-tools.ts#L4)
+The functions of an ecosystem are further described in [the Ecosystem Tools section of the API documentation](https://docs.truvera.io/truvera-api/ecosystem-tools).
+
+The Truvera Wallet SDK implementation of ecosystem tools is in:
+[packages/core/src/ecosystem-tools.ts](https://github.com/docknetwork/wallet-sdk/blob/5dfbcb197b848802478d2f7a697286a8c3c28823/packages/core/src/ecosystem-tools.ts#L4)
 
 ## Usage Example
 
@@ -29,7 +32,7 @@ fetchEcosystemDetails();
 
 ## Expected Output
 
-When you run the above code, you should expect an output similar to this:
+When you run the above code, you should expect output similar to this:
 
 ```json
 {
@@ -46,5 +49,6 @@ This JSON output contains the details of the ecosystems associated with the give
 ## Integration Tests
 
 For more examples and usage, please refer to the integration test at:
+https://github.com/docknetwork/wallet-sdk/blob/master/integration-tests/ecosystem-tools.test.ts
 
-Test File Path: https://github.com/docknetwork/wallet-sdk/blob/master/integration-tests/ecosystem-tools.test.ts This test file provides comprehensive examples on how to interact with ecosystem tools effectively.
+This test file provides comprehensive examples on how to interact with ecosystem tools effectively.

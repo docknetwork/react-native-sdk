@@ -10,6 +10,4 @@ The WebView is similar to a REST API, and its entry point is in the wallet-sdk-w
 interacts with
 `@docknetwork/wallet-sdk-wasm/lib/services/[moduleName]/service.js`
 
-Notice that the `modules` folder is running in the main thread (react native) and will be using the json rpc client (`@docknetwork/wallet-sdk-core/lib/client`) to interact with `@docknetwork/wallet-sdk-core/lib/service` methods
-
-
+Notice that the `modules` folder is running in the main thread (React Native) and will be using the JSON RPC client (`@docknetwork/wallet-sdk-core/lib/client`) to interact with `@docknetwork/wallet-sdk-core/lib/service` methods.

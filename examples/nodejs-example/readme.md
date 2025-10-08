@@ -1,5 +1,5 @@
-# Wallet sdk web examples
-This is an examples on how to install the Truvera Wallet SDK in a nodejs application.
+# Wallet SDK NodeJS Example
+This example illustrates how to install the Truvera Wallet SDK in a Node.js application.
 
 ## Installation steps
 

@@ -1,12 +1,17 @@
 # Cloud Wallet Documentation
 
-The Cloud Wallet feature allows secure storage and synchronization of wallet documents via an [Encrypted Data Vault (EDV)](https://digitalbazaar.github.io/encrypted-data-vaults/).
+The Truvera Cloud Wallet provides SaaS hosted secure storage of a user's identity data. The contents of an individual cloud wallet are accessed through a wallet application. The Cloud Wallet APIs support synchronization between the cloud storage and local storage of a wallet application. In addition to standard mobile or web wallet applications, the Cloud Wallet also allows credentials to be used in existing web sites through embedded widgets. The Cloud Wallet is especially useful for non-human identity use cases, such as organizational identity wallets and wallets for AI agents.
 
-**File Path:** `@docknetwork/wallet-sdk-core/src/cloud-wallet`
+The implementation is in:
+`@docknetwork/wallet-sdk-core/src/cloud-wallet`
 
 ## Feature Overview
 
-The Cloud Wallet integrates with an [Encrypted Data Vault (EDV)](https://digitalbazaar.github.io/encrypted-data-vaults/) to securely store, sync, and manage documents. Once initialized, it automatically synchronizes documents between the EDV and the wallet, allowing you to add, update, remove, without dealing with the synchronization logic.
+The Truvera Cloud Wallet service hosts individual wallets for each user. The user's wallet stores encrypted documents that usually contain verifiable credentials. The service includes an [Encrypted Data Vault (EDV)](https://digitalbazaar.github.io/encrypted-data-vaults/) to securely store, sync, and manage documents. The Truvera Platform includes an EDV instance that can be used as part of a Truvera solution, but you can also deploy an EDV instance within your infrastructure if you prefer to host the encrypted user data. In most solutions, documents should be encrypted by the wallet application before being stored in the cloud wallet so that it cannot be read by the organization hosting the EDV.
+
+Once initialized, the Cloud Wallet automatically synchronizes documents between the EDV and the wallet application, allowing you to add, update, and remove credentials without dealing with the synchronization logic.
+
+Each holder's individual cloud wallet is accessed using a key in the holder's possession. This key can be stored in the local storage of a wallet application, or derived from a biometric of the holder's. A recovery mnemonic can be used to recover a lost master key.
 
 ## Usage Example
 
@@ -41,7 +46,7 @@ const dataStore = await createDataStore({
 
 ### Step 2: Generate Wallet Key and Mnemonic
 
-Next, we generate key and mnemonic for interacting with the cloud wallet. Use the same Cloud Wallet key across multiple devices to access the same documents. These keys are used to encrypt, decrypt, and locate documents in the EDV.
+Next, we generate a key and mnemonic for interacting with the cloud wallet. Use the same Cloud Wallet key across multiple devices to access the same documents. These keys are used to encrypt, decrypt, and locate documents in the EDV.
 
 ```ts
 import {generateCloudWalletMasterKey} from '@docknetwork/wallet-sdk-core/lib/cloud-wallet';
@@ -51,7 +56,7 @@ const {masterKey, mnemonic} = await generateCloudWalletMasterKey();
 
 The `masterKey` is used to derive encryption keys for the EDV, while the `mnemonic` is used to recover the master key.
 
-**Note:** Encryption keys can be derived from biometric data through a third-party service, offering enhanced security by linking the keys to a user's unique biometric profile
+**Note:** Encryption keys can be derived from biometric data through a third-party service, offering enhanced security by linking the keys to a user's unique biometric profile.
 
 If the master key is lost, the mnemonic can be used to recover it. Store the mnemonic securely and do not share it with anyone.
 ```ts
@@ -62,7 +67,7 @@ const masterKey = await recoverCloudWalletMasterKey(mnemonic);
 
 ### Step 3: Initialize the cloud storage
 
-After setting up the data store and generating keys, initialize the Cloud storage and connect it to the local data storage. This ensures continuous synchronization between the EDV and the wallet.
+After setting up the data store and generating keys, initialize the cloud storage and connect it to the local data storage. This ensures continuous synchronization between the EDV and the wallet.
 
 ```ts
 import {initializeCloudWallet} from '@docknetwork/wallet-sdk-core/lib/cloud-wallet';
@@ -108,7 +113,7 @@ await wallet.addDocument(document);
 
 ### Issuing Credentials to Cloud Wallet
 
-You can issue credentials directly to a cloud wallet using the Truvera Workspace/API. The credential will be automatically distributed to the holder's cloud wallet through the DIDComm protocol, eliminating the need for direct API calls or manual credential handling.
+You can issue credentials directly to a cloud wallet using the Truvera Workspace or the Truvera API. The credential will be automatically distributed to the holder's cloud wallet through the DIDComm protocol, eliminating the need for direct API calls or manual credential handling.
 
 #### Important Requirement
 
@@ -195,9 +200,13 @@ The system uses a two-vault architecture:
 - KeyMappingVault: Stores encrypted master keys that can only be accessed with proper authentication
 - CloudWalletVault: The main vault containing wallet documents, secured by the master key
 
+We will provide an example of how this two-vault architecture can be used to allow biometric authentication to the cloud wallet.
+
+Note that the biometric sample used to authenticate to a cloud wallet could also be provided to a [biometric service](https://github.com/docknetwork/wallet-sdk/blob/master/docs/biometric-plugin.md) in order to issue a new biometric check credential as described in [biometric bound credentials](https://docs.truvera.io/solutions/biometric-bound-credentials).
+
 #### Step 1: Enroll User with Biometric Data
 
-To set up biometric authentication, enroll the user with their biometric data and identifier (typically an email):
+To set up biometric authentication, enroll the user with their biometric data and identifier:
 
 ```ts
 import { enrollUserWithBiometrics } from '@docknetwork/wallet-sdk-core/lib/cloud-wallet';
@@ -221,6 +230,8 @@ The enrollment process:
 2. Generates encryption keys from the biometric data
 3. Encrypts the master key with the biometric-derived keys
 4. Stores the encrypted master key in the KeyMappingVault, indexed by the user's email
+
+In this example, the user email address is provided as a unique identifier to look up the biometric template for highly secure one-to-one biometric matching. The identifier is not shared with issuers or verifiers and any identifier may be used so long as it is convenient for the holder to remember. Phone numbers are another common choice. Biometric solutions that support one-to-n matching might be sufficient for many scenarios and would allow the user to avoid having to remember and provide an identifier. If you use an identifier, remember to verify that the user is actually in control of the identifier or an attacker could register the identifier and prevent the legitimate holder from accessing the service.
 
 #### Step 2: Authenticate with Biometrics
 
@@ -259,3 +270,23 @@ The authentication process:
 3. Derives decryption keys from the provided biometric data
 4. Decrypts the master key
 5. Uses the master key to access the CloudWalletVault
+
+### Wallet Recovery
+
+This architecture allows solution developers to design the recovery mechanism that makes sense for your use case.
+
+If only a master key is used, then the mnemonic should also be provided to the user so that they can regenerate the master key if necessary.
+
+Alternatively, one or more recovery keys can be stored in the KeyMappingVault. As they are used, old keys can be removed and new keys can be added.
+
+If a biometrically derived key can no longer be generated, then a recovery key should be used to enroll a new biometric. Any biometric-bound credentials will need to be reissued with the new biometric.
+
+
+## Organizational Wallets
+
+Verifiable credentials can help automate many processes that include organization identity, such as credit worthiness or Know-Your-Business (KYB) checks. Organization information that originates with a third party and then must be privately shared with a relying party is well suited to verifiable credentials.
+
+By storing organizational credentials in a cloud wallet, multiple members of the organization can access the wallet to present the credentials as needed. The multi-key authentication described above allows for integration with a variety of authentication and authorization systems.
+
+* Keys to the organization's cloud wallet can be stored in a corporate secrets vault or password manager, through which access can be granted to authorized employees.
+* Staff can authenticate with the corporate IAM system. If they are authorized to use the cloud wallet, then the key stored in the IAM system can be used for the cloud wallet.
