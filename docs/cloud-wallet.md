@@ -65,9 +65,9 @@ import {recoverCloudWalletMasterKey} from '@docknetwork/wallet-sdk-core/lib/clou
 const masterKey = await recoverCloudWalletMasterKey(mnemonic);
 ```
 
-### Step 3: Initialize the Cloud Wallet
+### Step 3: Initialize the cloud storage
 
-After setting up the data store and generating the key, initialize the Cloud Wallet and connect it to the local data storage. This ensures continuous synchronization between the EDV and the wallet.
+After setting up the data store and generating keys, initialize the cloud storage and connect it to the local data storage. This ensures continuous synchronization between the EDV and the wallet.
 
 ```ts
 import {initializeCloudWallet} from '@docknetwork/wallet-sdk-core/lib/cloud-wallet';
