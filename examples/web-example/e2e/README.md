@@ -28,12 +28,12 @@ This directory contains end-to-end tests for the Wallet SDK Web Example applicat
 
 1. Install dependencies:
 ```bash
-yarn install
+npm install
 ```
 
 2. **Important**: Install Playwright browsers (required for tests to run):
 ```bash
-yarn playwright install
+npm playwright install
 ```
 
 Without this step, you'll get "Executable doesn't exist" errors.
@@ -44,35 +44,35 @@ Without this step, you'll get "Executable doesn't exist" errors.
 
 ```bash
 # Run all e2e tests (Chrome only by default)
-yarn test:e2e
+npm run test:e2e
 
 # Run tests in UI mode (interactive, great for development)
-yarn test:e2e:ui
+npm run test:e2e:ui
 
 # Run tests in headed mode (see browser actions)
-yarn test:e2e:headed
+npm run test:e2e:headed
 
 # Run tests in debug mode (step-by-step)
-yarn test:e2e:debug
+npm run test:e2e:debug
 
 # Show test report after running
-yarn test:e2e:report
+npm run test:e2e:report
 ```
 
 ### Running Specific Tests
 
 ```bash
 # Run a specific test file
-yarn playwright test e2e/app-loading.spec.ts
+npx playwright test e2e/app-loading.spec.ts
 
 # Run tests matching a pattern
-yarn playwright test -g "should create a new wallet"
+npx playwright test -g "should create a new wallet"
 
 # Run a specific test by name
-yarn playwright test e2e/wallet-creation.spec.ts -g "should create a new wallet successfully"
+npx playwright test e2e/wallet-creation.spec.ts -g "should create a new wallet successfully"
 
 # Run only failing tests from last run
-yarn playwright test --last-failed
+npx playwright test --last-failed
 ```
 
 ### Browser Configuration
@@ -103,32 +103,32 @@ projects: [
 
 ```bash
 # Run tests in headed mode to see browser actions
-yarn playwright test --headed
+npx playwright test --headed
 
 # Run tests in debug mode with step-by-step execution
-yarn playwright test --debug
+npx playwright test --debug
 
 # Run a specific failing test in debug mode
-yarn playwright test e2e/wallet-creation.spec.ts -g "should create" --debug
+npx playwright test e2e/wallet-creation.spec.ts -g "should create" --debug
 
 # Run with browser console output
-yarn playwright test --headed --reporter=line
+npx playwright test --headed --reporter=line
 ```
 
 ### Debugging Tools
 
 ```bash
 # Generate test code by recording interactions
-yarn playwright codegen http://localhost:3000
+npx playwright codegen http://localhost:3000
 
 # Run single test with maximum verbosity
-yarn playwright test e2e/app-loading.spec.ts --headed --debug --reporter=line
+npx playwright test e2e/app-loading.spec.ts --headed --debug --reporter=line
 
 # Run tests with custom timeout
-yarn playwright test --timeout=60000
+npx playwright test --timeout=60000
 
 # Keep browser open after test completion
-yarn playwright test --headed --debug --pause-on-failure
+npx playwright test --headed --debug --pause-on-failure
 ```
 
 ### Analyzing Test Results
@@ -141,10 +141,10 @@ Tests automatically capture on failure:
 
 ```bash
 # Open the HTML report to view test results
-yarn playwright show-report
+npx playwright show-report
 
 # View traces for failed tests (very detailed)
-yarn playwright show-trace test-results/path-to-trace.zip
+npx playwright show-trace test-results/path-to-trace.zip
 ```
 
 ### Adding Debug Logs
@@ -172,7 +172,7 @@ export TEST_CREDENTIAL_URL="openid-credential-offer://your-test-url"
 export TEST_PROOF_REQUEST_URL="https://your-proof-request-url"
 
 # Run tests with environment variables
-yarn test:e2e
+npm run test:e2e
 ```
 
 ## Common Issues and Solutions
@@ -182,7 +182,7 @@ yarn test:e2e
 **Problem**: Playwright browsers not installed
 ```bash
 # Solution
-yarn playwright install
+npx playwright install
 ```
 
 ### 2. Tests Timing Out
@@ -267,7 +267,7 @@ export default defineConfig({
     video: 'retain-on-failure',
   },
   webServer: {
-    command: 'yarn start',
+    command: 'npm start',
     port: 3000,
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000, // 2 minutes for server start
@@ -301,13 +301,13 @@ For continuous integration:
 ```yaml
 # Example GitHub Actions configuration
 - name: Install dependencies
-  run: yarn install
+  run: npm install
 
 - name: Install Playwright browsers
-  run: yarn playwright install
+  run: npx playwright install
 
 - name: Run e2e tests
-  run: yarn test:e2e
+  run: npm run test:e2e
   env:
     CI: true
 
@@ -424,13 +424,13 @@ The credential import test is skipped by default because it requires a real cred
 When tests fail:
 
 1. **Check the basics**:
-   - Are dependencies installed? (`yarn install`)
-   - Are browsers installed? (`yarn playwright install`)
+   - Are dependencies installed? (`npm install`)
+   - Are browsers installed? (`npx playwright install`)
    - Is the dev server starting properly?
 
 2. **Run tests visually**:
    ```bash
-   yarn playwright test --headed --debug
+   npx playwright test --headed --debug
    ```
 
 3. **Check test artifacts**:
@@ -439,7 +439,7 @@ When tests fail:
    - Browser console output
 
 4. **Verify app behavior manually**:
-   - Start dev server: `yarn start`
+   - Start dev server: `npm start`
    - Test the failing functionality manually in browser
 
 5. **Check for timing issues**:

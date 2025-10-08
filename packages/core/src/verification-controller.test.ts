@@ -1,4 +1,4 @@
-import {IWallet} from './types';
+import {IWallet, WalletEvents} from './types';
 import {
   createVerificationController,
   VerificationStatus,
@@ -11,7 +11,6 @@ import iiwTemplate from './fixtures/iiw-template.json';
 import anyCredentialProofRequest from './fixtures/any-credential-proof-request.json';
 import universityDegreeProofRequest from './fixtures/university-degree-proof-request.json';
 import {createDIDProvider, IDIDProvider} from './did-provider';
-import {WalletEvents} from '@docknetwork/wallet-sdk-core/src/wallet';
 import {replaceResponseURL} from './helpers';
 import {createDataStore} from '@docknetwork/wallet-sdk-data-store-typeorm/src';
 

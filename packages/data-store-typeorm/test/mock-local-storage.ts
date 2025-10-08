@@ -1,4 +1,4 @@
-import {LocalStorage} from '../src/migration/migration1/v1-data-store';
+import {LocalStorage} from '@docknetwork/wallet-sdk-data-store/src/types';
 
 export const createMockLocalStorage = (): LocalStorage => {
   let data: any = {};

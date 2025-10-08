@@ -4,6 +4,7 @@ export class StorageService {
     StorageService.prototype.setItem,
     StorageService.prototype.getItem,
     StorageService.prototype.removeItem,
+    StorageService.prototype.getAllKeys,
   ];
 
   constructor() {
@@ -20,6 +21,10 @@ export class StorageService {
 
   getItem(...args): Promise<any> {
     return global.localStorage.getItem(...args);
+  }
+
+  getAllKeys(): Promise<string[]> {
+    return Promise.resolve(Object.keys(global.localStorage));
   }
 }
 

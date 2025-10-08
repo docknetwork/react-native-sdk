@@ -3,16 +3,13 @@ import { test, expect } from '@playwright/test';
 test.describe('App Loading', () => {
   test('should load the application successfully', async ({ page }) => {
     await page.goto('/');
-    
-    // Check if the app header is visible
-    await expect(page.locator('.App-header')).toBeVisible();
-    
-    // Should show either welcome screen (no wallet) or documents screen (wallet exists)
+
+    // Should show either welcome screen (no wallet) or wallet interface (wallet exists)
     const welcomeText = page.getByText('Welcome to the Wallet App');
-    const documentsText = page.getByText('Documents');
-    
-    // Wait for either welcome or documents to be visible
-    await expect(welcomeText.or(documentsText)).toBeVisible();
+    const credentialsText = page.getByText('Credentials (');
+
+    // Wait for either welcome or credentials section to be visible
+    await expect(welcomeText.or(credentialsText)).toBeVisible();
   });
 
   test('should show wallet setup options when no wallet exists', async ({ page }) => {
@@ -54,8 +51,8 @@ test.describe('App Loading', () => {
       buffer: buffer
     }]);
     
-    // After file upload, should eventually show the documents page
-    // Wait for the documents header to appear (may briefly show loading)
-    await expect(page.getByText('Documents')).toBeVisible({ timeout: 10000 });
+    // After file upload, should eventually show the credentials section
+    // Wait for the credentials section to appear (may briefly show loading)
+    await expect(page.getByText('Credentials (')).toBeVisible({ timeout: 10000 });
   });
 });

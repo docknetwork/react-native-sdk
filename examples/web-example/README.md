@@ -7,8 +7,8 @@ This web application leverages the **Truvera Wallet SDK** and **Truvera Cloud Wa
 1. **Start the Application:**
    - Run the app with the following commands:
      ```bash
-     yarn install
-     yarn start
+     npm install
+     npm start
      ```
 
 2. **Initialize the Wallet:**

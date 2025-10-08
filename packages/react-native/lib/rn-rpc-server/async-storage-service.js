@@ -5,6 +5,7 @@ export class StorageService {
     setItem: StorageService.prototype.setItem,
     getItem: StorageService.prototype.getItem,
     removeItem: StorageService.prototype.removeItem,
+    getAllKeys: StorageService.prototype.getAllKeys,
   };
 
   constructor() {
@@ -25,6 +26,10 @@ export class StorageService {
     }
 
     return AsyncStorage.getItem(key);
+  }
+
+  getAllKeys(): Promise<string[]> {
+    return AsyncStorage.getAllKeys();
   }
 }
 

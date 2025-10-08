@@ -1,4 +1,12 @@
 // @ts-nocheck
+
+/**
+ * @module credential-service
+ * @description Verifiable credential management service for the Wallet SDK.
+ * This module provides functionality for creating, signing, verifying, and presenting
+ * verifiable credentials including support for BBS+ signatures and anonymous credentials.
+ */
+
 import {serviceName, validation} from './config';
 import {
   Accumulator,
@@ -29,11 +37,25 @@ import {
 import assert from 'assert';
 import axios from 'axios';
 import {getIsRevoked, getWitnessDetails} from './bbs-revocation';
-import {getPexRequiredAttributes} from './pex-helpers';
+import {getPexRequiredAttributes, shouldSkipAttribute} from './pex-helpers';
 import {didService} from '../dids/service';
 
+/**
+ * PEX (Presentation Exchange) instance for credential filtering
+ * @private
+ */
 const pex: PEX = new PEX();
 
+/**
+ * Checks if a credential uses BBS+ signature
+ * @param {Object} credential - The credential to check
+ * @returns {boolean} True if the credential uses BBS+ signature
+ * @example
+ * const isBBS = isBBSPlusCredential(credential);
+ * if (isBBS) {
+ *   console.log('This credential uses BBS+ signatures');
+ * }
+ */
 export function isBBSPlusCredential(credential) {
   return (
     (typeof credential?.proof?.type === 'string' &&
@@ -45,6 +67,13 @@ export function isBBSPlusCredential(credential) {
   );
 }
 
+/**
+ * Checks if a credential uses KVAC (BBDT16) signature
+ * @param {Object} credential - The credential to check
+ * @returns {boolean} True if the credential uses KVAC signature
+ * @example
+ * const isKVAC = isKvacCredential(credential);
+ */
 export function isKvacCredential(credential) {
   return (
     typeof credential?.proof?.type === 'string' &&
@@ -52,11 +81,30 @@ export function isKvacCredential(credential) {
   );
 }
 
+/**
+ * Checks if a credential is anonymous (BBS+ or KVAC)
+ * @param {Object} credential - The credential to check
+ * @returns {boolean} True if the credential is anonymous
+ * @example
+ * if (isAnnonymousCredential(credential)) {
+ *   console.log('This credential supports selective disclosure');
+ * }
+ */
 export function isAnnonymousCredential(credential) {
   return isBBSPlusCredential(credential) || isKvacCredential(credential);
 }
 
+/**
+ * Service class for managing verifiable credentials
+ * @class
+ * @description Provides methods for creating, signing, verifying, and presenting
+ * verifiable credentials with support for various signature types
+ */
 class CredentialService {
+  /**
+   * Creates a new CredentialService instance
+   * @constructor
+   */
   constructor() {
     this.name = serviceName;
   }
@@ -71,6 +119,16 @@ class CredentialService {
     CredentialService.prototype.isKvacCredential,
     CredentialService.prototype.acquireOIDCredential,
   ];
+  /**
+   * Generates a new verifiable credential template
+   * @param {Object} [params={}] - Generation parameters
+   * @param {Object} [params.subject] - The credential subject
+   * @returns {VerifiableCredential} A new verifiable credential instance
+   * @example
+   * const credential = credentialService.generateCredential({
+   *   subject: { id: 'did:example:123', name: 'Alice' }
+   * });
+   */
   generateCredential(params = {}) {
     validation.generateCredential(params);
     const {subject} = params;
@@ -89,6 +147,19 @@ class CredentialService {
     }
     return vc;
   }
+  /**
+   * Signs a verifiable credential
+   * @param {Object} params - Signing parameters
+   * @param {Object} params.vcJson - The credential JSON to sign
+   * @param {Object} params.keyDoc - The key document for signing
+   * @returns {Promise<VerifiableCredential>} The signed verifiable credential
+   * @throws {Error} If validation fails or signing fails
+   * @example
+   * const signedCredential = await credentialService.signCredential({
+   *   vcJson: credentialData,
+   *   keyDoc: issuerKeyDocument
+   * });
+   */
   async signCredential(params) {
     validation.signCredential(params);
     const {vcJson, keyDoc} = params;
@@ -104,6 +175,24 @@ class CredentialService {
 
     return verifiableCredential;
   }
+  /**
+   * Creates a verifiable presentation from credentials
+   * @param {Object} params - Presentation parameters
+   * @param {Array<Object>} params.credentials - Array of verifiable credentials to include
+   * @param {Object} params.keyDoc - The key document for signing the presentation
+   * @param {string} [params.challenge] - Challenge string for the presentation proof
+   * @param {string} [params.id] - Presentation identifier
+   * @param {string} [params.domain] - Domain for the presentation proof
+   * @returns {Promise<Object>} The signed verifiable presentation
+   * @throws {Error} If validation fails
+   * @example
+   * const presentation = await credentialService.createPresentation({
+   *   credentials: [credential1, credential2],
+   *   keyDoc: holderKeyDocument,
+   *   challenge: 'abc123',
+   *   domain: 'example.com'
+   * });
+   */
   async createPresentation(params) {
     validation.createPresentation(params);
     const {credentials, keyDoc, challenge, id, domain} = params;
@@ -129,10 +218,40 @@ class CredentialService {
     return vp.sign(suite, challenge, domain, blockchainService.resolver);
   }
 
+  /**
+   * Verifies a verifiable presentation
+   * @param {Object} params - Verification parameters
+   * @param {Object} params.presentation - The presentation to verify
+   * @param {Object} [params.options] - Verification options
+   * @returns {Promise<Object>} Verification result with verified status and any errors
+   * @example
+   * const result = await credentialService.verifyPresentation({
+   *   presentation: presentationData
+   * });
+   * console.log('Verified:', result.verified);
+   */
   async verifyPresentation({ presentation, options }: any) {
     return verifyPresentation(presentation, options);
   }
 
+  /**
+   * Verifies a verifiable credential including revocation check
+   * @param {Object} params - Verification parameters
+   * @param {Object} params.credential - The credential to verify
+   * @param {Object} [params.membershipWitness] - Membership witness for revocation check
+   * @returns {Promise<Object>} Verification result
+   * @returns {boolean} returns.verified - Whether the credential is valid
+   * @returns {string} [returns.error] - Error message if verification failed
+   * @throws {Error} If validation fails
+   * @example
+   * const result = await credentialService.verifyCredential({
+   *   credential: credentialData,
+   *   membershipWitness: witnessData
+   * });
+   * if (!result.verified) {
+   *   console.error('Verification failed:', result.error);
+   * }
+   */
   async verifyCredential(params) {
     validation.verifyCredential(params);
     const {credential, membershipWitness} = params;
@@ -160,6 +279,20 @@ class CredentialService {
     return result;
   }
 
+  /**
+   * Filters credentials based on a presentation definition
+   * @param {Object} params - Filter parameters
+   * @param {Array<Object>} params.credentials - Array of credentials to filter
+   * @param {Object} params.presentationDefinition - PEX presentation definition
+   * @param {string} [params.holderDid] - DID of the credential holder
+   * @returns {Object} Filtered credentials matching the presentation definition
+   * @example
+   * const filtered = credentialService.filterCredentials({
+   *   credentials: allCredentials,
+   *   presentationDefinition: definition,
+   *   holderDid: 'did:example:holder'
+   * });
+   */
   filterCredentials(params) {
     const {credentials, presentationDefinition, holderDid} = params;
     const result = pex.selectFrom(
@@ -171,6 +304,18 @@ class CredentialService {
     return result;
   }
 
+  /**
+   * Evaluates a presentation against a presentation definition
+   * @param {Object} params - Evaluation parameters
+   * @param {Object} params.presentation - The presentation to evaluate
+   * @param {Object} params.presentationDefinition - PEX presentation definition
+   * @returns {Object} Evaluation result with validation details
+   * @example
+   * const evaluation = credentialService.evaluatePresentation({
+   *   presentation: presentationData,
+   *   presentationDefinition: definition
+   * });
+   */
   evaluatePresentation(params) {
     const {presentation, presentationDefinition} = params;
     const result = pex.evaluatePresentation(
@@ -181,16 +326,43 @@ class CredentialService {
     return result;
   }
 
+  /**
+   * Checks if a credential uses BBS+ signature
+   * @param {Object} params - Check parameters
+   * @param {Object} params.credential - The credential to check
+   * @returns {boolean} True if the credential uses BBS+ signature
+   */
   isBBSPlusCredential(params) {
     const {credential} = params;
     return isBBSPlusCredential(credential);
   }
 
+  /**
+   * Checks if a credential uses KVAC signature
+   * @param {Object} params - Check parameters
+   * @param {Object} params.credential - The credential to check
+   * @returns {boolean} True if the credential uses KVAC signature
+   */
   isKvacCredential(params) {
     const {credential} = params;
     return isKvacCredential(credential);
   }
 
+  /**
+   * Acquires a credential through OpenID for Verifiable Credentials (OID4VC)
+   * @param {Object} params - Acquisition parameters
+   * @param {string} params.uri - The credential offer URI
+   * @param {string} [params.authorizationCode] - Authorization code if required
+   * @param {Object} params.holderKeyDocument - Key document for the credential holder
+   * @returns {Promise<Object>} Result containing the credential or authorization URL
+   * @returns {Object} [returns.credential] - The acquired credential
+   * @returns {string} [returns.authorizationURL] - Authorization URL if auth is required
+   * @example
+   * const result = await credentialService.acquireOIDCredential({
+   *   uri: 'openid-credential-offer://...',
+   *   holderKeyDocument: keyDoc
+   * });
+   */
   async acquireOIDCredential({
     uri,
     authorizationCode,
@@ -264,6 +436,22 @@ class CredentialService {
     }
   }
 
+  /**
+   * Creates a BBS+ presentation with selective disclosure
+   * @param {Object} params - Presentation parameters
+   * @param {Array<Object>} params.credentials - Array of credentials with attributes to reveal
+   * @param {Object} params.credentials[].credential - The BBS+ credential
+   * @param {Array<string>} [params.credentials[].attributesToReveal] - Attributes to reveal
+   * @returns {Promise<Object>} The BBS+ presentation
+   * @throws {Error} If validation fails
+   * @example
+   * const presentation = await credentialService.createBBSPresentation({
+   *   credentials: [{
+   *     credential: bbsCredential,
+   *     attributesToReveal: ['name', 'age']
+   *   }]
+   * });
+   */
   async createBBSPresentation(params) {
     validation.createBBSPresentation(params);
     const {credentials} = params;
@@ -280,6 +468,13 @@ class CredentialService {
     return bbsPlusPresentation.createPresentation();
   }
 
+  /**
+   * Gets the accumulator ID from a credential's status
+   * @param {Object} params - Parameters
+   * @param {Object} params.credential - The credential to get accumulator ID from
+   * @returns {string|null} The accumulator ID or null if not present
+   * @throws {Error} If credential is not provided
+   */
   getAccumulatorId({credential}) {
     assert(!!credential, `credential is required`);
     if (!credential?.credentialStatus) {
@@ -289,6 +484,13 @@ class CredentialService {
     return credential?.credentialStatus.id;
   }
 
+  /**
+   * Gets accumulator data from the blockchain for a credential
+   * @param {Object} params - Parameters
+   * @param {Object} params.credential - The credential to get accumulator data for
+   * @returns {Promise<Object|null>} The accumulator data or null if not found
+   * @throws {Error} If credential is not provided
+   */
   async getAccumulatorData({credential}) {
     assert(!!credential, `credential is required`);
     const accumulatorId = await this.getAccumulatorId({credential});
@@ -304,10 +506,15 @@ class CredentialService {
   }
 
   /**
-   * Fetch the latest accumulator witness updates for a given credential and membership witness
-   * The witness is generated by the issuer when the credential is created and is stored in the wallet when the credential is imported
-   *
-   * @param param0
+   * Updates the membership witness with the latest accumulator state
+   * @description The witness is generated by the issuer when the credential is created
+   * and is stored in the wallet when the credential is imported. This method updates
+   * it with the latest accumulator changes from the blockchain.
+   * @param {Object} params - Update parameters
+   * @param {Object} params.credential - The credential with revocation status
+   * @param {Object} params.membershipWitnessJSON - Current membership witness in JSON format
+   * @returns {Promise<Object>} Updated membership witness in JSON format
+   * @throws {Error} If updates cannot be fetched or applied
    */
   async updateMembershipWitness({credential, membershipWitnessJSON}) {
     const revocationId = credential.credentialStatus.revocationId;
@@ -359,6 +566,25 @@ class CredentialService {
     return witness.toJSON();
   }
 
+  /**
+   * Derives verifiable credentials from a presentation with selective disclosure
+   * @param {Object} params - Derivation parameters
+   * @param {Array<Object>} params.credentials - Array of credential objects
+   * @param {Object} params.credentials[].credential - The credential
+   * @param {Array<string>} params.credentials[].attributesToReveal - Attributes to reveal
+   * @param {Object} [params.credentials[].witness] - Membership witness for revocation
+   * @param {Object} [params.options={}] - Additional options for derivation
+   * @param {Object} [params.proofRequest] - Proof request with constraints
+   * @returns {Promise<Array>} Array of derived credentials
+   * @throws {Error} If validation fails
+   * @example
+   * const derivedCredentials = await credentialService.deriveVCFromPresentation({
+   *   credentials: [{
+   *     credential: bbsCredential,
+   *     attributesToReveal: ['name', 'dateOfBirth']
+   *   }]
+   * });
+   */
   async deriveVCFromPresentation(params) {
     validation.deriveVCFromPresentation(params);
     const {credentials, options = {}, proofRequest} = params;
@@ -397,7 +623,7 @@ class CredentialService {
         ? descriptorBounds[idx].map(bound => bound.attributeName)
         : [];
       const filteredAttributes = attributesToReveal.filter(
-        attribute => !attributesToSkip.includes(attribute),
+        attribute => !attributesToSkip.includes(attribute) && !shouldSkipAttribute(attribute),
       );
       const _pexRequiredAttributes = pexRequiredAttributes[idx] || [];
 
@@ -443,9 +669,34 @@ class CredentialService {
     return credentialsFromPresentation;
   }
 
+  /**
+   * Test method for range proofs
+   * @private
+   * @returns {Promise<void>}
+   */
   async testRangeProof() {
     console.log('test');
   }
 }
 
+/**
+ * Singleton instance of the credential service
+ * @type {CredentialService}
+ * @example
+ * import { credentialService } from '@docknetwork/wallet-sdk-wasm/services/credential';
+ *
+ * // Create and sign a credential
+ * const credential = credentialService.generateCredential({
+ *   subject: { id: 'did:example:123' }
+ * });
+ * const signed = await credentialService.signCredential({
+ *   vcJson: credential,
+ *   keyDoc: issuerKey
+ * });
+ *
+ * // Verify a credential
+ * const result = await credentialService.verifyCredential({
+ *   credential: signedCredential
+ * });
+ */
 export const credentialService = new CredentialService();

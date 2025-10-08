@@ -4,11 +4,15 @@ import {generateSignedPayload, toBase64} from '../src/payloads';
 import {ALICE_KEY_PAIR_DOC, BOB_KEY_PAIR_DOC} from './mock-data';
 import {didcommCreateEncrypted} from '../src/didcomm';
 import {getDerivedAgreementKey} from '../src/didcomm';
+import {blockchainService} from '@docknetwork/wallet-sdk-wasm/src/services/blockchain';
 
 describe('Relay service', () => {
   beforeEach(() => {
     jest.spyOn(didcomm, 'encrypt').mockImplementationOnce(msg => msg);
     jest.spyOn(didcomm, 'decrypt').mockImplementationOnce(msg => msg);
+    jest
+      .spyOn(blockchainService, 'resolveDID')
+      .mockImplementationOnce(msg => msg);
   });
 
   describe('generateSignedPayload', () => {
@@ -171,13 +175,6 @@ describe('Relay service', () => {
       const axiosMock = jest.spyOn(axios, 'get').mockResolvedValue({
         data: jwtMessage,
       });
-
-      // Mock the JWT decode functionality to return an object with credentials
-      jest.spyOn(require('jwt-decode'), 'default').mockImplementation(() => ({
-        payload: {
-          credentials: [{id: 'test-credential'}],
-        },
-      }));
 
       const result = await RelayService.resolveDidcommMessage({
         message: `didcomm://${messageURL}`,

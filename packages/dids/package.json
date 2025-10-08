@@ -1,10 +1,10 @@
 {
     "name": "@docknetwork/wallet-sdk-dids",
-    "version": "1.5.12",
-    "license": "https://github.com/docknetwork/react-native-sdk/LICENSE",
+    "version": "1.5.14",
+    "license": "https://github.com/docknetwork/wallet-sdk/LICENSE",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/docknetwork/react-native-sdk.git",
+        "url": "git+https://github.com/docknetwork/wallet-sdk.git",
         "directory": "packages/dids"
     },
     "main": "lib/index.js",

@@ -1,4 +1,4 @@
-import {LocalStorage} from '@docknetwork/wallet-sdk-data-store/src/types';
+import type {LocalStorage} from '@docknetwork/wallet-sdk-data-store/src/types';
 import assert from 'assert';
 
 let _localStorage: LocalStorage;

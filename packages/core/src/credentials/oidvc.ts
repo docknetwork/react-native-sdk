@@ -2,7 +2,7 @@ import {IWallet} from '../types';
 import {IDIDProvider} from '../did-provider';
 import {credentialServiceRPC} from '@docknetwork/wallet-sdk-wasm/src/services/credential';
 import {MetadataClient} from '@sphereon/oid4vci-client';
-import jwtDecode from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode';
 import axios from 'axios';
 import {pexService} from '@docknetwork/wallet-sdk-wasm/src/services/pex';
 import {WellKnownEndpoints} from '@sphereon/oid4vci-common';
