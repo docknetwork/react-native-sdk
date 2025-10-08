@@ -34,7 +34,7 @@ jobs:
       - name: Copy files
         run: |
           # Sync docs and README to knowledgebase
-          rsync -av --delete docs/ ./knowledge-base/credential-wallet/wallet-sdk/
+          rsync -avr --delete docs/ ./knowledge-base/credential-wallet/wallet-sdk/
           rsync -av README.md ./knowledge-base/credential-wallet/wallet-sdk/README.md
 
       - name: Get branch name
