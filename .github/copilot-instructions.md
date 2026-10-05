@@ -8,8 +8,9 @@ platform bindings. Source of these rules: `AGENTS.md`. Keep both in sync.
 ## Flag as high priority
 
 - **Cross-package contracts:** changes to `wasm`'s public exports or the `DataStore` interface in
-  `data-store` without updating every consumer (`core`, `data-store-typeorm`, `data-store-web`,
-  `react-native`, `web`, `cli`) in the same PR. Breaking changes need bumped internal
+  `data-store` without updating every consumer in the same PR — `wasm`: `core`, `data-store`,
+  `data-store-typeorm`, `data-store-web`, `relay-service`, `react-native`; `DataStore`: `core`,
+  `data-store-typeorm`, `data-store-web`, `react-native`, `web`, `cli`. Breaking changes need bumped internal
   `dependencies`/`peerDependencies` ranges.
 - **Public API breaks:** these are published npm packages used by external apps (including
   `dock-app` via `packages/react-native`). Flag removed or changed exports and signatures.
@@ -20,6 +21,7 @@ platform bindings. Source of these rules: `AGENTS.md`. Keep both in sync.
   release-triggering workflows.
 - **Lockfile:** `package-lock.json` changes not tied to an intentional dependency change.
 - **Build artefacts** committed: `lib/`, `dist/`, `coverage/`, `reports/`, `node_modules/`.
+  Exception: `packages/react-native/lib/` and `packages/request-logger/lib/` are checked-in source.
 
 ## Checklists that get forgotten
 
