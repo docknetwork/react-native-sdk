@@ -227,6 +227,8 @@ The agent must **never** modify without explicit direction:
 
 ## Further Reading
 
+- [.github/copilot-instructions.md](.github/copilot-instructions.md) — Copilot code review
+  checklist distilled from this file; update it when these rules change.
 - Per-package guides: [core](packages/core/AGENTS.md), [wasm](packages/wasm/AGENTS.md),
   [data-store-typeorm](packages/data-store-typeorm/AGENTS.md),
   [react-native](packages/react-native/AGENTS.md), [cli](packages/cli/AGENTS.md).
